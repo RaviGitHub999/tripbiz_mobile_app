@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import IconSwitcher from '../common/icons/IconSwitcher';
 import { colors, fonts } from '../../config/theme';
@@ -32,28 +32,31 @@ const components = [
     componentName: "MaterialIcons"
   },
 ];
-const getContent = (component: string,props:any) => {
-  switch (component) {
-    case 'flights':
-      return <FlightsSearch {...props}/>;
-    case 'hotel':
-      return <HotelSearch  {...props}/>;
-    case 'bus':
-      return <HotelSearch  {...props}/>;
-    case 'train':
-      return <HotelSearch  {...props}/>;
-    default:
-      return 'Default content goes here';
-  }
-};
 
-const HomeScreen = (props:any) => {
+
+const HomeScreen = (props: any) => {
   const [activeComponent, setActiveComponent] = useState(components[0].categoryName);
-const flatListRef=useRef<FlatList>(null)
-  const switchComponent = (component:string) => {
+  const getContentMemoized = useMemo(() => {
+    return (component: string, props: any) => {
+      switch (component) {
+        case 'flights':
+          return <FlightsSearch {...props} />;
+        case 'hotel':
+          return <HotelSearch  {...props} />;
+        case 'bus':
+          return <HotelSearch  {...props} />;
+        case 'train':
+          return <HotelSearch  {...props} />;
+        default:
+          return 'Default content goes here';
+      }
+    };
+  }, [])
+  const flatListRef = useRef<FlatList>(null)
+  const switchComponent = (component: string) => {
     setActiveComponent(component);
     const selectedIndex = components.findIndex((item) => item.categoryName === component);
-    flatListRef.current?.scrollToIndex({ animated: true, index: selectedIndex});
+    flatListRef.current?.scrollToIndex({ animated: true, index: selectedIndex });
   };
 
   return (
@@ -69,15 +72,15 @@ const flatListRef=useRef<FlatList>(null)
                 style={[styles.navItem, activeComponent === item.categoryName && styles.active]}
                 onPress={() => switchComponent(item.categoryName)}>
                 <View style={styles.categoriesContainer}>
-                  <IconSwitcher componentName={item.componentName} color={activeComponent===item.categoryName?colors.white:colors.primary} iconName={item.iconName} iconsize={3.2}/>
-                  <Text style={activeComponent===item.categoryName?styles.categoryName:{...styles.categoryName,color:colors.primary}}>{item.categoryName}</Text>
+                  <IconSwitcher componentName={item.componentName} color={activeComponent === item.categoryName ? colors.white : colors.primary} iconName={item.iconName} iconsize={3.2} />
+                  <Text style={activeComponent === item.categoryName ? styles.categoryName : { ...styles.categoryName, color: colors.primary }}>{item.categoryName}</Text>
                 </View>
               </TouchableOpacity>
             )
-          }} keyExtractor={item => item.categoryName} horizontal showsHorizontalScrollIndicator={false}   />
+          }} keyExtractor={item => item.categoryName} horizontal showsHorizontalScrollIndicator={false} />
         </View>
         <View style={styles.section}>
-        {getContent(activeComponent,{...props})}
+          {getContentMemoized(activeComponent, { ...props })}
         </View>
       </View>
     </View>

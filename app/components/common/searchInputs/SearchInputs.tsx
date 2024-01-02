@@ -38,6 +38,8 @@ const SearchInputs: React.FC<IProps> = ({ btn, dropDown,selected, placeholder,cu
   const [activeBtn, setActiveBtn] = useState(false)
   const[btnOrTextInput,setBtnOrTextInput]=useState(false)
   const [dropDownState, setDropDownState] = useState<DropDownState>({ dropDownArrow: false, dropDownHandle: false })
+  // console.log(selectedObj,"lklk")
+  // console.log(selected,"lklk")
   const handleFocus = (name: string) => {
     if (name === "input") {
       setActive(true)
