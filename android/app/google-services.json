@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "217583970561",
+    "project_id": "trav-biz",
+    "storage_bucket": "trav-biz.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:217583970561:android:e2cd54e647176e8b689300",
+        "android_client_info": {
+          "package_name": "com.tripbiz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "217583970561-pqevp0n9q0l1urvrs02510nn9s1dburt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD94li3AJNQLZrxfiObByCfwFqvc2Z9DBc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "217583970561-pqevp0n9q0l1urvrs02510nn9s1dburt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

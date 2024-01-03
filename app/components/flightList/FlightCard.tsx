@@ -15,17 +15,15 @@ interface LogosData {
   url: string
 }[]
 const FlightCard: React.FC<IProps> = ({ flightGrp, index }) => {
-    const{actions}=useContext<any>(MyContext)
+    const{actions,flightsLogosData,flightName}=useContext<any>(MyContext)
     var flightArr = flightGrp.map((flight:any, f:number) => {
         return { ...actions.modifyFlightObject(flight) };
       });
-  // console.log(flightArr,".................")
   let airlinename = flightArr[0].segments[0].airlineName
-//   const flightSymbol = useCallback((airlineName: string): string | undefined => {
-//     const logo: any = airlinelogos.find((ele: LogosData) => ele.id === airlineName?.toLowerCase());
-//     return logo?.url;
-//   }, [airlinelogos]);
-
+  const flightSymbol = useCallback((airlineName: string): string | undefined => {
+    const logo: any = flightsLogosData.find((ele: LogosData) => ele.id === airlineName?.toLowerCase());
+    return logo?.url;
+  }, [flightsLogosData]);
   const handleRenderingFlightCard = ({ item }: { item: any }) => {
     var flightCode = "";
     item.flightCodes.forEach((code: string, c: number) => {
@@ -38,9 +36,9 @@ const FlightCard: React.FC<IProps> = ({ flightGrp, index }) => {
     return (
       <View style={styles.mainContainer}>
         <View style={styles.logoHeader} >
-          {/* <View style={styles.flightLogoContainer}>{flightSymbol(airlinename) ? (
+          <View style={styles.flightLogoContainer}>{flightSymbol(airlinename) ? (
             <Image source={{ uri: flightSymbol(airlinename) }} style={styles.flightLogo} resizeMode='contain' />
-          ) : <IconSwitcher componentName='FontAwesome5' iconName='plane-departure' iconsize={3} />}</View> */}
+          ) : <IconSwitcher componentName='FontAwesome5' iconName='plane-departure' iconsize={3} />}</View>
         <View style={{width:"45%",alignItems:'center'}}>
         <Text style={styles.airlineName}> {`${item.airlineName}`}</Text>
         </View>

@@ -50,7 +50,7 @@ const FlightsSearchRes = (props: any) => {
         <View style={styles.mainContainer}>
             {renderHeader()}
 
-            {showFilters ? (
+            {/* {showFilters ? (
                 <FlightFilters />
             ) : (
                 <View style={styles.filtersHeaderContainer}>
@@ -62,7 +62,7 @@ const FlightsSearchRes = (props: any) => {
                         <IconSwitcher componentName='Ionicons' iconName='chevron-down' color={colors.black} iconsize={3.5} />
                     </TouchableOpacity>
                 </View>
-            )}
+            )} */}
 
             <View style={styles.activeIndicatorMainContainer}>
                 {searchingFlights ? (

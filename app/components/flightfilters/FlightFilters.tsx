@@ -68,6 +68,13 @@ const FlightFilters = () => {
       setSelectedStops(item)
     }
   }
+    const handleFlightsNames = ({ item }: { item: string }) => {
+    return (
+      <TouchableOpacity style={[styles.flightNameBtn]} >
+        <Text style={[styles.flightName]}>{item}</Text>
+      </TouchableOpacity>
+    )
+  }
   const arrHandleTimeClick = async (time) => {
     const startDate = new Date();
     const endDate = new Date();
@@ -302,7 +309,7 @@ const FlightFilters = () => {
       <View style={styles.filtersmainContainer}>
         <View>
           <Text style={styles.filterTitles}>{"Airline"}</Text>
-          {/* <FlatList data={flightsNamesList} renderItem={handleFlightsNames} numColumns={4} style={styles.flightNamesRenderContainer} nestedScrollEnabled /> */}
+          <FlatList data={ai} renderItem={handleFlightsNames} numColumns={4} style={styles.flightNamesRenderContainer} nestedScrollEnabled />
         </View>
         <View>
           <Text style={styles.filterTitles}>{"Stops"}</Text>
