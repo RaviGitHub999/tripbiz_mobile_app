@@ -8,12 +8,14 @@ import ProgressBar from '../common/progressBar/ProgressBar';
 import MyContext from '../../context/Context';
 import FlightList from '../flightList/FlightList';
 import FlightFilters from '../flightfilters/FlightFilters';
+import FlightBooking from '../FlightBooking/FlightBooking';
 
-const FlightsSearchRes = (props: any) => {
+const FlightsSearchRes = (props) => {
     console.log("res")
     const {
         flightResult,
         searchingFlights,
+        flightBookPage,
         showFilters,
         destinationSelectedAirPort,
         departureformattedDate,
@@ -25,7 +27,7 @@ const FlightsSearchRes = (props: any) => {
         classes,
         flightResJType,
         actions
-    } = useContext<any>(MyContext);
+    } = useContext(MyContext);
 
     const travellers = adults + children + infants;
 
@@ -48,7 +50,7 @@ const FlightsSearchRes = (props: any) => {
 
     return (
         <View style={styles.mainContainer}>
-            {renderHeader()}
+            {!flightBookPage?renderHeader():null}
 
             {/* {showFilters ? (
                 <FlightFilters />
@@ -69,7 +71,7 @@ const FlightsSearchRes = (props: any) => {
                     <View style={styles.activeIndicator}><ProgressBar /></View>
                 ) : flightResult.length === 0 ? (
                     <Text style={styles.nodata}>{"No Flights Found!!"}</Text>
-                ) : (
+                ) :flightBookPage?<FlightBooking/>: (
                     !showFilters && flightResJType === 0 ? <FlightList index={0} /> : <FlightList index={1} />
 
                 )}

@@ -1,0 +1,65 @@
+import { StyleSheet } from "react-native";
+import { responsiveHeight, responsiveWidth } from "../../utils/responsiveScale";
+import { colors } from "../../config/theme";
+
+export const styles=StyleSheet.create({
+    mainContainer:{
+       flex:1,
+       borderWidth:2,
+       alignItems:'center',
+       justifyContent:'center'
+    },
+    backBtnContainer:{
+        marginTop:responsiveHeight(1),
+        justifyContent:'center',
+        paddingHorizontal:responsiveWidth(4)
+    },
+    bookingFlightCabinAndCheckInContainer:{
+marginTop:responsiveHeight(1.5)
+    },
+    bookingFlightCabinAndCheckInSubContainer:{
+        flexDirection:'row',
+        alignItems:'center',
+        columnGap:responsiveWidth(2),
+    },
+    baggageAndMealsContainer:{
+        marginTop:responsiveHeight(3),
+        paddingHorizontal:responsiveWidth(3)
+    },
+    baggageDetailsContainer:{
+        borderWidth:1,
+        paddingHorizontal:responsiveWidth(4),
+        paddingVertical:responsiveHeight(1.5)
+    },
+    horizontalLine:{
+        borderTopWidth:1,
+        borderStyle:'dashed',
+        marginVertical:responsiveHeight(2)
+    },
+    baggageAndMealsTitle:{
+        fontSize:responsiveHeight(2.6),
+        marginBottom:responsiveHeight(1.5),
+        color:colors.black
+    },
+    baggageDetailsText:{
+        fontSize:responsiveHeight(2.2),
+        color:colors.black
+    },
+    flightextrabagAndMealTitle:{
+        fontSize:responsiveHeight(2.2),
+        color:colors.black
+    },
+    flightextrabagAndMealContainer:{
+        rowGap:responsiveHeight(1.3),
+    },
+    selectingBtn:{
+        borderWidth:1
+    },
+    flightBaggageText:{
+        fontSize:responsiveHeight(1.8),
+        color:colors.black
+    },
+    flightBaggageDataText:{
+        color:colors.highlight
+    }
+})

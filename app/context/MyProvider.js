@@ -13,67 +13,14 @@ const cabinclassMap = {
   5: "Premium Business class",
   6: "First"
 };
-interface MyProviderProps {
-  children: ReactNode;
-}
-export interface SelectedFlightObj {
-  name: string;
-  iataCode: string;
-  address: { cityName: string; countryName: string }
-}
-interface MyProviderState {
-    origin: string,
-    destination: string,
-    departure: string,
-    returnDate: string,
-    adults: number,
-    children: number,
-    infants: number,
-    classes: string,
-    directflight: boolean,
-    oneStopFlight: boolean,
-    dateValue: Date,
-    returnDateValue: Date,
-    cabinClassId:string,
-    journeyWay: string,
-    departureformattedDate: string,
-    returnformattedDate: string,
-    outbound: string,
-    inbound: string,
-    airportOriginData: [],
-    airportOriginLoading: boolean,
-    desRes: boolean,
-    oriRes: boolean,
-    originselected: boolean,
-    destinationselected:boolean,
-    flightResList:[],
-    searchingFlights:boolean,
-    airportDestData: [],
-    airportDestLoading: boolean,
-    originSelectedAirport: SelectedFlightObj,
-    destinationSelectedAirPort: SelectedFlightObj,
-    internationalFlights: boolean,
-    flightResult: any,
-    flightSearchToken:string,
-    flightSessionStarted: boolean,
-    flightSessionExpired: boolean,
-    flightResJType: number,
-    showFilters:boolean,
-    flightsLogosData:[],
-    airlineName:string,
-    stopPts: number|null,
-    destStartTime: null,
-    destEndTime: null,
-    actions:any
-}
-let abortAirportController: AbortController;
+let abortAirportController;
 var fuse = new Fuse(AirportsData, {
   keys: ["cityName", "name", "iataCode", "countryName"],
   includeScore: true,
   threshold: 0.2
 });
-export default class MyProvider extends Component<MyProviderProps, MyProviderState> {
-  constructor(props: MyProviderProps) {
+export default class MyProvider extends Component {
+  constructor(props) {
     super(props);
     this.state = {
       origin: "",
@@ -132,8 +79,9 @@ export default class MyProvider extends Component<MyProviderProps, MyProviderSta
     destStartTime: null,
     destEndTime: null,
     stopPts:null,
+    flightTravellers:0,
       actions:{
-        handleDropDownState: (payload: { stateName:string; stateValue:number; }) => {
+        handleDropDownState: (payload) => {
             switch (payload.stateName) {
                 case "adults":
                     this.setState({adults:payload.stateValue})
@@ -148,7 +96,7 @@ export default class MyProvider extends Component<MyProviderProps, MyProviderSta
                     break;
             }
         },
-        handleClass: (payload: string) => {
+        handleClass: (payload) => {
             this.setState({classes:payload})
             const classId = (() => {
                 switch (payload) {
@@ -168,10 +116,10 @@ export default class MyProvider extends Component<MyProviderProps, MyProviderSta
             })();
             this.setState({cabinClassId:classId}) 
         },
-        handleJourneyWay: (payload:string) => {
+        handleJourneyWay: (payload) => {
             this.setState({journeyWay:payload}) 
         },
-        handleDepartureDateChange: (payload:any) => {
+        handleDepartureDateChange: (payload) => {
             if (payload) {
 
                 const formattedDate = payload.toLocaleDateString('en-US', {
@@ -187,7 +135,7 @@ export default class MyProvider extends Component<MyProviderProps, MyProviderSta
                 this.setState({outbound:`${dateString.split("").slice(0, dateString.indexOf("T") + 1).join("")}00:00:00`})
             }
         },
-        handleReturnDateChange: (payload: any) => {
+        handleReturnDateChange: (payload) => {
             if (payload) {
 
                 const formattedDate = payload.toLocaleDateString('en-US', {
@@ -202,17 +150,17 @@ export default class MyProvider extends Component<MyProviderProps, MyProviderSta
                 this.setState({inbound:`${dateString.split("").slice(0, dateString.indexOf("T") + 1).join("")}00:00:00`})
             }
         },
-        handleChangeOriginTextInput: (payload: { e: string; name:string; }) => {
+        handleChangeOriginTextInput: (payload) => {
             const query = payload.e.trim();
             const loading1 = query !== "" ? true : false;
             this.setState({...this.state,[payload.name]:payload.e,airportOriginLoading:loading1,oriRes:loading1,airportOriginData:[]})
         },
-        handleChangeDestinationTextInput: (payload: { e: string; name:string; }) => {
+        handleChangeDestinationTextInput: (payload) => {
             const query = payload.e.trim();
             const loading = query !== "" ? true : false;
             this.setState({...this.state,[payload.name]:payload.e,airportDestLoading:loading,desRes:loading,airportDestData:[]})
         },
-        handleOriginSelectedAirPort: (payload: any) => {
+        handleOriginSelectedAirPort: (payload) => {
           this.setState({
                 ...this.state,
               originSelectedAirport:payload,
@@ -221,7 +169,7 @@ export default class MyProvider extends Component<MyProviderProps, MyProviderSta
               originselected: true
           })
       },
-      handleDestinationSelectedAirPort: (payload:any) => {
+      handleDestinationSelectedAirPort: (payload) => {
        this.setState({
             ...this.state,
             destinationSelectedAirPort: payload,
@@ -230,7 +178,7 @@ export default class MyProvider extends Component<MyProviderProps, MyProviderSta
             destinationselected: true
         })
     },
-    handleFlightsFilter:(payload:boolean)=>
+    handleFlightsFilter:(payload)=>
     {
       this.setState({showFilters:payload})
     },
@@ -241,16 +189,13 @@ this.setState({searchingFlights:true})
 handleFlightsLogos: async()=>
 {
     const querySnapshot = await firestore().collection("airlinelogos").get();
-    let updatedAirlinelogos: any = [];
+    let updatedAirlinelogos = [];
 
     querySnapshot.forEach(snapshot => {
         updatedAirlinelogos.push({ id: snapshot.id, url: snapshot.data().url });
     });
     this.setState({flightsLogosData:updatedAirlinelogos})
 },
-
-
-
     changeOriginAirportKeyword : this.debounce(async (keyword) => {
       // console.log(keyword);
       if (keyword !== "") {
@@ -357,7 +302,7 @@ handleFlightsLogos: async()=>
         { signal: abortAirportController.signal }
       );
     },
-    separateFlightsByType: (results:any) => {
+    separateFlightsByType: (results) => {
       this.setState({
         flightResList: results,
         internationalFlights: results.length > 1 ? false : true
@@ -387,7 +332,7 @@ handleFlightsLogos: async()=>
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       return diffDays;
     },
-    modifyFlightObject: (flight:any) => {
+    modifyFlightObject: (flight) => {
       var totalDuration = 0;
       var segments = flight.Segments.map((segment, sg) => {
         var seg1 = segment[0];
@@ -541,12 +486,12 @@ handleFlightsLogos: async()=>
         totalDuration
       };
     },
-    setAirlineName: async (value:string) => {
+    setAirlineName: async (value) => {
       this.setState({
         airlineName: value
       });
     },
-    setStopPts:async(value: any) => {
+    setStopPts:async(value) => {
       console.log(value,"kiran")
  this.setState({
         stopPts:value
@@ -798,6 +743,7 @@ handleFlightsLogos: async()=>
     },
     flightSearch: async () => {
     const{inbound,outbound,cabinClassId,destinationSelectedAirPort,originSelectedAirport,adults,children,infants,directflight,oneStopFlight,journeyWay}=this.state
+    this.setState({flightTravellers:adults+infants+children})
       var request = {
         adults: adults,
         child:children,
@@ -879,8 +825,160 @@ handleFlightsLogos: async()=>
         );
       }, 840000);
     },
-  }, 
+    populateBookData: (bookingFlight, flightBookData) => {
+      bookingFlight.forEach((book, bookIndex) => {
+        if (flightBookData && flightBookData[bookIndex]) {
+          // if(flightBookData[bookIndex].fareRules){
+
+          // }
+
+          if (
+            flightBookData[bookIndex].ssrResult &&
+            flightBookData[bookIndex].ssrResult.Response
+          ) {
+            book.baggageData = flightBookData[bookIndex].ssrResult.Response
+              .Baggage
+              ? [...flightBookData[bookIndex].ssrResult.Response.Baggage]
+              : [];
+            book.mealData = flightBookData[bookIndex].ssrResult.Response
+              .MealDynamic
+              ? [...flightBookData[bookIndex].ssrResult.Response.MealDynamic]
+              : [];
+            book.seatData = flightBookData[bookIndex].ssrResult.Response
+              .SeatDynamic
+              ? [...flightBookData[bookIndex].ssrResult.Response.SeatDynamic]
+              : [];
+          }
+        }
+      });
+    },
+    fetchingFlightBookData: async (bookingFlight) => {
+      // var bookingFlight = bookingFlight
+      //   ? [...bookingFlight]
+      //   : [...this.state.bookingFlight];
+
+      if (!this.state.flightSessionExpired) {
+        this.setState({
+          flightBookPage: true,
+          flightBookDataLoading: true
+        });
+
+        var bookReqs = [];
+        var bookReqList = [];
+
+        bookingFlight.forEach((flightB, b) => {
+          var request = {
+            tokenId: this.state.flightSearchToken,
+            traceId: this.state.flightResult.TraceId,
+            resultIndex: flightB.resultIndex
+          };
+
+          bookReqList.push(request);
+
+          bookReqs.push(
+            fetch(
+              "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/flightBookData",
+              {
+                method: "POST",
+                // credentials: "include",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify(request)
+              }
+            )
+              .then((res) => res.json())
+              .catch((err) => console.log(err))
+          );
+        });
+
+        console.log("Flight booking req", bookReqList);
+
+        var flightBookData = await Promise.all(bookReqs);
+
+        this.state.actions.populateBookData(bookingFlight, flightBookData);
+
+        console.log("Flight booking res", flightBookData);
+        this.setState({
+          flightBookData,
+          bookingFlight,
+          flightBookDataLoading: false
+        });
+      } else {
+        this.setState({
+          flightSessionExpiredPopup: true
+        });
+        console.log(
+          "Flight session has expired please make a search request again"
+        );
+      }
+    },
+    fetchFlightBookData: async (
+      resultIndex,
+      flight,
+      baggageDtls,
+      arrIndex
+    ) => {
+      var bookingFlight = this.state.bookingFlight
+        ? [...this.state.bookingFlight]
+        : [];
   
+      bookingFlight[this.state.flightResJType] = {
+        flight,
+        flightNew: this.state.actions.modifyFlightObject(flight),
+        baggageData: [],
+        mealData: [],
+        seatData: [],
+        baggagePrice: [0, 0],
+        baggageWeight: [0, 0],
+        mealPrice: [0, 0],
+        mealDesc: ["", ""],
+        seats: [[], []],
+        totalFare: flight.Fare.OfferedFare
+          ? Math.ceil(flight.Fare.OfferedFare)
+          : Math.ceil(flight.Fare.PublishedFare),
+        baggageDtls,
+        resultIndex,
+        arrIndex,
+        adults: this.state.adults,
+        child: this.state.children,
+        infant: this.state.infants,
+        travellers: this.state.flightTravellers
+      };
+  
+      if (
+        this.state.flightResList.length > 1 &&
+        this.state.flightResJType === 0
+        // &&
+        // bookingFlight.length <= 1
+      ) {
+        this.setState({
+          bookingFlight,
+          flightResJType: 1
+        });
+      } else {
+        this.setState({
+          bookingFlight
+        });
+        if (this.state.flightResList.length === 1) {
+          this.state.actions.fetchingFlightBookData(bookingFlight);
+        }
+      }
+    },
+    setFlightBookPage: (value) => {
+      this.setState({
+        flightBookPage: value
+      });
+    },
+    setBookingFlight: (value) => {
+      this.setState({
+        bookingFlight: [...value]
+      });
+    },
+
+
+    
+  }, 
       }
     }
 debounce = (cb, delay) => {
@@ -908,7 +1006,7 @@ debounce = (cb, delay) => {
   
 
 
-  render(): JSX.Element {
+  render() {
     // Include actions in the context value
     const contextValue = {
       ...this.state,

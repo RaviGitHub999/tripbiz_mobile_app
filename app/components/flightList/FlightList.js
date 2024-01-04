@@ -7,9 +7,6 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 import { responsiveHeight, responsiveWidth } from '../../utils/responsiveScale'
 import { colors, fonts } from '../../config/theme'
 import CustomRadioButton from '../common/customRadioButton/CustomRadioButton'
-interface IProps {
-    index: number
-}
 const sunImg = [
     {
         title: "Before 6 AM",
@@ -36,13 +33,13 @@ const sunImg = [
         time:"night"
     }
 ]
-const FlightList: React.FC<IProps> = ({ index }) => {
+const FlightList = ({ index }) => {
     const [times, setTimes] = useState(sunImg);
-    const [selectedStops, setSelectedStops] = useState<number | null>(null);
-    const [depSelectedTime, setDepSelectedTime] = useState<any>(null);
+    const [selectedStops, setSelectedStops] = useState(null);
+    const [depSelectedTime, setDepSelectedTime] = useState(null);
     const [arrSelectedTime, setArrSelectedTime] = useState(null);
-    const [airports, setAirports] = useState<any>({});
-    const [stops, setStops] = useState<any>();
+    const [airports, setAirports] = useState({});
+    const [stops, setStops] = useState();
     const [intStops1, setIntStops1] = useState();
     const [intStops2, setIntStops2] = useState();
     const [airline, setAirline] = useState();
@@ -53,15 +50,15 @@ const FlightList: React.FC<IProps> = ({ index }) => {
     const [count, setCount] = useState(0);
     const [cost, setCost] = useState(true)
     const [duration, setDuration] = useState(false);
-    const { flightResList, actions,showFilters } = useContext<any>(MyContext)
-    var flightArr = flightResList[0].map((flight:any) => {
+    const { flightResList, actions,showFilters } = useContext(MyContext)
+    var flightArr = flightResList[0].map((flight) => {
         return { ...actions.modifyFlightObject(flight[0]) };
       });
-      const toggleSelection = (index: number) => {
+      const toggleSelection = (index) => {
         const updatedTimes = [...times];
         // updatedTimes[index].clicked = !updatedTimes[index].clicked;
         // setTimes(updatedTimes);
-        setDepSelectedTime((prev:any)=>prev===updatedTimes[index].time?null:updatedTimes[index].time)
+        setDepSelectedTime((prev)=>prev===updatedTimes[index].time?null:updatedTimes[index].time)
       };
       const img = times.map((item, index) => {
         return (
@@ -71,18 +68,18 @@ const FlightList: React.FC<IProps> = ({ index }) => {
           </TouchableOpacity>
         )
       })
-      const handleFlightStops = (item: number) => {
-       return setStops((prevAirline:number) =>
+      const handleFlightStops = (item) => {
+       return setStops((prevAirline) =>
         prevAirline === item ? null : item
       );
       }
-      const handleFlightsNameFilter=(airlinename:any)=>
+      const handleFlightsNameFilter=(airlinename)=>
       {
         setAirline((prevAirline) =>
         prevAirline === airlinename ? null : airlinename
       )
       }
-      const handleFlightsNames = ({ item }: { item: string }) => {
+      const handleFlightsNames = ({ item }) => {
         return (
           <TouchableOpacity onPress={()=>handleFlightsNameFilter(item)} style={[styles.flightNameBtn, airline === item && styles.selectedFlightNameBtn]}>
             <Text  style={[styles.flightName, airline === item && styles.selectedFlightName]}>{item}</Text>
@@ -314,16 +311,16 @@ const FlightList: React.FC<IProps> = ({ index }) => {
           setCount((prev) => prev + 1);
         }
     } 
-        const addToObj :any= (item:any) => {
+        const addToObj = (item) => {
             if (!airports[item]) {
               const updatedTargetObject = { ...airports, [item]: true };
               setAirports(updatedTargetObject);
             }
           };
-          flightArr.map((flight:any) => {
+          flightArr.map((flight) => {
             return { ...addToObj(flight.segments[0].airlineName) };
           });
-          var isInternationalRound = flightArr.every((seg:any) => {
+          var isInternationalRound = flightArr.every((seg) => {
             return seg.segments.length === 2
           });
           var airlines = Object.entries(airports).map(([key, value]) => {
@@ -396,7 +393,7 @@ const FlightList: React.FC<IProps> = ({ index }) => {
    {flightResList &&
                 flightResList[index] &&
                 <FlatList data={actions
-                    .filterFlights(flightResList[index])} renderItem={({ item, index }: { item: any, index: number }) => {
+                    .filterFlights(flightResList[index])} renderItem={({ item, index }) => {
                     return (
                         <FlightCard
                             flightGrp={item}
