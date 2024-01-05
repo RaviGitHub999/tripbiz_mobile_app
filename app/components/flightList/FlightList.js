@@ -1,5 +1,5 @@
 import { View, Text, FlatList, StyleSheet, ScrollView, Image } from 'react-native'
-import React, { useContext, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import MyContext from '../../context/Context'
 import FlightCard from './FlightCard'
 import IconSwitcher from '../common/icons/IconSwitcher'
@@ -33,6 +33,20 @@ const sunImg = [
         time:"night"
     }
 ]
+const flightStops=[
+  {
+    title:'Nonstop only',
+    stops:0
+  },
+  {
+    title:'1 stop or fewer',
+    stops:1
+  },
+  {
+    title:'2 stops or fewer',
+    stops:2
+  }
+]
 const FlightList = ({ index }) => {
     const [times, setTimes] = useState(sunImg);
     const [selectedStops, setSelectedStops] = useState(null);
@@ -54,21 +68,33 @@ const FlightList = ({ index }) => {
     var flightArr = flightResList[0].map((flight) => {
         return { ...actions.modifyFlightObject(flight[0]) };
       });
-      const toggleSelection = (index) => {
+      const toggleSelection1 = (index) => {
         const updatedTimes = [...times];
-        // updatedTimes[index].clicked = !updatedTimes[index].clicked;
-        // setTimes(updatedTimes);
         setDepSelectedTime((prev)=>prev===updatedTimes[index].time?null:updatedTimes[index].time)
       };
-      const img = times.map((item, index) => {
+      const toggleSelection2 = (index) => {
+        const updatedTimes = [...times];
+        setArrSelectedTime((prev)=>prev===updatedTimes[index].time?null:updatedTimes[index].time)
+      };
+      const img1 = times.map((item, index) => {
         return (
-          <TouchableOpacity key={item.title} onPress={() => toggleSelection(index)} style={[styles.sunimgCardContainer, depSelectedTime===item.time && styles.selected]}>
+          <TouchableOpacity key={item.title} onPress={() => toggleSelection1(index)} style={[styles.sunimgCardContainer, depSelectedTime===item.time && styles.selected]}>
             <Image source={{ uri: item.url }} style={styles.sunImges} />
             <Text style={styles.title}>{item.title}</Text>
           </TouchableOpacity>
         )
       })
-      const handleFlightStops = (item) => {
+      const img2 = times.map((item, index) => {
+        return (
+          <TouchableOpacity key={item.title} onPress={() => toggleSelection2(index)} style={[styles.sunimgCardContainer, arrSelectedTime===item.time && styles.selected]}>
+            <Image source={{ uri: item.url }} style={styles.sunImges} />
+            <Text style={styles.title}>{item.title}</Text>
+          </TouchableOpacity>
+        )
+      })
+      const flatListRef = useRef(null)
+      const handleFlightStops = (item,index) => {
+        flatListRef.current?.scrollToIndex({ animated: true, index: index });
        return setStops((prevAirline) =>
         prevAirline === item ? null : item
       );
@@ -294,10 +320,10 @@ const FlightList = ({ index }) => {
         // if (intarrSelectedTime2) {
         //   setCount((prev) => prev + 1);
         // }
-        // arrHandleTimeClick(arrSelectedTime);
-        // if (arrSelectedTime) {
-        //   setCount((prev) => prev + 1);
-        // }
+        arrHandleTimeClick(arrSelectedTime);
+        if (arrSelectedTime) {
+          setCount((prev) => prev + 1);
+        }
         // intDepHandleTime1Click(intdepSelectedTime1)
         // if (intdepSelectedTime1) {
         //   setCount((prev) => prev + 1);
@@ -348,36 +374,29 @@ const FlightList = ({ index }) => {
         </View>
         <View>
           <Text style={styles.filterTitles}>{"Stops"}</Text>
-          <View style={styles.stopsContainer}>
-            <CustomRadioButton
-              label="Nonstop only"
-              selected={stops === 0}
-              onSelect={() => handleFlightStops(0)}
-            />
-            <CustomRadioButton
-              label="1 stop or fewer"
-              selected={stops === 1}
-              onSelect={() => handleFlightStops(1)}
-            />
-            <CustomRadioButton
-              label="2 stops or fewer"
-              selected={stops === 2}
-              onSelect={() => handleFlightStops(2)}
-            />
+          <View style={[styles.stopsContainer]}>
+            <FlatList ref={flatListRef} data={flightStops} renderItem={({item,index})=>
+            {
+              return(
+                  <TouchableOpacity onPress={() => handleFlightStops(item.stops,index)}  style={[styles.flightStopsTitle,stops===item.stops&&styles.activeStop]}>
+                    <Text key={item.stops} style={[styles.flightStopsText,stops===item.stops&&styles.activeStopsText]}>{item.title}</Text>
+                  </TouchableOpacity>
+              )
+            }} horizontal showsHorizontalScrollIndicator={false}/>
           </View>
         </View>
         <View>
           <Text style={styles.filterTitles}>{"Departure Time"}</Text>
           <View style={styles.mappedSunImgContainer}>
-            {img}
+            {img1}
           </View>
         </View>
-        {/* <View>
+        <View>
           <Text style={styles.filterTitles}>{"Arrival Time"}</Text>
           <View style={styles.mappedSunImgContainer}>
-            {img}
+            {img2}
           </View>
-        </View> */}
+        </View>
         <View>
           <Text style={styles.filterTitles}>{"Sort"}</Text>
         </View>
@@ -559,7 +578,27 @@ selectedFlightName:{
 color:colors.white
 },
 stopsContainer:{
-    rowGap:responsiveHeight(0.5),
-    marginTop:responsiveHeight(2)
+   columnGap:responsiveWidth(2),
+    marginTop:responsiveHeight(2),
+    flexDirection:"row"
+},
+flightStopsTitle:{
+  borderWidth:1,
+  paddingVertical:responsiveHeight(0.6),
+  paddingHorizontal:responsiveWidth(3),
+  borderRadius:responsiveHeight(3),
+  alignItems:'center',
+  justifyContent:'center',
+  marginLeft:responsiveWidth(2)
+},
+activeStop:{
+  backgroundColor:colors.gray
+},
+flightStopsText:{
+  fontSize:responsiveHeight(1.8)
+},
+activeStopsText:{
+  fontFamily:fonts.primary,
+  color:colors.white
 }
 })

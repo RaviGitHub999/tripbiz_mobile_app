@@ -28,10 +28,24 @@ const sunImg = [
   }
 ]
 
+const flightStops=[
+  {
+    title:'Nonstop only',
+    stops:0
+  },
+  {
+    title:'1 stop or fewer',
+    stops:1
+  },
+  {
+    title:'2 stops or fewer',
+    stops:2
+  }
+]
 const FlightFilters = () => {
   console.log("filterComponent")
   const [times, setTimes] = useState(sunImg);
-  const [selectedStops, setSelectedStops] = useState<number | null>(null);
+  const [selectedStops, setSelectedStops] = useState(null);
   const [depSelectedTime, setDepSelectedTime] = useState(null);
   const [arrSelectedTime, setArrSelectedTime] = useState(null);
   const [airports, setAirports] = useState({});
@@ -46,8 +60,8 @@ const FlightFilters = () => {
   const [count, setCount] = useState(0);
   const [cost, setCost] = useState(true)
   const [duration, setDuration] = useState(false);
-  const { actions } = useContext<any>(MyContext)
-  const toggleSelection = (index: number) => {
+  const { actions } = useContext(MyContext)
+  const toggleSelection = (index) => {
     const updatedTimes = [...times];
     updatedTimes[index].clicked = !updatedTimes[index].clicked;
     setTimes(updatedTimes);
@@ -60,7 +74,7 @@ const FlightFilters = () => {
       </TouchableOpacity>
     )
   })
-  const handleFlightStops = (item: number) => {
+  const handleFlightStops = (item) => {
     if (item === selectedStops) {
       setSelectedStops(null)
     }
@@ -68,7 +82,7 @@ const FlightFilters = () => {
       setSelectedStops(item)
     }
   }
-    const handleFlightsNames = ({ item }: { item: string }) => {
+    const handleFlightsNames = ({ item }) => {
     return (
       <TouchableOpacity style={[styles.flightNameBtn]} >
         <Text style={[styles.flightName]}>{item}</Text>
@@ -314,7 +328,7 @@ const FlightFilters = () => {
         <View>
           <Text style={styles.filterTitles}>{"Stops"}</Text>
           <View style={styles.stopsContainer}>
-            <CustomRadioButton
+            {/* <CustomRadioButton
               label="Nonstop only"
               selected={selectedStops === 0}
               onSelect={() => handleFlightStops(0)}
@@ -328,7 +342,15 @@ const FlightFilters = () => {
               label="2 stops or fewer"
               selected={selectedStops === 2}
               onSelect={() => handleFlightStops(2)}
-            />
+            /> */}
+            {
+              flightStops.map((ele)=>
+              {
+                <TouchableOpacity>
+                  <Text>{ele.title}</Text>
+                </TouchableOpacity>
+              })
+            }
           </View>
         </View>
         <View>

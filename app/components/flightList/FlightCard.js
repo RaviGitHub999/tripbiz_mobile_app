@@ -8,9 +8,15 @@ import MyContext from '../../context/Context'
 
 const FlightCard = ({ flightGrp, index, bookingPage, segIndex }) => {
   const { actions, flightsLogosData, flightName, flightResList, bookingFlight } = useContext(MyContext)
+  // var flightArr = flightGrp.map((flight, f) => {
+  //   return { ...actions.modifyFlightObject(flight) };
+  // });
   var flightArr = flightGrp.map((flight, f) => {
-    return { ...actions.modifyFlightObject(flight) };
+    const modifiedFlight = actions.modifyFlightObject(flight);
+    const key = f.toString();
+    return { ...modifiedFlight, key };
   });
+  
   let airlinename = flightArr[0].segments[0].airlineName
   const flightSymbol = useCallback((airlineName) => {
     const logo = flightsLogosData.find((ele) => ele.id === airlineName?.toLowerCase());

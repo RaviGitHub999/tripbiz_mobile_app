@@ -497,6 +497,16 @@ handleFlightsLogos: async()=>
         stopPts:value
       })
     },
+    setOriginStartTime: async (value) => {
+      this.setState({
+        originStartTime: value
+      });
+    },
+    setOriginEndTime: async (value) => {
+      this.setState({
+        originEndTime: value
+      });
+    },
     setDestStartTime: async (value) => {
       this.setState({
         destStartTime: value
@@ -525,7 +535,7 @@ handleFlightsLogos: async()=>
       //     return aDur - bDur;
       //   });
       // }
-      if (this.state.stopPts>=0) {
+      if (this.state.stopPts!==null) {
         filteredArr = filteredArr.filter((a) => {
           var newflightObj = this.state.actions.modifyFlightObject(a[0]);
           return (
@@ -541,34 +551,34 @@ handleFlightsLogos: async()=>
           );
         });
       }
-      // if (this.state.originStartTime && this.state.originEndTime) {
-      //   if (this.state.originEndTime.getHours() === 23) {
-      //     filteredArr = filteredArr.filter((a) => {
-      //       var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-      //       return (
-      //         new Date(newflightObj.segments[0].depTimeDate).getHours() >
-      //         this.state.originStartTime.getHours() &&
-      //         (new Date(newflightObj.segments[0].depTimeDate).getHours() <
-      //           this.state.originEndTime.getHours() ||
-      //           (new Date(newflightObj.segments[0].depTimeDate).getHours() ===
-      //             this.state.originEndTime.getHours() &&
-      //             new Date(
-      //               newflightObj.segments[0].depTimeDate
-      //             ).getMinutes() < this.state.originEndTime.getMinutes()))
-      //       );
-      //     });
-      //   } else {
-      //     filteredArr = filteredArr.filter((a) => {
-      //       var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-      //       return (
-      //         new Date(newflightObj.segments[0].depTimeDate).getHours() >
-      //         this.state.originStartTime.getHours() &&
-      //         new Date(newflightObj.segments[0].depTimeDate).getHours() <
-      //         this.state.originEndTime.getHours()
-      //       );
-      //     });
-      //   }
-      // }
+      if (this.state.originStartTime && this.state.originEndTime) {
+        if (this.state.originEndTime.getHours() === 23) {
+          filteredArr = filteredArr.filter((a) => {
+            var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+            return (
+              new Date(newflightObj.segments[0].arrTimeDate).getHours() >
+              this.state.originStartTime.getHours() &&
+              (new Date(newflightObj.segments[0].arrTimeDate).getHours() <
+                this.state.originEndTime.getHours() ||
+                (new Date(newflightObj.segments[0].arrTimeDate).getHours() ===
+                  this.state.originEndTime.getHours() &&
+                  new Date(
+                    newflightObj.segments[0].arrTimeDate
+                  ).getMinutes() < this.state.originEndTime.getMinutes()))
+            );
+          });
+        } else {
+          filteredArr = filteredArr.filter((a) => {
+            var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+            return (
+              new Date(newflightObj.segments[0].arrTimeDate).getHours() >
+              this.state.originStartTime.getHours() &&
+              new Date(newflightObj.segments[0].arrTimeDate).getHours() <
+              this.state.originEndTime.getHours()
+            );
+          });
+        }
+      }
       if (this.state.destStartTime && this.state.destEndTime) {
         if (this.state.destEndTime.getHours() === 23) {
           filteredArr = filteredArr.filter((a) => {
@@ -964,6 +974,77 @@ handleFlightsLogos: async()=>
           this.state.actions.fetchingFlightBookData(bookingFlight);
         }
       }
+    },
+    handleChangeFlightBook: async (
+      e,
+      type,
+      bookIndex,
+      segIndex,
+      seat,
+      seatSegIdx,
+      rmSeat
+    ) => {
+      var bookingFlight = [...this.state.bookingFlight];
+
+      if (type === "baggage") {
+        if (e !== "No excess baggage") {
+          bookingFlight[bookIndex].baggagePrice[segIndex] = Number(
+            e.split("at")[1].split("Rs")[1].split("/-")[0].trim()
+          );
+          bookingFlight[bookIndex].baggageWeight[segIndex] = Number(
+            e.split("at")[0].split("KG")[0].trim()
+          );
+        } else {
+          bookingFlight[bookIndex].baggagePrice[segIndex] = 0;
+          bookingFlight[bookIndex].baggageWeight[segIndex] = 0;
+        }
+      } else if (type === "meal") {
+        if (e !== "No add-on meal") {
+          bookingFlight[bookIndex].mealPrice[segIndex] = Number(
+            e.split("->")[1].split("Rs")[1].split("/")[0].trim()
+          );
+          bookingFlight[bookIndex].mealDesc[segIndex] = e
+            .split("->")[0]
+            .trim();
+        } else {
+          bookingFlight[bookIndex].mealPrice[segIndex] = 0;
+          bookingFlight[bookIndex].mealDesc[segIndex] = "";
+        }
+      } else if (type === "seats") {
+        if (!bookingFlight[bookIndex].seats[segIndex]) {
+          bookingFlight[bookIndex].seats[segIndex] = [];
+        }
+        if (!bookingFlight[bookIndex].seats[segIndex][seatSegIdx]) {
+          bookingFlight[bookIndex].seats[segIndex][seatSegIdx] = {};
+        }
+
+        if (rmSeat) {
+          delete bookingFlight[bookIndex].seats[segIndex][seatSegIdx][rmSeat];
+        }
+
+        if (seat) {
+          bookingFlight[bookIndex].seats[segIndex][seatSegIdx][seat.Code] =
+            seat;
+        }
+
+        var seatCharges = 0;
+
+        bookingFlight[bookIndex].seats.forEach((seatSeg, sg) => {
+          seatSeg.forEach((seat, s) => {
+            Object.values(seat).forEach((sp, b) => {
+              seatCharges += sp.Price ? sp.Price : 0;
+            });
+          });
+        });
+        bookingFlight[bookIndex].seatCharges = seatCharges;
+      }
+
+      bookingFlight[bookIndex].totalFare =
+        this.state.actions.calculateTotalFlightFare(bookingFlight, bookIndex);
+
+      this.setState({
+        bookingFlight
+      });
     },
     setFlightBookPage: (value) => {
       this.setState({

@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 import { responsiveHeight, responsiveWidth } from "../../utils/responsiveScale";
-import { colors } from "../../config/theme";
+import { colors, fonts } from "../../config/theme";
 
 export const styles=StyleSheet.create({
     mainContainer:{
@@ -29,7 +29,9 @@ marginTop:responsiveHeight(1.5)
     baggageDetailsContainer:{
         borderWidth:1,
         paddingHorizontal:responsiveWidth(4),
-        paddingVertical:responsiveHeight(1.5)
+        paddingTop:responsiveHeight(1.5),
+        borderRadius:responsiveHeight(1.5),
+        paddingBottom:responsiveHeight(3)
     },
     horizontalLine:{
         borderTopWidth:1,
@@ -61,5 +63,17 @@ marginTop:responsiveHeight(1.5)
     },
     flightBaggageDataText:{
         color:colors.highlight
-    }
+    },
+    scrollViewContainer:{
+paddingBottom:responsiveHeight(10)
+    },
+    cancellationAndDateChangeMainContainer:{
+        marginTop:responsiveHeight(3),
+        paddingHorizontal:responsiveWidth(3)
+    },
+    cancellationAndDateChangeTitle:{
+        fontSize:responsiveHeight(2.6),
+        marginBottom:responsiveHeight(1.5),
+        color:colors.black,
+    },
 })
