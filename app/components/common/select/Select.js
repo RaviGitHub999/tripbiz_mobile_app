@@ -89,11 +89,12 @@ const{actions}=useContext(MyContext)
     };
 
     const handleItemPress = (index, bag,type) => {
-        setSelectedItem(name === "baggage" ? bag.Weight > 0 ? `${bag.Weight}KG at Rs ${bag.Price}/-` : "No excess baggage" : bag.Quantity > 0 ? `${bag.AirlineDescription} -> Rs ${bag.Price}/-` : "No add-on meal");
+        const pickedItem=name === "baggage" ? bag.Weight > 0 ? `${bag.Weight}KG at Rs ${bag.Price}/-` : "No excess baggage" : bag.Quantity > 0 ? `${bag.AirlineDescription} -> Rs ${bag.Price}/-` : "No add-on meal"
+        setSelectedItem(pickedItem);
         setSelectedItemIndex(index);
         setViewAll(false);
         actions.handleChangeFlightBook(
-            selectedItem,
+            pickedItem,
             type,
             bookIndex,
             segIndex

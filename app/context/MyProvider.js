@@ -486,33 +486,33 @@ handleFlightsLogos: async()=>
         totalDuration
       };
     },
-    setAirlineName: async (value) => {
+    setAirlineName: (value) => {
       this.setState({
         airlineName: value
       });
     },
-    setStopPts:async(value) => {
+    setStopPts:(value) => {
       console.log(value,"kiran")
  this.setState({
         stopPts:value
       })
     },
-    setOriginStartTime: async (value) => {
+    setOriginStartTime: (value) => {
       this.setState({
         originStartTime: value
       });
     },
-    setOriginEndTime: async (value) => {
+    setOriginEndTime:  (value) => {
       this.setState({
         originEndTime: value
       });
     },
-    setDestStartTime: async (value) => {
+    setDestStartTime: (value) => {
       this.setState({
         destStartTime: value
       });
     },
-    setDestEndTime: async (value) => {
+    setDestEndTime:(value) => {
       this.setState({
         destEndTime: value
       });
@@ -974,6 +974,59 @@ handleFlightsLogos: async()=>
           this.state.actions.fetchingFlightBookData(bookingFlight);
         }
       }
+    },
+    calculateTotalFlightFare: (bookingFlight, bookIndex) => {
+      var totalFare = 0;
+
+      totalFare += bookingFlight[bookIndex].flight?.Fare?.OfferedFare
+        ? Math.ceil(bookingFlight[bookIndex].flight?.Fare?.OfferedFare)
+        : Math.ceil(bookingFlight[bookIndex].flight?.Fare?.PublishedFare);
+
+      bookingFlight[bookIndex].baggagePrice.forEach((bgp, b) => {
+        totalFare += bgp;
+      });
+      bookingFlight[bookIndex].mealPrice.forEach((mp, b) => {
+        totalFare += mp;
+      });
+      bookingFlight[bookIndex].seats.forEach((seatSeg, sg) => {
+        seatSeg.forEach((seat, s) => {
+          Object.values(seat).forEach((sp, b) => {
+            totalFare += sp.Price ? sp.Price : 0;
+          });
+        });
+      });
+
+      return totalFare;
+    },
+    getTotalFares: (bookingFlight) => {
+      //debugger;
+      var totalFareSum = 0;
+      var totalSeatCharges = 0;
+      var totalBaggagePrice = 0;
+      var totalMealPrice = 0;
+
+      bookingFlight.forEach((seg, s) => {
+
+        totalFareSum += seg.totalFare ? Number(seg.totalFare) : 0;
+        totalSeatCharges += seg.seatCharges ? Number(seg.seatCharges) : 0;
+
+        seg.baggagePrice &&
+          seg.baggagePrice?.forEach((price, p) => {
+            totalBaggagePrice += price ? Number(price) : 0;
+          });
+
+        seg.mealPrice &&
+          seg.mealPrice?.forEach((price, p) => {
+            totalMealPrice += price ? Number(price) : 0;
+          });
+      });
+
+      return {
+        totalFareSum,
+        totalSeatCharges,
+        totalBaggagePrice,
+        totalMealPrice
+      };
     },
     handleChangeFlightBook: async (
       e,

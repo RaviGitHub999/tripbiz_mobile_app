@@ -10,9 +10,9 @@ export const styles=StyleSheet.create({
        justifyContent:'center'
     },
     backBtnContainer:{
-        marginTop:responsiveHeight(1),
         justifyContent:'center',
-        paddingHorizontal:responsiveWidth(4)
+        paddingHorizontal:responsiveWidth(4),
+        paddingVertical:responsiveHeight(1.3)
     },
     bookingFlightCabinAndCheckInContainer:{
 marginTop:responsiveHeight(1.5)
@@ -65,15 +65,79 @@ marginTop:responsiveHeight(1.5)
         color:colors.highlight
     },
     scrollViewContainer:{
-paddingBottom:responsiveHeight(10)
+// paddingBottom:responsiveHeight(10),
+// marginBottom:responsiveHeight(100)
     },
     cancellationAndDateChangeMainContainer:{
         marginTop:responsiveHeight(3),
-        paddingHorizontal:responsiveWidth(3)
+        paddingHorizontal:responsiveWidth(3),
     },
     cancellationAndDateChangeTitle:{
         fontSize:responsiveHeight(2.6),
         marginBottom:responsiveHeight(1.5),
         color:colors.black,
     },
+    cancellationAndDateChangeDetailsContainer:{
+        borderWidth:1,
+        paddingHorizontal:responsiveWidth(4),
+        paddingTop:responsiveHeight(1.5),
+        borderRadius:responsiveHeight(1.5),
+        paddingBottom:responsiveHeight(3)  
+    },
+    totalFareContainer:{
+        flex:0.5/2 ,
+        backgroundColor:colors.white
+    },
+    totalFareToggleIconContainer:{
+        alignSelf:'center',
+    },
+    totalFareFlightDetailsContainer:{
+        flexDirection:'row',
+        justifyContent:'space-between',
+        paddingHorizontal:responsiveWidth(3.5),
+        flex:1,
+        alignItems:'center'
+    },
+    flighttotalFareText:{
+        fontSize:responsiveHeight(2.3),
+        color:colors.black,
+        fontFamily:fonts.primary
+    },
+    flightPrice:{
+        fontSize:responsiveHeight(2.3),
+        color:colors.secondary,
+        fontFamily:fonts.primary
+    },
+    submitTripBtn:{
+        borderWidth:1,
+        padding:responsiveHeight(1),
+        paddingHorizontal:responsiveWidth(3),
+        borderRadius:responsiveHeight(1.3),
+        backgroundColor:colors.black
+    },
+    submitTripBtnText:{
+color:colors.white,
+fontSize:responsiveHeight(1.5),
+fontFamily:fonts.primary
+    },
+    flightDepAndArrContainer:{
+        flexDirection:"row",
+        justifyContent:'space-between',
+        width:"35%"
+    },
+    flightDepAndArrText:{
+        fontSize:responsiveHeight(2.3),
+        color:colors.secondary,
+        fontFamily:fonts.primary
+    },
+    cancellationAndDateChangeDetailsEachContainer:{
+        flexDirection:"row",
+        alignItems:'center',
+        columnGap:responsiveWidth(2)
+    },
+    cancellationAndDateChangeDetailsEachContainerText:{
+        fontSize:responsiveHeight(1.8),
+        color:colors.lightGray,
+        fontFamily:fonts.textFont
+    }
 })

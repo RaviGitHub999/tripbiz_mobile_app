@@ -71,10 +71,13 @@ const FlightsSearchRes = (props) => {
                     <View style={styles.activeIndicator}><ProgressBar /></View>
                 ) : flightResult.length === 0 ? (
                     <Text style={styles.nodata}>{"No Flights Found!!"}</Text>
-                ) :flightBookPage?<FlightBooking/>: (
+                ) :
+                flightBookPage?<FlightBooking/>: (
                     !showFilters && flightResJType === 0 ? <FlightList index={0} /> : <FlightList index={1} />
 
-                )}
+                )
+                // <Text>hi</Text>
+            }
             </View>
         </View>
     );
