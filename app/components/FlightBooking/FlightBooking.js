@@ -1,5 +1,5 @@
 import { Animated, Text, View } from 'react-native'
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext, useMemo, useRef, useState } from 'react'
 import IconSwitcher from '../common/icons/IconSwitcher'
 import { FlatList, ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import MyContext from '../../context/Context'
@@ -51,6 +51,19 @@ const FlightBooking = () => {
       const animatedStyles = {
         transform: [{ translateY }],
       };
+      
+  const memoizedRenderItem = useMemo(() => {
+    return ({ item, index }) => {
+      return (
+        <FlightCard
+          flightGrp={[{ ...bookingFlight[index]?.flight }]}
+          index={index}
+          bookingPage={true}
+          segIndex={segIndex}
+        />
+      );
+    };
+  }, [bookingFlight, segIndex])
     return (
         <View style={{flex:1}}>
             <TouchableOpacity onPress={() => {
@@ -61,7 +74,7 @@ const FlightBooking = () => {
             </TouchableOpacity>
           <View style={{flex:2}}>
           <ScrollView nestedScrollEnabled contentContainerStyle={{paddingBottom:20}}>
-                <FlatList data={bookingFlight} renderItem={({ item, index }) => {
+                {/* <FlatList data={bookingFlight} renderItem={({ item, index }) => {
                     return (
                         <FlightCard
                             flightGrp={[{ ...bookingFlight[index]?.flight }]}
@@ -70,7 +83,12 @@ const FlightBooking = () => {
                             segIndex={segIndex}
                         />
                     )
-                }} />
+                }} /> */}
+                 <FlatList 
+      data={bookingFlight}
+      renderItem={memoizedRenderItem}
+      keyExtractor={(item, index) => index.toString()} // Assuming each item can be uniquely identified by its index
+    />
                 <View style={styles.baggageAndMealsContainer}>
                     {/* Baggage and Meals */}
                     <Text style={styles.baggageAndMealsTitle}>Baggage and Meals</Text>

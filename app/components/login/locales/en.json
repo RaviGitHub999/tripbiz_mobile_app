@@ -1,0 +1,20 @@
+{
+    "login": "Login",
+    "forgotpassword":"Forgot password?",
+    "loginMethosTitle":"Or Login With",
+    "signUpLink":"Signup",
+    "notamember":"Not a member?",
+    "iconComponentName1":"Entypo",
+    "iconComponentName2":"FontAwesome5",
+    "iconName1":"mail",
+    "iconName2":"lock",
+    "iconComponentName3":"EvilIcons",
+    "iconComponentName4":"AntDesign",
+    "iconName3":"sc-facebook",
+    "iconName4":"google",
+    "placeHolder1":"Enter your email",
+    "placeHolder2":"Enter your password",
+    "title1":"Email",
+    "title2":"Password"
+
+  }

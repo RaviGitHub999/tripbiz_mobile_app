@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, FlatList, ScrollView } from 'react-native'
-import React, { useState, useCallback, useContext } from 'react'
+import React, { useState, useCallback, useContext, useEffect } from 'react'
 import { styles } from './styles'
 import { responsiveWidth } from '../../utils/responsiveScale'
 import SearchInputs from '../common/searchInputs/SearchInputs'
@@ -22,6 +22,7 @@ interface IProps {
   }
 }
 const FlightsSearch: React.FC<IProps> = ({ navigation: { navigate } }) => {
+  const [isSearchReady, setSearchReady] = useState(false);
   const [active, setActive] = useState(btns[0].journeyType)
   const [calenderOpen, setCalenderOpen] = useState<CalenderOpen>({ departureCalender: false, returCalender: false })
   const { departureformattedDate, actions, oriRes, desRes, origin, airportOriginLoading, airportOriginData, destination, originSelectedAirport, originselected, destinationSelectedAirPort, destinationselected, departure, returnDate, dateValue, returnDateValue, airportDestData, airportDestLoading } = useContext<any>(MyContext)
@@ -85,15 +86,41 @@ const FlightsSearch: React.FC<IProps> = ({ navigation: { navigate } }) => {
       </View>
     </TouchableOpacity>
   ));
-  const handleSearch = () => {
-    if (originSelectedAirport.address.cityName && destinationSelectedAirPort.address.cityName && departureformattedDate.length !== 0) {
-      navigate("OneWayFlights")
-      actions.flightSearch()
-      actions.handleFlightsLogos()
-      // dispatch(fetchFlightsLogos())
-    }
+  // const handleSearch = () => {
+  //   if (originSelectedAirport.address.cityName && destinationSelectedAirPort.address.cityName && departureformattedDate.length !== 0) {
+  //     navigate("OneWayFlights")
+  //     // actions.flightSearch()
+  //     // actions.handleFlightsLogos()
+  //   }
 
+  // }
+  const handleSearch =  () => {
+    if (originSelectedAirport.address.cityName && destinationSelectedAirPort.address.cityName && departureformattedDate.length !== 0) {
+      navigate("OneWayFlights");
+    }
   }
+  // const handleSearch = async () => {
+  //   if (originSelectedAirport.address.cityName && destinationSelectedAirPort.address.cityName && departureformattedDate.length !== 0) {
+  //     console.log('Before flightSearch');
+  //     await actions.flightSearch();
+  //     console.log('After flightSearch');
+  
+  //     console.log('Before handleFlightsLogos');
+  //     await actions.handleFlightsLogos();
+  //     console.log('After handleFlightsLogos');
+  
+  //     console.log('Before navigate');
+  //     navigate("OneWayFlights");
+  //     console.log('After navigate');
+  //   }
+  // }
+  
+
+  // useEffect(() => {
+  //   if (isSearchReady) {
+     
+  //   }
+  // }, [isSearchReady]);
   return (
     <View style={styles.subContainer}>
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} >

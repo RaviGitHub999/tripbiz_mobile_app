@@ -7,6 +7,8 @@ import HomeScreen from '../../home/HomeScreen';
 import BottomNavigation from './BottomNavigation';
 import FlightsSearchRes from '../../flightsRes/FlightsSearchRes';
 import Select from '../select/Select';
+import Splash from '../../splash/Splash';
+import Login from '../../login/Login';
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {
@@ -14,8 +16,8 @@ const AppNavigator = () => {
     <MyProvider>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          {/* <Stack.Screen name="Splash" component={Select} /> */}
-    {/* <Stack.Screen name="Login" component={Login} /> */}
+          {/* <Stack.Screen name="Splash" component={Splash} />
+          <Stack.Screen name="Login" component={Login} /> */}
           <Stack.Screen name="CustomerBottomNavigation" component={BottomNavigation} />
           <Stack.Screen name="OneWayFlights" component={FlightsSearchRes} />
         </Stack.Navigator>

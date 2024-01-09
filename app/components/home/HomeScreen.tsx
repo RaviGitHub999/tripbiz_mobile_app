@@ -58,7 +58,7 @@ const HomeScreen = (props: any) => {
     const selectedIndex = components.findIndex((item) => item.categoryName === component);
     flatListRef.current?.scrollToIndex({ animated: true, index: selectedIndex });
   };
-
+console.log("home")
   return (
     <View style={styles.container}>
       <View style={styles.header}>

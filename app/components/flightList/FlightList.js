@@ -1,9 +1,8 @@
-import { View, Text, FlatList, StyleSheet, ScrollView, Image } from 'react-native'
+import { View, Text, FlatList, StyleSheet, ScrollView, Image,TouchableOpacity } from 'react-native'
 import React, { useContext, useMemo, useRef, useState } from 'react'
 import MyContext from '../../context/Context'
 import FlightCard from './FlightCard'
 import IconSwitcher from '../common/icons/IconSwitcher'
-import { TouchableOpacity } from 'react-native-gesture-handler'
 import { responsiveHeight, responsiveWidth } from '../../utils/responsiveScale'
 import { colors, fonts } from '../../config/theme'
 import CustomRadioButton from '../common/customRadioButton/CustomRadioButton'
@@ -46,6 +45,17 @@ const flightStops = [
     title: '2 stops or fewer',
     stops: 2
   }
+]
+const sortData=
+[
+{
+title:"Price",
+des:"Lowest to Highest"
+},
+{
+  title:"Duration",
+  des:"Shortest to Longest"
+},
 ]
 const FlightList = ({ index }) => {
   const [times, setTimes] = useState(sunImg);
@@ -353,8 +363,18 @@ const FlightList = ({ index }) => {
   var airlines = Object.entries(airports).map(([key, value]) => {
     return `${key}`;
   });
+  const memoizedRenderItem = useMemo(() => {
+    return ({ item, index }) => {
+      return (
+        <FlightCard
+          flightGrp={item}
+          index={index}
+        />
+      );
+    };
+  }, [actions, flightResList])
   return (
-    <View>
+    <View style={{flex:1}}>
       {!showFilters ? <View style={styles.filtersHeaderContainer}>
         <View style={styles.filtersIconContainer}>
           <IconSwitcher componentName='FontAwesome5' iconName='filter' color={colors.black} iconsize={3} />
@@ -364,8 +384,8 @@ const FlightList = ({ index }) => {
           <IconSwitcher componentName='Ionicons' iconName='chevron-down' color={colors.black} iconsize={3.5} />
         </TouchableOpacity>
       </View> :
-      //  <ScrollView nestedScrollEnabled style={styles.upArrowIconmainContainer}>
        <View>
+           <ScrollView nestedScrollEnabled style={styles.upArrowIconmainContainer}>
          <View style={styles.filtersIconContainer}>
           <IconSwitcher componentName='FontAwesome5' iconName='filter' color={colors.black} iconsize={3} />
           <Text style={styles.filterHeader}>{"Filters"}</Text>
@@ -373,7 +393,7 @@ const FlightList = ({ index }) => {
         <View style={styles.filtersmainContainer}>
           <View>
             <Text style={styles.filterTitles}>{"Airline"}</Text>
-            <FlatList data={airlines} renderItem={handleFlightsNames} numColumns={3} style={styles.flightNamesRenderContainer} nestedScrollEnabled />
+            <FlatList data={airlines} renderItem={handleFlightsNames}  style={styles.flightNamesRenderContainer} nestedScrollEnabled   contentContainerStyle={styles.flightNamesContentContainer}/>
           </View>
           <View>
             <Text style={styles.filterTitles}>{"Stops"}</Text>
@@ -399,47 +419,48 @@ const FlightList = ({ index }) => {
               {img2}
             </View>
           </View>
-          <View>
+          <View style={styles.sortingMainContainer}>
             <Text style={styles.filterTitles}>{"Sort"}</Text>
+            <FlatList data={sortData} renderItem={({item})=>
+            {
+return(
+  <TouchableOpacity style={styles.sortingBtnsContainer}>
+    <Text style={styles.sortingBtnText}>{`${item.title}(${item.des})`}</Text>
+    </TouchableOpacity>
+)
+            }} horizontal/>
           </View>
         </View>
+        <TouchableOpacity onPress={applyFilters} style={styles.applyFiltersBtn}>
+          <Text style={styles.applyFiltersBtnText}>Apply</Text>
+        </TouchableOpacity>
         <TouchableOpacity style={styles.upArrowIcon} onPress={() => setShowFilters(false)}>
           <IconSwitcher componentName='Ionicons' iconName='chevron-up' color={colors.black} iconsize={3.5} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={applyFilters}>
-          <Text>Apply</Text>
-        </TouchableOpacity>
+       </ScrollView>
        </View>
-      // </ScrollView>
     }
       <View>
         {
         flightResList &&
           flightResList[index]&&
-          <FlatList data={actions
-            .filterFlights(flightResList[index])} renderItem={({ item, index }) => {
-              return (
-                <FlightCard
-                  flightGrp={item}
-                  index={index}
-                />
-              )
-            }} contentContainerStyle={{ paddingBottom: responsiveHeight(20) }} />
+          // <FlatList data={actions
+          //   .filterFlights(flightResList[index])} renderItem={({ item, index }) => {
+          //     return (
+          //       <FlightCard
+          //         flightGrp={item}
+          //         index={index}
+          //       />
+          //     )
+          //   }} contentContainerStyle={{ paddingBottom: responsiveHeight(20) }} />
+          <FlatList 
+      data={actions.filterFlights(flightResList[index])} 
+      renderItem={memoizedRenderItem} 
+      contentContainerStyle={{ paddingBottom: responsiveHeight(20) }} 
+    />
        }
       </View>
           <View>
-      {/* { (
-        <FlatList 
-          data={filteredFlights}
-          renderItem={({ item, index }) => (
-            <FlightCard
-              flightGrp={item}
-              index={index}
-            />
-          )}
-          contentContainerStyle={{ paddingBottom: responsiveHeight(20) }}
-        />
-      )} */}
     </View>
     </View>
   )
@@ -506,10 +527,12 @@ const styles = StyleSheet.create({
   filtersHeaderContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: responsiveHeight(1),
-    paddingVertical: responsiveHeight(1.5),
-    borderBlockColor: colors.white,
-    elevation: responsiveHeight(0.1)
+    alignItems:'center',
+    backgroundColor:colors.white,
+    // paddingHorizontal: responsiveHeight(1),
+    // paddingVertical: responsiveHeight(1.5),
+    // borderBlockColor: colors.white,
+    elevation: responsiveHeight(0.1),
   },
   filtersIconContainer: {
     flexDirection: 'row',
@@ -586,7 +609,14 @@ const styles = StyleSheet.create({
     // flexDirection:'row'
   },
   flightNamesRenderContainer: {
-    marginTop: responsiveHeight(2)
+    flex:1,
+    marginTop: responsiveHeight(2),
+  
+  },
+  flightNamesContentContainer:{
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    flexShrink:1
   },
   selectedFlightNameBtn: {
     backgroundColor: colors.gray
@@ -621,5 +651,50 @@ const styles = StyleSheet.create({
   activeStopsText: {
     fontFamily: fonts.primary,
     color: colors.white
+  },
+  sortingBtnsContainer:{
+    borderWidth:1,
+    width:responsiveWidth(35),
+    height:responsiveHeight(6),
+    marginRight:responsiveWidth(5),
+    paddingHorizontal:responsiveWidth(2),
+    paddingVertical:responsiveHeight(0.5),
+    borderRadius:responsiveHeight(2)
+  },
+  sortingBtnText:
+  {
+fontSize:responsiveHeight(1.5),
+fontFamily:fonts.primary,
+color:colors.black
+  },
+  sortingMainContainer:{
+    rowGap:responsiveHeight(1.5)
+  },
+  applyFiltersBtn:{
+    alignSelf:"flex-end",
+    borderWidth:1,
+    paddingHorizontal:responsiveHeight(2),
+    paddingVertical:responsiveHeight(0.6),
+    marginRight:responsiveWidth(5),
+    marginTop:responsiveHeight(2),
+    borderRadius:responsiveHeight(1.2),
+    backgroundColor:colors.black
+  },
+  applyFiltersBtnText:{
+    fontSize:responsiveHeight(2),
+    fontFamily:fonts.primary,
+    color:colors.white
   }
 })  
+// import { View, Text } from 'react-native'
+// import React from 'react'
+
+// const FlightList = () => {
+//   return (
+//     <View>
+//       <Text>FlightList</Text>
+//     </View>
+//   )
+// }
+
+// export default FlightList

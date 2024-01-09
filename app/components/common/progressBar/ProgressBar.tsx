@@ -4,6 +4,7 @@ import * as Progress from 'react-native-progress';
 import { StyleSheet } from 'react-native';
 import { responsiveHeight } from '../../../utils/responsiveScale';
 import { fonts } from '../../../config/theme';
+import reactNativeConfig from '../../../../react-native.config';
 const ProgressBar = () => {
     const [progress, setProgress] = React.useState(0);
     const [indeterminate, setIndeterminate] = React.useState(true);
@@ -46,4 +47,4 @@ fontFamily:fonts.textFont
         rowGap:responsiveHeight(1)
     }
   });
-export default ProgressBar
+export default React.memo( ProgressBar)
