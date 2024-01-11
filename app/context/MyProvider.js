@@ -939,7 +939,7 @@ export default class MyProvider extends Component {
             );
           }
         },
-        fetchFlightBookData: async (
+        fetchFlightBookData:  (
           resultIndex,
           flight,
           baggageDtls,

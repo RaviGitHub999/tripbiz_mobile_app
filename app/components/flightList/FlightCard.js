@@ -139,7 +139,6 @@ const FlightCard = ({ flightGrp, index, bookingPage, segIndex }) => {
                       },
                       index
                     );
-
                   }}>
                     <Text style={styles.bookingButtonText}>{flightResList.length > 1 ? "Select" : "Book"}</Text>
                   </TouchableOpacity> : null

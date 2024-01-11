@@ -125,7 +125,7 @@ import FlightList from '../flightList/FlightList';
 import FlightBooking from '../FlightBooking/FlightBooking';
 import ProgressBar from '../common/progressBar/ProgressBar';
 
-const FlightsSearchRes = () => {
+const FlightsSearchRes = (props) => {
     const {
                  flightResult,
                 searchingFlights,
@@ -166,29 +166,28 @@ const FlightsSearchRes = () => {
             await actions.handleFlightsLogos();
         };
         fetchData();
-    }, [actions]);
+    }, []);
 
     console.log("res");
 
     return (
         <View style={styles.mainContainer}>
-           {!flightBookPage?renderHeader():null}
+          {renderHeader()}
           <View style={styles.activeIndicatorMainContainer}>
                 {searchingFlights ? (
                     <View style={styles.activeIndicator}><ProgressBar /></View>
                 ) : flightResult.length === 0 ? (
                     <Text style={styles.nodata}>{"No Flights Found!!"}</Text>
                 ) :
-                flightBookPage?<FlightBooking/>: (
-                    !showFilters && flightResJType === 0 ? <FlightList index={0} /> : <FlightList index={1} />
+                (
+                  flightResJType === 0 ? <FlightList index={0} props={props}/> : <FlightList index={1} />
 
                 )
-                // <Text>hi</Text>
             }
             </View>
         </View>
     );
 }
 
-export default FlightsSearchRes;
+export default React.memo(FlightsSearchRes);
 

@@ -57,7 +57,8 @@ des:"Lowest to Highest"
   des:"Shortest to Longest"
 },
 ]
-const FlightList = ({ index }) => {
+const FlightList = ({ index ,props}) => {
+  console.log("list")
   const [times, setTimes] = useState(sunImg);
   const [selectedStops, setSelectedStops] = useState(null);
   const [depSelectedTime, setDepSelectedTime] = useState(null);
@@ -83,6 +84,7 @@ const FlightList = ({ index }) => {
     const updatedTimes = [...times];
     setDepSelectedTime((prev) => prev === updatedTimes[index].time ? null : updatedTimes[index].time)
   };
+  
   const toggleSelection2 = (index) => {
     const updatedTimes = [...times];
     setArrSelectedTime((prev) => prev === updatedTimes[index].time ? null : updatedTimes[index].time)
@@ -369,10 +371,11 @@ const FlightList = ({ index }) => {
         <FlightCard
           flightGrp={item}
           index={index}
+          props={props}
         />
       );
     };
-  }, [actions, flightResList])
+  }, [])
   return (
     <View style={{flex:1}}>
       {!showFilters ? <View style={styles.filtersHeaderContainer}>

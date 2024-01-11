@@ -1,5 +1,5 @@
 import { Animated, Text, View } from 'react-native'
-import React, { useContext, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useContext, useMemo, useRef, useState } from 'react'
 import IconSwitcher from '../common/icons/IconSwitcher'
 import { FlatList, ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import MyContext from '../../context/Context'
@@ -10,7 +10,7 @@ import { colors } from '../../config/theme'
 import Select from '../common/select/Select'
 import { responsiveHeight, responsiveWidth } from '../../utils/responsiveScale'
 
-const FlightBooking = () => {
+const FlightBooking = ({navigation}) => {
     var [bookIndex, setBookIndex] = useState(0);
     var [segIndex, setSegIndex] = useState(0);
     var [seatSegIdx, setSeatSegIdx] = useState(0);
@@ -52,29 +52,31 @@ const FlightBooking = () => {
         transform: [{ translateY }],
       };
       
-  const memoizedRenderItem = useMemo(() => {
-    return ({ item, index }) => {
-      return (
-        <FlightCard
-          flightGrp={[{ ...bookingFlight[index]?.flight }]}
-          index={index}
-          bookingPage={true}
-          segIndex={segIndex}
-        />
-      );
-    };
-  }, [bookingFlight, segIndex])
+//   const memoizedRenderItem = useMemo(() => {
+//     return ({ item, index }) => {
+//       return (
+//         <FlightCard
+//           flightGrp={[{ ...bookingFlight[index]?.flight }]}
+//           index={index}
+//           bookingPage={true}
+//           segIndex={segIndex}
+//         />
+//       );
+//     };
+//   }, [bookingFlight, segIndex])
+const handleBackButtonPress = () => {
+    // actions.setFlightBookPage(false);
+    // actions.setBookingFlight([]);
+    navigation.goBack()
+  };
     return (
         <View style={{flex:1}}>
-            <TouchableOpacity onPress={() => {
-                actions.setFlightBookPage(false);
-                actions.setBookingFlight([]);
-            }} style={styles.backBtnContainer}>
+            <TouchableOpacity onPress={handleBackButtonPress} style={styles.backBtnContainer}>
                 <IconSwitcher componentName='AntDesign' iconName='arrowleft' color='black' iconsize={3} />
             </TouchableOpacity>
           <View style={{flex:2}}>
           <ScrollView nestedScrollEnabled contentContainerStyle={{paddingBottom:20}}>
-                {/* <FlatList data={bookingFlight} renderItem={({ item, index }) => {
+                <FlatList data={bookingFlight} renderItem={({ item, index }) => {
                     return (
                         <FlightCard
                             flightGrp={[{ ...bookingFlight[index]?.flight }]}
@@ -83,12 +85,8 @@ const FlightBooking = () => {
                             segIndex={segIndex}
                         />
                     )
-                }} /> */}
-                 <FlatList 
-      data={bookingFlight}
-      renderItem={memoizedRenderItem}
-      keyExtractor={(item, index) => index.toString()} // Assuming each item can be uniquely identified by its index
-    />
+                }} /> 
+                 
                 <View style={styles.baggageAndMealsContainer}>
                     {/* Baggage and Meals */}
                     <Text style={styles.baggageAndMealsTitle}>Baggage and Meals</Text>
@@ -241,4 +239,4 @@ const FlightBooking = () => {
     )
 }
 
-export default React.memo(FlightBooking)
+export default (FlightBooking)
