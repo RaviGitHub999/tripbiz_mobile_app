@@ -200,6 +200,11 @@ export default class MyProvider extends Component {
         handleFlightsFilter: (payload) => {
           this.setState({ showFilters: payload })
         },
+        setFlightResJType: (value) => {
+          this.setState({
+            flightResJType: value
+          });
+        },
         handlesearchingFlights: () => {
           this.setState({ searchingFlights: true })
         },

@@ -1,5 +1,5 @@
-import { View, Text, FlatList, StyleSheet, ScrollView, Image,TouchableOpacity } from 'react-native'
-import React, { useContext, useMemo, useRef, useState } from 'react'
+import { View, Text, FlatList, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native'
+import React, { useCallback, useContext, useMemo, useRef, useState } from 'react'
 import MyContext from '../../context/Context'
 import FlightCard from './FlightCard'
 import IconSwitcher from '../common/icons/IconSwitcher'
@@ -46,18 +46,18 @@ const flightStops = [
     stops: 2
   }
 ]
-const sortData=
-[
-{
-title:"Price",
-des:"Lowest to Highest"
-},
-{
-  title:"Duration",
-  des:"Shortest to Longest"
-},
-]
-const FlightList = ({ index ,props}) => {
+const sortData =
+  [
+    {
+      title: "Price",
+      des: "Lowest to Highest"
+    },
+    {
+      title: "Duration",
+      des: "Shortest to Longest"
+    },
+  ]
+const FlightList = ({ index, props }) => {
   console.log("list")
   const [times, setTimes] = useState(sunImg);
   const [selectedStops, setSelectedStops] = useState(null);
@@ -76,7 +76,15 @@ const FlightList = ({ index ,props}) => {
   const [cost, setCost] = useState(true)
   var [showFilters, setShowFilters] = useState(false);
   const [duration, setDuration] = useState(false);
-  const { flightResList, actions} = useContext(MyContext)
+  const { actions,
+    flightResList,
+    internationalFlights,
+    flightResJType,
+    flightResult,
+    byDuration,
+    byCost,
+    intStopPts2
+  } = useContext(MyContext)
   var flightArr = flightResList[0]?.map((flight) => {
     return { ...actions.modifyFlightObject(flight[0]) };
   });
@@ -84,7 +92,7 @@ const FlightList = ({ index ,props}) => {
     const updatedTimes = [...times];
     setDepSelectedTime((prev) => prev === updatedTimes[index].time ? null : updatedTimes[index].time)
   };
-  
+
   const toggleSelection2 = (index) => {
     const updatedTimes = [...times];
     setArrSelectedTime((prev) => prev === updatedTimes[index].time ? null : updatedTimes[index].time)
@@ -124,33 +132,33 @@ const FlightList = ({ index ,props}) => {
       </TouchableOpacity>
     )
   }
-  const arrHandleTimeClick =  (time) => {
+  const arrHandleTimeClick = (time) => {
     const startDate = new Date();
     const endDate = new Date();
     if (time === "morning") {
       startDate.setHours(0);
       endDate.setHours(6);
-       actions.setOriginStartTime(startDate);
-       actions.setOriginEndTime(endDate);
+      actions.setOriginStartTime(startDate);
+      actions.setOriginEndTime(endDate);
     } else if (time === "noon") {
       startDate.setHours(6);
       endDate.setHours(12);
-       actions.setOriginStartTime(startDate);
-       actions.setOriginEndTime(endDate);
+      actions.setOriginStartTime(startDate);
+      actions.setOriginEndTime(endDate);
     } else if (time === "evening") {
       startDate.setHours(12);
       endDate.setHours(18);
-       actions.setOriginStartTime(startDate);
-       actions.setOriginEndTime(endDate);
+      actions.setOriginStartTime(startDate);
+      actions.setOriginEndTime(endDate);
     } else if (time === "night") {
       startDate.setHours(18);
       endDate.setHours(23);
       endDate.setMinutes(59)
-       actions.setOriginStartTime(startDate);
-       actions.setOriginEndTime(endDate);
+      actions.setOriginStartTime(startDate);
+      actions.setOriginEndTime(endDate);
     } else if (arrSelectedTime === null) {
-       actions.setOriginStartTime(null);
-       actions.setOriginEndTime(null);
+      actions.setOriginStartTime(null);
+      actions.setOriginEndTime(null);
     }
   };
 
@@ -162,7 +170,7 @@ const FlightList = ({ index ,props}) => {
       startDate.setHours(0);
       endDate.setHours(6);
       actions.setDestStartTime(startDate);
-       actions.setDestEndTime(endDate);
+      actions.setDestEndTime(endDate);
     } else if (time === "noon") {
       startDate.setHours(6);
       endDate.setHours(12);
@@ -172,13 +180,13 @@ const FlightList = ({ index ,props}) => {
       startDate.setHours(12);
       endDate.setHours(18);
       actions.setDestStartTime(startDate);
-       actions.setDestEndTime(endDate);
+      actions.setDestEndTime(endDate);
     } else if (time === "night") {
       startDate.setHours(18);
       endDate.setHours(23);
       endDate.setMinutes(59)
-     actions.setDestStartTime(startDate);
-   actions.setDestEndTime(endDate);
+      actions.setDestStartTime(startDate);
+      actions.setDestEndTime(endDate);
     } else if (depSelectedTime === null) {
       actions.setDestStartTime(null);
       actions.setDestEndTime(null);
@@ -305,6 +313,39 @@ const FlightList = ({ index ,props}) => {
       await actions.setIntDestEndTime2(null);
     }
   }
+  const removeFilters = () => {
+    setCount(0)
+    actions.setDestStartTime(null);
+    actions.setDestEndTime(null);
+    actions.setOriginStartTime(null);
+    actions.setOriginEndTime(null);
+    actions.setStopPts(null);
+    actions.setAirlineName("");
+    // actions.setByCost(true);
+    // actions.setByDuration(false);
+    // actions.setIntDestEndTime1(null)
+    // actions.setIntDestEndTime2(null)
+    // actions.setIntDestStartTime1(null)
+    // actions.setIntDestStartTime2(null)
+    // actions.setIntOriginEndTime1(null)
+    // actions.setIntOriginEndTime2(null)
+    // actions.setIntOriginStartTime1(null)
+    // actions.setIntOriginStartTime2(null)
+    // actions.setIntStopPts1(null)
+    // actions.setIntStopPts2(null)
+    // setIntSelectedArrTime1(null)
+    // setIntSelectedArrTime2(null)
+    // setIntSelectedDepTime1(null)
+    // setIntSelectedDepTime2(null)
+    setArrSelectedTime(null);
+    setDepSelectedTime(null);
+    setStops(null);
+    setAirline(null);
+    // setIntStops1(null);
+    // setIntStops2(null);
+    setCost(true)
+    setDuration(false)
+  };
   var applyFilters = () => {
     setShowFilters(false)
     let countUpdate = 0;
@@ -376,95 +417,115 @@ const FlightList = ({ index ,props}) => {
       );
     };
   }, [])
+  const handlePress = useCallback(() => {
+    setShowFilters(true);
+  }, []);
+  const handlejourneyType=useCallback((value)=>
+  {
+    actions.setFlightResJType(value)
+    removeFilters()
+  },[])
   return (
-    <View style={{flex:1}}>
+    <View style={{ flex: 1 }}>
       {!showFilters ? <View style={styles.filtersHeaderContainer}>
         <View style={styles.filtersIconContainer}>
           <IconSwitcher componentName='FontAwesome5' iconName='filter' color={colors.black} iconsize={3} />
           <Text style={styles.filterHeader}>{"Filters"}</Text>
         </View>
-        <TouchableOpacity onPress={() => setShowFilters(true)}>
+        <TouchableOpacity onPress={handlePress}>
           <IconSwitcher componentName='Ionicons' iconName='chevron-down' color={colors.black} iconsize={3.5} />
         </TouchableOpacity>
       </View> :
-       <View>
-           <ScrollView nestedScrollEnabled style={styles.upArrowIconmainContainer}>
-         <View style={styles.filtersIconContainer}>
-          <IconSwitcher componentName='FontAwesome5' iconName='filter' color={colors.black} iconsize={3} />
-          <Text style={styles.filterHeader}>{"Filters"}</Text>
+        <View>
+          <ScrollView nestedScrollEnabled style={styles.upArrowIconmainContainer}>
+            <View style={styles.filtersIconContainer}>
+              <IconSwitcher componentName='FontAwesome5' iconName='filter' color={colors.black} iconsize={3} />
+              <Text style={styles.filterHeader}>{"Filters"}</Text>
+            </View>
+            <View style={styles.filtersmainContainer}>
+              <View>
+                <Text style={styles.filterTitles}>{"Airline"}</Text>
+                <FlatList data={airlines} renderItem={handleFlightsNames} style={styles.flightNamesRenderContainer} nestedScrollEnabled contentContainerStyle={styles.flightNamesContentContainer} />
+              </View>
+              <View>
+                <Text style={styles.filterTitles}>{"Stops"}</Text>
+                <View style={[styles.stopsContainer]}>
+                  <FlatList ref={flatListRef} data={flightStops} renderItem={({ item, index }) => {
+                    return (
+                      <TouchableOpacity onPress={() => handleFlightStops(item.stops, index)} style={[styles.flightStopsTitle, stops === item.stops && styles.activeStop]}>
+                        <Text key={item.stops} style={[styles.flightStopsText, stops === item.stops && styles.activeStopsText]}>{item.title}</Text>
+                      </TouchableOpacity>
+                    )
+                  }} horizontal showsHorizontalScrollIndicator={false} />
+                </View>
+              </View>
+              <View>
+                <Text style={styles.filterTitles}>{"Departure Time"}</Text>
+                <View style={styles.mappedSunImgContainer}>
+                  {img1}
+                </View>
+              </View>
+              <View>
+                <Text style={styles.filterTitles}>{"Arrival Time"}</Text>
+                <View style={styles.mappedSunImgContainer}>
+                  {img2}
+                </View>
+              </View>
+              <View style={styles.sortingMainContainer}>
+                <Text style={styles.filterTitles}>{"Sort"}</Text>
+                <FlatList data={sortData} renderItem={({ item }) => {
+                  return (
+                    <TouchableOpacity style={styles.sortingBtnsContainer}>
+                      <Text style={styles.sortingBtnText}>{`${item.title}(${item.des})`}</Text>
+                    </TouchableOpacity>
+                  )
+                }} horizontal />
+              </View>
+            </View>
+            <TouchableOpacity onPress={applyFilters} style={styles.applyFiltersBtn}>
+              <Text style={styles.applyFiltersBtnText}>Apply</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.upArrowIcon} onPress={() => setShowFilters(false)}>
+              <IconSwitcher componentName='Ionicons' iconName='chevron-up' color={colors.black} iconsize={3.5} />
+            </TouchableOpacity>
+          </ScrollView>
         </View>
-        <View style={styles.filtersmainContainer}>
-          <View>
-            <Text style={styles.filterTitles}>{"Airline"}</Text>
-            <FlatList data={airlines} renderItem={handleFlightsNames}  style={styles.flightNamesRenderContainer} nestedScrollEnabled   contentContainerStyle={styles.flightNamesContentContainer}/>
-          </View>
-          <View>
-            <Text style={styles.filterTitles}>{"Stops"}</Text>
-            <View style={[styles.stopsContainer]}>
-              <FlatList ref={flatListRef} data={flightStops} renderItem={({ item, index }) => {
-                return (
-                  <TouchableOpacity onPress={() => handleFlightStops(item.stops, index)} style={[styles.flightStopsTitle, stops === item.stops && styles.activeStop]}>
-                    <Text key={item.stops} style={[styles.flightStopsText, stops === item.stops && styles.activeStopsText]}>{item.title}</Text>
-                  </TouchableOpacity>
-                )
-              }} horizontal showsHorizontalScrollIndicator={false} />
-            </View>
-          </View>
-          <View>
-            <Text style={styles.filterTitles}>{"Departure Time"}</Text>
-            <View style={styles.mappedSunImgContainer}>
-              {img1}
-            </View>
-          </View>
-          <View>
-            <Text style={styles.filterTitles}>{"Arrival Time"}</Text>
-            <View style={styles.mappedSunImgContainer}>
-              {img2}
-            </View>
-          </View>
-          <View style={styles.sortingMainContainer}>
-            <Text style={styles.filterTitles}>{"Sort"}</Text>
-            <FlatList data={sortData} renderItem={({item})=>
-            {
-return(
-  <TouchableOpacity style={styles.sortingBtnsContainer}>
-    <Text style={styles.sortingBtnText}>{`${item.title}(${item.des})`}</Text>
-    </TouchableOpacity>
-)
-            }} horizontal/>
-          </View>
-        </View>
-        <TouchableOpacity onPress={applyFilters} style={styles.applyFiltersBtn}>
-          <Text style={styles.applyFiltersBtnText}>Apply</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.upArrowIcon} onPress={() => setShowFilters(false)}>
-          <IconSwitcher componentName='Ionicons' iconName='chevron-up' color={colors.black} iconsize={3.5} />
-        </TouchableOpacity>
-       </ScrollView>
-       </View>
-    }
+      }
+      {
+        flightResList.length > 1 && !internationalFlights ?
+          <View style={styles.flightResultsNavMainContainer}>
+            <TouchableOpacity style={[styles.flightResultsNavItem, flightResJType === 0&&styles.flightResultsNavSelectedItem]} onPress={()=>handlejourneyType(0)}>
+              <Text style={[styles.flightResultsNavItemText,flightResJType === 0&&styles.flightResultsNavSelectedItemText]}>{`${flightResult?.Origin}`}</Text>
+              <IconSwitcher componentName='AntDesign' iconName='arrowright' iconsize={3} color={flightResJType===0?colors.white:colors.black} />
+              <Text style={[styles.flightResultsNavItemText, flightResJType === 0&&styles.flightResultsNavSelectedItemText]}>{`${flightResult?.Destination}`}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.flightResultsNavItem, flightResJType === 1&&styles.flightResultsNavSelectedItem]} onPress={()=>handlejourneyType(1)}>
+              <Text style={[styles.flightResultsNavItemText,flightResJType === 1&&styles.flightResultsNavSelectedItemText]}>{`${flightResult?.Destination}`}</Text>
+              <IconSwitcher componentName='AntDesign' iconName='arrowright' iconsize={3} color={flightResJType===1?colors.white:colors.black} />
+              <Text style={[styles.flightResultsNavItemText,flightResJType === 1&&styles.flightResultsNavSelectedItemText]}>{`${flightResult?.Origin}`}</Text>
+            </TouchableOpacity>
+          </View> : null
+      }
+
+
+
+
+
+
+
+
       <View>
         {
-        flightResList &&
-          flightResList[index]&&
-          // <FlatList data={actions
-          //   .filterFlights(flightResList[index])} renderItem={({ item, index }) => {
-          //     return (
-          //       <FlightCard
-          //         flightGrp={item}
-          //         index={index}
-          //       />
-          //     )
-          //   }} contentContainerStyle={{ paddingBottom: responsiveHeight(20) }} />
-          <FlatList 
-      data={actions.filterFlights(flightResList[index])} 
-      renderItem={memoizedRenderItem} 
-      contentContainerStyle={{ paddingBottom: responsiveHeight(20) }} 
-    />
-       }
+          flightResList.length > 0 ? (
+            flightResList[index] &&
+            (actions.filterFlights(flightResList[index]) ? <FlatList
+              data={actions.filterFlights(flightResList[index])}
+              renderItem={memoizedRenderItem}
+              contentContainerStyle={{ paddingBottom: responsiveHeight(20) }}
+            /> : <Text>No results found</Text>)
+          ) : <Text>Flight search hasn't returned any results</Text>
+        }
       </View>
-          <View>
-    </View>
     </View>
   )
 }
@@ -530,8 +591,8 @@ const styles = StyleSheet.create({
   filtersHeaderContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems:'center',
-    backgroundColor:colors.white,
+    alignItems: 'center',
+    backgroundColor: colors.white,
     // paddingHorizontal: responsiveHeight(1),
     // paddingVertical: responsiveHeight(1.5),
     // borderBlockColor: colors.white,
@@ -541,8 +602,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     columnGap: responsiveHeight(1),
     alignItems: 'center',
-    paddingLeft:responsiveWidth(2),
-    paddingVertical:responsiveHeight(1.5),
+    paddingLeft: responsiveWidth(2),
+    paddingVertical: responsiveHeight(1.5),
     // borderWidth:1
   },
   filterHeader: {
@@ -612,14 +673,14 @@ const styles = StyleSheet.create({
     // flexDirection:'row'
   },
   flightNamesRenderContainer: {
-    flex:1,
+    flex: 1,
     marginTop: responsiveHeight(2),
-  
+
   },
-  flightNamesContentContainer:{
+  flightNamesContentContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    flexShrink:1
+    flexShrink: 1
   },
   selectedFlightNameBtn: {
     backgroundColor: colors.gray
@@ -655,49 +716,63 @@ const styles = StyleSheet.create({
     fontFamily: fonts.primary,
     color: colors.white
   },
-  sortingBtnsContainer:{
-    borderWidth:1,
-    width:responsiveWidth(35),
-    height:responsiveHeight(6),
-    marginRight:responsiveWidth(5),
-    paddingHorizontal:responsiveWidth(2),
-    paddingVertical:responsiveHeight(0.5),
-    borderRadius:responsiveHeight(2)
+  sortingBtnsContainer: {
+    borderWidth: 1,
+    width: responsiveWidth(35),
+    height: responsiveHeight(6),
+    marginRight: responsiveWidth(5),
+    paddingHorizontal: responsiveWidth(2),
+    paddingVertical: responsiveHeight(0.5),
+    borderRadius: responsiveHeight(2)
   },
   sortingBtnText:
   {
-fontSize:responsiveHeight(1.5),
-fontFamily:fonts.primary,
-color:colors.black
+    fontSize: responsiveHeight(1.5),
+    fontFamily: fonts.primary,
+    color: colors.black
   },
-  sortingMainContainer:{
-    rowGap:responsiveHeight(1.5)
+  sortingMainContainer: {
+    rowGap: responsiveHeight(1.5)
   },
-  applyFiltersBtn:{
-    alignSelf:"flex-end",
-    borderWidth:1,
-    paddingHorizontal:responsiveHeight(2),
-    paddingVertical:responsiveHeight(0.6),
-    marginRight:responsiveWidth(5),
-    marginTop:responsiveHeight(2),
-    borderRadius:responsiveHeight(1.2),
-    backgroundColor:colors.black
+  applyFiltersBtn: {
+    alignSelf: "flex-end",
+    borderWidth: 1,
+    paddingHorizontal: responsiveHeight(2),
+    paddingVertical: responsiveHeight(0.6),
+    marginRight: responsiveWidth(5),
+    marginTop: responsiveHeight(2),
+    borderRadius: responsiveHeight(1.2),
+    backgroundColor: colors.black
   },
-  applyFiltersBtnText:{
-    fontSize:responsiveHeight(2),
-    fontFamily:fonts.primary,
+  applyFiltersBtnText: {
+    fontSize: responsiveHeight(2),
+    fontFamily: fonts.primary,
+    color: colors.white
+  },
+  flightResultsNavMainContainer: {
+    flexDirection: "row",
+    alignSelf: 'center',
+    columnGap: responsiveHeight(2),
+    marginTop: responsiveHeight(2)
+  },
+  flightResultsNavItem: {
+    flexDirection: "row",
+    columnGap: responsiveWidth(2),
+    borderWidth: 1,
+    paddingHorizontal: responsiveWidth(2.5),
+    alignItems: 'center',
+    paddingVertical: responsiveHeight(0.3),
+    borderRadius: responsiveHeight(3)
+  },
+  flightResultsNavSelectedItem:{
+backgroundColor:colors.black
+  },
+  flightResultsNavItemText: {
+    fontSize: responsiveHeight(1.8),
+    fontFamily: fonts.primary,
+    color: colors.black
+  },
+  flightResultsNavSelectedItemText:{
     color:colors.white
   }
 })  
-// import { View, Text } from 'react-native'
-// import React from 'react'
-
-// const FlightList = () => {
-//   return (
-//     <View>
-//       <Text>FlightList</Text>
-//     </View>
-//   )
-// }
-
-// export default FlightList

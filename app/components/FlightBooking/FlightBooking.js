@@ -65,9 +65,9 @@ const FlightBooking = ({navigation}) => {
 //     };
 //   }, [bookingFlight, segIndex])
 const handleBackButtonPress = () => {
-    // actions.setFlightBookPage(false);
-    // actions.setBookingFlight([]);
-    navigation.goBack()
+    actions.setFlightBookPage(false);
+    actions.setBookingFlight([]);
+    // navigation.goBack()
   };
     return (
         <View style={{flex:1}}>

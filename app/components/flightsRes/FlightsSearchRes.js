@@ -102,7 +102,7 @@
 //     console.log("Context values:",flightTravellers); // Debugging log
 
 //     const memoizedComponent = useMemo(() => {
-        
+
 //         return (
 //             <View>
 //                 <Text>FlightsSearchRes</Text>
@@ -127,20 +127,22 @@ import ProgressBar from '../common/progressBar/ProgressBar';
 
 const FlightsSearchRes = (props) => {
     const {
-                 flightResult,
-                searchingFlights,
-                flightBookPage,
-                showFilters,
-                destinationSelectedAirPort,
-                departureformattedDate,
-                originSelectedAirport,
-                adults,
-                children,
-                infants,
-                returnformattedDate,
-                classes,
-                flightResJType,
-                actions 
+        flightResult,
+        searchingFlights,
+        flightBookPage,
+        showFilters,
+        destinationSelectedAirPort,
+        departureformattedDate,
+        originSelectedAirport,
+        adults,
+        children,
+        infants,
+        returnformattedDate,
+        classes,
+        flightResJType,
+        flightResList,
+        bookingFlight,
+        actions
     } = useContext(MyContext);
     const travellers = adults + children + infants;
 
@@ -148,7 +150,7 @@ const FlightsSearchRes = (props) => {
         <View style={styles.headerContainer}>
             <View style={styles.header}>
                 <Text style={styles.title}>{`${originSelectedAirport.address.cityName} to ${destinationSelectedAirPort.address.cityName}`}</Text>
-                <TouchableOpacity style={styles.editButton} onPress={() => {props.navigation.goBack(),actions.handlesearchingFlights()}}>
+                <TouchableOpacity style={styles.editButton} onPress={() => { props.navigation.goBack(), actions.handlesearchingFlights() }}>
                     <IconSwitcher componentName='MaterialIcons' iconName='edit' color={colors.white} iconsize={2.3} />
                 </TouchableOpacity>
             </View>
@@ -172,18 +174,59 @@ const FlightsSearchRes = (props) => {
 
     return (
         <View style={styles.mainContainer}>
-          {renderHeader()}
-          <View style={styles.activeIndicatorMainContainer}>
+            {renderHeader()}
+            <View style={styles.activeIndicatorMainContainer}>
                 {searchingFlights ? (
                     <View style={styles.activeIndicator}><ProgressBar /></View>
                 ) : flightResult.length === 0 ? (
                     <Text style={styles.nodata}>{"No Flights Found!!"}</Text>
                 ) :
-                (
-                  flightResJType === 0 ? <FlightList index={0} props={props}/> : <FlightList index={1} />
+                    <View style={{flex:1}}>
+                        {
+                            flightBookPage ? <FlightBooking /> : (
+                                flightResJType === 0 ? <FlightList index={0} /> : <FlightList index={1} />
+                            )
+                        }
+                        {
+                            flightResList.length > 1 &&
+                                bookingFlight &&
+                                bookingFlight.length > 0 ? 
+                            <View style={styles.selectedDomesticFlightsmainContainer}>
+                                <View style={styles.selectedDomesticEachFlights}>
+                                    <View>
+                                        <Text>06:38</Text>
+                                        <Text>HYD</Text>
+                                    </View>
+                                    <IconSwitcher componentName='AntDesign' iconName='arrowright' iconsize={3}/>
+                                    <View>
+                                        <Text>04:38</Text>
+                                        <Text>RJA</Text>
+                                    </View>
+                                </View>
 
-                )
-            }
+                                <View style={styles.selectedDomesticEachFlights}>
+                                    <View>
+                                        <Text>06:38</Text>
+                                        <Text>HYD</Text>
+                                    </View>
+                                    <IconSwitcher componentName='AntDesign' iconName='arrowright' iconsize={3}/>
+                                    <View>
+                                        <Text>04:38</Text>
+                                        <Text>RJA</Text>
+                                    </View>
+                                </View>
+
+                                <View style={styles.selectedDomesticFlightsPrice}>
+                                    <Text>19,980</Text>
+                                    <TouchableOpacity>
+                                        <Text>Book</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View> : null
+                        }
+                    </View>
+
+                }
             </View>
         </View>
     );

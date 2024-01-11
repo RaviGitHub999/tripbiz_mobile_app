@@ -7,7 +7,7 @@ import IconSwitcher from '../common/icons/IconSwitcher'
 import MyContext from '../../context/Context'
 
 const FlightCard = ({ flightGrp, index, bookingPage, segIndex }) => {
-  const { actions, flightsLogosData, flightName, flightResList, bookingFlight } = useContext(MyContext)
+  const { actions, flightsLogosData, flightName, flightResList, bookingFlight ,flightResJType} = useContext(MyContext)
   // var flightArr = flightGrp.map((flight, f) => {
   //   return { ...actions.modifyFlightObject(flight) };
   // });
@@ -33,7 +33,9 @@ const FlightCard = ({ flightGrp, index, bookingPage, segIndex }) => {
     })
     return (
       <View>
-        <View style={styles.mainContainer}>
+        <View style={ bookingFlight &&
+            bookingFlight[flightResJType]?.arrIndex === index &&
+            !bookingPage?{...styles.selectedCard}:styles.mainContainer}>
           <View style={styles.logoHeader} >
             <View style={styles.flightLogoContainer}>{flightSymbol(airlinename) ? (
               <Image source={{ uri: flightSymbol(airlinename) }} style={styles.flightLogo} resizeMode='contain' />
@@ -191,6 +193,18 @@ const styles = StyleSheet.create({
     borderRadius: responsiveHeight(2),
     rowGap: responsiveHeight(2.5),
     elevation: responsiveHeight(1),
+    marginHorizontal: responsiveWidth(3.5),
+    marginTop: responsiveHeight(2.5)
+  },
+  selectedCard:{
+    backgroundColor: colors.highlightLite,
+    borderWidth:2,
+    borderColor:colors.highlight,
+    paddingHorizontal: responsiveWidth(3.5),
+    paddingVertical: responsiveHeight(3),
+    borderRadius: responsiveHeight(2),
+    rowGap: responsiveHeight(2.5),
+    // elevation: responsiveHeight(1),
     marginHorizontal: responsiveWidth(3.5),
     marginTop: responsiveHeight(2.5)
   },

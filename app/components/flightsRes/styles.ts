@@ -75,5 +75,33 @@ filterHeader:{
     fontSize:responsiveHeight(2.5),
     color:colors.black,
     fontFamily:fonts.textFont
+},
+selectedDomesticFlightsmainContainer:{
+    flexDirection:'row',
+    justifyContent:'space-between',
+   paddingHorizontal:responsiveWidth(3),
+   backgroundColor:"red",
+   height:responsiveHeight(10),
+   alignItems:'center',
+
+},
+selectedDomesticEachFlights:{
+    flexDirection:'row',
+    columnGap:8,
+    borderWidth:1,
+    paddingHorizontal:responsiveWidth(2),
+    paddingVertical:responsiveHeight(2),
+    alignContent:'center',
+    justifyContent:'center',
+
+},
+selectedDomesticFlightsPrice:{
+    // borderWidth:1,
+    width:"30%",
+    alignItems:'center',
+},
+selectedDomesticFlightsbookBtn:{
+    borderWidth:1,
+    padding:responsiveHeight(0.5)
 }
 })
