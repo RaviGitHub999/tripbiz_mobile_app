@@ -82,7 +82,7 @@ export default class MyProvider extends Component {
       airlineName: "",
       destStartTime: null,
       destEndTime: null,
-      stopPts: null,
+      stopPts:null,
       flightTravellers: 0,
       actions: {
         loginAction:async()=>
@@ -206,7 +206,18 @@ export default class MyProvider extends Component {
           });
         },
         handlesearchingFlights: () => {
-          this.setState({ searchingFlights: true })
+          this.setState({
+         searchingFlights: true ,
+          origin:"",
+          destination: "",
+          departure: "Departure Date",
+          returnDate: "Return Date",
+          cabinClassId: "2",
+          journeyWay: "1",
+          departureformattedDate: "",
+          returnformattedDate: "",
+          })
+          
         },
         handleFlightsLogos: async () => {
           const querySnapshot = await firestore().collection("airlinelogos").get();
@@ -507,7 +518,14 @@ export default class MyProvider extends Component {
             totalDuration
           };
         },
+        editFlightSearch: () => {
+          this.setState({
+            flightResult: {},
+            flightResList: []
+          });
+        },
         setAirlineName: (value) => {
+          console.log("99999999999",value)
           this.setState({
             airlineName: value
           });
@@ -556,19 +574,21 @@ export default class MyProvider extends Component {
           //     return aDur - bDur;
           //   });
           // }
-          if (this.state.stopPts !== null) {
-            filteredArr = filteredArr.filter((a) => {
-              var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-              return (
-                newflightObj.segments[0].stopOverPts.length <= this.state.stopPts
-              );
-            });
-          }
+
           if (this.state.airlineName) {
             filteredArr = filteredArr.filter((a) => {
               var newflightObj = this.state.actions.modifyFlightObject(a[0]);
               return (
                 newflightObj.segments[0].airlineName === this.state.airlineName
+              );
+            });
+          }
+  
+           if (this.state.stopPts === 0 || this.state.stopPts) {
+            filteredArr = filteredArr.filter((a) => {
+              var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+              return (
+                newflightObj.segments[0].stopOverPts.length <= this.state.stopPts
               );
             });
           }
@@ -636,6 +656,11 @@ export default class MyProvider extends Component {
               });
             }
           }
+
+
+
+
+          
           // if (this.state.intDestStartTime1 && this.state.intDestEndTime1) {
           //   if (this.state.intDestEndTime1.getHours() === 23) {
           //     filteredArr = filteredArr.filter((a) => {

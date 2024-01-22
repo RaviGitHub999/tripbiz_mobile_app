@@ -193,16 +193,16 @@ const handleBackButtonPress = () => {
             </ScrollView>
            
           </View>
-          <View style={[styles.totalFareContainer,isOpen&&{flex:0.4}]}>
+          <View style={[styles.totalFareContainer,isOpen&&{flex:0.7}]}>
                <View >
                <TouchableOpacity onPress={toggleView} style={styles.totalFareToggleIconContainer}>
                <IconSwitcher componentName='Ionicons' iconName={isOpen?"chevron-down-sharp":'chevron-up-sharp'} color={colors.black} iconsize={3}/>
                </TouchableOpacity>
-               {isOpen&&<Animated.View style={[{borderBottomWidth:1,flexDirection:'row',justifyContent:'space-between',marginHorizontal:responsiveWidth(3),height:responsiveHeight(5),alignItems:'center'},animatedStyles]}>
+               {isOpen&&<Animated.View style={[{borderBottomWidth:1,justifyContent:'space-between',marginHorizontal:responsiveWidth(3)},animatedStyles]}>
                 {
                         bookingFlight.map((book, b) => {
                           return (
-                            <>
+                            <View style={{flexDirection:'row',justifyContent:'space-between',marginBottom:10}}>
                               <View style={styles.flightDepAndArrContainer} key={b}>
                                 <Text style={styles.flightDepAndArrText}>{`${book.flightNew.segments[0].originAirportCode}`}</Text>
                                 <IconSwitcher componentName='AntDesign' iconName='arrowright' color={colors.secondary} iconsize={2.8} />
@@ -220,7 +220,7 @@ const handleBackButtonPress = () => {
                                   }/-`}
                                </Text>
                               </View>
-                            </>
+                            </View>
                           );
                         })
                 }

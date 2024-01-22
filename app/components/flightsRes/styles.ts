@@ -80,7 +80,7 @@ selectedDomesticFlightsmainContainer:{
     flexDirection:'row',
     justifyContent:'space-between',
    paddingHorizontal:responsiveWidth(3),
-   backgroundColor:"red",
+   backgroundColor:colors.white,
    height:responsiveHeight(10),
    alignItems:'center',
 
@@ -88,20 +88,51 @@ selectedDomesticFlightsmainContainer:{
 selectedDomesticEachFlights:{
     flexDirection:'row',
     columnGap:8,
-    borderWidth:1,
     paddingHorizontal:responsiveWidth(2),
     paddingVertical:responsiveHeight(2),
-    alignContent:'center',
-    justifyContent:'center',
+    backgroundColor:colors.highlightLite,
+    borderRadius:responsiveHeight(2)
 
 },
-selectedDomesticFlightsPrice:{
+selectedDomesticFlightsPriceContainer:{
     // borderWidth:1,
-    width:"30%",
+    // width:"30%",
     alignItems:'center',
+    rowGap:responsiveHeight(1)
+},
+selectedDomesticFlightsPrice:{
+    fontSize:responsiveHeight(2),
+    fontFamily:fonts.primary,
+    color:colors.secondary
+},
+selectedDomesticFlightIconContainer:{
+alignSelf:'center'
 },
 selectedDomesticFlightsbookBtn:{
-    borderWidth:1,
-    padding:responsiveHeight(0.5)
+    padding:responsiveHeight(0.5),
+    paddingHorizontal:responsiveWidth(5),
+    borderRadius:responsiveHeight(2),
+    backgroundColor:colors.black
+},
+selectedDomesticFlightsbookBtnTitle:{
+    fontSize:responsiveHeight(1.8),
+    fontWeight:"bold",
+    color:colors.white,
+},
+selectedDomesticFlightDepContainer:{
+
+},
+selectedDomesticFlightArrContainer:{
+alignItems:'flex-end'
+},
+selectedDomesticFlightName:{
+    fontSize:responsiveHeight(1.5),
+    fontFamily:fonts.textFont,
+    color:colors.primary
+},
+selectedDomesticFlightTimings:{
+    fontSize:responsiveHeight(1.8),
+    fontWeight:"800",
+    color:colors.lightGray
 }
 })

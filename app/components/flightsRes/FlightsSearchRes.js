@@ -142,21 +142,24 @@ const FlightsSearchRes = (props) => {
         flightResJType,
         flightResList,
         bookingFlight,
-        actions
+        actions,
+        journeyWay
     } = useContext(MyContext);
     const travellers = adults + children + infants;
-
+    if (bookingFlight && bookingFlight.length > 0) {
+        var { totalFareSum } = actions.getTotalFares(bookingFlight);
+      }
     const renderHeader = () => (
         <View style={styles.headerContainer}>
             <View style={styles.header}>
                 <Text style={styles.title}>{`${originSelectedAirport.address.cityName} to ${destinationSelectedAirPort.address.cityName}`}</Text>
-                <TouchableOpacity style={styles.editButton} onPress={() => { props.navigation.goBack(), actions.handlesearchingFlights() }}>
+                <TouchableOpacity style={styles.editButton} onPress={() => { props.navigation.goBack(), actions.handlesearchingFlights() ,actions.editFlightSearch()}}>
                     <IconSwitcher componentName='MaterialIcons' iconName='edit' color={colors.white} iconsize={2.3} />
                 </TouchableOpacity>
             </View>
             <View style={styles.travellerDescription}>
                 <Text style={styles.descriptionTitles}>{`${departureformattedDate}`}</Text>
-                {returnformattedDate.length !== 0 && <Text style={styles.descriptionTitles}>{` - ${returnformattedDate}`}</Text>}
+                {journeyWay==="2" && <Text style={styles.descriptionTitles}>{` - ${returnformattedDate}`}</Text>}
                 <Text style={styles.descriptionTitles}>{` | ${travellers} ${travellers <= 1 ? "traveller" : "travellers"} | `}</Text>
                 <Text style={styles.descriptionTitles}>{classes}</Text>
             </View>
@@ -187,42 +190,49 @@ const FlightsSearchRes = (props) => {
                                 flightResJType === 0 ? <FlightList index={0} /> : <FlightList index={1} />
                             )
                         }
-                        {
+                        {!flightBookPage?
                             flightResList.length > 1 &&
                                 bookingFlight &&
                                 bookingFlight.length > 0 ? 
                             <View style={styles.selectedDomesticFlightsmainContainer}>
                                 <View style={styles.selectedDomesticEachFlights}>
                                     <View>
-                                        <Text>06:38</Text>
-                                        <Text>HYD</Text>
+                                        <Text style={styles.selectedDomesticFlightTimings}>{bookingFlight[0].flightNew.segments[0].depTime}</Text>
+                                        <Text style={styles.selectedDomesticFlightName}>{bookingFlight[0].flightNew.segments[0].originAirportCode}</Text>
                                     </View>
-                                    <IconSwitcher componentName='AntDesign' iconName='arrowright' iconsize={3}/>
-                                    <View>
-                                        <Text>04:38</Text>
-                                        <Text>RJA</Text>
+                                    <View style={styles.selectedDomesticFlightIconContainer}>
+                                    <IconSwitcher componentName='AntDesign' iconName='arrowright' iconsize={3} color={colors.primary}/>
                                     </View>
-                                </View>
-
-                                <View style={styles.selectedDomesticEachFlights}>
-                                    <View>
-                                        <Text>06:38</Text>
-                                        <Text>HYD</Text>
-                                    </View>
-                                    <IconSwitcher componentName='AntDesign' iconName='arrowright' iconsize={3}/>
-                                    <View>
-                                        <Text>04:38</Text>
-                                        <Text>RJA</Text>
+                                    <View style={styles.selectedDomesticFlightArrContainer}>
+                                        <Text style={styles.selectedDomesticFlightTimings}> {bookingFlight[0].flightNew.segments[0].arrTime}</Text>
+                                        <Text style={styles.selectedDomesticFlightName}>{bookingFlight[0].flightNew.segments[0].destAirportCode}</Text>
                                     </View>
                                 </View>
 
-                                <View style={styles.selectedDomesticFlightsPrice}>
-                                    <Text>19,980</Text>
-                                    <TouchableOpacity>
-                                        <Text>Book</Text>
+                                {bookingFlight[1] ?<View style={styles.selectedDomesticEachFlights}>
+                                    <View>
+                                        <Text style={styles.selectedDomesticFlightTimings}> {bookingFlight[1].flightNew.segments[0].depTime}</Text>
+                                        <Text style={styles.selectedDomesticFlightName}>{bookingFlight[1].flightNew.segments[0].originAirportCode}</Text>
+                                    </View>
+                                    <View style={styles.selectedDomesticFlightIconContainer}>
+                                    <IconSwitcher componentName='AntDesign' iconName='arrowright' iconsize={3} color={colors.primary}/>
+                                    </View>
+                                    <View style={styles.selectedDomesticFlightArrContainer}>
+                                        <Text style={styles.selectedDomesticFlightTimings}>{bookingFlight[1].flightNew.segments[0].arrTime}</Text>
+                                        <Text style={styles.selectedDomesticFlightName}>{bookingFlight[1].flightNew.segments[0].destAirportCode}</Text>
+                                    </View>
+                                </View>:null}
+
+                                {bookingFlight.length === 2 ?<View style={styles.selectedDomesticFlightsPriceContainer}>
+                                    <Text style={styles.selectedDomesticFlightsPrice}>  {`₹ ${totalFareSum.toLocaleString("en-IN")}`}</Text>
+                                    <TouchableOpacity  style={styles.selectedDomesticFlightsbookBtn}
+                                    onPress={() =>
+                                        actions.fetchingFlightBookData(bookingFlight)
+                                      }>
+                                        <Text style={styles.selectedDomesticFlightsbookBtnTitle}>Book</Text>
                                     </TouchableOpacity>
-                                </View>
-                            </View> : null
+                                </View>:null}
+                            </View> : null:null
                         }
                     </View>
 

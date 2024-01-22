@@ -123,7 +123,7 @@ fontFamily:fonts.primary
     flightDepAndArrContainer:{
         flexDirection:"row",
         justifyContent:'space-between',
-        width:"35%"
+        width:"35%",
     },
     flightDepAndArrText:{
         fontSize:responsiveHeight(2.3),

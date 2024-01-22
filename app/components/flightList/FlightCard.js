@@ -6,7 +6,7 @@ import { colors, fonts } from '../../config/theme'
 import IconSwitcher from '../common/icons/IconSwitcher'
 import MyContext from '../../context/Context'
 
-const FlightCard = ({ flightGrp, index, bookingPage, segIndex }) => {
+const FlightCard = ({ flightGrp, index, bookingPage, segIndex,removeFilters }) => {
   const { actions, flightsLogosData, flightName, flightResList, bookingFlight ,flightResJType} = useContext(MyContext)
   // var flightArr = flightGrp.map((flight, f) => {
   //   return { ...actions.modifyFlightObject(flight) };
@@ -40,9 +40,13 @@ const FlightCard = ({ flightGrp, index, bookingPage, segIndex }) => {
             <View style={styles.flightLogoContainer}>{flightSymbol(airlinename) ? (
               <Image source={{ uri: flightSymbol(airlinename) }} style={styles.flightLogo} resizeMode='contain' />
             ) : <IconSwitcher componentName='FontAwesome5' iconName='plane-departure' iconsize={3} />}</View>
-            <View style={[{flexDirection:'row',alignItems:'center',columnGap:responsiveWidth(2)},{width:bookingPage?"100%":"60%"}]}>
-              <Text style={styles.airlineName}> {`${item.airlineName}`}</Text>
-              <Text style={styles.flightNumbers}>({flightCode})</Text>
+            <View style={[{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}]}>
+            <View style={{width:"50%"}}>
+            <Text style={styles.airlineName}> {`${item.airlineName}`}</Text>
+            </View>
+       <View style={{width:"40%"}}>
+       <Text style={styles.flightNumbers}>({flightCode})</Text>
+       </View>
               {bookingPage ? (
                 <Text>{item.depTimeDate.toString().slice(4, 10)}</Text>
             ) : null}
@@ -141,6 +145,7 @@ const FlightCard = ({ flightGrp, index, bookingPage, segIndex }) => {
                       },
                       index
                     );
+                    removeFilters()
                   }}>
                     <Text style={styles.bookingButtonText}>{flightResList.length > 1 ? "Select" : "Book"}</Text>
                   </TouchableOpacity> : null
@@ -150,13 +155,13 @@ const FlightCard = ({ flightGrp, index, bookingPage, segIndex }) => {
             <View>
               {bookingPage ?
                 <View style={styles.bookingFlightCityNameAirportName}>
-                  <View>
-                    <Text>{item.originCityName}</Text>
+                  <View style={{width:"50%"}}>
+                    <Text >{item.originCityName}</Text>
                     <Text>{item.originAirportName}</Text>
                   </View>
-                  <View>
+                  <View style={{width:"50%"}}>
                     <Text>{item.destCityName}</Text>
-                    <Text>{item.destAirportName}</Text>
+                    <Text >{item.destAirportName}</Text>
                   </View>
                 </View>
                 : null}
@@ -367,7 +372,8 @@ const styles = StyleSheet.create({
   },
   bookingButtonText: {
     color: colors.white,
-    fontFamily: fonts.textInput
+    fontFamily: fonts.textFont,
+    fontSize:responsiveHeight(1.7)
   },
   viewAllEachCard: {
     rowGap: responsiveHeight(0.9),
