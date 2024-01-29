@@ -16,8 +16,8 @@ const AppNavigator = () => {
     <MyProvider>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Splash" component={Splash} />
-          <Stack.Screen name="Login" component={Login} />
+          {/* <Stack.Screen name="Splash" component={Splash} />
+          <Stack.Screen name="Login" component={Login} /> */}
           <Stack.Screen name="CustomerBottomNavigation" component={BottomNavigation} />
           <Stack.Screen name="OneWayFlights" component={FlightsSearchRes} />
         </Stack.Navigator>

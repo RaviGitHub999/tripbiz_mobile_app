@@ -139,5 +139,31 @@ fontFamily:fonts.primary
         fontSize:responsiveHeight(1.8),
         color:colors.lightGray,
         fontFamily:fonts.textFont
-    }
+    },
+    flightResultsNavMainContainer: {
+        flexDirection: "row",
+        alignSelf: 'center',
+        columnGap: responsiveHeight(2),
+        marginTop: responsiveHeight(2)
+      },
+      flightResultsNavItem: {
+        flexDirection: "row",
+        columnGap: responsiveWidth(2),
+        borderWidth: 1,
+        paddingHorizontal: responsiveWidth(2.5),
+        alignItems: 'center',
+        paddingVertical: responsiveHeight(0.3),
+        borderRadius: responsiveHeight(3)
+      },
+      flightResultsNavSelectedItem: {
+        backgroundColor: colors.black
+      },
+      flightResultsNavItemText: {
+        fontSize: responsiveHeight(1.8),
+        fontFamily: fonts.primary,
+        color: colors.black
+      },
+      flightResultsNavSelectedItemText: {
+        color: colors.white
+      },
 })

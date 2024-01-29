@@ -51,6 +51,12 @@ const FlightBooking = ({navigation}) => {
       const animatedStyles = {
         transform: [{ translateY }],
       };
+      const changeBookIndex = (value) => {
+        setBookIndex(value);
+        setSegIndex(0);
+        // setSeatSegIdx(0);
+        // setSelectedSeats([[], []]);
+      };
       
 //   const memoizedRenderItem = useMemo(() => {
 //     return ({ item, index }) => {
@@ -67,6 +73,7 @@ const FlightBooking = ({navigation}) => {
 const handleBackButtonPress = () => {
     actions.setFlightBookPage(false);
     actions.setBookingFlight([]);
+actions.setFlightResJType(0)
     // navigation.goBack()
   };
     return (
@@ -87,6 +94,33 @@ const handleBackButtonPress = () => {
                     )
                 }} /> 
                  
+      {
+        bookingFlight.length > 1?
+          <View style={styles.flightResultsNavMainContainer}>
+            <TouchableOpacity style={[styles.flightResultsNavItem, bookIndex === 0 && styles.flightResultsNavSelectedItem]} onPress={() => changeBookIndex(0)}>
+              <Text style={[styles.flightResultsNavItemText, bookIndex === 0 && styles.flightResultsNavSelectedItemText]}>{`${bookingFlight[0]?.flightNew?.segments[0]?.originAirportCode}`}</Text>
+              <IconSwitcher componentName='AntDesign' iconName='arrowright' iconsize={3} color={bookIndex === 0 ? colors.white : colors.black} />
+              <Text style={[styles.flightResultsNavItemText, bookIndex === 0 && styles.flightResultsNavSelectedItemText]}>{`${bookingFlight[0]?.flightNew?.segments[0]?.destAirportCode}`}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.flightResultsNavItem, bookIndex === 1 && styles.flightResultsNavSelectedItem]} onPress={() => changeBookIndex(1)}>
+              <Text style={[styles.flightResultsNavItemText, bookIndex === 1 && styles.flightResultsNavSelectedItemText]}>{`${bookingFlight[1]?.flightNew?.segments[0]?.originAirportCode}`}</Text>
+              <IconSwitcher componentName='AntDesign' iconName='arrowright' iconsize={3} color={bookIndex === 1 ? colors.white : colors.black} />
+              <Text style={[styles.flightResultsNavItemText, bookIndex === 1 && styles.flightResultsNavSelectedItemText]}>{`${bookingFlight[1]?.flightNew?.segments[0]?.destAirportCode}`}</Text>
+            </TouchableOpacity>
+          </View> :bookingFlight.length === 1 &&
+              bookingFlight[0].flightNew.segments.length > 1 ?<View style={styles.flightResultsNavMainContainer}>
+            <TouchableOpacity style={[styles.flightResultsNavItem, segIndex === 0 && styles.flightResultsNavSelectedItem]} onPress={() => setSegIndex(0)}>
+              <Text style={[styles.flightResultsNavItemText, segIndex === 0 && styles.flightResultsNavSelectedItemText]}>{`${bookingFlight[0]?.flightNew?.segments[0]?.originAirportCode}`}</Text>
+              <IconSwitcher componentName='AntDesign' iconName='arrowright' iconsize={3} color={segIndex === 0 ? colors.white : colors.black} />
+              <Text style={[styles.flightResultsNavItemText, segIndex === 0 && styles.flightResultsNavSelectedItemText]}>{`${bookingFlight[0]?.flightNew?.segments[0]?.destAirportCode}`}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.flightResultsNavItem, segIndex === 1 && styles.flightResultsNavSelectedItem]} onPress={() => setSegIndex(1)}>
+              <Text style={[styles.flightResultsNavItemText, segIndex === 1 && styles.flightResultsNavSelectedItemText]}>{`${bookingFlight[0]?.flightNew?.segments[1]?.originAirportCode}`}</Text>
+              <IconSwitcher componentName='AntDesign' iconName='arrowright' iconsize={3} color={segIndex === 1 ? colors.white : colors.black} />
+              <Text style={[styles.flightResultsNavItemText, segIndex === 1 && styles.flightResultsNavSelectedItemText]}>{`${bookingFlight[0]?.flightNew?.segments[1]?.destAirportCode}`}</Text>
+            </TouchableOpacity>
+          </View>:null
+      }
                 <View style={styles.baggageAndMealsContainer}>
                     {/* Baggage and Meals */}
                     <Text style={styles.baggageAndMealsTitle}>Baggage and Meals</Text>
@@ -204,9 +238,9 @@ const handleBackButtonPress = () => {
                           return (
                             <View style={{flexDirection:'row',justifyContent:'space-between',marginBottom:10}}>
                               <View style={styles.flightDepAndArrContainer} key={b}>
-                                <Text style={styles.flightDepAndArrText}>{`${book.flightNew.segments[0].originAirportCode}`}</Text>
+                                <Text style={styles.flightDepAndArrText}>{`${book?.flightNew?.segments[0].originAirportCode}`}</Text>
                                 <IconSwitcher componentName='AntDesign' iconName='arrowright' color={colors.secondary} iconsize={2.8} />
-                                <Text style={styles.flightDepAndArrText}>{`${book.flightNew.segments[0].destAirportCode}`}</Text>
+                                <Text style={styles.flightDepAndArrText}>{`${book?.flightNew?.segments[0].destAirportCode}`}</Text>
                               </View>
                               <View >
                                <Text style={[styles.flightPrice,{color:colors.highlight}]}>

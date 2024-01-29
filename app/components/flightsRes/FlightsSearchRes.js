@@ -196,29 +196,29 @@ const FlightsSearchRes = (props) => {
                             <View style={styles.selectedDomesticFlightsmainContainer}>
                                 <View style={styles.selectedDomesticEachFlights}>
                                     <View>
-                                        <Text style={styles.selectedDomesticFlightTimings}>{bookingFlight[0].flightNew.segments[0].depTime}</Text>
-                                        <Text style={styles.selectedDomesticFlightName}>{bookingFlight[0].flightNew.segments[0].originAirportCode}</Text>
+                                        <Text style={styles.selectedDomesticFlightTimings}>{bookingFlight[0]?.flightNew?.segments[0].depTime}</Text>
+                                        <Text style={styles.selectedDomesticFlightName}>{bookingFlight[0]?.flightNew?.segments[0].originAirportCode}</Text>
                                     </View>
                                     <View style={styles.selectedDomesticFlightIconContainer}>
                                     <IconSwitcher componentName='AntDesign' iconName='arrowright' iconsize={3} color={colors.primary}/>
                                     </View>
                                     <View style={styles.selectedDomesticFlightArrContainer}>
-                                        <Text style={styles.selectedDomesticFlightTimings}> {bookingFlight[0].flightNew.segments[0].arrTime}</Text>
-                                        <Text style={styles.selectedDomesticFlightName}>{bookingFlight[0].flightNew.segments[0].destAirportCode}</Text>
+                                        <Text style={styles.selectedDomesticFlightTimings}> {bookingFlight[0]?.flightNew?.segments[0].arrTime}</Text>
+                                        <Text style={styles.selectedDomesticFlightName}>{bookingFlight[0]?.flightNew?.segments[0].destAirportCode}</Text>
                                     </View>
                                 </View>
 
                                 {bookingFlight[1] ?<View style={styles.selectedDomesticEachFlights}>
                                     <View>
-                                        <Text style={styles.selectedDomesticFlightTimings}> {bookingFlight[1].flightNew.segments[0].depTime}</Text>
-                                        <Text style={styles.selectedDomesticFlightName}>{bookingFlight[1].flightNew.segments[0].originAirportCode}</Text>
+                                        <Text style={styles.selectedDomesticFlightTimings}> {bookingFlight[1]?.flightNew?.segments[0].depTime}</Text>
+                                        <Text style={styles.selectedDomesticFlightName}>{bookingFlight[1]?.flightNew?.segments[0].originAirportCode}</Text>
                                     </View>
                                     <View style={styles.selectedDomesticFlightIconContainer}>
                                     <IconSwitcher componentName='AntDesign' iconName='arrowright' iconsize={3} color={colors.primary}/>
                                     </View>
                                     <View style={styles.selectedDomesticFlightArrContainer}>
-                                        <Text style={styles.selectedDomesticFlightTimings}>{bookingFlight[1].flightNew.segments[0].arrTime}</Text>
-                                        <Text style={styles.selectedDomesticFlightName}>{bookingFlight[1].flightNew.segments[0].destAirportCode}</Text>
+                                        <Text style={styles.selectedDomesticFlightTimings}>{bookingFlight[1]?.flightNew?.segments[0].arrTime}</Text>
+                                        <Text style={styles.selectedDomesticFlightName}>{bookingFlight[1]?.flightNew?.segments[0].destAirportCode}</Text>
                                     </View>
                                 </View>:null}
 

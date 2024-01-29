@@ -5,17 +5,21 @@ import {
   Image,
   TouchableOpacity,
   FlatList,
+  Modal,
 } from 'react-native';
-import React, {useCallback, useContext, useEffect} from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {
   responsiveFontSize,
   responsiveHeight,
   responsiveWidth,
 } from '../../utils/responsiveScale';
-import {colors, fonts} from '../../config/theme';
+import { colors, fonts } from '../../config/theme';
 import IconSwitcher from '../common/icons/IconSwitcher';
 import MyContext from '../../context/Context';
-
+const ruleType = {
+  Cancellation: "Cancellation",
+  Reissue: "Date change"
+};
 const FlightCard = ({
   flightGrp,
   index,
@@ -31,7 +35,12 @@ const FlightCard = ({
     bookingFlight,
     flightResJType,
   } = useContext(MyContext);
-  //  console.log(flightGrp.length,"oooooooo",index)
+  var [baggage, setBaggage] = useState(false);
+  var [baggageDtls, setBaggageDtls] = useState({});
+  var [stopDtls, setStopDtls] = useState([]);
+  var [showStopDtls, setShowStopDtls] = useState(false);
+  var [cancellation, setCancellation] = useState(false);
+  var [cancelDtls, setCancelDtls] = useState([]);
   var flightArr = flightGrp.map((flight, f) => {
     return { ...actions.modifyFlightObject(flight) };
   });
@@ -51,7 +60,34 @@ const FlightCard = ({
     },
     [flightsLogosData],
   );
-  const handleRenderingFlightCard = ({item}) => {
+  const handleBaggage = () => {
+    setBaggage(true);
+    setBaggageDtls({
+      baggage: flightArr[0].segments[0].baggage,
+      cabinBaggage: flightArr[0].segments[0].cabinBaggage
+    });
+  }
+  const handleBaggageClose = () => {
+    setBaggage(false);
+    setBaggageDtls({});
+  }
+  const handleStops = (item) => {
+    setStopDtls(item.segRoutes);
+    setShowStopDtls(true);
+  }
+  const handleStopsClose = () => {
+    setStopDtls([]);
+    setShowStopDtls(false);
+  }
+  const handleCancellation = (flight) => {
+    setCancellation(true);
+    setCancelDtls(flightArr[0].fareRules);
+  }
+  const handleCancellationClose = () => {
+    setCancellation(false);
+    setCancelDtls([]);
+  }
+  const handleRenderingFlightCard = ({ item }) => {
     var flightCode = '';
     item.flightCodes.forEach((code, c) => {
       if (c === item.flightCodes.length - 1) {
@@ -61,12 +97,12 @@ const FlightCard = ({
       }
     });
     return (
-      <View style={{rowGap:responsiveHeight(2)}}>
-        <View style={bookingFlight?{flexDirection:'row',alignItems:'center'}:styles.logoHeader}>
+      <View style={{ rowGap: responsiveHeight(2) }}>
+        <View style={bookingFlight ? { flexDirection: 'row', alignItems: 'center' } : styles.logoHeader}>
           <View style={styles.flightLogoContainer}>
             {flightSymbol(airlinename) ? (
               <Image
-                source={{uri: flightSymbol(airlinename)}}
+                source={{ uri: flightSymbol(airlinename) }}
                 style={styles.flightLogo}
                 resizeMode="contain"
               />
@@ -88,17 +124,17 @@ const FlightCard = ({
                 borderBlockColor:'red'
               },
             ]}> */}
-            <View style={bookingFlight?{width:"40%"}:{width:"50%"}}>
-              <Text style={styles.airlineName}> {`${item.airlineName}`}</Text>
+          <View style={bookingFlight ? { width: "40%" } : { width: "50%" }}>
+            <Text style={styles.airlineName}> {`${item.airlineName}`}</Text>
+          </View>
+          <View style={bookingFlight ? { width: "35%" } : { width: "40%", alignItems: 'flex-end' }}>
+            <Text style={styles.flightNumbers}>({flightCode})</Text>
+          </View>
+          {bookingPage ? (
+            <View style={{ backgroundColor: colors.highlight, padding: responsiveHeight(1), borderTopLeftRadius: responsiveHeight(2), borderBottomLeftRadius: responsiveHeight(2) }}>
+              <Text style={{ fontSize: responsiveHeight(1.8), fontFamily: fonts.primary, color: colors.primary }}>{item.depTimeDate.toString().slice(4, 10)}</Text>
             </View>
-            <View style={bookingFlight?{width:"35%"}:{width:"40%",alignItems:'flex-end'}}>
-              <Text style={styles.flightNumbers}>({flightCode})</Text>
-            </View>
-            {bookingPage ? (
-              <View style={{backgroundColor:colors.highlight,padding:responsiveHeight(1),borderTopLeftRadius:responsiveHeight(2),borderBottomLeftRadius:responsiveHeight(2)}}>
-                <Text style={{fontSize:responsiveHeight(1.8),fontFamily:fonts.primary,color:colors.primary}}>{item.depTimeDate.toString().slice(4, 10)}</Text>
-              </View>
-            ) : null}
+          ) : null}
           {/* </View> */}
           <View></View>
         </View>
@@ -108,15 +144,14 @@ const FlightCard = ({
             <Text style={styles.flightTimings}>{item.depTime}</Text>
           </View>
           <View style={styles.directionContainer}>
-            <TouchableOpacity style={styles.stopsBtn}>
+            <TouchableOpacity style={styles.stopsBtn} onPress={() => handleStops(item)}>
               <Text style={styles.stopsBtnText}>
                 {item.stopOverPts.length === 0
                   ? 'Direct'
-                  : `${
-                      item.stopOverPts.length > 1
-                        ? `${item.stopOverPts.length} stops`
-                        : '1 stop'
-                    }`}
+                  : `${item.stopOverPts.length > 1
+                    ? `${item.stopOverPts.length} stops`
+                    : '1 stop'
+                  }`}
               </Text>
               {item.stopOverPts.length !== 0 ? (
                 <IconSwitcher
@@ -127,7 +162,7 @@ const FlightCard = ({
                 />
               ) : null}
             </TouchableOpacity>
-            <View style={{borderTopWidth: 1, borderStyle: 'dashed'}}></View>
+            <View style={{ borderTopWidth: 1, borderStyle: 'dashed' }}></View>
             <Text style={styles.flighttotalTime}>{item.duration}</Text>
           </View>
           <View style={styles.destinationContainer}>
@@ -190,13 +225,13 @@ const FlightCard = ({
           } */}
         {bookingPage ? (
           <View style={styles.bookingFlightCityNameAirportName}>
-            <View style={{width:'50%'}}>
-              <Text style={{fontFamily:fonts.primary,color:colors.primary,fontSize:responsiveHeight(1.5)}}>{item.originCityName}</Text>
-              <Text style={{fontFamily:fonts.subTitle,color:colors.primary,fontSize:responsiveHeight(1.5)}}>{item.originAirportName}</Text>
+            <View style={{ width: '50%' }}>
+              <Text style={{ fontFamily: fonts.primary, color: colors.primary, fontSize: responsiveHeight(1.5) }}>{item.originCityName}</Text>
+              <Text style={{ fontFamily: fonts.subTitle, color: colors.primary, fontSize: responsiveHeight(1.5) }}>{item.originAirportName}</Text>
             </View>
-            <View style={{width:"50%",alignItems:'flex-end',}}>
-              <Text style={{fontFamily:fonts.primary,color:colors.primary,fontSize:responsiveHeight(1.5)}}>{item.destCityName}</Text>
-              <Text style={{fontFamily:fonts.subTitle,color:colors.primary,fontSize:responsiveHeight(1.5)}}>{item.destAirportName}</Text>
+            <View style={{ width: "50%", alignItems: 'flex-end', }}>
+              <Text style={{ fontFamily: fonts.primary, color: colors.primary, fontSize: responsiveHeight(1.5) }}>{item.destCityName}</Text>
+              <Text style={{ fontFamily: fonts.subTitle, color: colors.primary, fontSize: responsiveHeight(1.5) }}>{item.destAirportName}</Text>
             </View>
           </View>
         ) : null}
@@ -208,9 +243,9 @@ const FlightCard = ({
     <View
       style={
         bookingFlight &&
-        bookingFlight[flightResJType]?.arrIndex === index &&
-        !bookingPage
-          ? {...styles.selectedCard}
+          bookingFlight[flightResJType]?.arrIndex === index &&
+          !bookingPage
+          ? { ...styles.selectedCard }
           : styles.mainContainer
       }>
       <FlatList
@@ -225,7 +260,7 @@ const FlightCard = ({
         <View>
           <View style={styles.flightPricesContainer}>
             <View style={styles.luggageBagContainer}>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={handleBaggage}>
                 <IconSwitcher
                   componentName="MaterialCommunityIcons"
                   iconName="bag-suitcase-outline"
@@ -233,7 +268,7 @@ const FlightCard = ({
                   iconsize={3.5}
                 />
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={handleCancellation}>
                 <IconSwitcher
                   componentName="MaterialCommunityIcons"
                   iconName="cancel"
@@ -245,8 +280,8 @@ const FlightCard = ({
             <View>
               <Text
                 style={styles.farePrice}>{`${flightArr[0].fare.toLocaleString(
-                'en-IN',
-              )}`}</Text>
+                  'en-IN',
+                )}`}</Text>
             </View>
             {!bookingPage ? (
               <TouchableOpacity
@@ -278,17 +313,166 @@ const FlightCard = ({
                 {bookingFlight[index].flightNew.fareType}
               </Text>
             </View>
-            <Text style={styles.bookingFlightText}>{`${
-              bookingFlight[index].travellers
-            } ${
-              bookingFlight[index].travellers > 1 ? 'travellers' : 'traveller'
-            }`}</Text>
+            <Text style={styles.bookingFlightText}>{`${bookingFlight[index].travellers
+              } ${bookingFlight[index].travellers > 1 ? 'travellers' : 'traveller'
+              }`}</Text>
             <Text style={styles.bookingFlightText}>
               {flightArr[0].segments[0].cabinClass}
             </Text>
           </View>
         </View>
       )}
+      {/* {baggagePopUp} */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={baggage}>
+        <View style={{ flex: 1 }}>
+          <View style={{ height: "100%", width: "100%", backgroundColor: colors.black, position: "absolute", opacity: 0.5, }}></View>
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginHorizontal: 10 }}>
+            <View style={{ backgroundColor: 'white', width: '100%', height: "20%", paddingVertical: 10, paddingHorizontal: 15, borderRadius: 10 }}>
+              <TouchableOpacity onPress={handleBaggageClose} style={{ alignItems: 'flex-end' }}>
+                <IconSwitcher componentName='Entypo' iconName='cross' iconsize={3} color='black' />
+              </TouchableOpacity>
+              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontFamily: fonts.textInput, color: colors.primary }}>{`${baggageDtls.baggage
+                  ? `Check-In baggage: ${baggageDtls.baggage}`
+                  : ""
+                  }${baggageDtls.baggage && baggageDtls.cabinBaggage ? " | " : ""} ${baggageDtls.cabinBaggage
+                    ? `Cabin baggage: ${baggageDtls.cabinBaggage}`
+                    : ""
+                  }`}</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      {/* {stopsPopUp} */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showStopDtls}>
+        <View style={{ flex: 1 }}>
+          <View style={{ height: "100%", width: "100%", backgroundColor: colors.black, position: "absolute", opacity: 0.5, }}></View>
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginHorizontal: 10 }}>
+            <View style={{ backgroundColor: 'white', width: '100%', paddingVertical: 10, paddingHorizontal: 15, borderRadius: 10 }}>
+              <TouchableOpacity onPress={handleStopsClose} style={{ alignItems: 'flex-end' }}>
+                <IconSwitcher componentName='Entypo' iconName='cross' iconsize={3} color='black' />
+              </TouchableOpacity>
+              <View>
+                {
+                  stopDtls &&
+                  stopDtls.map((stop, s) => {
+                    return (
+
+                      <View>
+                        {
+                          stop.layoverDur ?
+                            <View style={{ flexDirection: 'row' }}>
+                              <IconSwitcher componentName='AntDesign' iconsize={3} iconName='arrowright' color='black' />
+                              <Text> {`Layover for ${stop.layoverDur} in ${stop.arrCity}`}</Text>
+                            </View>
+                            : null
+                        }
+                        <View style={styles.flightsTimingContainer}>
+
+                          <View style={styles.originContainer}>
+                            <Text style={styles.originTitle}>{stop.depTime}</Text>
+                            <Text style={styles.flightTimings}>{stop.originCode}</Text>
+                          </View>
+                          <View style={[styles.directionContainer, { justifyContent: 'center' }]}>
+                            <View style={{ borderTopWidth: 1, borderStyle: 'dashed' }}></View>
+                            <Text style={styles.flighttotalTime}>{stop.flightDur}</Text>
+                          </View>
+                          <View style={styles.destinationContainer}>
+                            <Text style={styles.destinationTitle}> {stop.arrTime}</Text>
+                            <Text style={styles.flightTimings}> {stop.destCode}</Text>
+                          </View>
+                          <View></View>
+                        </View>
+                      </View>
+                    )
+                  })
+                }
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      {/* {CancellationPopUp} */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={cancellation}
+      >
+        <View style={{ flex: 1 }}>
+          <View style={{ height: "100%", width: "100%", backgroundColor: colors.black, position: "absolute", opacity: 0.5, }}></View>
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginHorizontal: 10 }}>
+            <View style={{ backgroundColor: 'white', width: '100%', paddingVertical: 10, paddingHorizontal: 15, borderRadius: 10 }}>
+              <TouchableOpacity style={{ alignItems: 'flex-end' }} onPress={handleCancellationClose}>
+                <IconSwitcher componentName='Entypo' iconName='cross' iconsize={3} color='black' />
+              </TouchableOpacity>
+              <View style={{rowGap:responsiveHeight(1)}}>
+                <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                  <Text>Journey points</Text>
+                  <Text>Type</Text>
+                  <Text>Range</Text>
+                  <Text>Charge</Text>
+                </View>
+                <View style={{borderTopWidth:1}}></View>
+                <View>
+                  {
+                    cancelDtls.map((ruleBlock, ru)=>{
+                      return(
+                        <View key={ru}>
+                        {
+                          ruleBlock.map((rule,r)=>
+                          {
+                            return(
+                              <View style={{flexDirection:'row'}} key={r}>
+                                  <View style={{width:"25%",alignItems:'center',justifyContent:'center'}}>
+                            <Text >{rule.JourneyPoints}</Text>
+                          </View>
+                          <View style={{width:"25%",alignItems:'center',justifyContent:'center'}}>
+                            <Text>{ruleType[rule.Type]}</Text>
+                          </View>
+                          <View style={{width:"25%",alignItems:'center',justifyContent:'center'}}>
+                            <Text>{rule.To === null ||
+                            rule.From === null ||
+                            rule.Unit === null
+                            ? "-"
+                            : rule.To === ""
+                              ? `Upto ${rule.From} ${rule.Unit} from departure`
+                              : rule.From === "0"
+                                ? `After ${rule.To} ${rule.Unit} from departure`
+                                : `Between ${rule.To} & ${rule.From} ${rule.Unit} from departure`}</Text>
+                          </View>
+                          <View style={{width:"25%",alignItems:'center',justifyContent:'center'}}>
+                            <Text>{rule.Details}</Text>
+                          </View>
+                                </View>
+                            )
+                          })
+                        }
+                        </View>
+                      )
+                    })
+                  }
+                  
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+
+
+
+
+
+
+
     </View>
   );
 };
@@ -303,10 +487,10 @@ const styles = StyleSheet.create({
     rowGap: responsiveHeight(2.5),
     // elevation: responsiveHeight(0.8),
     shadowColor: colors.lightGray,
-  shadowOffset: { width: responsiveWidth(1), height: responsiveHeight(1) },
-  shadowOpacity: responsiveHeight(0.3),
-  shadowRadius: responsiveHeight(1),
-  elevation: responsiveHeight(0.4),
+    shadowOffset: { width: responsiveWidth(1), height: responsiveHeight(1) },
+    shadowOpacity: responsiveHeight(0.3),
+    shadowRadius: responsiveHeight(1),
+    elevation: responsiveHeight(0.4),
     marginHorizontal: responsiveWidth(3.5),
     marginTop: responsiveHeight(2.5),
   },

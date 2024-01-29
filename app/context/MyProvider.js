@@ -534,7 +534,9 @@ export default class MyProvider extends Component {
         editFlightSearch: () => {
           this.setState({
             flightResult: {},
-            flightResList: []
+            flightResList: [],
+            searchingFlights:true,
+            flightBookPage:false
           });
         },
         setAirlineName: (value) => {
