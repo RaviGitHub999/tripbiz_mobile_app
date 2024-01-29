@@ -153,7 +153,7 @@ const FlightsSearchRes = (props) => {
         <View style={styles.headerContainer}>
             <View style={styles.header}>
                 <Text style={styles.title}>{`${originSelectedAirport.address.cityName} to ${destinationSelectedAirPort.address.cityName}`}</Text>
-                <TouchableOpacity style={styles.editButton} onPress={() => { props.navigation.goBack(), actions.handlesearchingFlights() ,actions.editFlightSearch()}}>
+                <TouchableOpacity style={styles.editButton} onPress={() => { props.navigation.goBack() ,actions.editFlightSearch()}}>
                     <IconSwitcher componentName='MaterialIcons' iconName='edit' color={colors.white} iconsize={2.3} />
                 </TouchableOpacity>
             </View>
@@ -173,7 +173,7 @@ const FlightsSearchRes = (props) => {
         fetchData();
     }, []);
 
-    console.log("res");
+    console.log(flightResJType,"res");
 
     return (
         <View style={styles.mainContainer}>
@@ -181,9 +181,8 @@ const FlightsSearchRes = (props) => {
             <View style={styles.activeIndicatorMainContainer}>
                 {searchingFlights ? (
                     <View style={styles.activeIndicator}><ProgressBar /></View>
-                ) : flightResult.length === 0 ? (
-                    <Text style={styles.nodata}>{"No Flights Found!!"}</Text>
-                ) :
+                ) 
+                 :
                     <View style={{flex:1}}>
                         {
                             flightBookPage ? <FlightBooking /> : (

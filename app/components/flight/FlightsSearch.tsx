@@ -167,9 +167,9 @@ const FlightsSearch: React.FC<IProps> = ({ navigation: { navigate } }) => {
             {active === "Round Trip" && <SearchInputs datePick="return" btn={true} dropDown={false} placeholder={returnDate} customStyles={{ width: responsiveWidth(41) }} handleDatePicker={handleOpenReturnCalender} />}
           </View>
           <View style={{ flexDirection: "row", justifyContent: 'space-evenly' }}>
-            <DropDown length={10} particularState='adults' />
-            <DropDown length={9} particularState='children' />
-            <DropDown length={9} particularState='infants' />
+            <DropDown length={10} particularState='Adults' />
+            <DropDown length={9} particularState='Children' />
+            <DropDown length={9} particularState='Infants' />
           </View>
           <SearchInputs btn={true} dropDown={true} placeholder='Origin' />
           <View style={styles.searchFlightsBtnConatainer}>

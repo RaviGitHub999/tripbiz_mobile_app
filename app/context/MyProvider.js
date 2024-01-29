@@ -83,7 +83,20 @@ export default class MyProvider extends Component {
       destStartTime: null,
       destEndTime: null,
       stopPts:null,
+      intStopPts1:null,
+      intStopPts2:null,
       flightTravellers: 0,
+      originStartTime: null,
+    originEndTime: null,
+    destStartTime: null,
+    intOriginStartTime1: null,
+    intOriginEndTime1: null,
+    intOriginStartTime2: null,
+    intOriginEndTime2: null,
+    intDestStartTime1: null,
+    intDestEndTime1: null,
+    intDestStartTime2: null,
+    intDestEndTime2: null,
       actions: {
         loginAction:async()=>
         {
@@ -98,13 +111,13 @@ export default class MyProvider extends Component {
         },
         handleDropDownState: (payload) => {
           switch (payload.stateName) {
-            case "adults":
+            case "Adults":
               this.setState({ adults: payload.stateValue })
               break;
-            case "children":
+            case "Children":
               this.setState({ children: payload.stateValue })
               break;
-            case "infants":
+            case "Infants":
               this.setState({ infants: payload.stateValue })
               break;
             default:
@@ -366,59 +379,59 @@ export default class MyProvider extends Component {
         },
         modifyFlightObject: (flight) => {
           var totalDuration = 0;
-          var segments = flight.Segments.map((segment, sg) => {
+          var segments = flight?.Segments?.map((segment, sg) => {
             var seg1 = segment[0];
             var segLast = segment[segment.length - 1];
-
+  
             var originCityName = seg1.Origin.Airport.CityName;
             var originAirportCode = seg1.Origin.Airport.AirportCode;
             var originAirportName = seg1.Origin.Airport.AirportName;
             var originTerminal = seg1.Origin.Airport.Terminal;
-
+  
             var destCityName = segLast.Destination.Airport.CityName;
             var destAirportCode = segLast.Destination.Airport.AirportCode;
             var destAirportName = segLast.Destination.Airport.AirportName;
             var destTerminal = segLast.Destination.Airport.Terminal;
-
+  
             var depTimeDate = new Date(seg1.Origin.DepTime);
             var arrTimeDate = new Date(segLast.Destination.ArrTime);
-
+  
             var depTimeArr = seg1.Origin.DepTime.split("T")[1].split(":");
             var arrTimeArr = segLast.Destination.ArrTime.split("T")[1].split(":");
             var depTime = `${depTimeArr[0]}:${depTimeArr[1]}`;
             var arrTime = `${arrTimeArr[0]}:${arrTimeArr[1]}`;
-
+  
             var durationSum = 0;
-
+  
             var stopOverPts = [];
             var charNum = 0;
-
+  
             var segRoutes = [];
-
+  
             var dur = 0;
             var flightCodes = [];
-
+  
             segment.forEach((seg, s) => {
               var flightCode = `${seg.Airline.AirlineCode} - ${seg.Airline.FlightNumber} ${seg.Airline.FareClass}`;
               flightCodes[s] = flightCode;
-
+  
               var flightDuration =
                 seg.Duration !== 0 ? seg.Duration : seg.AccumulatedDuration;
-
+  
               dur += flightDuration + seg.GroundTime;
-
+  
               durationSum += flightDuration;
-
+  
               if (s > 0) {
                 var currDepTime = seg.Origin.DepTime;
                 var prevArrTime = segment[s - 1].Destination.ArrTime;
-
+  
                 var diffMin = this.state.actions.diffMinutes(
                   prevArrTime,
                   currDepTime
                 );
                 durationSum += diffMin;
-
+  
                 var stopDurationNum = diffMin / 60;
                 var stopDurHours = Math.floor(stopDurationNum);
                 var stopDurMins = Math.ceil(
@@ -426,33 +439,33 @@ export default class MyProvider extends Component {
                 );
                 var stopDuration = `${stopDurHours ? `${stopDurHours}h ` : ""}${stopDurMins !== 0 ? `${stopDurMins}m` : ""
                   }`;
-
+  
                 charNum += seg.Origin.Airport.CityName.length;
-
+  
                 stopOverPts.push({
                   cityName: seg.Origin.Airport.CityName,
                   stopDuration,
                   charNum
                 });
               }
-
+  
               var durNum = flightDuration / 60;
               var durHrs = Math.floor(durNum);
               var durMns = Math.ceil(60 * (durNum - Math.floor(durNum)));
               var durationStr = `${durHrs ? `${durHrs}h ` : ""}${durMns !== 0 ? `${durMns}m` : ""
                 }`;
-
+  
               var dpTimeStr = seg.Origin.DepTime;
               var arTimeStr = seg.Destination.ArrTime;
-
+  
               var depDate = new Date(dpTimeStr);
               var arrDate = new Date(arTimeStr);
-
+  
               var dpTimeArr = dpTimeStr.split("T")[1].split(":");
               var arTimeArr = arTimeStr.split("T")[1].split(":");
               var dpTime = `${dpTimeArr[0]}:${dpTimeArr[1]}`;
               var arTime = `${arTimeArr[0]}:${arTimeArr[1]}`;
-
+  
               segRoutes.push({
                 originCode: seg.Origin.Airport.AirportCode,
                 destCode: seg.Destination.Airport.AirportCode,
@@ -465,21 +478,21 @@ export default class MyProvider extends Component {
                 destCity: seg.Destination.Airport.CityName
               });
             });
-
+  
             var cabinClass = cabinclassMap[segment[0].CabinClass];
             var durationNum = durationSum / 60;
             var durHours = Math.floor(durationNum);
             var durMins = Math.ceil(60 * (durationNum - Math.floor(durationNum)));
             var duration = `${durHours ? `${durHours}h ` : ""}${durMins !== 0 ? `${durMins}m` : ""
               }`;
-
+  
             var arrAfterDays = this.state.actions.diffDays(
               depTimeDate,
               arrTimeDate
             );
-
+  
             totalDuration += dur;
-
+  
             return {
               airlineName: seg1.Airline.AirlineName,
               mainFlgtCode: flightCodes[0],
@@ -506,7 +519,7 @@ export default class MyProvider extends Component {
               cabinClass
             };
           });
-
+  
           return {
             segments,
             fare: flight.Fare.OfferedFare
@@ -525,16 +538,24 @@ export default class MyProvider extends Component {
           });
         },
         setAirlineName: (value) => {
-          console.log("99999999999",value)
           this.setState({
             airlineName: value
           });
         },
         setStopPts: (value) => {
-          console.log(value, "kiran")
           this.setState({
             stopPts: value
           })
+        },
+        setIntStopPts1: (value) => {
+          this.setState({
+            intStopPts1: value
+          });
+        },
+        setIntStopPts2: (value) => {
+          this.setState({
+            intStopPts2: value
+          });
         },
         setOriginStartTime: (value) => {
           this.setState({
@@ -556,25 +577,313 @@ export default class MyProvider extends Component {
             destEndTime: value
           });
         },
+        setIntDestStartTime1: (value) => {
+          this.setState({
+            intDestStartTime1: value
+          });
+        },
+        setIntDestStartTime2: (value) => {
+          this.setState({
+            intDestStartTime2: value
+          });
+        },
+        setIntDestEndTime1: (value) => {
+          this.setState({
+            intDestEndTime1: value
+          });
+        },
+        setIntDestEndTime2: (value) => {
+          this.setState({
+            intDestEndTime2: value
+          });
+        },
+        setIntOriginStartTime1: (value) => {
+          this.setState({
+            intOriginStartTime1: value
+          });
+        },
+        setIntOriginStartTime2: (value) => {
+          this.setState({
+            intOriginStartTime2: value
+          });
+        },
+        setIntOriginEndTime1: (value) => {
+          this.setState({
+            intOriginEndTime1: value
+          });
+        },
+        setIntOriginEndTime2: (value) => {
+          this.setState({
+            intOriginEndTime2: value
+          });
+        },
+        // filterFlights: (flightArr) => {
+        //   var filteredArr = flightArr;
+        //   // if (this.state.byCost) {
+        //   //   filteredArr.sort(
+        //   //     (a, b) => a[0].Fare.PublishedFare - b[0].Fare.PublishedFare
+        //   //   );
+        //   // }
+        //   // if (this.state.byDuration) {
+        //   //   filteredArr.sort((a, b) => {
+        //   //     var aFlight = this.state.actions.modifyFlightObject(a[0]);
+        //   //     var bFlight = this.state.actions.modifyFlightObject(b[0]);
+
+        //   //     var aDur = aFlight.totalDuration;
+        //   //     var bDur = bFlight.totalDuration;
+
+        //   //     return aDur - bDur;
+        //   //   });
+        //   // }
+
+        //   if (this.state.airlineName) {
+        //     filteredArr = filteredArr.filter((a) => {
+        //       var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+        //       return (
+        //         newflightObj.segments[0].airlineName === this.state.airlineName
+        //       );
+        //     });
+        //   }
+  
+        //    if (this.state.stopPts === 0 || this.state.stopPts) {
+        //     filteredArr = filteredArr.filter((a) => {
+        //       var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+        //       return (
+        //         newflightObj.segments[0].stopOverPts.length <= this.state.stopPts
+        //       );
+        //     });
+        //   }
+        //   if (this.state.originStartTime && this.state.originEndTime) {
+        //     if (this.state.originEndTime.getHours() === 23) {
+        //       filteredArr = filteredArr.filter((a) => {
+        //         var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+        //         return (
+        //           new Date(newflightObj.segments[0].arrTimeDate).getHours() >
+        //           this.state.originStartTime.getHours() &&
+        //           (new Date(newflightObj.segments[0].arrTimeDate).getHours() <
+        //             this.state.originEndTime.getHours() ||
+        //             (new Date(newflightObj.segments[0].arrTimeDate).getHours() ===
+        //               this.state.originEndTime.getHours() &&
+        //               new Date(
+        //                 newflightObj.segments[0].arrTimeDate
+        //               ).getMinutes() < this.state.originEndTime.getMinutes()))
+        //         );
+        //       });
+        //     } else {
+        //       filteredArr = filteredArr.filter((a) => {
+        //         var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+        //         return (
+        //           new Date(newflightObj.segments[0].arrTimeDate).getHours() >
+        //           this.state.originStartTime.getHours() &&
+        //           new Date(newflightObj.segments[0].arrTimeDate).getHours() <
+        //           this.state.originEndTime.getHours()
+        //         );
+        //       });
+        //     }
+        //   }
+        //   if (this.state.destStartTime && this.state.destEndTime) {
+        //     if (this.state.destEndTime.getHours() === 23) {
+        //       filteredArr = filteredArr.filter((a) => {
+        //         var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+        //         console.log(
+        //           new Date(newflightObj.segments[0].depTimeDate).getHours(),
+        //           this.state.destStartTime.getHours()
+        //         );
+        //         return (
+        //           new Date(newflightObj.segments[0].depTimeDate).getHours() >
+        //           this.state.destStartTime.getHours() &&
+        //           (new Date(newflightObj.segments[0].depTimeDate).getHours() <
+        //             this.state.destEndTime.getHours() ||
+        //             (new Date(newflightObj.segments[0].depTimeDate).getHours() ===
+        //               this.state.destEndTime.getHours() &&
+        //               new Date(
+        //                 newflightObj.segments[0].depTimeDate
+        //               ).getMinutes() < this.state.destEndTime.getMinutes()))
+        //         );
+        //       });
+        //     } else {
+        //       filteredArr = filteredArr.filter((a) => {
+        //         var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+        //         console.log(
+        //           new Date(newflightObj.segments[0].depTimeDate).getHours(),
+        //           this.state.destStartTime.getHours()
+        //         );
+        //         return (
+        //           new Date(newflightObj.segments[0].depTimeDate).getHours() >
+        //           this.state.destStartTime.getHours() &&
+        //           new Date(newflightObj.segments[0].depTimeDate).getHours() <
+        //           this.state.destEndTime.getHours()
+        //         );
+        //       });
+        //     }
+        //   }
+
+
+
+
+          
+        //   if (this.state.intDestStartTime1 && this.state.intDestEndTime1) {
+        //     if (this.state.intDestEndTime1.getHours() === 23) {
+        //       filteredArr = filteredArr.filter((a) => {
+        //         var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+        //         return (
+        //           new Date(newflightObj.segments[0].depTimeDate).getHours() >
+        //           this.state.intDestStartTime1.getHours() &&
+        //           (new Date(newflightObj.segments[0].depTimeDate).getHours() <
+        //             this.state.intDestEndTime1.getHours() ||
+        //             (new Date(newflightObj.segments[0].depTimeDate).getHours() ===
+        //               this.state.intDestEndTime1.getHours() &&
+        //               new Date(
+        //                 newflightObj.segments[0].depTimeDate
+        //               ).getMinutes() < this.state.intDestEndTime1.getMinutes()))
+        //         );
+        //       });
+        //     } else {
+        //       filteredArr = filteredArr.filter((a) => {
+        //         var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+        //         return (
+        //           new Date(newflightObj.segments[0].depTimeDate).getHours() >
+        //           this.state.intDestStartTime1.getHours() &&
+        //           new Date(newflightObj.segments[0].depTimeDate).getHours() <
+        //           this.state.intDestEndTime1.getHours()
+        //         );
+        //       });
+        //     }
+        //   }
+        //   if (this.state.intDestStartTime2 && this.state.intDestEndTime2) {
+        //     if (this.state.intDestEndTime2.getHours() === 23) {
+        //       filteredArr = filteredArr.filter((a) => {
+        //         var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+        //         return (
+        //           new Date(newflightObj.segments[1].depTimeDate).getHours() >
+        //           this.state.intDestStartTime2.getHours() &&
+        //           (new Date(newflightObj.segments[1].depTimeDate).getHours() <
+        //             this.state.intDestEndTime2.getHours() ||
+        //             (new Date(newflightObj.segments[1].depTimeDate).getHours() ===
+        //               this.state.intDestEndTime2.getHours() &&
+        //               new Date(
+        //                 newflightObj.segments[1].depTimeDate
+        //               ).getMinutes() < this.state.intDestEndTime2.getMinutes()))
+        //         );
+        //       });
+        //     } else {
+        //       filteredArr = filteredArr.filter((a) => {
+        //         var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+        //         return (
+        //           new Date(newflightObj.segments[1].depTimeDate).getHours() >
+        //           this.state.intDestStartTime2.getHours() &&
+        //           new Date(newflightObj.segments[1].depTimeDate).getHours() <
+        //           this.state.intDestEndTime2.getHours()
+        //         );
+        //       });
+        //     }
+        //   }
+        //   if (this.state.intOriginStartTime1 && this.state.intOriginEndTime1) {
+        //     if (this.state.intOriginEndTime1.getHours() === 23) {
+        //       filteredArr = filteredArr.filter((a) => {
+        //         var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+        //         return (
+        //           new Date(newflightObj.segments[0].arrTimeDate).getHours() >
+        //           this.state.intOriginStartTime1.getHours() &&
+        //           (new Date(newflightObj.segments[0].arrTimeDate).getHours() <
+        //             this.state.intOriginEndTime1.getHours() ||
+        //             (new Date(newflightObj.segments[0].arrTimeDate).getHours() ===
+        //               this.state.intOriginEndTime1.getHours() &&
+        //               new Date(
+        //                 newflightObj.segments[0].arrTimeDate
+        //               ).getMinutes() < this.state.intOriginEndTime1.getMinutes()))
+        //         );
+        //       });
+        //     } else {
+        //       filteredArr = filteredArr.filter((a) => {
+        //         var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+        //         console.log(
+        //           new Date(newflightObj.segments[0].arrTimeDate).getHours(),
+        //           this.state.intOriginStartTime1.getHours()
+        //         );
+        //         return (
+        //           new Date(newflightObj.segments[0].arrTimeDate).getHours() >
+        //           this.state.intOriginStartTime1.getHours() &&
+        //           new Date(newflightObj.segments[0].arrTimeDate).getHours() <
+        //           this.state.intOriginEndTime1.getHours()
+        //         );
+        //       });
+        //     }
+        //   }
+        //   if (this.state.intOriginStartTime2 && this.state.intOriginEndTime2) {
+        //     if (this.state.intOriginEndTime2.getHours() === 23) {
+        //       filteredArr = filteredArr.filter((a) => {
+        //         var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+        //         return (
+        //           new Date(newflightObj.segments[1].arrTimeDate).getHours() >
+        //           this.state.intOriginStartTime2.getHours() &&
+        //           (new Date(newflightObj.segments[1].arrTimeDate).getHours() <
+        //             this.state.intOriginEndTime2.getHours() ||
+        //             (new Date(newflightObj.segments[1].arrTimeDate).getHours() ===
+        //               this.state.intOriginEndTime2.getHours() &&
+        //               new Date(
+        //                 newflightObj.segments[1].arrTimeDate
+        //               ).getMinutes() < this.state.intOriginEndTime2.getMinutes()))
+        //         );
+        //       });
+        //     } else {
+        //       filteredArr = filteredArr.filter((a) => {
+        //         var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+        //         return (
+        //           new Date(newflightObj.segments[1].arrTimeDate).getHours() >
+        //           this.state.intOriginStartTime2.getHours() &&
+        //           new Date(newflightObj.segments[1].arrTimeDate).getHours() <
+        //           this.state.intOriginEndTime2.getHours()
+        //         );
+        //       });
+        //     }
+        //   }
+        //   if (this.state.intStopPts1 === 0 || this.state.intStopPts1) {
+        //     filteredArr = filteredArr.filter((a) => {
+        //       var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+        //       return (
+        //         newflightObj.segments[0].stopOverPts.length <=
+        //         this.state.intStopPts1
+        //       );
+        //     });
+        //   }
+        //   if (this.state.intStopPts2 === 0 || this.state.intStopPts2) {
+        //     filteredArr = filteredArr.filter((a) => {
+        //       var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+        //       return (
+        //         newflightObj.segments[1].stopOverPts.length <=
+        //         this.state.intStopPts2
+        //       );
+        //     });
+        //   }
+        //   return filteredArr;
+        // },
         filterFlights: (flightArr) => {
           var filteredArr = flightArr;
-          // if (this.state.byCost) {
-          //   filteredArr.sort(
-          //     (a, b) => a[0].Fare.PublishedFare - b[0].Fare.PublishedFare
-          //   );
-          // }
-          // if (this.state.byDuration) {
-          //   filteredArr.sort((a, b) => {
-          //     var aFlight = this.state.actions.modifyFlightObject(a[0]);
-          //     var bFlight = this.state.actions.modifyFlightObject(b[0]);
-
-          //     var aDur = aFlight.totalDuration;
-          //     var bDur = bFlight.totalDuration;
-
-          //     return aDur - bDur;
-          //   });
-          // }
-
+          if (this.state.byCost) {
+            filteredArr.sort(
+              (a, b) => a[0].Fare.PublishedFare - b[0].Fare.PublishedFare
+            );
+          }
+          if (this.state.byDuration) {
+            filteredArr.sort((a, b) => {
+              var aFlight = this.state.actions.modifyFlightObject(a[0]);
+              var bFlight = this.state.actions.modifyFlightObject(b[0]);
+  
+              var aDur = aFlight.totalDuration;
+              var bDur = bFlight.totalDuration;
+  
+              return aDur - bDur;
+            });
+          }
+          if (this.state.stopPts === 0 || this.state.stopPts) {
+            filteredArr = filteredArr.filter((a) => {
+              var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+              return (
+                newflightObj.segments[0].stopOverPts.length <= this.state.stopPts
+              );
+            });
+          }
           if (this.state.airlineName) {
             filteredArr = filteredArr.filter((a) => {
               var newflightObj = this.state.actions.modifyFlightObject(a[0]);
@@ -583,28 +892,19 @@ export default class MyProvider extends Component {
               );
             });
           }
-  
-           if (this.state.stopPts === 0 || this.state.stopPts) {
-            filteredArr = filteredArr.filter((a) => {
-              var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-              return (
-                newflightObj.segments[0].stopOverPts.length <= this.state.stopPts
-              );
-            });
-          }
           if (this.state.originStartTime && this.state.originEndTime) {
             if (this.state.originEndTime.getHours() === 23) {
               filteredArr = filteredArr.filter((a) => {
                 var newflightObj = this.state.actions.modifyFlightObject(a[0]);
                 return (
-                  new Date(newflightObj.segments[0].arrTimeDate).getHours() >
+                  new Date(newflightObj.segments[0].depTimeDate).getHours() >
                   this.state.originStartTime.getHours() &&
-                  (new Date(newflightObj.segments[0].arrTimeDate).getHours() <
+                  (new Date(newflightObj.segments[0].depTimeDate).getHours() <
                     this.state.originEndTime.getHours() ||
-                    (new Date(newflightObj.segments[0].arrTimeDate).getHours() ===
+                    (new Date(newflightObj.segments[0].depTimeDate).getHours() ===
                       this.state.originEndTime.getHours() &&
                       new Date(
-                        newflightObj.segments[0].arrTimeDate
+                        newflightObj.segments[0].depTimeDate
                       ).getMinutes() < this.state.originEndTime.getMinutes()))
                 );
               });
@@ -612,9 +912,9 @@ export default class MyProvider extends Component {
               filteredArr = filteredArr.filter((a) => {
                 var newflightObj = this.state.actions.modifyFlightObject(a[0]);
                 return (
-                  new Date(newflightObj.segments[0].arrTimeDate).getHours() >
+                  new Date(newflightObj.segments[0].depTimeDate).getHours() >
                   this.state.originStartTime.getHours() &&
-                  new Date(newflightObj.segments[0].arrTimeDate).getHours() <
+                  new Date(newflightObj.segments[0].depTimeDate).getHours() <
                   this.state.originEndTime.getHours()
                 );
               });
@@ -624,20 +924,100 @@ export default class MyProvider extends Component {
             if (this.state.destEndTime.getHours() === 23) {
               filteredArr = filteredArr.filter((a) => {
                 var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-                console.log(
-                  new Date(newflightObj.segments[0].depTimeDate).getHours(),
-                  this.state.destStartTime.getHours()
-                );
                 return (
-                  new Date(newflightObj.segments[0].depTimeDate).getHours() >
+                  new Date(newflightObj.segments[0].arrTimeDate).getHours() >
                   this.state.destStartTime.getHours() &&
-                  (new Date(newflightObj.segments[0].depTimeDate).getHours() <
+                  (new Date(newflightObj.segments[0].arrTimeDate).getHours() <
                     this.state.destEndTime.getHours() ||
-                    (new Date(newflightObj.segments[0].depTimeDate).getHours() ===
+                    (new Date(newflightObj.segments[0].arrTimeDate).getHours() ===
                       this.state.destEndTime.getHours() &&
                       new Date(
-                        newflightObj.segments[0].depTimeDate
+                        newflightObj.segments[0].arrTimeDate
                       ).getMinutes() < this.state.destEndTime.getMinutes()))
+                );
+              });
+            } else {
+              filteredArr = filteredArr.filter((a) => {
+                var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+                return (
+                  new Date(newflightObj.segments[0].arrTimeDate).getHours() >
+                  this.state.destStartTime.getHours() &&
+                  new Date(newflightObj.segments[0].arrTimeDate).getHours() <
+                  this.state.destEndTime.getHours()
+                );
+              });
+            }
+          }
+          if (this.state.intDestStartTime1 && this.state.intDestEndTime1) {
+            if (this.state.intDestEndTime1.getHours() === 23) {
+              filteredArr = filteredArr.filter((a) => {
+                var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+                return (
+                  new Date(newflightObj.segments[0].arrTimeDate).getHours() >
+                  this.state.intDestStartTime1.getHours() &&
+                  (new Date(newflightObj.segments[0].arrTimeDate).getHours() <
+                    this.state.intDestEndTime1.getHours() ||
+                    (new Date(newflightObj.segments[0].arrTimeDate).getHours() ===
+                      this.state.intDestEndTime1.getHours() &&
+                      new Date(
+                        newflightObj.segments[0].arrTimeDate
+                      ).getMinutes() < this.state.intDestEndTime1.getMinutes()))
+                );
+              });
+            } else {
+              filteredArr = filteredArr.filter((a) => {
+                var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+                return (
+                  new Date(newflightObj.segments[0].arrTimeDate).getHours() >
+                  this.state.intDestStartTime1.getHours() &&
+                  new Date(newflightObj.segments[0].arrTimeDate).getHours() <
+                  this.state.intDestEndTime1.getHours()
+                );
+              });
+            }
+          }
+          if (this.state.intDestStartTime2 && this.state.intDestEndTime2) {
+            if (this.state.intDestEndTime2.getHours() === 23) {
+              filteredArr = filteredArr.filter((a) => {
+                var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+                return (
+                  new Date(newflightObj.segments[1].arrTimeDate).getHours() >
+                  this.state.intDestStartTime2.getHours() &&
+                  (new Date(newflightObj.segments[1].arrTimeDate).getHours() <
+                    this.state.intDestEndTime2.getHours() ||
+                    (new Date(newflightObj.segments[1].arrTimeDate).getHours() ===
+                      this.state.intDestEndTime2.getHours() &&
+                      new Date(
+                        newflightObj.segments[1].arrTimeDate
+                      ).getMinutes() < this.state.intDestEndTime2.getMinutes()))
+                );
+              });
+            } else {
+              filteredArr = filteredArr.filter((a) => {
+                var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+                return (
+                  new Date(newflightObj.segments[1].arrTimeDate).getHours() >
+                  this.state.intDestStartTime2.getHours() &&
+                  new Date(newflightObj.segments[1].arrTimeDate).getHours() <
+                  this.state.intDestEndTime2.getHours()
+                );
+              });
+            }
+          }
+          if (this.state.intOriginStartTime1 && this.state.intOriginEndTime1) {
+            if (this.state.intOriginEndTime1.getHours() === 23) {
+              filteredArr = filteredArr.filter((a) => {
+                var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+                return (
+                  new Date(newflightObj.segments[0].depTimeDate).getHours() >
+                  this.state.intOriginStartTime1.getHours() &&
+                  (new Date(newflightObj.segments[0].depTimeDate).getHours() <
+                    this.state.intOriginEndTime1.getHours() ||
+                    (new Date(newflightObj.segments[0].depTimeDate).getHours() ===
+                      this.state.intOriginEndTime1.getHours() &&
+                      new Date(
+                        newflightObj.segments[0].depTimeDate
+                      ).getMinutes() < this.state.intOriginEndTime1.getMinutes()))
                 );
               });
             } else {
@@ -645,156 +1025,63 @@ export default class MyProvider extends Component {
                 var newflightObj = this.state.actions.modifyFlightObject(a[0]);
                 console.log(
                   new Date(newflightObj.segments[0].depTimeDate).getHours(),
-                  this.state.destStartTime.getHours()
+                  this.state.intOriginStartTime1.getHours()
                 );
                 return (
                   new Date(newflightObj.segments[0].depTimeDate).getHours() >
-                  this.state.destStartTime.getHours() &&
+                  this.state.intOriginStartTime1.getHours() &&
                   new Date(newflightObj.segments[0].depTimeDate).getHours() <
-                  this.state.destEndTime.getHours()
+                  this.state.intOriginEndTime1.getHours()
                 );
               });
             }
           }
-
-
-
-
-          
-          // if (this.state.intDestStartTime1 && this.state.intDestEndTime1) {
-          //   if (this.state.intDestEndTime1.getHours() === 23) {
-          //     filteredArr = filteredArr.filter((a) => {
-          //       var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-          //       return (
-          //         new Date(newflightObj.segments[0].arrTimeDate).getHours() >
-          //         this.state.intDestStartTime1.getHours() &&
-          //         (new Date(newflightObj.segments[0].arrTimeDate).getHours() <
-          //           this.state.intDestEndTime1.getHours() ||
-          //           (new Date(newflightObj.segments[0].arrTimeDate).getHours() ===
-          //             this.state.intDestEndTime1.getHours() &&
-          //             new Date(
-          //               newflightObj.segments[0].arrTimeDate
-          //             ).getMinutes() < this.state.intDestEndTime1.getMinutes()))
-          //       );
-          //     });
-          //   } else {
-          //     filteredArr = filteredArr.filter((a) => {
-          //       var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-          //       return (
-          //         new Date(newflightObj.segments[0].arrTimeDate).getHours() >
-          //         this.state.intDestStartTime1.getHours() &&
-          //         new Date(newflightObj.segments[0].arrTimeDate).getHours() <
-          //         this.state.intDestEndTime1.getHours()
-          //       );
-          //     });
-          //   }
-          // }
-          // if (this.state.intDestStartTime2 && this.state.intDestEndTime2) {
-          //   if (this.state.intDestEndTime2.getHours() === 23) {
-          //     filteredArr = filteredArr.filter((a) => {
-          //       var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-          //       return (
-          //         new Date(newflightObj.segments[1].arrTimeDate).getHours() >
-          //         this.state.intDestStartTime2.getHours() &&
-          //         (new Date(newflightObj.segments[1].arrTimeDate).getHours() <
-          //           this.state.intDestEndTime2.getHours() ||
-          //           (new Date(newflightObj.segments[1].arrTimeDate).getHours() ===
-          //             this.state.intDestEndTime2.getHours() &&
-          //             new Date(
-          //               newflightObj.segments[1].arrTimeDate
-          //             ).getMinutes() < this.state.intDestEndTime2.getMinutes()))
-          //       );
-          //     });
-          //   } else {
-          //     filteredArr = filteredArr.filter((a) => {
-          //       var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-          //       return (
-          //         new Date(newflightObj.segments[1].arrTimeDate).getHours() >
-          //         this.state.intDestStartTime2.getHours() &&
-          //         new Date(newflightObj.segments[1].arrTimeDate).getHours() <
-          //         this.state.intDestEndTime2.getHours()
-          //       );
-          //     });
-          //   }
-          // }
-          // if (this.state.intOriginStartTime1 && this.state.intOriginEndTime1) {
-          //   if (this.state.intOriginEndTime1.getHours() === 23) {
-          //     filteredArr = filteredArr.filter((a) => {
-          //       var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-          //       return (
-          //         new Date(newflightObj.segments[0].depTimeDate).getHours() >
-          //         this.state.intOriginStartTime1.getHours() &&
-          //         (new Date(newflightObj.segments[0].depTimeDate).getHours() <
-          //           this.state.intOriginEndTime1.getHours() ||
-          //           (new Date(newflightObj.segments[0].depTimeDate).getHours() ===
-          //             this.state.intOriginEndTime1.getHours() &&
-          //             new Date(
-          //               newflightObj.segments[0].depTimeDate
-          //             ).getMinutes() < this.state.intOriginEndTime1.getMinutes()))
-          //       );
-          //     });
-          //   } else {
-          //     filteredArr = filteredArr.filter((a) => {
-          //       var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-          //       console.log(
-          //         new Date(newflightObj.segments[0].depTimeDate).getHours(),
-          //         this.state.intOriginStartTime1.getHours()
-          //       );
-          //       return (
-          //         new Date(newflightObj.segments[0].depTimeDate).getHours() >
-          //         this.state.intOriginStartTime1.getHours() &&
-          //         new Date(newflightObj.segments[0].depTimeDate).getHours() <
-          //         this.state.intOriginEndTime1.getHours()
-          //       );
-          //     });
-          //   }
-          // }
-          // if (this.state.intOriginStartTime2 && this.state.intOriginEndTime2) {
-          //   if (this.state.intOriginEndTime2.getHours() === 23) {
-          //     filteredArr = filteredArr.filter((a) => {
-          //       var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-          //       return (
-          //         new Date(newflightObj.segments[1].depTimeDate).getHours() >
-          //         this.state.intOriginStartTime2.getHours() &&
-          //         (new Date(newflightObj.segments[1].depTimeDate).getHours() <
-          //           this.state.intOriginEndTime2.getHours() ||
-          //           (new Date(newflightObj.segments[1].depTimeDate).getHours() ===
-          //             this.state.intOriginEndTime2.getHours() &&
-          //             new Date(
-          //               newflightObj.segments[1].depTimeDate
-          //             ).getMinutes() < this.state.intOriginEndTime2.getMinutes()))
-          //       );
-          //     });
-          //   } else {
-          //     filteredArr = filteredArr.filter((a) => {
-          //       var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-          //       return (
-          //         new Date(newflightObj.segments[1].depTimeDate).getHours() >
-          //         this.state.intOriginStartTime2.getHours() &&
-          //         new Date(newflightObj.segments[1].depTimeDate).getHours() <
-          //         this.state.intOriginEndTime2.getHours()
-          //       );
-          //     });
-          //   }
-          // }
-          // if (this.state.intStopPts1) {
-          //   filteredArr = filteredArr.filter((a) => {
-          //     var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-          //     return (
-          //       newflightObj.segments[0].stopOverPts.length <=
-          //       this.state.intStopPts1
-          //     );
-          //   });
-          // }
-          // if (this.state.intStopPts2) {
-          //   filteredArr = filteredArr.filter((a) => {
-          //     var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-          //     return (
-          //       newflightObj.segments[1].stopOverPts.length <=
-          //       this.state.intStopPts2
-          //     );
-          //   });
-          // }
+          if (this.state.intOriginStartTime2 && this.state.intOriginEndTime2) {
+            if (this.state.intOriginEndTime2.getHours() === 23) {
+              filteredArr = filteredArr.filter((a) => {
+                var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+                return (
+                  new Date(newflightObj.segments[1].depTimeDate).getHours() >
+                  this.state.intOriginStartTime2.getHours() &&
+                  (new Date(newflightObj.segments[1].depTimeDate).getHours() <
+                    this.state.intOriginEndTime2.getHours() ||
+                    (new Date(newflightObj.segments[1].depTimeDate).getHours() ===
+                      this.state.intOriginEndTime2.getHours() &&
+                      new Date(
+                        newflightObj.segments[1].depTimeDate
+                      ).getMinutes() < this.state.intOriginEndTime2.getMinutes()))
+                );
+              });
+            } else {
+              filteredArr = filteredArr.filter((a) => {
+                var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+                return (
+                  new Date(newflightObj.segments[1].depTimeDate).getHours() >
+                  this.state.intOriginStartTime2.getHours() &&
+                  new Date(newflightObj.segments[1].depTimeDate).getHours() <
+                  this.state.intOriginEndTime2.getHours()
+                );
+              });
+            }
+          }
+          if (this.state.intStopPts1 === 0 || this.state.intStopPts1) {
+            filteredArr = filteredArr.filter((a) => {
+              var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+              return (
+                newflightObj.segments[0].stopOverPts.length <=
+                this.state.intStopPts1
+              );
+            });
+          }
+          if (this.state.intStopPts2 === 0 || this.state.intStopPts2) {
+            filteredArr = filteredArr.filter((a) => {
+              var newflightObj = this.state.actions.modifyFlightObject(a[0]);
+              return (
+                newflightObj.segments[1].stopOverPts.length <=
+                this.state.intStopPts2
+              );
+            });
+          }
           return filteredArr;
         },
         flightSearch: async () => {
@@ -822,8 +1109,8 @@ export default class MyProvider extends Component {
                 PreferredArrivalTime: outbound
               },
               {
-                Origin: originSelectedAirport.iataCode,
-                Destination: destinationSelectedAirPort.iataCode,
+                Origin:destinationSelectedAirPort.iataCode,
+                Destination: originSelectedAirport.iataCode,
                 FlightCabinClass: cabinClassId,
                 PreferredDepartureTime: inbound,
                 PreferredArrivalTime: inbound
@@ -859,7 +1146,7 @@ export default class MyProvider extends Component {
             .then((res) => res.json())
             .catch((err) => console.log(err));
 
-          // console.log(flightRes);
+          console.log(flightRes);
           this.state.actions.separateFlightsByType(
             flightRes.flightResult.Response.Results
           );

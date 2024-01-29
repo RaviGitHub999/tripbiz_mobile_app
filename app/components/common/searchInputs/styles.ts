@@ -5,7 +5,7 @@ import { colors, fonts } from "../../../config/theme";
 export const styles=StyleSheet.create(
     {
         btnMainContainer:{
-            backgroundColor:"rgb(26, 246, 246)",
+            backgroundColor:"#f6f6f6",
             justifyContent:'center',
             borderRadius:responsiveHeight(1.5),
             paddingHorizontal:responsiveWidth(5),
@@ -19,7 +19,8 @@ export const styles=StyleSheet.create(
             justifyContent:'space-between',
         },
         btnText:{
-            fontSize:responsiveFontSize(2.5)
+            fontSize:responsiveFontSize(2.5),
+            color:colors.gray
         },
         dropDownListContainer:{
             borderWidth:1,
@@ -30,7 +31,7 @@ export const styles=StyleSheet.create(
             paddingVertical:responsiveHeight(0.1)
         },
         textInputContainer:{
-            backgroundColor:"rgb(26, 246, 246)",
+            backgroundColor:"#f6f6f6",
             justifyContent:'center',
             borderRadius:responsiveHeight(1.5),
             paddingHorizontal:responsiveWidth(5)
@@ -48,7 +49,7 @@ export const styles=StyleSheet.create(
            justifyContent:'center',
            paddingHorizontal:responsiveWidth(5),
            borderRadius:responsiveHeight(1.5),
-           backgroundColor:"rgb(26, 246, 246)",
+           backgroundColor:"#f6f6f6",
         },
         selectedAirportContainer:{
             flex:1,
