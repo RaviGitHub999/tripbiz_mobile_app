@@ -41,6 +41,7 @@ const FlightCard = ({
   var [showStopDtls, setShowStopDtls] = useState(false);
   var [cancellation, setCancellation] = useState(false);
   var [cancelDtls, setCancelDtls] = useState([]);
+  var [isOpen, setIsOpen] = useState(false);
   var flightArr = flightGrp.map((flight, f) => {
     return { ...actions.modifyFlightObject(flight) };
   });
@@ -87,7 +88,11 @@ const FlightCard = ({
     setCancellation(false);
     setCancelDtls([]);
   }
+  const toggle = () => {
+    setIsOpen(!isOpen);
+  };
   const handleRenderingFlightCard = ({ item }) => {
+    console.log(item,"first")
     var flightCode = '';
     item.flightCodes.forEach((code, c) => {
       if (c === item.flightCodes.length - 1) {
@@ -169,7 +174,14 @@ const FlightCard = ({
             <Text style={styles.destinationTitle}> {item.destAirportCode}</Text>
             <Text style={styles.flightTimings}> {item.arrTime}</Text>
           </View>
-          <View></View>
+          <View>
+          {/* {
+              <View>
+                <Text>{`+ ${item.arrAfterDays}`}</Text>
+                <Text>{`${item.arrAfterDays > 1 ? "Days" : "Day"}`}</Text>
+                </View>
+            } */}
+          </View>
         </View>
         {/* {!bookingPage ?
             <View>
@@ -279,7 +291,7 @@ const FlightCard = ({
             </View>
             <View>
               <Text
-                style={styles.farePrice}>{`${flightArr[0].fare.toLocaleString(
+                style={styles.farePrice}>{`₹ ${flightArr[0].fare.toLocaleString(
                   'en-IN',
                 )}`}</Text>
             </View>
@@ -322,6 +334,77 @@ const FlightCard = ({
           </View>
         </View>
       )}
+{ flightArr.length > 1?<TouchableOpacity style={styles.viewAllPrice} onPress={toggle}>
+        <Text style={styles.viewAllPriceTitle}>View Prices</Text>
+        <IconSwitcher componentName='Feather' iconName={isOpen ? "chevron-down" : 'chevron-up'} iconsize={2.5} color={colors.black} />
+      </TouchableOpacity>:null}
+     {isOpen&& <View>
+        {
+          flightArr.map((flight, f) => {
+            if (f > 0) {
+              return (
+                <View style={styles.viewPriceCard}>
+                  <Text style={styles.fareType}>{`${flight.fareType}`}</Text>
+                  <View style={styles.flightPricesContainer}>
+                    <View style={styles.luggageBagContainer}>
+                      <TouchableOpacity onPress={() => {
+                        setBaggage(true);
+                        setBaggageDtls({
+                          baggage: flight.segments[0].baggage,
+                          cabinBaggage: flight.segments[0].cabinBaggage
+                        });
+                      }}>
+                        <IconSwitcher
+                          componentName="MaterialCommunityIcons"
+                          iconName="bag-suitcase-outline"
+                          color="black"
+                          iconsize={2.8}
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => {
+                        setCancellation(true);
+                        setCancelDtls(flight.fareRules);
+                      }}>
+                        <IconSwitcher
+                          componentName="MaterialCommunityIcons"
+                          iconName="cancel"
+                          color="black"
+                          iconsize={2.8}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                    <View>
+                      <Text
+                        style={styles.farePrice}>{`₹ ${flight.fare.toLocaleString("en-IN")}`}</Text>
+                    </View>
+                    {!bookingPage ? (
+              <TouchableOpacity
+                style={styles.bookingButton}
+                onPress={() => {
+                  actions.fetchFlightBookData(
+                    flight.resultIndex,
+                    flightGrp[f],
+                    {
+                      baggage: flight.segments[0].baggage,
+                      cabinBaggage: flight.segments[0].cabinBaggage
+                    },
+                    index
+                  );
+                  removeFilters();
+                }}>
+                <Text style={styles.bookingButtonText}>
+                  {flightResList.length > 1 ? 'Select' : 'Book'}
+                </Text>
+              </TouchableOpacity>
+            ) : null}
+                  </View>
+                </View>
+              )
+            }
+          })
+        }
+      </View>}
+
       {/* {baggagePopUp} */}
       <Modal
         animationType="slide"
@@ -412,67 +495,58 @@ const FlightCard = ({
               <TouchableOpacity style={{ alignItems: 'flex-end' }} onPress={handleCancellationClose}>
                 <IconSwitcher componentName='Entypo' iconName='cross' iconsize={3} color='black' />
               </TouchableOpacity>
-              <View style={{rowGap:responsiveHeight(1)}}>
-                <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+              <View style={{ rowGap: responsiveHeight(1) }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Text>Journey points</Text>
                   <Text>Type</Text>
                   <Text>Range</Text>
                   <Text>Charge</Text>
                 </View>
-                <View style={{borderTopWidth:1}}></View>
+                <View style={{ borderTopWidth: 1 }}></View>
                 <View>
                   {
-                    cancelDtls.map((ruleBlock, ru)=>{
-                      return(
+                    cancelDtls.map((ruleBlock, ru) => {
+                      return (
                         <View key={ru}>
-                        {
-                          ruleBlock.map((rule,r)=>
                           {
-                            return(
-                              <View style={{flexDirection:'row'}} key={r}>
-                                  <View style={{width:"25%",alignItems:'center',justifyContent:'center'}}>
-                            <Text >{rule.JourneyPoints}</Text>
-                          </View>
-                          <View style={{width:"25%",alignItems:'center',justifyContent:'center'}}>
-                            <Text>{ruleType[rule.Type]}</Text>
-                          </View>
-                          <View style={{width:"25%",alignItems:'center',justifyContent:'center'}}>
-                            <Text>{rule.To === null ||
-                            rule.From === null ||
-                            rule.Unit === null
-                            ? "-"
-                            : rule.To === ""
-                              ? `Upto ${rule.From} ${rule.Unit} from departure`
-                              : rule.From === "0"
-                                ? `After ${rule.To} ${rule.Unit} from departure`
-                                : `Between ${rule.To} & ${rule.From} ${rule.Unit} from departure`}</Text>
-                          </View>
-                          <View style={{width:"25%",alignItems:'center',justifyContent:'center'}}>
-                            <Text>{rule.Details}</Text>
-                          </View>
+                            ruleBlock.map((rule, r) => {
+                              return (
+                                <View style={{ flexDirection: 'row' }} key={r}>
+                                  <View style={{ width: "25%", alignItems: 'center', justifyContent: 'center' }}>
+                                    <Text >{rule.JourneyPoints}</Text>
+                                  </View>
+                                  <View style={{ width: "25%", alignItems: 'center', justifyContent: 'center' }}>
+                                    <Text>{ruleType[rule.Type]}</Text>
+                                  </View>
+                                  <View style={{ width: "25%", alignItems: 'center', justifyContent: 'center' }}>
+                                    <Text>{rule.To === null ||
+                                      rule.From === null ||
+                                      rule.Unit === null
+                                      ? "-"
+                                      : rule.To === ""
+                                        ? `Upto ${rule.From} ${rule.Unit} from departure`
+                                        : rule.From === "0"
+                                          ? `After ${rule.To} ${rule.Unit} from departure`
+                                          : `Between ${rule.To} & ${rule.From} ${rule.Unit} from departure`}</Text>
+                                  </View>
+                                  <View style={{ width: "25%", alignItems: 'center', justifyContent: 'center' }}>
+                                    <Text>{rule.Details}</Text>
+                                  </View>
                                 </View>
-                            )
-                          })
-                        }
+                              )
+                            })
+                          }
                         </View>
                       )
                     })
                   }
-                  
+
                 </View>
               </View>
             </View>
           </View>
         </View>
       </Modal>
-
-
-
-
-
-
-
-
     </View>
   );
 };
@@ -653,7 +727,7 @@ const styles = StyleSheet.create({
     letterSpacing: responsiveHeight(0.5),
   },
   farePrice: {
-    color: colors.red,
+    color: colors.secondary,
     fontSize: responsiveFontSize(2),
   },
   bookingButton: {
@@ -769,4 +843,27 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: responsiveHeight(2),
   },
+  viewAllPrice: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+    alignItems: 'center',
+    columnGap: responsiveWidth(1)
+  },
+  viewAllPriceTitle: {
+    fontSize: responsiveHeight(1.5),
+    fontFamily: fonts.textFont,
+    color: colors.primary
+  },
+  viewPriceCard:{
+    marginBottom:responsiveHeight(2),
+    padding:responsiveHeight(1.8),
+    borderRadius:responsiveHeight(2),
+    backgroundColor:'#f5f5f5',
+    gap:responsiveHeight(0.5)
+  },
+  fareType:{
+    fontSize:responsiveHeight(1.5),
+    color:"#108bbc",
+    fontFamily:fonts.primary
+  }
 });

@@ -364,17 +364,12 @@ export default class MyProvider extends Component {
           return diffMinutes;
         },
         diffDays: (dateStr1, dateStr2) => {
-          var date1 = new Date(
-            `${dateStr1.getMonth() + 1
-            }/${dateStr1.getDate()}/${dateStr1.getFullYear()}`
-          );
-          var date2 = new Date(
-            `${dateStr2.getMonth() + 1
-            }/${dateStr2.getDate()}/${dateStr2.getFullYear()}`
-          );
+          var date1 = new Date(dateStr1);
+          var date2 = new Date(dateStr2);
 
-          const diffTime = Math.abs(date2 - date1);
+          const diffTime = (date2 - date1);
           const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          console.log(date1,"diffDays")
           return diffDays;
         },
         modifyFlightObject: (flight) => {
@@ -460,7 +455,6 @@ export default class MyProvider extends Component {
   
               var depDate = new Date(dpTimeStr);
               var arrDate = new Date(arTimeStr);
-  
               var dpTimeArr = dpTimeStr.split("T")[1].split(":");
               var arTimeArr = arTimeStr.split("T")[1].split(":");
               var dpTime = `${dpTimeArr[0]}:${dpTimeArr[1]}`;
@@ -618,6 +612,13 @@ export default class MyProvider extends Component {
           this.setState({
             intOriginEndTime2: value
           });
+        },
+        isOpenViewPrices:()=>
+        {
+          flightArr[0].segments.map((ele)=>
+          {
+            console.log(ele.ResultIndex)
+          })
         },
         // filterFlights: (flightArr) => {
         //   var filteredArr = flightArr;
