@@ -22,7 +22,8 @@ export const fonts = {
     black:"#000000",
     lightGray:"#505050",
     red:"red",
-    gray:"#A6A39E"
+    gray:"#A6A39E",
+    whiteSmoke:"#f5f5f5"
   };
  
   export const darkTheme = {
@@ -38,8 +39,8 @@ export const fonts = {
     black:"#000000",
     lightGray:"#505050",
     red:"red",
-    gray:"#A6A39E"
-   
+    gray:"#A6A39E",
+    whiteSmoke:"#f5f5f5"
   };
   
   // const isDarkMode = store.getState()?.Theme?.isDarkMode;

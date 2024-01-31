@@ -92,7 +92,7 @@ const FlightCard = ({
     setIsOpen(!isOpen);
   };
   const handleRenderingFlightCard = ({ item }) => {
-    console.log(item,"first")
+    // console.log(item,"first")
     var flightCode = '';
     item.flightCodes.forEach((code, c) => {
       if (c === item.flightCodes.length - 1) {
@@ -560,10 +560,10 @@ const styles = StyleSheet.create({
     borderRadius: responsiveHeight(2),
     rowGap: responsiveHeight(2.5),
     // elevation: responsiveHeight(0.8),
-    shadowColor: colors.lightGray,
-    shadowOffset: { width: responsiveWidth(1), height: responsiveHeight(1) },
+    shadowColor: colors.black,
+    shadowOffset: { width: responsiveWidth(-0.2), height: responsiveHeight(-5) },
     shadowOpacity: responsiveHeight(0.3),
-    shadowRadius: responsiveHeight(1),
+    shadowRadius: responsiveHeight(3),
     elevation: responsiveHeight(0.4),
     marginHorizontal: responsiveWidth(3.5),
     marginTop: responsiveHeight(2.5),

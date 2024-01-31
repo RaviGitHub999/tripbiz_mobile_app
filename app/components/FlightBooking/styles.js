@@ -5,9 +5,8 @@ import { colors, fonts } from "../../config/theme";
 export const styles=StyleSheet.create({
     mainContainer:{
        flex:1,
-       borderWidth:2,
        alignItems:'center',
-       justifyContent:'center'
+       justifyContent:'center',
     },
     backBtnContainer:{
         justifyContent:'center',
@@ -27,7 +26,7 @@ marginTop:responsiveHeight(1.5)
         paddingHorizontal:responsiveWidth(3)
     },
     baggageDetailsContainer:{
-        borderWidth:1,
+        backgroundColor:colors.whiteSmoke,
         paddingHorizontal:responsiveWidth(4),
         paddingTop:responsiveHeight(1.5),
         borderRadius:responsiveHeight(1.5),
@@ -78,11 +77,11 @@ marginTop:responsiveHeight(1.5)
         color:colors.black,
     },
     cancellationAndDateChangeDetailsContainer:{
-        borderWidth:1,
         paddingHorizontal:responsiveWidth(4),
         paddingTop:responsiveHeight(1.5),
         borderRadius:responsiveHeight(1.5),
-        paddingBottom:responsiveHeight(3)  
+        paddingBottom:responsiveHeight(3)  ,
+       backgroundColor:colors.whiteSmoke
     },
     totalFareContainer:{
         flex:0.5/2 ,
@@ -166,4 +165,25 @@ fontFamily:fonts.primary
       flightResultsNavSelectedItemText: {
         color: colors.white
       },
+      seatSelectionBtnContainer:{
+        backgroundColor:colors.whiteSmoke,
+        paddingVertical:responsiveHeight(1.5),
+        paddingHorizontal:responsiveWidth(3),
+        marginHorizontal:responsiveHeight(1.8),
+        marginTop:responsiveHeight(2),
+        borderRadius:responsiveHeight(1.5),
+      },
+      seatSelectionBtn:{
+        backgroundColor:colors.black,
+        width:responsiveWidth(20),
+        height:responsiveHeight(3.5),
+        borderRadius:responsiveHeight(1.5),
+        alignItems:'center',
+        justifyContent:'center'
+      },
+      seatSelectionBtnTitle:{
+        fontSize:responsiveHeight(1.3),
+        color:colors.white,
+        fontFamily:fonts.primary
+      }
 })

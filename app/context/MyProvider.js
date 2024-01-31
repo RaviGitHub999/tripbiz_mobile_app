@@ -14,6 +14,70 @@ const cabinclassMap = {
   5: "Premium Business class",
   6: "First"
 };
+const seatTypeObj = {
+  0: "Not set",
+  1: "Window",
+  2: "Aisle",
+  3: "Middle",
+  4: "WindowRecline",
+  5: "WindowWing",
+  6: "WindowExitRow",
+  7: "WindowReclineWing",
+  8: "WindowReclineExitRow",
+  9: "WindowWingExitRow",
+  10: "AisleRecline",
+  11: "AisleWing",
+  12: "AisleExitRow",
+  13: "AisleReclineWing",
+  14: "AisleReclineExitRow",
+  15: "AisleWingExitRow",
+  16: "MiddleRecline",
+  17: "MiddleWing",
+  18: "MiddleExitRow",
+  19: "MiddleReclineWing",
+  20: "MiddleReclineExitRow",
+  21: "MiddleWingExitRow",
+  22: "WindowReclineWingExitRow",
+  23: "AisleReclineWingExitRow",
+  24: "MiddleReclineWingExitRow",
+  25: "WindowBulkhead",
+  26: "WindowQuiet",
+  27: "WindowBulkheadQuiet",
+  28: "MiddleBulkhead",
+  29: "MiddleQuiet",
+  30: "MiddleBulkheadQuiet",
+  31: "AisleBulkhead",
+  32: "AisleQuiet",
+  33: "AisleBulkheadQuiet",
+  34: "CentreAisle",
+  35: "CentreMiddle",
+  36: "CentreAisleBulkHead",
+  37: "CentreAisleQuiet",
+  38: "CentreAisleBulkHeadQuiet",
+  39: "CentreMiddleBulkHead",
+  40: "CentreMiddleQuiet",
+  41: "CentreMiddleBulkHeadQuiet",
+  42: "WindowBulkHeadWing",
+  43: "WindowBulkHeadExitRow",
+  44: "MiddleBulkHeadWing",
+  45: "MiddleBulkHeadExitRow",
+  46: "AisleBulkHeadWing",
+  47: "AisleBulkHeadExitRow",
+  48: "NoSeatAtThisLocation",
+  49: "WindowAisle",
+  50: "NoSeatRow",
+  51: "NoSeatRowExit",
+  52: "NoSeatRowWing",
+  53: "NoSeatRowWingExit",
+  54: "WindowAisleRecline",
+  55: "WindowAisleWing",
+  56: "WindowAisleExitRow",
+  57: "WindowAisleReclineWing",
+  58: "WindowAisleReclineExitRow",
+  59: "WindowAisleWingExitRow",
+  60: "WindowAisleBulkhead",
+  61: "WindowAisleBulkheadWing"
+};
 let abortAirportController;
 var fuse = new Fuse(AirportsData, {
   keys: ["cityName", "name", "iataCode", "countryName"],
@@ -369,8 +433,23 @@ export default class MyProvider extends Component {
 
           const diffTime = (date2 - date1);
           const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-          console.log(date1,"diffDays")
+          // console.log(date1,"diffDays")
           return diffDays;
+        },
+        isExitRow: (row) => {
+          var firstSeat = row.Seats[0];
+          var i = 1;
+          while (firstSeat.noSeat && i < row.Seats.length) {
+            firstSeat = row.Seats[i];
+            i++;
+          }
+          if (
+            !firstSeat.noSeat &&
+            seatTypeObj[firstSeat.SeatType].includes("ExitRow")
+          ) {
+            return true;
+          }
+          return false;
         },
         modifyFlightObject: (flight) => {
           var totalDuration = 0;
@@ -619,6 +698,146 @@ export default class MyProvider extends Component {
           {
             console.log(ele.ResultIndex)
           })
+        },
+        validSeatMap: (seatData) => {
+          var valid = false;
+          //console.log(seatData);
+          seatData.SegmentSeat.forEach((seg, s) => {
+            var firstRow = seg.RowSeats[1];
+  
+            if (firstRow.Seats.length === 6) {
+              valid = true;
+            }
+          });
+  
+          return valid;
+        },
+        fillUpRowSeats: (rowSeats) => {
+          var rowsNum = 0;
+          var firstRow = rowSeats[1];
+          rowsNum = Number(firstRow.Seats[0].RowNo) - 1;
+          var rows = [];
+  
+          for (var i = 1; i <= rowsNum; i++) {
+            rows.push({
+              Seats: [
+                {
+                  AvailablityType: 3,
+                  Code: `${i}A`,
+                  RowNo: `${i}`,
+                  SeatNo: "A",
+                  SeatType: 0
+                },
+                {
+                  AvailablityType: 3,
+                  Code: `${i}B`,
+                  RowNo: `${i}`,
+                  SeatNo: "B",
+                  SeatType: 0
+                },
+                {
+                  AvailablityType: 3,
+                  Code: `${i}C`,
+                  RowNo: `${i}`,
+                  SeatNo: "C",
+                  SeatType: 0
+                },
+                {
+                  AvailablityType: 3,
+                  Code: `${i}D`,
+                  RowNo: `${i}`,
+                  SeatNo: "D",
+                  SeatType: 0
+                },
+                {
+                  AvailablityType: 3,
+                  Code: `${i}E`,
+                  RowNo: `${i}`,
+                  SeatNo: "E",
+                  SeatType: 0
+                },
+                {
+                  AvailablityType: 3,
+                  Code: `${i}F`,
+                  RowNo: `${i}`,
+                  SeatNo: "F",
+                  SeatType: 0
+                }
+              ]
+            });
+          }
+  
+          rowSeats.shift();
+  
+          var seatsNo = {
+            0: "A",
+            1: "B",
+            2: "C",
+            3: "D",
+            4: "E",
+            5: "F"
+          };
+  
+          rowSeats.forEach((row, r) => {
+            if (row.Seats.length < 6) {
+              var i = 0;
+              var s = 0;
+              var seats = [];
+              while (s < 6) {
+                if (
+                  (row.Seats[i] && row.Seats[i].SeatNo !== seatsNo[s]) ||
+                  !row.Seats[i]
+                ) {
+                  seats[s] = { noSeat: true };
+                } else {
+                  seats[s] = { ...row.Seats[i] };
+                  i++;
+                }
+                s++;
+              }
+  
+              row.Seats = [...seats];
+              // console.log("Filled seats", seats);
+            }
+          });
+          return [...rows, ...rowSeats];
+        },
+        fillUpSegmentSeats: (seatData) => {
+          var seatDataNew = seatData.map((seatSeg, s) => {
+            return {
+              RowSeats: this.state.actions.fillUpRowSeats(seatSeg.RowSeats)
+            };
+          });
+  
+          return seatDataNew;
+        },
+        getWingPos: (rowSeats) => {
+          var wingPosArr = [];
+  
+          rowSeats.forEach((row, r) => {
+            var firstSeat = row.Seats[0];
+            var i = 1;
+            while (firstSeat.noSeat && i < row.Seats.length) {
+              firstSeat = row.Seats[i];
+              i++;
+            }
+  
+            if (
+              !firstSeat.noSeat &&
+              seatTypeObj[firstSeat.SeatType].includes("Wing")
+            ) {
+              wingPosArr.push(firstSeat.RowNo);
+            }
+          });
+  
+          return wingPosArr;
+        },
+        getWingPosArr: (seatData) => {
+          var wingPosArr = seatData.map((seatSeg, s) => {
+            return [...this.state.actions.getWingPos(seatSeg.RowSeats)];
+          });
+  
+          return wingPosArr;
         },
         // filterFlights: (flightArr) => {
         //   var filteredArr = flightArr;
