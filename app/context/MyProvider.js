@@ -805,7 +805,7 @@ export default class MyProvider extends Component {
         fillUpSegmentSeats: (seatData) => {
           var seatDataNew = seatData.map((seatSeg, s) => {
             return {
-              RowSeats: this.state.actions.fillUpRowSeats(seatSeg.RowSeats)
+              RowSeats:seatSeg.RowSeats
             };
           });
   
