@@ -1,4 +1,4 @@
-import { Animated, Modal, Text, View, FlatList, ScrollView, TouchableOpacity } from 'react-native'
+import { Animated, Modal, Text, View, FlatList, ScrollView, TouchableOpacity, StyleSheet } from 'react-native'
 import React, { useCallback, useContext, useMemo, useRef, useState } from 'react'
 import IconSwitcher from '../common/icons/IconSwitcher'
 import MyContext from '../../context/Context'
@@ -303,46 +303,113 @@ const FlightBooking = ({ navigation }) => {
                             <IconSwitcher componentName='Entypo' iconName='cross' iconsize={3} color='black' />
                         </TouchableOpacity>
                         <View>
-                            {
-                                seatData[seatSegIdx] &&
-                                seatData[seatSegIdx].RowSeats.map((row, r) => {
-                                    return (
-                                        <>
-                                            {
-                                                actions.isExitRow(row) ? (
-                                                    <View>
-                                                        <View style={{borderWidth:1,flexDirection:'row',paddingHorizontal:5,justifyContent:"space-between"}}>
+                        {/* <View >
+            {seatData[seatSegIdx] &&
+              seatData[seatSegIdx].RowSeats.map((row, r) => {
+                return (
+                  <>
+                  {
+                   actions.isExitRow(row) ?
+                   <View style={{paddingHorizontal: 35,marginBottom:10}}>
+                        <View style={{borderWidth:1,flexDirection:'row',height:30,justifyContent:"space-between",alignItems:'center'}}>
                                                             <IconSwitcher componentName='Feather' iconName='chevrons-left' color={colors.black} iconsize={3} />
                                                             <Text> Emergency exit</Text>
                                                             <IconSwitcher componentName='Feather' iconName='chevrons-right' color={colors.black} iconsize={3} />
                                                         </View>
-                                                        <View>
-                                                            {
-                                                             wingPosArr &&
-                                                             wingPosArr.length > 0 &&
-                                                             row.Seats &&
-                                                             row.Seats[0] &&
-                                                             wingPosArr[seatSegIdx].includes(row.Seats[0].RowNo)?
-                                                             <View style={!actions.isExitRow(row)?wingPosArr[seatSegIdx].indexOf(
-                                                                row.Seats[0].RowNo
-                                                              ) === 0?{borderTopWidth:1,borderTopLeftRadius:3}: wingPosArr[seatSegIdx].indexOf(
-                                                                row.Seats[0].RowNo
-                                                              ) ===
-                                                                wingPosArr[seatSegIdx].length - 1
-                                                                ?{}:{}:{}}>
-                                                                
-                                                            </View>
-                                                            // <View style={{borderTopWidth:2,width:40}}/>
-                                                             :null   
-                                                            }
-                                                        </View>
-                                                    </View>
-                                                ) : null
-                                            }
-                                        </>
-                                    )
-                                })
-                            }
+                   </View> :null
+                  }
+                    <View>
+                      {wingPosArr &&
+                        wingPosArr.length > 0 &&
+                        row.Seats &&
+                        row.Seats[0] &&
+                        wingPosArr[seatSegIdx].includes(row.Seats[0].RowNo) ? (
+<View style={!actions.isExitRow(row)
+                              ? wingPosArr[seatSegIdx].indexOf(
+                                row.Seats[0].RowNo
+                              ) === 0?
+[wingsStyles.rightWing ,wingsStyles.rightWingFirst]  : wingPosArr[seatSegIdx].indexOf(
+    row.Seats[0].RowNo
+  ) ===
+    wingPosArr[seatSegIdx].length - 1
+    ?[wingsStyles.rightWing ,wingsStyles.rightWingLast]:wingsStyles.rightWing:wingsStyles.rightWing}></View>
+                        
+                      ) : null}
+
+{wingPosArr &&
+                        wingPosArr.length > 0 &&
+                        row.Seats &&
+                        row.Seats[0] &&
+                        wingPosArr[seatSegIdx].includes(row.Seats[0].RowNo) ? (
+<View style={!actions.isExitRow(row)
+                              ? wingPosArr[seatSegIdx].indexOf(
+                                row.Seats[0].RowNo
+                              ) === 0?
+[wingsStyles.leftWing ,wingsStyles.leftWingFirst]  : wingPosArr[seatSegIdx].indexOf(
+    row.Seats[0].RowNo
+  ) ===
+    wingPosArr[seatSegIdx].length - 1
+    ?[wingsStyles.leftWing ,wingsStyles.leftWingLast]:wingsStyles.leftWing:wingsStyles.leftWing}></View>
+                        
+                      ) : null}
+                    </View>
+                  </>
+                );
+              })}
+          </View> */}
+        {  seatData[seatSegIdx] && <FlatList data={seatData[seatSegIdx].RowSeats} renderItem={({item:row})=>
+        {
+            return (
+                <>
+                {
+                 actions.isExitRow(row) ?
+                 <View style={{paddingHorizontal: 35,marginBottom:10}}>
+                      <View style={{borderWidth:1,flexDirection:'row',height:30,justifyContent:"space-between",alignItems:'center'}}>
+                                                          <IconSwitcher componentName='Feather' iconName='chevrons-left' color={colors.black} iconsize={3} />
+                                                          <Text> Emergency exit</Text>
+                                                          <IconSwitcher componentName='Feather' iconName='chevrons-right' color={colors.black} iconsize={3} />
+                                                      </View>
+                 </View> :null
+                }
+                <Text>kwndjhs</Text>
+                  <View>
+                    {wingPosArr &&
+                      wingPosArr.length > 0 &&
+                      row.Seats &&
+                      row.Seats[0] &&
+                      wingPosArr[seatSegIdx].includes(row.Seats[0].RowNo) ? (
+<View style={!actions.isExitRow(row)
+                            ? wingPosArr[seatSegIdx].indexOf(
+                              row.Seats[0].RowNo
+                            ) === 0?
+[wingsStyles.rightWing ,wingsStyles.rightWingFirst]  : wingPosArr[seatSegIdx].indexOf(
+  row.Seats[0].RowNo
+) ===
+  wingPosArr[seatSegIdx].length - 1
+  ?[wingsStyles.rightWing ,wingsStyles.rightWingLast]:wingsStyles.rightWing:wingsStyles.rightWing}></View>
+                      
+                    ) : null}
+
+{wingPosArr &&
+                      wingPosArr.length > 0 &&
+                      row.Seats &&
+                      row.Seats[0] &&
+                      wingPosArr[seatSegIdx].includes(row.Seats[0].RowNo) ? (
+<View style={!actions.isExitRow(row)
+                            ? wingPosArr[seatSegIdx].indexOf(
+                              row.Seats[0].RowNo
+                            ) === 0?
+[wingsStyles.leftWing ,wingsStyles.leftWingFirst]  : wingPosArr[seatSegIdx].indexOf(
+  row.Seats[0].RowNo
+) ===
+  wingPosArr[seatSegIdx].length - 1
+  ?[wingsStyles.leftWing ,wingsStyles.leftWingLast]:wingsStyles.leftWing:wingsStyles.leftWing}></View>
+                      
+                    ) : null}
+                  </View>
+                </>
+              );
+        }}/>}
                         </View>
                     </View>
 
@@ -353,5 +420,38 @@ const FlightBooking = ({ navigation }) => {
         </View>
     )
 }
-
+const wingsStyles=StyleSheet.create({
+  rightWing:{
+    borderRightWidth:1,
+    height:60,
+    width:30,
+    position:'absolute',
+  left:0,
+    top:0
+  },
+  rightWingFirst:{
+    borderTopWidth:1,
+    borderTopRightRadius:8
+  },
+  rightWingLast:{
+    borderBottomWidth:1,
+    borderBottomRightRadius:8
+  },
+  leftWing:{
+    borderLeftWidth:1,
+    height:60,
+    width:30,
+    position:'absolute',
+    right:0,
+    top:0,
+  },
+  leftWingFirst:{
+    borderTopWidth:1,
+    borderTopLeftRadius:8
+  },
+  leftWingLast:{
+    borderBottomWidth:1,
+    borderBottomLeftRadius:8
+  },
+})
 export default (FlightBooking)
