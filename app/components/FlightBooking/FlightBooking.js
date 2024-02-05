@@ -5,17 +5,28 @@ import MyContext from '../../context/Context'
 import ProgressBar from '../common/progressBar/ProgressBar'
 import { styles } from './styles'
 import FlightCard from '../flightList/FlightCard'
-import { colors } from '../../config/theme'
+import { colors, fonts } from '../../config/theme'
 import Select from '../common/select/Select'
 import { responsiveHeight, responsiveWidth } from '../../utils/responsiveScale'
+const seatsSelect = (seatsSeg, pax, seatCode) => {
+    if (!seatsSeg) {
+        seatsSeg = [];
+    }
+    var rmSeat = null;
+    if (seatsSeg.length >= pax) {
+        rmSeat = seatsSeg.shift();
+    }
+    seatsSeg.push(seatCode);
 
+    return { seatsSeg, rmSeat };
+};
 const FlightBooking = ({ navigation }) => {
     var [bookIndex, setBookIndex] = useState(0);
     var [segIndex, setSegIndex] = useState(0);
     var [seatSegIdx, setSeatSegIdx] = useState(0);
     var [selectSeats, setSelectSeats] = useState(false);
     var [seatData, setSeatData] = useState([]);
-    var [selectedSeats, setSelectedSeats] = useState([[], []]);
+    var [selectedSeats, setSelectedSeats] = useState(([[], []]));
     var [wingPosArr, setWingPosArr] = useState([]);
     var [fareIsOpen, setFareIsOpen] = useState(false);
     var [submitIsOpen, setSubmitIsOpen] = useState(false);
@@ -46,15 +57,15 @@ const FlightBooking = ({ navigation }) => {
         inputRange: [0, 1],
         outputRange: [300, 0],
     });
-
+    // console.log(selectSeats,"......")
     const animatedStyles = {
         transform: [{ translateY }],
     };
     const changeBookIndex = (value) => {
         setBookIndex(value);
         setSegIndex(0);
-        // setSeatSegIdx(0);
-        // setSelectedSeats([[], []]);
+        setSeatSegIdx(0);
+        setSelectedSeats([[], []]);
     };
     const handleSeatSelectionPopUp = () => {
         setSelectSeats(true);
@@ -85,6 +96,57 @@ const FlightBooking = ({ navigation }) => {
         actions.setFlightResJType(0)
         // navigation.goBack()
     };
+    // const handleSeatSelection = (seat) => {
+    //     console.log("first", seat);
+
+    //     return !seat.noSeat && seat.AvailablityType === 1
+    //       ? () => {
+    //           var seats = [...selectedSeats];
+    //           console.log(seats, ".............../");
+
+    //           if (
+    //             seats[segIndex] &&
+    //             seats[segIndex][seatSegIdx] &&
+    //             seats[segIndex][seatSegIdx].includes(seat.Code)
+    //           ) {
+    //             seats[segIndex][seatSegIdx] = seats[segIndex][seatSegIdx].filter(
+    //               (seatCode) => seatCode !== seat.Code
+    //             );
+    //             actions.handleChangeFlightBook(
+    //               null,
+    //               "seats",
+    //               bookIndex,
+    //               segIndex,
+    //               null,
+    //               seatSegIdx,
+    //               seat.Code
+    //             );
+    //           } else {
+    //             var { seatsSeg, rmSeat } = seatsSelect(
+    //               seats[segIndex][seatSegIdx],
+    //               Number(bookingFlight[bookIndex].adults) +
+    //                 Number(bookingFlight[bookIndex].child),
+    //               seat.Code
+    //             );
+    //             seats[segIndex][seatSegIdx] = [...seatsSeg];
+
+    //             actions.handleChangeFlightBook(
+    //               null,
+    //               "seats",
+    //               bookIndex,
+    //               segIndex,
+    //               seat,
+    //               seatSegIdx,
+    //               rmSeat
+    //             );
+    //           }
+
+    //           setSelectedSeats(seats);
+    //         }
+    //       :
+    //   };
+
+
     return (
         <View style={{ flex: 1 }}>
             <TouchableOpacity onPress={handleBackButtonPress} style={styles.backBtnContainer}>
@@ -239,8 +301,19 @@ const FlightBooking = ({ navigation }) => {
                         bookingFlight[bookIndex].seatData &&
                             bookingFlight[bookIndex].seatData[segIndex] &&
                             actions.validSeatMap(bookingFlight[bookIndex].seatData[segIndex]) ? <View style={styles.seatSelectionBtnContainer}>
+                                <View>
+                                    <Text>Selected seats:</Text>
+                                    <View style={{backgroundColor:colors.white,width:responsiveWidth(30),paddingVertical:responsiveHeight(1),paddingHorizontal:responsiveWidth(2)}}>
+                                    <View style={{flexDirection:"row",alignItems:'center'}}>
+                                    <Text>hyd</Text>
+                                    <IconSwitcher componentName='AntDesign' iconName='arrowright' color='black' iconsize={2} />
+                                    <Text>bom</Text>
+                                    </View>
+                                    <Text>8B</Text>
+                                </View>
+                                </View>
                             <TouchableOpacity style={styles.seatSelectionBtn} onPress={handleSeatSelectionPopUp}>
-                                <Text style={styles.seatSelectionBtnTitle}>Select seats</Text>
+                                <Text style={styles.seatSelectionBtnTitle}>Select seats</Text>  
                             </TouchableOpacity>
                         </View> : null
                     }
@@ -292,241 +365,254 @@ const FlightBooking = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
             </View>
-            {/* <Modal
+            <Modal
                 animationType="slide"
                 visible={selectSeats}
             >
                 <View style={{ height: "100%", width: "100%", backgroundColor: colors.black, position: "absolute", opacity: 0.5, }}></View>
-                <View style={{ alignItems: 'center', justifyContent: 'center', marginHorizontal: 10 }}>
-                    <View style={{ backgroundColor: 'white', paddingVertical: 10, paddingHorizontal: 15, borderRadius: 10,borderWidth:1,flex:1 }}>
-                        <TouchableOpacity onPress={() => setSelectSeats(false)} style={{ alignItems: 'flex-end' }}>
+                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginHorizontal: 10 }}>
+                    <View style={styles.flightSeatsDataCard}>
+                        <TouchableOpacity onPress={() => setSelectSeats(false)} style={{ alignItems: 'flex-end' ,margin:10}}>
                             <IconSwitcher componentName='Entypo' iconName='cross' iconsize={3} color='black' />
                         </TouchableOpacity>
-                        <View>
-                        {/* <View >
-            {seatData[seatSegIdx] &&
-              seatData[seatSegIdx].RowSeats.map((row, r) => {
-                return (
-                  <>
-                  {
-                   actions.isExitRow(row) ?
-                   <View style={{paddingHorizontal: 35,marginBottom:10}}>
-                        <View style={{borderWidth:1,flexDirection:'row',height:30,justifyContent:"space-between",alignItems:'center'}}>
-                                                            <IconSwitcher componentName='Feather' iconName='chevrons-left' color={colors.black} iconsize={3} />
-                                                            <Text> Emergency exit</Text>
-                                                            <IconSwitcher componentName='Feather' iconName='chevrons-right' color={colors.black} iconsize={3} />
-                                                        </View>
-                   </View> :null
+                        {bookingFlight[bookIndex].seats &&
+            bookingFlight[bookIndex].seats[segIndex] &&
+            bookingFlight[bookIndex].seats[segIndex][seatSegIdx] &&
+            Object.keys(bookingFlight[bookIndex].seats[segIndex][seatSegIdx])
+              .length > 0 ?
+                            <View style={styles.selectedSeatContainer}>
+                                <Text style={styles.selectedSeatTitle}>Selected seats</Text>
+                               <View style={{flexDirection:"row"}}>
+                               {Object.keys(
+                  bookingFlight[bookIndex].seats[segIndex][seatSegIdx]
+                ).map((seatCode, c) => {
+                  if (
+                    c ===
+                    Object.keys(
+                      bookingFlight[bookIndex].seats[segIndex][seatSegIdx]
+                    ).length -
+                    1
+                  ) {
+                    return   <Text style={styles.seatCode}>{seatCode}</Text>;
                   }
-                    <View>
-                      {wingPosArr &&
-                        wingPosArr.length > 0 &&
-                        row.Seats &&
-                        row.Seats[0] &&
-                        wingPosArr[seatSegIdx].includes(row.Seats[0].RowNo) ? (
-<View style={!actions.isExitRow(row)
-                              ? wingPosArr[seatSegIdx].indexOf(
-                                row.Seats[0].RowNo
-                              ) === 0?
-[wingsStyles.rightWing ,wingsStyles.rightWingFirst]  : wingPosArr[seatSegIdx].indexOf(
-    row.Seats[0].RowNo
-  ) ===
-    wingPosArr[seatSegIdx].length - 1
-    ?[wingsStyles.rightWing ,wingsStyles.rightWingLast]:wingsStyles.rightWing:wingsStyles.rightWing}></View>
-                        
-                      ) : null}
+                  return  <Text style={styles.seatCode}>{`${seatCode}, `}</Text>;
+                })}
+                                </View>
+                            </View>
+                            :null
+                        }
+                        {seatData[seatSegIdx] && <FlatList data={seatData[seatSegIdx].RowSeats} renderItem={({ item: row }) => {
+                            return (
+                                <>
+                                    {
+                                        actions.isExitRow(row) ?
+                                            <View style={wingsStyles.emergencyExitMainContainer}>
+                                                <View style={wingsStyles.emergencyExitContainer}>
+                                                    <IconSwitcher componentName='Feather' iconName='chevrons-left' color={colors.emergency} iconsize={3} />
+                                                    <Text style={wingsStyles.emergencyText}> Emergency exit</Text>
+                                                    <IconSwitcher componentName='Feather' iconName='chevrons-right' color={colors.emergency} iconsize={3} />
+                                                </View>
+                                            </View> : null
+                                    }
 
-{wingPosArr &&
-                        wingPosArr.length > 0 &&
-                        row.Seats &&
-                        row.Seats[0] &&
-                        wingPosArr[seatSegIdx].includes(row.Seats[0].RowNo) ? (
-<View style={!actions.isExitRow(row)
-                              ? wingPosArr[seatSegIdx].indexOf(
-                                row.Seats[0].RowNo
-                              ) === 0?
-[wingsStyles.leftWing ,wingsStyles.leftWingFirst]  : wingPosArr[seatSegIdx].indexOf(
-    row.Seats[0].RowNo
-  ) ===
-    wingPosArr[seatSegIdx].length - 1
-    ?[wingsStyles.leftWing ,wingsStyles.leftWingLast]:wingsStyles.leftWing:wingsStyles.leftWing}></View>
-                        
-                      ) : null}
+                                    <View>
+                                        {wingPosArr &&
+                                            wingPosArr.length > 0 &&
+                                            row.Seats &&
+                                            row.Seats[0] &&
+                                            wingPosArr[seatSegIdx].includes(row.Seats[0].RowNo) ? (
+                                            <View style={!actions.isExitRow(row)
+                                                ? wingPosArr[seatSegIdx].indexOf(
+                                                    row.Seats[0].RowNo
+                                                ) === 0 ?
+                                                    [wingsStyles.rightWing, wingsStyles.rightWingFirst] : wingPosArr[seatSegIdx].indexOf(
+                                                        row.Seats[0].RowNo
+                                                    ) ===
+                                                        wingPosArr[seatSegIdx].length - 1
+                                                        ? [wingsStyles.rightWing, wingsStyles.rightWingLast] : wingsStyles.rightWing : wingsStyles.rightWing}></View>
+
+                                        ) : null}
+                                        <View style={{ alignSelf: 'center' }}>
+                                            <FlatList
+                                                data={row?.Seats}
+                                                numColumns={6}
+                                                keyExtractor={(seat, index) => index.toString()}
+                                                renderItem={({ item, index }) => (
+                                                    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+
+                                                        <TouchableOpacity style={[wingsStyles.flightBookSeat, index % 6 === 2 ? wingsStyles.spaceBetween : null, item.AvailablityType === 3 ? wingsStyles.flightBookSeatReserved : item.AvailablityType === 1 ? [wingsStyles.flightBookSeat, { borderWidth: 1 }] : wingsStyles.flightBookSeat, bookingFlight[bookIndex].seats &&
+                                                            bookingFlight[bookIndex].seats[segIndex] &&
+                                                            bookingFlight[bookIndex].seats[segIndex][
+                                                            seatSegIdx
+                                                            ] &&
+                                                            bookingFlight[bookIndex].seats[segIndex][
+                                                            seatSegIdx
+                                                            ][item.Code] ? { backgroundColor: '#0080007c' } : "",
+                                                        item.Code==="NoSeat"?{width:"100%"}:null]}
+                                                            disabled={item.AvailablityType === 3 && true}
+                                                            onPress={!item.noSeat && item.AvailablityType === 1
+                                                                ? () => {
+                                                                    var seats = [...selectedSeats];
+                                                                    if (
+                                                                        seats[segIndex] &&
+                                                                        seats[segIndex][seatSegIdx] &&
+                                                                        seats[segIndex][
+                                                                            seatSegIdx
+                                                                        ].includes(item.Code)
+                                                                    ) {
+                                                                        seats[segIndex][seatSegIdx] = seats[
+                                                                            segIndex
+                                                                        ][seatSegIdx].filter(
+                                                                            (seatCode, c) => {
+                                                                                return seatCode !== item.Code;
+                                                                            }
+                                                                        );
+                                                                        actions.handleChangeFlightBook(
+                                                                            null,
+                                                                            "seats",
+                                                                            bookIndex,
+                                                                            segIndex,
+                                                                            null,
+                                                                            seatSegIdx,
+                                                                            item.Code
+                                                                        );
+                                                                    } else {
+                                                                        var { seatsSeg, rmSeat } =
+                                                                            seatsSelect(
+                                                                                seats[segIndex][seatSegIdx],
+                                                                                Number(
+                                                                                    bookingFlight[bookIndex]
+                                                                                        .adults
+                                                                                ) +
+                                                                                Number(
+                                                                                    bookingFlight[bookIndex]
+                                                                                        .child
+                                                                                ),
+                                                                                item.Code
+                                                                            );
+                                                                        seats[segIndex][seatSegIdx] = [
+                                                                            ...seatsSeg
+                                                                        ];
+
+                                                                        actions.handleChangeFlightBook(
+                                                                            null,
+                                                                            "seats",
+                                                                            bookIndex,
+                                                                            segIndex,
+                                                                            item,
+                                                                            seatSegIdx,
+                                                                            rmSeat
+                                                                        );
+                                                                    }
+
+                                                                    setSelectedSeats(seats);
+                                                                }
+                                                                : null}
+
+
+                                                        >
+                                                            <Text style={{ fontSize: responsiveHeight(1.5) }}>{item.Code}</Text>
+                                                        </TouchableOpacity>
+                                                        {item.Price ? <View style={[index % 6 === 2 ? wingsStyles.spaceBetween : null]}>
+                                                            <Text style={{ fontSize: responsiveHeight(1.5) }}>{`${item.Price.toLocaleString("en-IN")}`}</Text>
+                                                        </View> : <Text></Text>}
+                                                    </View>
+                                                )}
+                                            />
+                                        </View>
+
+                                        {wingPosArr &&
+                                            wingPosArr.length > 0 &&
+                                            row.Seats &&
+                                            row.Seats[0] &&
+                                            wingPosArr[seatSegIdx].includes(row.Seats[0].RowNo) ? (
+                                            <View style={!actions.isExitRow(row)
+                                                ? wingPosArr[seatSegIdx].indexOf(
+                                                    row.Seats[0].RowNo
+                                                ) === 0 ?
+                                                    [wingsStyles.leftWing, wingsStyles.leftWingFirst] : wingPosArr[seatSegIdx].indexOf(
+                                                        row.Seats[0].RowNo
+                                                    ) ===
+                                                        wingPosArr[seatSegIdx].length - 1
+                                                        ? [wingsStyles.leftWing, wingsStyles.leftWingLast] : wingsStyles.leftWing : wingsStyles.leftWing}></View>
+
+                                        ) : null}
+                                    </View>
+                                </>
+                            );
+                        }} />}
                     </View>
-                  </>
-                );
-              })}
-          </View> */}
-        {  seatData[seatSegIdx] && <FlatList data={seatData[seatSegIdx].RowSeats} renderItem={({item:row})=>
-        {
-            return (
-                <>
-                {
-                 actions.isExitRow(row) ?
-                 <View style={{paddingHorizontal: 35,marginBottom:10}}>
-                      <View style={{borderWidth:1,flexDirection:'row',height:30,justifyContent:"space-between",alignItems:'center'}}>
-                                                          <IconSwitcher componentName='Feather' iconName='chevrons-left' color={colors.black} iconsize={3} />
-                                                          <Text> Emergency exit</Text>
-                                                          <IconSwitcher componentName='Feather' iconName='chevrons-right' color={colors.black} iconsize={3} />
-                                                      </View>
-                 </View> :null
-                }
-                <Text>kwndjhs</Text>
-                  <View>
-                    {wingPosArr &&
-                      wingPosArr.length > 0 &&
-                      row.Seats &&
-                      row.Seats[0] &&
-                      wingPosArr[seatSegIdx].includes(row.Seats[0].RowNo) ? (
-<View style={!actions.isExitRow(row)
-                            ? wingPosArr[seatSegIdx].indexOf(
-                              row.Seats[0].RowNo
-                            ) === 0?
-[wingsStyles.rightWing ,wingsStyles.rightWingFirst]  : wingPosArr[seatSegIdx].indexOf(
-  row.Seats[0].RowNo
-) ===
-  wingPosArr[seatSegIdx].length - 1
-  ?[wingsStyles.rightWing ,wingsStyles.rightWingLast]:wingsStyles.rightWing:wingsStyles.rightWing}></View>
-                      
-                    ) : null}
 
-{wingPosArr &&
-                      wingPosArr.length > 0 &&
-                      row.Seats &&
-                      row.Seats[0] &&
-                      wingPosArr[seatSegIdx].includes(row.Seats[0].RowNo) ? (
-<View style={!actions.isExitRow(row)
-                            ? wingPosArr[seatSegIdx].indexOf(
-                              row.Seats[0].RowNo
-                            ) === 0?
-[wingsStyles.leftWing ,wingsStyles.leftWingFirst]  : wingPosArr[seatSegIdx].indexOf(
-  row.Seats[0].RowNo
-) ===
-  wingPosArr[seatSegIdx].length - 1
-  ?[wingsStyles.leftWing ,wingsStyles.leftWingLast]:wingsStyles.leftWing:wingsStyles.leftWing}></View>
-                      
-                    ) : null}
-                  </View>
-                </>
-              );
-        }}/>}
-                        </View>
-                    </View>
-
-                    <View>
-                    </View>
-                </View>
-            </Modal> */}
-            <Modal
-                animationType="slide"
-                visible={selectSeats}>
-                <View style={{ height: "100%", width: "100%", backgroundColor: colors.black, position: "absolute", opacity: 0.5, }}></View>
-                <View style={{  flex: 1, justifyContent: 'center', paddingHorizontal: responsiveWidth(2) }}>
-                    <View >
-                        <TouchableOpacity onPress={() => setSelectSeats(false)} style={{ alignItems: 'flex-end' }}>
-                            <IconSwitcher componentName='Entypo' iconName='cross' iconsize={3} color='black' />
-                        </TouchableOpacity>
-                        <View style={{borderWidth:1,alignItems:'center',justifyContent:'center',flexDirection:'row',height:"80%"}}>
-                        {/* <View style={{borderWidth:1,width:"10%",height:50}}></View> */}
-                        <View style={{alignItems:'center',borderWidth:1}}>
-                           <View >
-                           {
-  seatData[seatSegIdx] && <FlatList
-  style={{borderColor:'green',borderWidth:3}}
-  data={seatData[seatSegIdx]?.RowSeats}
-  keyExtractor={(row, index) => index.toString()}
-  renderItem={({ item: row,index }) => (
-    <View>
-        
-       {/* {actions.isExitRow(row)&&<View style={{borderTopWidth:1,borderBottomWidth:1,borderRightWidth:1,position:"absolute",height:200,width:20,top:-50,left:-22,}}/>} */}
-                              {actions.isExitRow(row) ?  <View style={{borderWidth:1,flexDirection:'row',paddingHorizontal:5,justifyContent:"space-between"}}>
-                                                            <IconSwitcher componentName='Feather' iconName='chevrons-left' color={colors.black} iconsize={3} />
-                                                            <Text> Emergency exit</Text>
-                                                            <IconSwitcher componentName='Feather' iconName='chevrons-right' color={colors.black} iconsize={3} />
-                                                        </View>
-                                                        :null}
-                                                        {/* {actions.isExitRow(row)&&<View style={{borderTopWidth:1,borderBottomWidth:1,borderLeftWidth:1,position:"absolute",height:200,width:20,top:-50,right:-22}}/>}        */}
-        <FlatList
-      data={row?.Seats}
-      numColumns={6}
-      keyExtractor={(seat, index) => index.toString()}
-      renderItem={({ item, index }) => (
-       <View>
-      
-         <View style={[style.item, index % 6 === 2 ? style.spaceBetween : null]}>
-          <Text>{item.Code}</Text>
-          {/* <Text>{`${item.Price.toLocaleString("en-IN")} /-`}</Text> */}
-        </View>
-        </View>
-      )}
-    />
-    </View>
-  )}
-/>
-
-
-}
-
-                           </View>
-                        </View>
-                        {/* <View style={{borderWidth:1,width:"10%",height:50}}></View> */}
-                        </View>
-                    </View>
                 </View>
             </Modal>
         </View>
     )
 }
-const wingsStyles=StyleSheet.create({
-  rightWing:{
-    borderRightWidth:1,
-    height:60,
-    width:30,
-    position:'absolute',
-  left:0,
-    top:0
-  },
-  rightWingFirst:{
-    borderTopWidth:1,
-    borderTopRightRadius:8
-  },
-  rightWingLast:{
-    borderBottomWidth:1,
-    borderBottomRightRadius:8
-  },
-  leftWing:{
-    borderLeftWidth:1,
-    height:60,
-    width:30,
-    position:'absolute',
-    right:0,
-    top:0,
-  },
-  leftWingFirst:{
-    borderTopWidth:1,
-    borderTopLeftRadius:8
-  },
-  leftWingLast:{
-    borderBottomWidth:1,
-    borderBottomLeftRadius:8
-  },
-})
-export default (FlightBooking)
-const style = StyleSheet.create({
-    item: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: 35, 
-      width:35,
-      borderWidth: 1, 
-      margin:5,
-    //   padding:10
-    // flexWrap:"wrap"
+const wingsStyles = StyleSheet.create({
+    rightWing: {
+        borderRightWidth: 1,
+        height: responsiveHeight(7),
+        width: responsiveWidth(9),
+        position: 'absolute',
+        left: 0,
+        top: 0
+    },
+    rightWingFirst: {
+        borderTopWidth: responsiveHeight(0.2),
+        borderTopRightRadius: responsiveHeight(1)
+    },
+    rightWingLast: {
+        borderBottomWidth: responsiveHeight(0.2),
+        borderBottomRightRadius: responsiveHeight(1)
+    },
+    leftWing: {
+        borderLeftWidth: responsiveHeight(0.2),
+        height: responsiveHeight(7),
+        width: responsiveWidth(9),
+        position: 'absolute',
+        right: 0,
+        top: 0,
+    },
+    leftWingFirst: {
+        borderTopWidth: responsiveHeight(0.2),
+        borderTopLeftRadius: responsiveHeight(1)
+    },
+    leftWingLast: {
+        borderBottomWidth: responsiveHeight(0.2),
+        borderBottomLeftRadius: responsiveHeight(1)
+    },
+    flightBookSeat: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: 'center',
+        height: responsiveHeight(3.5),
+        width: responsiveHeight(3.5),
+        // borderWidth:responsiveHeight(0.1),
+        margin: responsiveHeight(0.8),
+        borderRadius: responsiveHeight(1),
+        backgroundColor: colors.whiteSmoke
     },
     spaceBetween: {
-      marginRight: 30, 
-      
+        marginRight: responsiveWidth(15)
     },
-  });
-  
+    emergencyExitMainContainer: {
+        paddingHorizontal: responsiveWidth(10),
+        marginVertical: responsiveHeight(1)
+    },
+    emergencyExitContainer: {
+        flexDirection: 'row',
+        height: responsiveHeight(3.5),
+        justifyContent: "space-between",
+        alignItems: 'center',
+        backgroundColor: '#f1dcdc'
+    },
+    emergencyText: {
+        fontSize: responsiveHeight(1.8),
+        fontFamily: fonts.primary,
+        color: colors.emergency
+    },
+    flightBookSeatReserved: {
+        backgroundColor: "#8d8d8d",
+    }
+})
+export default (FlightBooking)

@@ -185,5 +185,29 @@ fontFamily:fonts.primary
         fontSize:responsiveHeight(1.3),
         color:colors.white,
         fontFamily:fonts.primary
-      }
+      },
+      selectedSeatContainer:{
+        backgroundColor:colors.whiteSmoke,
+        marginHorizontal:responsiveWidth(2),
+        paddingHorizontal:responsiveWidth(2),
+        rowGap:responsiveHeight(0.5),
+        paddingVertical:responsiveHeight(0.8),
+        borderRadius:responsiveHeight(1.5)
+      },
+      selectedSeatTitle:{
+        fontSize:responsiveHeight(2),
+        fontFamily:fonts.textFont,
+        color:colors.primary,
+    },
+    seatCode:{
+        fontSize:responsiveHeight(2),
+        fontFamily:fonts.primary,
+        color:colors.highlight,
+    },
+    flightSeatsDataCard:{
+        borderRadius:responsiveHeight(2), 
+        backgroundColor: 'white', 
+        marginVertical: responsiveHeight(10),
+         width: "100%" 
+    }
 })
