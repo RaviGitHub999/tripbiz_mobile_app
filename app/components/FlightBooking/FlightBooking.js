@@ -292,13 +292,13 @@ const FlightBooking = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
             </View>
-            <Modal
+            {/* <Modal
                 animationType="slide"
                 visible={selectSeats}
             >
                 <View style={{ height: "100%", width: "100%", backgroundColor: colors.black, position: "absolute", opacity: 0.5, }}></View>
-                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginHorizontal: 10 }}>
-                    <View style={{ backgroundColor: 'white', width: '100%', paddingVertical: 10, paddingHorizontal: 15, borderRadius: 10 }}>
+                <View style={{ alignItems: 'center', justifyContent: 'center', marginHorizontal: 10 }}>
+                    <View style={{ backgroundColor: 'white', paddingVertical: 10, paddingHorizontal: 15, borderRadius: 10,borderWidth:1,flex:1 }}>
                         <TouchableOpacity onPress={() => setSelectSeats(false)} style={{ alignItems: 'flex-end' }}>
                             <IconSwitcher componentName='Entypo' iconName='cross' iconsize={3} color='black' />
                         </TouchableOpacity>
@@ -416,6 +416,63 @@ const FlightBooking = ({ navigation }) => {
                     <View>
                     </View>
                 </View>
+            </Modal> */}
+            <Modal
+                animationType="slide"
+                visible={selectSeats}>
+                <View style={{ height: "100%", width: "100%", backgroundColor: colors.black, position: "absolute", opacity: 0.5, }}></View>
+                <View style={{  flex: 1, justifyContent: 'center', paddingHorizontal: responsiveWidth(2) }}>
+                    <View >
+                        <TouchableOpacity onPress={() => setSelectSeats(false)} style={{ alignItems: 'flex-end' }}>
+                            <IconSwitcher componentName='Entypo' iconName='cross' iconsize={3} color='black' />
+                        </TouchableOpacity>
+                        <View style={{borderWidth:1,alignItems:'center',justifyContent:'center',flexDirection:'row',height:"80%"}}>
+                        {/* <View style={{borderWidth:1,width:"10%",height:50}}></View> */}
+                        <View style={{alignItems:'center',borderWidth:1}}>
+                           <View >
+                           {
+  seatData[seatSegIdx] && <FlatList
+  style={{borderColor:'green',borderWidth:3}}
+  data={seatData[seatSegIdx]?.RowSeats}
+  keyExtractor={(row, index) => index.toString()}
+  renderItem={({ item: row,index }) => (
+    <View>
+        
+       {/* {actions.isExitRow(row)&&<View style={{borderTopWidth:1,borderBottomWidth:1,borderRightWidth:1,position:"absolute",height:200,width:20,top:-50,left:-22,}}/>} */}
+                              {actions.isExitRow(row) ?  <View style={{borderWidth:1,flexDirection:'row',paddingHorizontal:5,justifyContent:"space-between"}}>
+                                                            <IconSwitcher componentName='Feather' iconName='chevrons-left' color={colors.black} iconsize={3} />
+                                                            <Text> Emergency exit</Text>
+                                                            <IconSwitcher componentName='Feather' iconName='chevrons-right' color={colors.black} iconsize={3} />
+                                                        </View>
+                                                        :null}
+                                                        {/* {actions.isExitRow(row)&&<View style={{borderTopWidth:1,borderBottomWidth:1,borderLeftWidth:1,position:"absolute",height:200,width:20,top:-50,right:-22}}/>}        */}
+        <FlatList
+      data={row?.Seats}
+      numColumns={6}
+      keyExtractor={(seat, index) => index.toString()}
+      renderItem={({ item, index }) => (
+       <View>
+      
+         <View style={[style.item, index % 6 === 2 ? style.spaceBetween : null]}>
+          <Text>{item.Code}</Text>
+          {/* <Text>{`${item.Price.toLocaleString("en-IN")} /-`}</Text> */}
+        </View>
+        </View>
+      )}
+    />
+    </View>
+  )}
+/>
+
+
+}
+
+                           </View>
+                        </View>
+                        {/* <View style={{borderWidth:1,width:"10%",height:50}}></View> */}
+                        </View>
+                    </View>
+                </View>
             </Modal>
         </View>
     )
@@ -455,3 +512,21 @@ const wingsStyles=StyleSheet.create({
   },
 })
 export default (FlightBooking)
+const style = StyleSheet.create({
+    item: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: 35, 
+      width:35,
+      borderWidth: 1, 
+      margin:5,
+    //   padding:10
+    // flexWrap:"wrap"
+    },
+    spaceBetween: {
+      marginRight: 30, 
+      
+    },
+  });
+  
