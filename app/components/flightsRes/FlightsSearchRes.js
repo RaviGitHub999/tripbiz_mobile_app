@@ -177,7 +177,7 @@ const FlightsSearchRes = (props) => {
 
     return (
         <View style={styles.mainContainer}>
-            {renderHeader()}
+            {!flightBookPage?renderHeader():null}
             <View style={styles.activeIndicatorMainContainer}>
                 {searchingFlights ? (
                     <View style={styles.activeIndicator}><ProgressBar /></View>

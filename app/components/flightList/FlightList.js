@@ -50,11 +50,13 @@ const sortData =
   [
     {
       title: "Price",
-      des: "Lowest to Highest"
+      des: "Lowest to Highest",
+      id:0
     },
     {
       title: "Duration",
-      des: "Shortest to Longest"
+      des: "Shortest to Longest",
+      id:1
     },
   ]
 const FlightList = ({ index, props }) => {
@@ -76,6 +78,7 @@ const FlightList = ({ index, props }) => {
   const [cost, setCost] = useState(true)
   var [showFilters, setShowFilters] = useState(false);
   const [duration, setDuration] = useState(false);
+  const[sortInd,setSortInd]=useState(0)
   const { actions,
     flightResList,
     internationalFlights,
@@ -191,6 +194,18 @@ const FlightList = ({ index, props }) => {
         <Text style={[styles.flightName, airline === item && styles.selectedFlightName]}>{item}</Text>
       </TouchableOpacity>
     )
+  }
+  const handleCost=()=>
+  {
+    setCost(true)
+    setDuration(false)
+    setSortInd(0)
+  }
+  const handleDuration=()=>
+  {
+    setCost(false)
+    setDuration(true)
+    setSortInd(1)
   }
   const arrHandleTimeClick = (time) => {
     const startDate = new Date();
@@ -381,8 +396,8 @@ const FlightList = ({ index, props }) => {
     actions.setOriginEndTime(null);
     actions.setStopPts(null);
     actions.setAirlineName("");
-    // actions.setByCost(true);
-    // actions.setByDuration(false);
+    actions.setByCost(true);
+    actions.setByDuration(false);
     actions.setIntDestEndTime1(null)
     actions.setIntDestEndTime2(null)
     actions.setIntDestStartTime1(null)
@@ -405,6 +420,7 @@ const FlightList = ({ index, props }) => {
     setIntStops2(null);
     setCost(true)
     setDuration(false)
+    setSortInd(0)
   };
   var applyFilters = () => {
     setShowFilters(false)
@@ -449,10 +465,13 @@ const FlightList = ({ index, props }) => {
     }
     depHandleTimeClick(depSelectedTime)
     if (depSelectedTime) {
-      // countUpdate++;
       setCount((prev) => prev + 1);
     }
-    // setCount((prev) => prev + countUpdate);
+    actions.setByCost(cost)
+    actions.setByDuration(duration)
+    if (duration) {
+      setCount((prev) => prev + 1);
+    }
   }
   const addToObj = (item) => {
     if (!airports[item]) {
@@ -610,10 +629,10 @@ const FlightList = ({ index, props }) => {
               </View>
               <View style={styles.sortingMainContainer}>
                 <Text style={styles.filterTitles}>{"Sort"}</Text>
-                <FlatList data={sortData} renderItem={({ item }) => {
+                <FlatList data={sortData} renderItem={({ item,index }) => {
                   return (
-                    <TouchableOpacity style={styles.sortingBtnsContainer}>
-                      <Text style={styles.sortingBtnText}>{`${item.title}(${item.des})`}</Text>
+                    <TouchableOpacity style={item.id===sortInd?[styles.sortingBtnsContainer,styles.sortingBtnsSelectedContainer]:styles.sortingBtnsContainer} onPress={item.title==="Price"?handleCost:handleDuration}>
+                      <Text style={item.id===sortInd?[styles.sortingBtnText,styles.sortingBtnSelectedText]:styles.sortingBtnText}>{`${item.title}(${item.des})`}</Text>
                     </TouchableOpacity>
                   )
                 }} horizontal />
@@ -873,11 +892,17 @@ const styles = StyleSheet.create({
     paddingVertical: responsiveHeight(0.5),
     borderRadius: responsiveHeight(2)
   },
+  sortingBtnsSelectedContainer:{
+backgroundColor:colors.primary
+  },
   sortingBtnText:
   {
     fontSize: responsiveHeight(1.5),
     fontFamily: fonts.primary,
     color: colors.black
+  },
+  sortingBtnSelectedText:{
+color:colors.white
   },
   sortingMainContainer: {
     rowGap: responsiveHeight(1.5)

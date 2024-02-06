@@ -172,6 +172,7 @@ fontFamily:fonts.primary
         marginHorizontal:responsiveHeight(1.8),
         marginTop:responsiveHeight(2),
         borderRadius:responsiveHeight(1.5),
+        rowGap:responsiveHeight(1)
       },
       seatSelectionBtn:{
         backgroundColor:colors.black,
@@ -209,5 +210,35 @@ fontFamily:fonts.primary
         backgroundColor: 'white', 
         marginVertical: responsiveHeight(10),
          width: "100%" 
+    },
+    selectedSeat:{
+        fontSize:responsiveHeight(2.6),
+        // fontFamily:fonts.primary,
+        color:colors.black,
+    },
+    flightBookSelectSeatsSegNav:{
+flexDirection:'row',
+marginHorizontal:responsiveWidth(2),
+columnGap:responsiveWidth(2),
+padding:responsiveHeight(1)
+    },
+    flightBookSelectSeatsSegNavItem:
+    {
+borderWidth:1,
+paddingHorizontal:responsiveHeight(1),
+paddingVertical:responsiveHeight(0.5),
+borderRadius:responsiveHeight(1.8)
+    },
+    flightBookSelectSeatsSegNavItemText:
+    {
+        fontSize:responsiveHeight(1.5),
+        fontFamily:fonts.textFont,
+        color:colors.primary,
+    },
+    flightBookSelectSeatsSegNavSelectedItem:{
+backgroundColor:colors.primary
+    },
+    flightBookSelectSeatsSegNavItemSelectedText:{
+color:colors.white
     }
 })

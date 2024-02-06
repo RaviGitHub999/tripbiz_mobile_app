@@ -147,6 +147,8 @@ export default class MyProvider extends Component {
       destStartTime: null,
       destEndTime: null,
       stopPts:null,
+      byDuration: false,
+      byCost: true,
       intStopPts1:null,
       intStopPts2:null,
       flightTravellers: 0,
@@ -692,6 +694,16 @@ export default class MyProvider extends Component {
             intOriginEndTime2: value
           });
         },
+        setByDuration: async (value) => {
+          this.setState({
+            byDuration: value
+          });
+        },
+        setByCost: async (value) => {
+          this.setState({
+            byCost: value
+          });
+        },
         isOpenViewPrices:()=>
         {
           flightArr[0].segments.map((ele)=>
@@ -805,7 +817,7 @@ export default class MyProvider extends Component {
         fillUpSegmentSeats: (seatData) => {
           var seatDataNew = seatData.map((seatSeg, s) => {
             return {
-              RowSeats:seatSeg.RowSeats
+              RowSeats:this.state.actions.fillUpRowSeats(seatSeg.RowSeats)
             };
           });
   
