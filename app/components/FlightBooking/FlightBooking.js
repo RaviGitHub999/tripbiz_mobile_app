@@ -34,7 +34,7 @@ const FlightBooking = ({ navigation }) => {
     var [activeTab, setActiveTab] = useState('tab1');
     const [isOpen, setIsOpen] = useState(false);
     const animatedValue = useRef(new Animated.Value(0)).current;
-    const { actions, flightBookDataLoading, bookingFlight } = useContext(MyContext)
+    const { actions, flightBookDataLoading, bookingFlight ,domesticFlight,internationalFlight,isInternationalRound} = useContext(MyContext)
     var { totalFareSum, totalSeatCharges, totalBaggagePrice, totalMealPrice } =
         actions.getTotalFares(bookingFlight);
     if (flightBookDataLoading) {
@@ -298,7 +298,7 @@ const FlightBooking = ({ navigation }) => {
                     }
                 </ScrollView>
             </View>
-            <View style={[styles.totalFareContainer, isOpen && { flex: 0.7 }]}>
+            <View style={[styles.totalFareContainer, isOpen && { flex: 1 }]}>
                 <View >
                     <TouchableOpacity onPress={toggleView} style={styles.totalFareToggleIconContainer}>
                         <IconSwitcher componentName='Ionicons' iconName={isOpen ? "chevron-down-sharp" : 'chevron-up-sharp'} color={colors.black} iconsize={3} />
@@ -322,11 +322,42 @@ const FlightBooking = ({ navigation }) => {
                                                     : Math.ceil(
                                                         book.flight.Fare.PublishedFare
                                                     ).toLocaleString("en-IN")
-                                                    }/-`}
+                                                    }`}
                                             </Text>
                                         </View>
                                     </View>)
-                            })}
+                            }) 
+                            }
+                          <View style={{borderTopWidth:1,borderStyle:"dashed",rowGap:responsiveHeight(0.8),marginVertical:responsiveHeight(1)}}>
+                          {
+                            totalBaggagePrice? <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                            <Text style={styles.ExcessBagChargesTitle}>Excess baggage</Text>
+                            <Text style={styles.ExcessBagCharges}>{`+ ₹ ${totalBaggagePrice.toLocaleString("en-IN")}`}</Text>
+                        </View>:null
+                           }
+                            {
+                            totalMealPrice? <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                            <Text style={styles.ExcessBagChargesTitle}>Add-on meal</Text>
+                            <Text style={styles.ExcessBagCharges}>{`+ ₹ ${totalMealPrice.toLocaleString("en-IN")}`}</Text>
+                        </View>:null
+                           }
+                           {
+                            totalSeatCharges ? <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                            <Text style={styles.ExcessBagChargesTitle}>Seat Charges</Text>
+                            <Text style={styles.ExcessBagCharges}>{`+ ₹ ${totalSeatCharges?.toLocaleString("en-IN")}`}</Text>
+                        </View>:null
+                           }
+                            {
+                            isInternationalRound ? <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                            <Text style={styles.ExcessBagChargesTitle}>Service Charges</Text>
+                            <Text style={styles.ExcessBagCharges}>{`+ ₹ ${Math.ceil((totalFareSum * domesticFlight) / 100)}`}</Text>
+                        </View>:<View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                            <Text style={styles.ExcessBagChargesTitle}>Service Charges</Text>
+                            <Text style={styles.ExcessBagCharges}>{`+ ₹ ${Math.ceil((totalFareSum * internationalFlight) / 100)}`}</Text>
+                        </View>
+                           } 
+                          </View>
+
                     </Animated.View>}
                 </View>
                 <View style={styles.totalFareFlightDetailsContainer}>

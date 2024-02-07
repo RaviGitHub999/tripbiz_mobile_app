@@ -6,9 +6,12 @@ import { colors } from '../../../config/theme'
 import MyContext from '../../../context/Context'
 interface IProps {
     length: number,
-    particularState: string
-}
-const DropDown: React.FC<IProps> = ({ length, particularState }) => {
+    particularState: string,
+    customStyles?:any,
+    placeHolder?:string,
+    starting?:number
+}       
+const DropDown: React.FC<IProps> = ({ length,starting, particularState,customStyles,placeHolder}) => {
     const { adults, children, infants, actions } = useContext<any>(MyContext)
     const [dropDownIcon, setDropDownIcon] = useState(false)
     const [dropDownList, setDropDownList] = useState(false)
@@ -20,6 +23,10 @@ const DropDown: React.FC<IProps> = ({ length, particularState }) => {
                 return children
             case "Infants":
                 return infants
+                case "Nights":
+                    return children
+                    case "Rooms":
+                        return children
             default:
                 break;
         }
@@ -28,22 +35,22 @@ const DropDown: React.FC<IProps> = ({ length, particularState }) => {
 
     const list = numbers.map((number) => (
         <TouchableOpacity key={number} style={[requiredState(particularState) === number && { backgroundColor: "#86c9e8" }, { paddingHorizontal: responsiveWidth(2.5) }]} onPress={() => handlePress(particularState, number)}>
-            <Text>{number}</Text>
+            <Text>{starting===1?number+1:number}</Text>
         </TouchableOpacity>
     ))
     const handlePress = (a: string, b: number) => {
         actions.handleDropDownState({ stateName: a, stateValue: b })
-        setDropDownIcon(false)
+        setDropDownIcon(!dropDownIcon)
     }
     const handleDropDownIcon = () => {
-        setDropDownIcon(true)
+        setDropDownIcon(!dropDownIcon)
         setDropDownList(!dropDownList)
     }
     return (
         <View >
-            <TouchableOpacity style={styles.mainContainer} onPress={handleDropDownIcon}>
+            <TouchableOpacity style={[styles.mainContainer,customStyles&&{...customStyles}]} onPress={handleDropDownIcon}>
                 <View>
-                   {!dropDownIcon?<Text>{particularState}</Text>:null}
+                   {!dropDownIcon?<Text>{placeHolder}</Text>:null}
                 </View>
                 <View style={styles.dropDownInActiveConatiner}>
                     <Text>{requiredState(particularState)}</Text>

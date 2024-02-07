@@ -240,5 +240,15 @@ backgroundColor:colors.primary
     },
     flightBookSelectSeatsSegNavItemSelectedText:{
 color:colors.white
-    }
+    },
+ ExcessBagChargesTitle:{
+fontSize:responsiveHeight(2),
+fontFamily:fonts.primary,
+color:colors.gray
+    },
+    ExcessBagCharges:{
+        fontSize:responsiveHeight(2),
+        fontFamily:fonts.primary,
+        color:colors.highlight
+            }
 })

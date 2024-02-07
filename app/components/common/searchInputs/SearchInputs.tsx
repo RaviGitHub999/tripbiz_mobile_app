@@ -11,6 +11,7 @@ interface IProps {
   dropDown: boolean,
   placeholder: string,
   customStyles?:any,
+  customFontStyles?:any,
   handleDatePicker?:()=>void,
   datePick?:any,
   handleChangeText?:((event:string,name:string)=>void),
@@ -28,7 +29,7 @@ interface DropDownState {
   dropDownHandle?: boolean
 }
 
-const SearchInputs: React.FC<IProps> = ({ btn, dropDown,selected, placeholder,customStyles,datePick,handleDatePicker,handleChangeText,  stateName,Value,selectedObj}) => {
+const SearchInputs: React.FC<IProps> = ({ btn, dropDown,selected, placeholder,customStyles,datePick,handleDatePicker,handleChangeText,  stateName,Value,selectedObj,customFontStyles}) => {
   const {actions,classes,departure,returnDate,originSelectedAirport,oriRes} = useContext<any>(MyContext)
   const memoizedClasses = useMemo(() => classes, [classes]);
   const memoizedDeparture = useMemo(() => departure, [departure]);
@@ -82,7 +83,7 @@ const SearchInputs: React.FC<IProps> = ({ btn, dropDown,selected, placeholder,cu
           <View style={[styles.btnMainContainer, activeBtn && { borderColor:colors.primary, borderWidth: responsiveHeight(0.3) },customStyles]}>
             <TouchableOpacity onPressIn={() => handleFocus("btn")}
               onPressOut={handlePressOut} style={styles.btn} onPress={handleDatePicker}>
-              <Text style={styles.btnText}>{dropDown ? classes: placeholder}</Text>
+              <Text style={[styles.btnText,customFontStyles]}>{dropDown ? classes: placeholder}</Text>
               {dropDown && (dropDownState.dropDownArrow ? <IconSwitcher componentName='AntDesign' iconName='caretup' iconsize={2.2} /> : <IconSwitcher componentName='AntDesign' iconName='caretdown' iconsize={2.2} />)}
             </TouchableOpacity>
           </View>

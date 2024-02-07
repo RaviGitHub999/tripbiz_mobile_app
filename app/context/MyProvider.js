@@ -163,6 +163,11 @@ export default class MyProvider extends Component {
     intDestEndTime1: null,
     intDestStartTime2: null,
     intDestEndTime2: null,
+    adminDetails: {},
+    domesticFlight: 0,
+    internationalFlight: 0,
+    domesticHotel: 0,
+    internationalHotel: 0,
       actions: {
         loginAction:async()=>
         {
@@ -1566,35 +1571,97 @@ export default class MyProvider extends Component {
           return totalFare;
         },
         getTotalFares: (bookingFlight) => {
-          //debugger;
           var totalFareSum = 0;
           var totalSeatCharges = 0;
           var totalBaggagePrice = 0;
           var totalMealPrice = 0;
-
+  
           bookingFlight.forEach((seg, s) => {
-
             totalFareSum += seg.totalFare ? Number(seg.totalFare) : 0;
             totalSeatCharges += seg.seatCharges ? Number(seg.seatCharges) : 0;
-
-            seg.baggagePrice &&
-              seg.baggagePrice?.forEach((price, p) => {
-                totalBaggagePrice += price ? Number(price) : 0;
-              });
-
-            seg.mealPrice &&
-              seg.mealPrice?.forEach((price, p) => {
-                totalMealPrice += price ? Number(price) : 0;
-              });
+  
+            if (Array.isArray(seg.baggagePrice)) {
+              seg?.baggagePrice &&
+                seg?.baggagePrice?.forEach((price, p) => {
+                  totalBaggagePrice += price ? Number(price) : 0;
+                });
+            }
+            if (Array.isArray(seg.mealPrice)) {
+              seg.mealPrice &&
+                seg.mealPrice?.forEach((price, p) => {
+                  totalMealPrice += price ? Number(price) : 0;
+                });
+            }
           });
-
+          var finalPrice = totalFareSum + (totalFareSum * this.state.domesticFlight) / 100
           return {
             totalFareSum,
             totalSeatCharges,
             totalBaggagePrice,
-            totalMealPrice
+            totalMealPrice,
+            finalPrice
           };
         },
+        setUsers: async (value) => {
+          this.setState({
+            users: value
+          });
+        },
+        getAllUsers : async () => {
+          try {
+            const accountDocRef = firestore().collection('Accounts');
+            const userArray = [];
+            const querySnapshot = await accountDocRef.get();
+      
+            querySnapshot.forEach(async doc => {
+              userArray.push({
+                id: doc.id,
+                data: doc.data()
+              });
+            });
+      
+            const userArr = userArray.filter(user => {
+              return user.data.role !== 'admin';
+            });
+      
+            this.state.actions.setUsers(userArr);
+          } catch (error) {
+            console.log(error);
+          }
+        },
+        setAdminData :async () => {
+          try {
+            const accountsRef = firestore().collection('Accounts');
+            const roleQuery = accountsRef.where('role', '==', 'admin');
+            const querySnapshot = await roleQuery.get();
+            const admin = [];
+      
+            querySnapshot.forEach(doc => {
+              const data = doc.data();
+              admin.push(data);
+              this.setState({
+                adminDetails: data
+              });
+            });
+      
+            const docCollectionRef = firestore()
+              .collection('Accounts')
+              .doc(admin[0].userid);
+      
+            this.setState({
+              domesticFlight: Number(admin[0].domesticFlights),
+              internationalFlight: Number(admin[0].internationalFlights),
+              domesticHotel: Number(admin[0].domesticHotels),
+              internationalHotel: Number(admin[0].internationalHotels)
+            });
+      
+            await this.state.actions.getAllUsers();
+      
+          } catch (error) {
+            console.log(error);
+          }
+        },
+      
         handleChangeFlightBook: async (
           e,
           type,
@@ -1681,6 +1748,10 @@ export default class MyProvider extends Component {
 
       },
     }
+  }
+  componentDidMount= async ()=>
+  {
+    await this.state.actions.setAdminData()
   }
   debounce = (cb, delay) => {
     let timer;
