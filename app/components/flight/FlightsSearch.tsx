@@ -163,8 +163,8 @@ const FlightsSearch: React.FC<IProps> = ({ navigation: { navigate } }) => {
               </View> : null
           }
           <View {...active === "Round Trip" && { style: { flexDirection: 'row', justifyContent: 'space-between' } }}>
-            <SearchInputs datePick='departure' btn={true} dropDown={false} placeholder={departure}{...active === "Round Trip" && { customStyles: { width: responsiveWidth(41) } }} handleDatePicker={handleOpenCalender} />
-            {active === "Round Trip" && <SearchInputs datePick="return" btn={true} dropDown={false} placeholder={returnDate} customStyles={{ width: responsiveWidth(41) }} handleDatePicker={handleOpenReturnCalender} />}
+            <SearchInputs  btn={true} dropDown={false} placeholder={departure}{...active === "Round Trip" && { customStyles: { width: responsiveWidth(41) } }} handleDatePicker={handleOpenCalender} />
+            {active === "Round Trip" && <SearchInputs  btn={true} dropDown={false} placeholder={returnDate} customStyles={{ width: responsiveWidth(41) }} handleDatePicker={handleOpenReturnCalender} />}
           </View>
           <View style={{ flexDirection: "row", justifyContent: 'space-evenly' }}>
             <DropDown length={10} particularState='Adults' placeHolder='Adults'/>

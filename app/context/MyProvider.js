@@ -168,6 +168,15 @@ export default class MyProvider extends Component {
     internationalFlight: 0,
     domesticHotel: 0,
     internationalHotel: 0,
+    hotelRooms:1,
+    hotelNights:0,
+    hotelRoomArr:[{
+      adults: "1", 
+      child: 0, 
+      childAge: []
+    }],
+    hAdults:1,
+    hChild:0,
       actions: {
         loginAction:async()=>
         {
@@ -191,6 +200,27 @@ export default class MyProvider extends Component {
             case "Infants":
               this.setState({ infants: payload.stateValue })
               break;
+              case "Rooms":
+   var roomsArr = [...this.state.hotelRoomArr];
+    if (payload.stateValue > roomsArr.length) {
+      var diff = payload.stateValue - roomsArr.length;
+      for (var i = 1; i <= diff; i++) {
+        roomsArr.push({ adults: 1, child: 0, childAge: [] });
+      }
+    } else if (payload.stateValue < roomsArr.length) {
+      roomsArr = roomsArr.filter((room, r) => {
+        return r < payload.stateValue;
+      });
+    }
+                this.setState({ hotelRooms: payload.stateValue })
+                this.setState({hotelRoomArr:roomsArr})
+                break;
+                case "hAdults":
+                  this.setState({ hAdults: payload.stateValue })
+                  break;
+                case "hChild":
+                  this.setState({ hChild: payload.stateValue })
+                break;
             default:
               break;
           }

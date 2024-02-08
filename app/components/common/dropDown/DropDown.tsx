@@ -9,10 +9,12 @@ interface IProps {
     particularState: string,
     customStyles?:any,
     placeHolder?:string,
-    starting?:number
+    starting?:number,
+    hotel?:boolean,
+    handleChange?:Function
 }       
 const DropDown: React.FC<IProps> = ({ length,starting, particularState,customStyles,placeHolder}) => {
-    const { adults, children, infants, actions } = useContext<any>(MyContext)
+    const { adults,hChild, hAdults,children, infants, actions,hotelRooms } = useContext<any>(MyContext)
     const [dropDownIcon, setDropDownIcon] = useState(false)
     const [dropDownList, setDropDownList] = useState(false)
     const requiredState = (value: string) => {
@@ -24,20 +26,27 @@ const DropDown: React.FC<IProps> = ({ length,starting, particularState,customSty
             case "Infants":
                 return infants
                 case "Nights":
-                    return children
-                    case "Rooms":
-                        return children
+                return children
+            case "Rooms":
+                return hotelRooms
+                case "hAdults":
+                return hAdults
+                case "hChild":
+                return hChild
             default:
                 break;
         }
     }
     const numbers = Array.from({ length }, (_, index) => index);
 
-    const list = numbers.map((number) => (
-        <TouchableOpacity key={number} style={[requiredState(particularState) === number && { backgroundColor: "#86c9e8" }, { paddingHorizontal: responsiveWidth(2.5) }]} onPress={() => handlePress(particularState, number)}>
-            <Text>{starting===1?number+1:number}</Text>
-        </TouchableOpacity>
-    ))
+    const list = numbers.map((number) => {
+       let comp=starting===1?number+1:number
+       return(
+        <TouchableOpacity key={number} style={[requiredState(particularState) === comp&& { backgroundColor: "#86c9e8" }, { paddingHorizontal: responsiveWidth(2.5) }]} onPress={() => handlePress(particularState, starting===1?number+1:number)}>
+        <Text>{starting===1?number+1:number}</Text>
+    </TouchableOpacity>
+       )
+       })
     const handlePress = (a: string, b: number) => {
         actions.handleDropDownState({ stateName: a, stateValue: b })
         setDropDownIcon(!dropDownIcon)
