@@ -3,6 +3,7 @@ import React, { Component, ReactNode } from 'react';
 import MyContext from './Context';
 import Fuse from 'fuse.js';
 import AirportsData from "../components/jsonData/Airports.json"
+import HotelsData from "../components/jsonData/Hotels.json"
 import axios from 'axios';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
@@ -175,10 +176,14 @@ export default class MyProvider extends Component {
       child: 0, 
       childAge: []
     }],
-    hAdults:1,
-    hChild:0,
+    cityHotelRes: [],
+    hotelSearchInputToggle:false,
       actions: {
-        loginAction:async()=>
+handleToggleHotelSearchInput:()=>
+{
+this.setState({hotelSearchInputToggle:!this.state.hotelSearchInputToggle})
+},
+loginAction:async()=>
         {
           try {
             const email1="pavan@gmail.com"
@@ -200,27 +205,6 @@ export default class MyProvider extends Component {
             case "Infants":
               this.setState({ infants: payload.stateValue })
               break;
-              case "Rooms":
-   var roomsArr = [...this.state.hotelRoomArr];
-    if (payload.stateValue > roomsArr.length) {
-      var diff = payload.stateValue - roomsArr.length;
-      for (var i = 1; i <= diff; i++) {
-        roomsArr.push({ adults: 1, child: 0, childAge: [] });
-      }
-    } else if (payload.stateValue < roomsArr.length) {
-      roomsArr = roomsArr.filter((room, r) => {
-        return r < payload.stateValue;
-      });
-    }
-                this.setState({ hotelRooms: payload.stateValue })
-                this.setState({hotelRoomArr:roomsArr})
-                break;
-                case "hAdults":
-                  this.setState({ hAdults: payload.stateValue })
-                  break;
-                case "hChild":
-                  this.setState({ hChild: payload.stateValue })
-                break;
             default:
               break;
           }
@@ -448,6 +432,58 @@ export default class MyProvider extends Component {
             { signal: abortAirportController.signal }
           );
         },
+        fetchHotelCityList: () => {
+          try {
+            // const accountDocRef = firestore().collection("hotelAutoComplete");
+            // const hotelLists = [];
+    
+            // const querySnapshot = await accountDocRef.get();
+    
+            // querySnapshot.forEach(async (doc) => {
+            //   doc.data().hotelList.forEach((hotel) => {
+            //     hotelLists.push(hotel);
+            //   });
+            // });
+         
+            var fuse = new Fuse(HotelsData, {
+              keys: [
+                "item.CITYID",
+                "item.DESTINATION",
+                "item.STATEPROVINCE",
+                "item.STATEPROVINCECODE",
+                "item.COUNTRY",
+                "item.COUNTRYCODE"
+              ],
+              includeScore: true,
+              threshold: 0.2
+            });
+            this.setState({
+              hotelFuse: fuse
+            })
+          } catch (error) {
+            console.error("Error fetching hotel city list:", error);
+          }
+        },
+        changeCityKeyword :  (query) => {
+          console.log(query)
+          var results =  this.state.hotelFuse.search(query);
+          // console.log("Search results", results[0]?.item?.item);
+          this.setState({
+            cityHotelRes:results
+          });
+        },
+        handleChangeCityHotel: (keyword) => {
+          this.state.actions.changeCityKeyword(keyword);
+        },
+
+
+
+
+
+
+
+
+        
         separateFlightsByType: (results) => {
           this.setState({
             flightResList: results,
@@ -1773,7 +1809,7 @@ export default class MyProvider extends Component {
             bookingFlight: [...value]
           });
         },
-
+ 
 
 
       },
@@ -1782,6 +1818,10 @@ export default class MyProvider extends Component {
   componentDidMount= async ()=>
   {
     await this.state.actions.setAdminData()
+    console.log("calling1")
+    await this.state.actions.fetchHotelCityList();
+    console.log("calling2")
+
   }
   debounce = (cb, delay) => {
     let timer;
