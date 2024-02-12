@@ -8,7 +8,6 @@ import HotelSearchInput from './app/components/common/HotelSearchInput/HotelSear
 const App = () => {
   return (
     <AppNavigator/>
-  //  <HotelSearchInput placeHolder="Destination" value={""}/>
   )
 }
 

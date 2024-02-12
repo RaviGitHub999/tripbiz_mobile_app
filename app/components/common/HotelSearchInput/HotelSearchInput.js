@@ -5,18 +5,27 @@ import { colors, fonts } from '../../../config/theme'
 import MyContext from '../../../context/Context'
 
 
-const HotelSearchInput = ({placeHolder,value}) => {
+const HotelSearchInput = ({placeHolder,value,handleChange}) => {
     const[toggleBtn,setToggle]=useState(false)
+    const [active, setActive] = useState(false)
     const{actions,hotelSearchInputToggle}=useContext(MyContext)
-    const handleToggle=()=>
+    // const handleToggle=()=>
+    // {
+    //     actions.handleToggleHotelSearchInput()
+    // }
+    const handleFocus=()=>
     {
-        actions.handleToggleHotelSearchInput()
+        setActive(true)
     }
+    const handleBlur = () => {
+        setActive(false);
+        // actions.handleToggleHotelSearchInput()
+      }
   return (
     <View>
-        <TouchableOpacity style={[hotelSearchInputToggle?styles.isActiveMainContainer:styles.mainContainer,styles.mainContainer]} onPress={handleToggle}>
+        <TouchableOpacity style={[active?styles.isActiveMainContainer:styles.mainContainer,styles.mainContainer]} onPress={handleFocus}>
     {
-        hotelSearchInputToggle?<TextInput autoFocus style={{ paddingHorizontal:responsiveWidth(5),}}/>:<Text style={[styles.title,{paddingHorizontal:responsiveWidth(5)}]}>{placeHolder}</Text>
+        active?<TextInput autoFocus style={{ paddingHorizontal:responsiveWidth(5),}} value={value} onChangeText={(e)=>handleChange(e)} onFocus={handleFocus} onBlur={handleBlur}/>:<Text style={[styles.title,{paddingHorizontal:responsiveWidth(5)}]}>{placeHolder}</Text>
     }
     </TouchableOpacity>
     </View>
@@ -26,7 +35,7 @@ const HotelSearchInput = ({placeHolder,value}) => {
 export default HotelSearchInput
 const styles=StyleSheet.create({
     mainContainer:{
-        backgroundColor:"gray",
+        backgroundColor:colors.whiteSmoke,
         justifyContent:'center',
         borderRadius:responsiveHeight(1.5),
        

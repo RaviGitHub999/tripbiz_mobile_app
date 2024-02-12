@@ -178,6 +178,9 @@ export default class MyProvider extends Component {
     }],
     cityHotelRes: [],
     hotelSearchInputToggle:false,
+    hotelResList: [],
+    hotelSessionExpired: false,
+    hotelSessionStarted: false,
       actions: {
 handleToggleHotelSearchInput:()=>
 {
@@ -508,6 +511,14 @@ loginAction:async()=>
           const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
           // console.log(date1,"diffDays")
           return diffDays;
+        },
+        diffNights:(dateStr1, dateStr2)=>
+        {
+          const start = new Date(dateStr1);
+          const end = new Date(dateStr2);
+          const diffTime = Math.abs(end.getTime() - start.getTime());
+          const diffnights=Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+          return diffnights
         },
         isExitRow: (row) => {
           var firstSeat = row.Seats[0];
@@ -922,247 +933,6 @@ loginAction:async()=>
   
           return wingPosArr;
         },
-        // filterFlights: (flightArr) => {
-        //   var filteredArr = flightArr;
-        //   // if (this.state.byCost) {
-        //   //   filteredArr.sort(
-        //   //     (a, b) => a[0].Fare.PublishedFare - b[0].Fare.PublishedFare
-        //   //   );
-        //   // }
-        //   // if (this.state.byDuration) {
-        //   //   filteredArr.sort((a, b) => {
-        //   //     var aFlight = this.state.actions.modifyFlightObject(a[0]);
-        //   //     var bFlight = this.state.actions.modifyFlightObject(b[0]);
-
-        //   //     var aDur = aFlight.totalDuration;
-        //   //     var bDur = bFlight.totalDuration;
-
-        //   //     return aDur - bDur;
-        //   //   });
-        //   // }
-
-        //   if (this.state.airlineName) {
-        //     filteredArr = filteredArr.filter((a) => {
-        //       var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-        //       return (
-        //         newflightObj.segments[0].airlineName === this.state.airlineName
-        //       );
-        //     });
-        //   }
-  
-        //    if (this.state.stopPts === 0 || this.state.stopPts) {
-        //     filteredArr = filteredArr.filter((a) => {
-        //       var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-        //       return (
-        //         newflightObj.segments[0].stopOverPts.length <= this.state.stopPts
-        //       );
-        //     });
-        //   }
-        //   if (this.state.originStartTime && this.state.originEndTime) {
-        //     if (this.state.originEndTime.getHours() === 23) {
-        //       filteredArr = filteredArr.filter((a) => {
-        //         var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-        //         return (
-        //           new Date(newflightObj.segments[0].arrTimeDate).getHours() >
-        //           this.state.originStartTime.getHours() &&
-        //           (new Date(newflightObj.segments[0].arrTimeDate).getHours() <
-        //             this.state.originEndTime.getHours() ||
-        //             (new Date(newflightObj.segments[0].arrTimeDate).getHours() ===
-        //               this.state.originEndTime.getHours() &&
-        //               new Date(
-        //                 newflightObj.segments[0].arrTimeDate
-        //               ).getMinutes() < this.state.originEndTime.getMinutes()))
-        //         );
-        //       });
-        //     } else {
-        //       filteredArr = filteredArr.filter((a) => {
-        //         var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-        //         return (
-        //           new Date(newflightObj.segments[0].arrTimeDate).getHours() >
-        //           this.state.originStartTime.getHours() &&
-        //           new Date(newflightObj.segments[0].arrTimeDate).getHours() <
-        //           this.state.originEndTime.getHours()
-        //         );
-        //       });
-        //     }
-        //   }
-        //   if (this.state.destStartTime && this.state.destEndTime) {
-        //     if (this.state.destEndTime.getHours() === 23) {
-        //       filteredArr = filteredArr.filter((a) => {
-        //         var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-        //         console.log(
-        //           new Date(newflightObj.segments[0].depTimeDate).getHours(),
-        //           this.state.destStartTime.getHours()
-        //         );
-        //         return (
-        //           new Date(newflightObj.segments[0].depTimeDate).getHours() >
-        //           this.state.destStartTime.getHours() &&
-        //           (new Date(newflightObj.segments[0].depTimeDate).getHours() <
-        //             this.state.destEndTime.getHours() ||
-        //             (new Date(newflightObj.segments[0].depTimeDate).getHours() ===
-        //               this.state.destEndTime.getHours() &&
-        //               new Date(
-        //                 newflightObj.segments[0].depTimeDate
-        //               ).getMinutes() < this.state.destEndTime.getMinutes()))
-        //         );
-        //       });
-        //     } else {
-        //       filteredArr = filteredArr.filter((a) => {
-        //         var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-        //         console.log(
-        //           new Date(newflightObj.segments[0].depTimeDate).getHours(),
-        //           this.state.destStartTime.getHours()
-        //         );
-        //         return (
-        //           new Date(newflightObj.segments[0].depTimeDate).getHours() >
-        //           this.state.destStartTime.getHours() &&
-        //           new Date(newflightObj.segments[0].depTimeDate).getHours() <
-        //           this.state.destEndTime.getHours()
-        //         );
-        //       });
-        //     }
-        //   }
-
-
-
-
-          
-        //   if (this.state.intDestStartTime1 && this.state.intDestEndTime1) {
-        //     if (this.state.intDestEndTime1.getHours() === 23) {
-        //       filteredArr = filteredArr.filter((a) => {
-        //         var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-        //         return (
-        //           new Date(newflightObj.segments[0].depTimeDate).getHours() >
-        //           this.state.intDestStartTime1.getHours() &&
-        //           (new Date(newflightObj.segments[0].depTimeDate).getHours() <
-        //             this.state.intDestEndTime1.getHours() ||
-        //             (new Date(newflightObj.segments[0].depTimeDate).getHours() ===
-        //               this.state.intDestEndTime1.getHours() &&
-        //               new Date(
-        //                 newflightObj.segments[0].depTimeDate
-        //               ).getMinutes() < this.state.intDestEndTime1.getMinutes()))
-        //         );
-        //       });
-        //     } else {
-        //       filteredArr = filteredArr.filter((a) => {
-        //         var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-        //         return (
-        //           new Date(newflightObj.segments[0].depTimeDate).getHours() >
-        //           this.state.intDestStartTime1.getHours() &&
-        //           new Date(newflightObj.segments[0].depTimeDate).getHours() <
-        //           this.state.intDestEndTime1.getHours()
-        //         );
-        //       });
-        //     }
-        //   }
-        //   if (this.state.intDestStartTime2 && this.state.intDestEndTime2) {
-        //     if (this.state.intDestEndTime2.getHours() === 23) {
-        //       filteredArr = filteredArr.filter((a) => {
-        //         var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-        //         return (
-        //           new Date(newflightObj.segments[1].depTimeDate).getHours() >
-        //           this.state.intDestStartTime2.getHours() &&
-        //           (new Date(newflightObj.segments[1].depTimeDate).getHours() <
-        //             this.state.intDestEndTime2.getHours() ||
-        //             (new Date(newflightObj.segments[1].depTimeDate).getHours() ===
-        //               this.state.intDestEndTime2.getHours() &&
-        //               new Date(
-        //                 newflightObj.segments[1].depTimeDate
-        //               ).getMinutes() < this.state.intDestEndTime2.getMinutes()))
-        //         );
-        //       });
-        //     } else {
-        //       filteredArr = filteredArr.filter((a) => {
-        //         var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-        //         return (
-        //           new Date(newflightObj.segments[1].depTimeDate).getHours() >
-        //           this.state.intDestStartTime2.getHours() &&
-        //           new Date(newflightObj.segments[1].depTimeDate).getHours() <
-        //           this.state.intDestEndTime2.getHours()
-        //         );
-        //       });
-        //     }
-        //   }
-        //   if (this.state.intOriginStartTime1 && this.state.intOriginEndTime1) {
-        //     if (this.state.intOriginEndTime1.getHours() === 23) {
-        //       filteredArr = filteredArr.filter((a) => {
-        //         var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-        //         return (
-        //           new Date(newflightObj.segments[0].arrTimeDate).getHours() >
-        //           this.state.intOriginStartTime1.getHours() &&
-        //           (new Date(newflightObj.segments[0].arrTimeDate).getHours() <
-        //             this.state.intOriginEndTime1.getHours() ||
-        //             (new Date(newflightObj.segments[0].arrTimeDate).getHours() ===
-        //               this.state.intOriginEndTime1.getHours() &&
-        //               new Date(
-        //                 newflightObj.segments[0].arrTimeDate
-        //               ).getMinutes() < this.state.intOriginEndTime1.getMinutes()))
-        //         );
-        //       });
-        //     } else {
-        //       filteredArr = filteredArr.filter((a) => {
-        //         var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-        //         console.log(
-        //           new Date(newflightObj.segments[0].arrTimeDate).getHours(),
-        //           this.state.intOriginStartTime1.getHours()
-        //         );
-        //         return (
-        //           new Date(newflightObj.segments[0].arrTimeDate).getHours() >
-        //           this.state.intOriginStartTime1.getHours() &&
-        //           new Date(newflightObj.segments[0].arrTimeDate).getHours() <
-        //           this.state.intOriginEndTime1.getHours()
-        //         );
-        //       });
-        //     }
-        //   }
-        //   if (this.state.intOriginStartTime2 && this.state.intOriginEndTime2) {
-        //     if (this.state.intOriginEndTime2.getHours() === 23) {
-        //       filteredArr = filteredArr.filter((a) => {
-        //         var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-        //         return (
-        //           new Date(newflightObj.segments[1].arrTimeDate).getHours() >
-        //           this.state.intOriginStartTime2.getHours() &&
-        //           (new Date(newflightObj.segments[1].arrTimeDate).getHours() <
-        //             this.state.intOriginEndTime2.getHours() ||
-        //             (new Date(newflightObj.segments[1].arrTimeDate).getHours() ===
-        //               this.state.intOriginEndTime2.getHours() &&
-        //               new Date(
-        //                 newflightObj.segments[1].arrTimeDate
-        //               ).getMinutes() < this.state.intOriginEndTime2.getMinutes()))
-        //         );
-        //       });
-        //     } else {
-        //       filteredArr = filteredArr.filter((a) => {
-        //         var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-        //         return (
-        //           new Date(newflightObj.segments[1].arrTimeDate).getHours() >
-        //           this.state.intOriginStartTime2.getHours() &&
-        //           new Date(newflightObj.segments[1].arrTimeDate).getHours() <
-        //           this.state.intOriginEndTime2.getHours()
-        //         );
-        //       });
-        //     }
-        //   }
-        //   if (this.state.intStopPts1 === 0 || this.state.intStopPts1) {
-        //     filteredArr = filteredArr.filter((a) => {
-        //       var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-        //       return (
-        //         newflightObj.segments[0].stopOverPts.length <=
-        //         this.state.intStopPts1
-        //       );
-        //     });
-        //   }
-        //   if (this.state.intStopPts2 === 0 || this.state.intStopPts2) {
-        //     filteredArr = filteredArr.filter((a) => {
-        //       var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-        //       return (
-        //         newflightObj.segments[1].stopOverPts.length <=
-        //         this.state.intStopPts2
-        //       );
-        //     });
-        //   }
-        //   return filteredArr;
-        // },
         filterFlights: (flightArr) => {
           var filteredArr = flightArr;
           if (this.state.byCost) {
@@ -1472,6 +1242,182 @@ loginAction:async()=>
               }
             );
           }, 840000);
+        },
+      getRecommondedHotelList: async () => {
+          console.log('reco called');
+          try {
+            const accCollectionRef = firestore().collection("recomondedHotels").doc("recommondedHotelCityListJson");
+            const data1 = await accCollectionRef.get();
+            const recommondedHotelsData = data1.data().hotelCityList;
+            const hotelObj = {};
+            recommondedHotelsData.forEach((hotel) => {
+              hotelObj[hotel.HotelCode] = hotel;
+            });
+            this.setState({
+              recommondedHotels: hotelObj
+            });
+          } catch (error) {
+            console.error("Error fetching recommended hotels:", error);
+          }
+        },
+ getHotelImages : async (cityId) => {
+          try {
+            const cityIds = String(cityId);
+            const documentRef = firestore().collection("hotelImages").doc(cityIds);
+            const doc = await documentRef.get();
+            
+            if (doc.exists) {
+              console.log('called');
+              const documentData = doc.data();
+              const transformedData = documentData.hotelImageList.reduce((acc, entry) => {
+                const hotelId = Object.keys(entry)[0];
+                const hotelData = entry[hotelId];
+                acc[hotelId] = hotelData;
+                return acc;
+              }, {});
+              this.setState({
+                hotelImageList: transformedData
+              })
+              return transformedData;
+            }
+          } catch (error) {
+            console.error("Error fetching hotel images:", error);
+          }},
+          convertTboDateFormat: (inputDate) => {
+            const date = new Date(inputDate);
+            const day = date.getDate();
+            const month = date.getMonth() + 1;
+            const year = date.getFullYear();
+            const formattedDay = day < 10 ? '0' + day : day;
+            const formattedMonth = month < 10 ? '0' + month : month;
+        
+            return formattedDay + '/' + formattedMonth + '/' + year;
+          } ,
+        hotelSearch: async (query) => {
+          //Fields needed:  city or hotel name, check-in, nights, check-out, nationality, rooms, adults, children, star-rating
+          await this.state.actions.getRecommondedHotelList()
+          this.setState({
+            hotelResList: [],
+            hotelSearchQuery: query,
+            searchingHotels: true,
+            cityHotel: query.cityHotel,
+            hotelSessionStarted: false,
+            hotelSessionEnded: false,
+            hotelSearchName: query.cityDestName,
+            hotelSearchCheckIn: query.checkInDate,
+            hotelSearchCheckOut: query.checkOutDate,
+            hotelSearchAdults: query.hotelRoomArr.reduce(
+              (acc, room, r) => acc + Number(room.adults),
+              0
+            ),
+            hotelSearchChild: query.hotelRoomArr.reduce(
+              (acc, room, r) => acc + Number(room.child),
+              0
+            ),
+            hotelSearchNights: Number(query.hotelNights),
+            hotelRoomArr: query.hotelRoomArr,
+            hotelRooms: Number(query.hotelRooms)
+          });
+  
+          let roomGuests = [];
+  
+          query.hotelRoomArr.forEach((room, r) => {
+            roomGuests.push({
+              NoOfAdults: Number(room.adults),
+              NoOfChild: Number(room.child),
+              ChildAge: room.childAge.map((child, c) => Number(child.age))
+            });
+          });
+          var request = {
+            checkInDate:this.state.actions.convertTboDateFormat(query.checkInDate),
+            cityId: query.cityHotel,
+            nights: query.hotelNights,
+            countryCode: query.countryCode,
+            noOfRooms: query.hotelRooms,
+            roomGuests: [...roomGuests]
+          };
+  
+          // console.log("Hotel req", request);
+          // const cityId = String(query.cityHotel);
+          // var accCollectionRef = db
+          //   .collection("hotelImages")
+          //   .doc(cityId);
+          // await accCollectionRef.set({
+          //   hotelImageList: []
+          // })
+  
+          var hotelStatic = await Promise.all([
+            fetch(
+              "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/hotelSearchRes",
+              {
+                method: "POST",
+                // credentials: "include",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify(request)
+              }
+            )
+              .then((res) => res.json())
+              .catch((err) => console.log(err)),
+            // this.state.actions.convertXmlToJson(request.cityId),
+            //this.state.actions.convertXmlToJsonHotel({ cityId: "145710", hotelId: "00193836" })
+            this.state.actions.getHotelImages(request.cityId)
+          ]);
+  
+          console.log("Result", hotelStatic);
+  
+          var hotelRes = hotelStatic[0];
+          var staticdata = hotelStatic[1];
+  
+          // var hotelRes = await fetch(
+          //   "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/hotelSearchRes",
+          //   {
+          //     method: "POST",
+          //     // credentials: "include",
+          //     headers: {
+          //       "Content-Type": "application/json"
+          //     },
+          //     body: JSON.stringify(request)
+          //   }
+          // )
+          //   .then((res) => res.json())
+          //   .catch((err) => console.log(err));
+  
+          console.log("Hotel result", hotelRes);
+          if (hotelRes?.error) {
+            console.log('error');
+            this.setState({
+              hotelResList: [],
+              hotelErrorMessage: hotelRes?.error,
+              searchingHotels: false,
+              hotelSessionStarted: true
+            })
+          }
+          else {
+            this.setState({
+              hotelResList: hotelRes.hotelResult?.HotelSearchResult?.HotelResults,
+              hotelTraceId: hotelRes.hotelResult?.HotelSearchResult?.TraceId,
+              hotelStaticData: staticdata,
+              hotelTokenId: hotelRes.tokenId,
+              searchingHotels: false,
+              hotelSessionStarted: true
+            });
+          }
+  
+  
+          var hotelSessionTimeout = setTimeout(() => {
+            this.setState(
+              {
+                hotelSessionStarted: false,
+                hotelSessionExpired: true
+              },
+              () => {
+                console.log("Session expired");
+              }
+            );
+          }, 840000);
+          clearTimeout(hotelSessionTimeout);
         },
         populateBookData: (bookingFlight, flightBookData) => {
           bookingFlight.forEach((book, bookIndex) => {
