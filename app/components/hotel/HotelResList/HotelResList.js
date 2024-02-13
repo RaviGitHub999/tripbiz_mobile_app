@@ -1,24 +1,26 @@
-import { View, Text } from 'react-native'
-import React, { useContext } from 'react'
+import { View, Text, TextInput, KeyboardAvoidingView, Platform, FlatList } from 'react-native'
+import React, { useContext, useEffect } from 'react'
 import MyContext from '../../../context/Context';
 import ProgressBar from '../../common/progressBar/ProgressBar';
 import IconSwitcher from '../../common/icons/IconSwitcher';
 import { colors } from '../../../config/theme';
-import { responsiveHeight } from '../../../utils/responsiveScale';
+import { responsiveHeight, responsiveWidth } from '../../../utils/responsiveScale';
+import { styles } from './styles';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
-const HotelResList = () => {
+const HotelResList = ({ navigation: { goBack } }) => {
     var {
         searchingHotels,
         hotelResList,
         actions,
         fetchingHotelInfo,
         hotelInfoRes,
-        hotelSearchName,
+        // hotelSearchName,
         hotelSearchCheckIn,
         hotelSearchCheckOut,
         hotelSearchAdults,
         hotelSearchChild,
-        hotelSearchNights,
+        // hotelSearchNights,
         hotelSearchText,
         hotelRating,
         hotelStaticData,
@@ -26,47 +28,55 @@ const HotelResList = () => {
         recommondedHotels,
         hotelImageList,
         hotelErrorMessage,
-        cityHotel
+        cityHotel,
+        HotelcheckInDate,
+        HotelcheckOutDate,
+        selectedCheckInDate,
+        selectedCheckOutDate,
+        cityHotelItem,
+        hotelNights
     } = useContext(MyContext);
+
+
+    useEffect(() => {
+        // actions.hotelSearch()
+    }, [])
     return (
-        <View style={{ flex: 1 }}>
-            <View style={{flex:.1,borderWidth:2,borderColor:"red"}}>
-<View style={{flexDirection:"row"}}>
-    <Text>{hotelSearchName}</Text>
-    <View style={{
-        backgroundColor:colors.highlight,
-        height:responsiveHeight(3.8),
-        width:responsiveHeight(3.8),
-        borderRadius:responsiveHeight(3),
-        alignItems:'center',
-        justifyContent:'center',
-    }}>
-    <IconSwitcher componentName='MaterialIcons' iconName='edit' color={colors.white} iconsize={2.3} />
-    </View>
-</View>
-<Text>
-        {`${hotelSearchCheckIn
-            .toString()
-            .slice(4, 10)} - ${hotelSearchCheckOut
-              .toString()
-              .slice(4, 10)} | ${hotelRooms} ${hotelRooms > 1 ? "Rooms" : "Room"
-            } | ${hotelSearchAdults} ${hotelSearchAdults > 1 ? "Adults" : "Adult"
-            }${hotelSearchChild
-              ? ` | ${hotelSearchChild} ${hotelSearchChild > 1 ? "Children" : "Child"
-              } `
-              : ""
-            }| ${hotelSearchNights} ${hotelSearchNights > 1 ? "nights" : "night"
-            }`}</Text>
+        <KeyboardAvoidingView style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        
+        >
+            <View style={styles.headerMainContainer}>
+                <View style={styles.titleContainer}>
+                    <Text style={styles.title}>{`${cityHotelItem.DESTINATION}, ${cityHotelItem.STATEPROVINCE}`}</Text>
+                    <TouchableOpacity style={styles.editButtonContainer} onPress={() => goBack()}>
+                        <IconSwitcher componentName='MaterialIcons' iconName='edit' color={colors.white} iconsize={2.2} />
+                    </TouchableOpacity>
+                </View>
+                <Text style={styles.subTitle}>{`${selectedCheckInDate} - ${selectedCheckOutDate} | ${hotelRooms} ${hotelRooms > 1 ? "Rooms" : "Room"
+                    } | ${hotelSearchAdults} ${hotelSearchAdults > 1 ? "Adults" : "Adult"} ${hotelSearchChild
+                        ? ` | ${hotelSearchChild} ${hotelSearchChild > 1 ? "Children" : "Child"
+                        } `
+                        : ""
+                    } | ${hotelNights} ${hotelNights > 1 ? "nights" : "night"
+                    }`}</Text>
             </View>
-            {searchingHotels ?
+            {/* {searchingHotels ?
                 <View style={{ flex: 1, justifyContent: "center", alignItems: 'center' }}>
                     <ProgressBar />
                 </View> :
-                <View style={{borderWidth:1,flex:1}}>
+                <View style={{ borderWidth: 1, flex: 1 }}>
 
                 </View>
-            }
-        </View>
+            } */}
+            <View style={{borderWidth:3,borderColor:"red",padding:responsiveHeight(2),flex:1}}>
+                <TextInput placeholder='Search for your favourite hotel' style={{borderWidth:1,paddingHorizontal:responsiveWidth(5),borderRadius:responsiveHeight(2),fontSize:responsiveHeight(2.1)}}/>
+                <FlatList data={hotelResList} renderItem={({item})=>
+            {
+
+            }}/>
+            </View>
+        </KeyboardAvoidingView>
     )
 }
 

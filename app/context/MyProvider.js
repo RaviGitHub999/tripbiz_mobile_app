@@ -169,7 +169,7 @@ export default class MyProvider extends Component {
     internationalFlight: 0,
     domesticHotel: 0,
     internationalHotel: 0,
-    hotelRooms:1,
+    hotelRooms:"1",
     hotelNights:0,
     hotelRoomArr:[{
       adults: "1", 
@@ -181,6 +181,24 @@ export default class MyProvider extends Component {
     hotelResList: [],
     hotelSessionExpired: false,
     hotelSessionStarted: false,
+    selectedHotel:"Destination",
+    cityHotelQuery:"",
+    cityHotel:"",
+    countryCode:"IN",
+    cityHotelItem:{},
+    selectedCheckInDate:"Check-In date",
+    selectedCheckOutDate:"Check-Out date",
+    calenderOpen: {
+      checkInCalender: false,
+      checkOutCalender: false 
+    },
+    selectedHotelCheckInDate:new Date,
+    selectedHotelCheckOutDate:new Date,
+    // hotelSearchNights:0,
+    checkInTime:null,
+    checkOutTime:null,
+    hotelSearchAdults:0,
+    hotelSearchChild:0,
       actions: {
 handleToggleHotelSearchInput:()=>
 {
@@ -468,7 +486,7 @@ loginAction:async()=>
           }
         },
         changeCityKeyword :  (query) => {
-          console.log(query)
+          // console.log(query,"=======>")
           var results =  this.state.hotelFuse.search(query);
           // console.log("Search results", results[0]?.item?.item);
           this.setState({
@@ -476,17 +494,173 @@ loginAction:async()=>
           });
         },
         handleChangeCityHotel: (keyword) => {
+          this.setState({
+            cityHotelQuery:keyword
+          })
           this.state.actions.changeCityKeyword(keyword);
         },
 
+        selectedHotel:(item)=>
+        {
+this.setState({
+  selectedHotel:`${item.DESTINATION},${item?.STATEPROVINCE
+    ? item?.STATEPROVINCE
+    : item?.COUNTRY
+    }`,
+    cityHotel:item.CITYID,
+    countryCode:item.COUNTRYCODE,
+    cityHotelItem:item
+})
+        },
+handleOpenCheckinCalender:()=>
+{
+  this.setState(prevState => ({
+    calenderOpen: {
+      ...prevState.calenderOpen,
+      checkInCalender: true
+    }
+  }));
+},    
+handleOpenCheckoutCalender:()=>
+{
+  this.setState(prevState => ({
+    calenderOpen: {
+      ...prevState.calenderOpen,
+      checkOutCalender: true
+    }
+  }));
+},   
+handleCheckInCalender:(event, selectedDate)=>
+{
+  if (event.type === 'set')
+  {
+    this.setState(prevState => ({
+      calenderOpen: {
+        ...prevState.calenderOpen,
+        checkInCalender: false
+      }
+    }))
+    if(selectedDate)
+    {
+      const formattedDate = selectedDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+      });
+      this.setState({
+        selectedHotelCheckInDate:selectedDate,
+        selectedCheckInDate:formattedDate,
+        checkInTime:selectedDate
+      })
+    }
+    if(this.state.checkOutTime)
+    {
+      const nights =   Number(this.state.actions.diffNights(selectedDate,this.state.selectedHotelCheckOutDate))
+      this.setState({hotelNights:nights})
+    }
+  }
+  else{
+    this.setState(prevState => ({
+      calenderOpen: {
+        ...prevState.calenderOpen,
+        checkInCalender: false
+      }
+    }))
+  }
+},
 
+handleCheckOutCalender:(event, selectedDate)=>
+{
+  if (event.type === 'set')
+  {
+    this.setState(prevState => ({
+      calenderOpen: {
+        ...prevState.calenderOpen,
+        checkOutCalender: false
+      }
+    }))
+    if(selectedDate)
+    {
+      const formattedDate = selectedDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+      });
+      this.setState({
+        selectedHotelCheckOutDate:selectedDate,
+        selectedCheckOutDate:formattedDate,
+        checkOutTime:selectedDate
+      })
+    }
+    if(this.state.checkInTime)
+    {
+      const nights = Number(this.state.actions.diffNights(selectedDate,this.state.selectedHotelCheckInDate))
+     this.setState({hotelNights:nights})
+    }
+  }
+  else{
+    this.setState(prevState => ({
+      calenderOpen: {
+        ...prevState.calenderOpen,
+        checkOutCalender: false
+      }
+    }))
+  }
+},
+handleHotelRooms:(rooms)=>
+{
+  var roomsArr = [...this.state.hotelRoomArr];
+  if (rooms > roomsArr.length) {
+    var diff = rooms - roomsArr.length;
+    for (var i = 1; i <= diff; i++) {
+      roomsArr.push({ adults: 1, child: 0, childAge: [] });
+    }
+  } else if (rooms < roomsArr.length) {
+    roomsArr = roomsArr.filter((room, r) => {
+      return r < rooms;
+    });
+  }
+  this.setState({hotelRooms:rooms})
+  this.setState({
+    hotelRoomArr:roomsArr
+  })
+},
 
+handleHotelRoomsArr : (val, type, i)=>
+{
+  var roomsArr = [...this.state.hotelRoomArr];
 
+    if (type === "adults") {
+      roomsArr[i].adults = val;
+      this.setState({hotelSearchAdults:val})
+    } else if (type === "child") {
+      roomsArr[i].child = val;
+      this.setState({hotelSearchChild:val})
+      let childArr = [];
 
-
-
-
+      for (let i = 1; i <= val; i++) {
+        childArr.push({ age: 0 });
+      }
+      roomsArr[i].childAge = [...childArr];
+    }
+    this.setState({
+      hotelRoomArr:roomsArr,
+    })
+},
+ handleChildAge:(roomsArr)=>
+ {
+  this.setState({
+    hotelRoomArr:roomsArr
+  })
+ } , 
         
+
+
+
+
+
+
+
+
+
         separateFlightsByType: (results) => {
           this.setState({
             flightResList: results,
@@ -1297,31 +1471,24 @@ loginAction:async()=>
           //Fields needed:  city or hotel name, check-in, nights, check-out, nationality, rooms, adults, children, star-rating
           await this.state.actions.getRecommondedHotelList()
           this.setState({
-            hotelResList: [],
             hotelSearchQuery: query,
             searchingHotels: true,
-            cityHotel: query.cityHotel,
             hotelSessionStarted: false,
             hotelSessionEnded: false,
-            hotelSearchName: query.cityDestName,
-            hotelSearchCheckIn: query.checkInDate,
-            hotelSearchCheckOut: query.checkOutDate,
-            hotelSearchAdults: query.hotelRoomArr.reduce(
-              (acc, room, r) => acc + Number(room.adults),
-              0
-            ),
-            hotelSearchChild: query.hotelRoomArr.reduce(
-              (acc, room, r) => acc + Number(room.child),
-              0
-            ),
-            hotelSearchNights: Number(query.hotelNights),
-            hotelRoomArr: query.hotelRoomArr,
-            hotelRooms: Number(query.hotelRooms)
+            // hotelSearchName:  `${this.state.cityHotelItem.DESTINATION}, ${this.state.cityHotelItem.STATEPROVINCE}`,
+            // hotelSearchAdults: this.state.hotelRoomArr.reduce(
+            //   (acc, room, r) => acc + Number(room.adults),
+            //   0
+            // ),
+            // hotelSearchChild: this.state.hotelRoomArr.reduce(
+            //   (acc, room, r) => acc + Number(room.child),
+            //   0
+            // ),
           });
   
           let roomGuests = [];
   
-          query.hotelRoomArr.forEach((room, r) => {
+      this.state.hotelRoomArr.forEach((room, r) => {
             roomGuests.push({
               NoOfAdults: Number(room.adults),
               NoOfChild: Number(room.child),
@@ -1329,11 +1496,11 @@ loginAction:async()=>
             });
           });
           var request = {
-            checkInDate:this.state.actions.convertTboDateFormat(query.checkInDate),
-            cityId: query.cityHotel,
-            nights: query.hotelNights,
-            countryCode: query.countryCode,
-            noOfRooms: query.hotelRooms,
+            checkInDate:this.state.actions.convertTboDateFormat(this.state.selectedHotelCheckInDate),
+            cityId: this.state.cityHotel,
+            nights: this.state.hotelNights,
+            countryCode: this.state.countryCode,
+            noOfRooms: this.state.hotelRooms,
             roomGuests: [...roomGuests]
           };
   

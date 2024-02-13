@@ -10,43 +10,33 @@ import MyContext from '../../context/Context'
 import HotelDropDown from '../common/hotelDropDown/HotelDropDown'
 import HotelSearchInput from '../common/HotelSearchInput/HotelSearchInput'
 const HotelSearch = ({navigation:{navigate}}) => {
-  const [cityHotel, setCityHotel] = useState("");
-  const [countryCode, setCountryCode] = useState("IN");
-  const [checkInDate, setCheckInDate] = useState("");
-  const [checkOutDate, setCheckOutDate] = useState("");
-  const [checkInCalender, setCheckInCalender] = useState(new Date)
-  const [checkOutCalender, setCheckOutCalender] = useState(new Date)
-  const [selectedCheckInDate, setSelectedCheckInDate] = useState("Check-In date")
-  const [selectedCheckOutDate, setSelectedCheckOutDate] = useState("Check-Out date")
-  const [hotelNights, setHotelNights] = useState("0");
-  const [hotelRooms, setHotelRooms] = useState("1");
-  const [hotelRoomArr, setHotelRoomArr] = useState([
-    { adults: "1", child: 0, childAge: [] },
-  ]);
-  const [cityHotelQuery, setCityHotelQuery] = useState("");
-  const [calenderOpen, setCalenderOpen] = useState({ checkInCalender: false, checkOutCalender: false })
-  const [cityHotelResBox, setCityHotelResBox] = useState(false);
-  const [cityHotelItem, setCityHotelItem] = useState({});
-  const [selectedHotel, setSelectedHotel] = useState("Destination")
-  const { actions, cityHotelRes } = useContext(MyContext)
+  // const [cityHotel, setCityHotel] = useState("");
+  // const [countryCode, setCountryCode] = useState("IN");
+  // const [checkInDate, setCheckInDate] = useState("");
+  // const [checkOutDate, setCheckOutDate] = useState("");
+  // const [checkInCalender, setCheckInCalender] = useState(new Date)
+  // const [checkOutCalender, setCheckOutCalender] = useState(new Date)
+  // const [selectedCheckInDate, setSelectedCheckInDate] = useState("Check-In date")
+  // const [selectedCheckOutDate, setSelectedCheckOutDate] = useState("Check-Out date")
+  // const [hotelNights, setHotelNights] = useState("0");
+  // const [hotelRooms, setHotelRooms] = useState("1");
+  // const [hotelRoomArr, setHotelRoomArr] = useState([
+  //   { adults: "1", child: 0, childAge: [] },
+  // ]);
+  // const [cityHotelQuery, setCityHotelQuery] = useState("");
+  // const [calenderOpen, setCalenderOpen] = useState({ checkInCalender: false, checkOutCalender: false })
+  // const [cityHotelResBox, setCityHotelResBox] = useState(false);
+  // const [cityHotelItem, setCityHotelItem] = useState({});
+  // const [selectedHotel, setSelectedHotel] = useState("Destination")
+  const { actions, cityHotelRes,cityHotelQuery,selectedHotel,selectedCheckInDate,selectedCheckOutDate,calenderOpen,hotelNights,hotelRooms,hotelRoomArr,selectedHotelCheckInDate,selectedHotelCheckOutDate} = useContext(MyContext)
   let checkInTime
   let checkOutTime
   const handleChangeCityHotelQuery = (e) => {
-    setCityHotelQuery(e)
-    setCityHotelResBox(true);
     actions.handleChangeCityHotel(e);
-
   }
   const handleSelectedHotel = (item) => {
-    setCityHotel(item.CITYID);
-    setCountryCode(item.COUNTRYCODE);
-    setCityHotelItem(item)
-    setCityHotelResBox(false);
     actions.handleToggleHotelSearchInput();
-    setSelectedHotel(`${item.DESTINATION},${item?.STATEPROVINCE
-      ? item?.STATEPROVINCE
-      : item?.COUNTRY
-      }`)
+      actions.selectedHotel(item)
   }
   const handleSelectedCheckinDate = useCallback((event, selectedDate) => {
 
@@ -98,12 +88,12 @@ const HotelSearch = ({navigation:{navigate}}) => {
       setCalenderOpen({ checkOutCalender: false });
     }
   }, []);
-  const handleOpenCheckinCalender = useCallback(() => {
-    setCalenderOpen((prevState) => ({ ...prevState, checkInCalender: true }));
-  }, []);
-  const handleOpenCheckoutCalender = useCallback(() => {
-    setCalenderOpen((prevState) => ({ ...prevState, checkOutCalender: true }));
-  }, []);
+  // const handleOpenCheckinCalender = useCallback(() => {
+  //   setCalenderOpen((prevState) => ({ ...prevState, checkInCalender: true }));
+  // }, []);
+  // const handleOpenCheckoutCalender = useCallback(() => {
+  //   setCalenderOpen((prevState) => ({ ...prevState, checkOutCalender: true }));
+  // }, []);
   const handleChange = (val) => {
     setHotelRoomArr({ adults: val })
   }
@@ -141,19 +131,22 @@ const HotelSearch = ({navigation:{navigate}}) => {
     setHotelRoomArr(roomsArr);
   };
   const handleHotelSearch = () => {
-    if (cityHotel && selectedCheckInDate) {
-      navigate("HotelResList")
-      actions.hotelSearch({
-        cityHotel,
-        cityDestName: `${cityHotelItem.DESTINATION}, ${cityHotelItem.STATEPROVINCE}`,
-        countryCode,
-        checkInDate,
-        checkOutDate,
-        hotelNights,
-        hotelRooms,
-        hotelRoomArr
-      })
-    }
+    // if (cityHotel && selectedCheckInDate) {
+    //   navigate("HotelResList")
+    //   actions.hotelSearch({
+    //     cityHotel,
+    //     cityDestName: `${cityHotelItem.DESTINATION}, ${cityHotelItem.STATEPROVINCE}`,
+    //     countryCode,
+    //     checkInDate,
+    //     checkOutDate,
+    //     hotelNights,
+    //     hotelRooms,
+    //     hotelRoomArr,
+    //     selectedCheckInDate,
+    //     selectedCheckOutDate
+    //   })
+    // }
+    navigate("HotelResList")
   }
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -164,7 +157,7 @@ const HotelSearch = ({navigation:{navigate}}) => {
           {cityHotelRes.length === 0 ? <View>
             <Text>No DataFound!!!</Text>
           </View> :
-            cityHotelResBox && <FlatList data={cityHotelRes} renderItem={({ item: { item: { item } } }) => {
+           <FlatList data={cityHotelRes} renderItem={({ item: { item: { item } } }) => {
               return (
                 <TouchableOpacity style={{ marginVertical: 5 }} onPress={() => handleSelectedHotel(item)}>
                   <Text>{`${item.DESTINATION},${item?.STATEPROVINCE
@@ -176,12 +169,12 @@ const HotelSearch = ({navigation:{navigate}}) => {
             }} style={{ borderWidth: 1, paddingHorizontal: responsiveWidth(5), borderRadius: responsiveHeight(1) }} />
           }
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-            <SearchInputs btn={true} dropDown={false} placeholder={selectedCheckInDate} customStyles={{ width: responsiveWidth(42) }} customFontStyles={{ fontSize: responsiveHeight(2.3) }} handleDatePicker={handleOpenCheckinCalender} />
-            <SearchInputs btn={true} dropDown={false} placeholder={selectedCheckOutDate} customStyles={{ width: responsiveWidth(42) }} customFontStyles={{ fontSize: responsiveHeight(2.3) }} handleDatePicker={handleOpenCheckoutCalender} />
+            <SearchInputs btn={true} dropDown={false} placeholder={selectedCheckInDate} customStyles={{ width: responsiveWidth(42) }} customFontStyles={{ fontSize: responsiveHeight(2.3) }} handleDatePicker={actions.handleOpenCheckinCalender} />
+            <SearchInputs btn={true} dropDown={false} placeholder={selectedCheckOutDate} customStyles={{ width: responsiveWidth(42) }} customFontStyles={{ fontSize: responsiveHeight(2.3) }} handleDatePicker={actions.handleOpenCheckoutCalender} />
           </View>
           <View style={styles.aligningItemsInRow}>
             <HotelDropDown value={hotelNights} customStyles={{ width: responsiveWidth(42) }} placeHolder={"Nights"} disable={true} />
-            <HotelDropDown length={4} starting={1} value={hotelRooms} handleChangeValue={handleHotelRooms} customStyles={{ width: responsiveWidth(42) }} placeHolder="Rooms" />
+            <HotelDropDown length={4} starting={1} value={hotelRooms} handleChangeValue={actions.handleHotelRooms} customStyles={{ width: responsiveWidth(42) }} placeHolder="Rooms" />
           </View>
           {
             hotelRoomArr &&
@@ -191,9 +184,9 @@ const HotelSearch = ({navigation:{navigate}}) => {
                   <Text style={styles.roomTitle}>{`Room ${r + 1}`}</Text>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <HotelDropDown length={4} starting={1} value={room.adults} handleChangeValue={(val) =>
-                      handleHotelRoomsArr(val, "adults", r)} placeHolder="Adults" customStyles={{ width: responsiveWidth(39) }} />
+                      actions.handleHotelRoomsArr(val, "adults", r)} placeHolder="Adults" customStyles={{ width: responsiveWidth(39) }} />
                     <HotelDropDown length={3} value={room.child} handleChangeValue={(val) =>
-                      handleHotelRoomsArr(val, "child", r)} placeHolder={"Children"} customStyles={{ width: responsiveWidth(39) }} />
+                      actions.handleHotelRoomsArr(val, "child", r)} placeHolder={"Children"} customStyles={{ width: responsiveWidth(39) }} />
                   </View>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     {
@@ -206,7 +199,7 @@ const HotelSearch = ({navigation:{navigate}}) => {
 
                               roomsArr[r].childAge[c].age = age;
 
-                              setHotelRoomArr(roomsArr);
+                             actions.handleChildAge(roomsArr);
                             }} placeHolder={`Child ${c + 1} age`} customStyles={{ width: responsiveWidth(39) }} />
                           </View>
                         )
@@ -219,19 +212,19 @@ const HotelSearch = ({navigation:{navigate}}) => {
           }
           <CustomButton title='Search Hotels' handleSubmit={handleHotelSearch} />
           {calenderOpen.checkInCalender && <DateTimePicker
-            value={checkInCalender}
+            value={selectedHotelCheckInDate}
             mode="date"
             display="default"
-            onChange={handleSelectedCheckinDate}
+            onChange={actions.handleCheckInCalender}
             minimumDate={new Date()}
             is24Hour={true}
           />}
           {calenderOpen.checkOutCalender && <DateTimePicker
-            value={checkOutCalender}
+            value={selectedHotelCheckOutDate}
             mode="date"
             display="default"
-            onChange={handleSelectedCheckOutDate}
-            minimumDate={checkInCalender}
+            onChange={actions.handleCheckOutCalender}
+            minimumDate={selectedHotelCheckInDate}
             is24Hour={true}
           />}
         </View>
@@ -240,4 +233,4 @@ const HotelSearch = ({navigation:{navigate}}) => {
   )
 }
 
-export default HotelSearch
+export default React.memo(HotelSearch)
