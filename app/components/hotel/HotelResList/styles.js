@@ -39,5 +39,96 @@ subTitle:{
     color:colors.white,
     fontSize:responsiveHeight(1.7),
     fontFamily:fonts.primary  
-}
+},
+hotelCard: {
+    flexDirection: 'row',
+    marginVertical: responsiveHeight(0.5),
+    // marginHorizontal: 15,
+    padding: responsiveHeight(1),
+    // borderWidth: 1,
+    // borderColor: '#ccc',
+    borderRadius: responsiveHeight(1.5),
+    shadowColor:"#ccc",
+    shadowOffset: { width: responsiveWidth(-0.2), height: responsiveHeight(-5) },
+    shadowOpacity: responsiveHeight(0.3),
+    shadowRadius: responsiveHeight(3),
+    elevation: responsiveHeight(0.4),
+    backgroundColor:"white",
+    columnGap:responsiveWidth(4)
+  },
+  hotelImgContainer: {
+    // flex: 1,
+  },
+  hotelImg: {
+    width: responsiveHeight(8),
+    height: responsiveHeight(8),
+    borderRadius: responsiveHeight(0.5),
+    
+  },
+  noImageContainer: {
+    width: responsiveHeight(8),
+    height: responsiveHeight(8),
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: responsiveHeight(0.5),
+    backgroundColor: '#ccc',
+  },
+  hotelDetailsContainer: {
+    flex: 2,
+    rowGap:responsiveHeight(1)
+    // marginLeft: 10,
+    // borderWidth:1
+  },
+  hotelNameContainer: {
+    // marginBottom: 5,
+  },
+  hotelName: {
+    fontSize: responsiveHeight(1.8),
+    fontFamily: fonts.primary,
+    color:colors.primary
+  },
+  hotelDetailsBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    // borderWidth:1
+    
+  },
+  hotelDetailsRow: {
+    flexDirection: 'row',
+    // alignItems: 'center',
+  },
+  hotelPrice: {
+    fontSize: responsiveHeight(1.8),
+    // marginRight: 10,
+    fontFamily:fonts.primary,
+    color:colors.secondary
+  },
+  hotelRating: {
+    flexDirection: 'row',
+  },
+  hotelInfoButton: {
+    // marginTop: 10,
+    flexDirection:'row',
+    columnGap:responsiveWidth(2),
+    alignItems:'center'
+  },
+  bookingBtn:{
+    // borderWidth:1,
+    paddingHorizontal:responsiveWidth(4),
+    paddingVertical:responsiveHeight(0.4),
+    borderRadius:responsiveHeight(1),
+    backgroundColor:colors.black
+  },
+  bookingBtnText:{
+    fontSize:responsiveHeight(1.5),
+    fontFamily:fonts.primary,
+    color:colors.white
+  },
+  noImgText:{
+    fontSize:responsiveHeight(1.4),
+    fontFamily:fonts.textFont,
+    color:colors.primary,
+    textAlign:"center"
+  }
 })

@@ -10,27 +10,9 @@ import MyContext from '../../context/Context'
 import HotelDropDown from '../common/hotelDropDown/HotelDropDown'
 import HotelSearchInput from '../common/HotelSearchInput/HotelSearchInput'
 const HotelSearch = ({navigation:{navigate}}) => {
-  // const [cityHotel, setCityHotel] = useState("");
-  // const [countryCode, setCountryCode] = useState("IN");
-  // const [checkInDate, setCheckInDate] = useState("");
-  // const [checkOutDate, setCheckOutDate] = useState("");
-  // const [checkInCalender, setCheckInCalender] = useState(new Date)
-  // const [checkOutCalender, setCheckOutCalender] = useState(new Date)
-  // const [selectedCheckInDate, setSelectedCheckInDate] = useState("Check-In date")
-  // const [selectedCheckOutDate, setSelectedCheckOutDate] = useState("Check-Out date")
-  // const [hotelNights, setHotelNights] = useState("0");
-  // const [hotelRooms, setHotelRooms] = useState("1");
-  // const [hotelRoomArr, setHotelRoomArr] = useState([
-  //   { adults: "1", child: 0, childAge: [] },
-  // ]);
-  // const [cityHotelQuery, setCityHotelQuery] = useState("");
-  // const [calenderOpen, setCalenderOpen] = useState({ checkInCalender: false, checkOutCalender: false })
-  // const [cityHotelResBox, setCityHotelResBox] = useState(false);
-  // const [cityHotelItem, setCityHotelItem] = useState({});
-  // const [selectedHotel, setSelectedHotel] = useState("Destination")
-  const { actions, cityHotelRes,cityHotelQuery,selectedHotel,selectedCheckInDate,selectedCheckOutDate,calenderOpen,hotelNights,hotelRooms,hotelRoomArr,selectedHotelCheckInDate,selectedHotelCheckOutDate} = useContext(MyContext)
-  let checkInTime
-  let checkOutTime
+  // const [cityHotelResBox, setCityHotelResBox] = useState(true);
+
+  const { actions,checkInTime,checkOutTime, cityHotelResBox,cityHotelRes,cityHotelQuery,selectedHotel,selectedCheckInDate,selectedCheckOutDate,calenderOpen,hotelNights,hotelRooms,hotelRoomArr,selectedHotelCheckInDate,selectedHotelCheckOutDate} = useContext(MyContext)
   const handleChangeCityHotelQuery = (e) => {
     actions.handleChangeCityHotel(e);
   }
@@ -38,135 +20,31 @@ const HotelSearch = ({navigation:{navigate}}) => {
     actions.handleToggleHotelSearchInput();
       actions.selectedHotel(item)
   }
-  const handleSelectedCheckinDate = useCallback((event, selectedDate) => {
-
-    if (event.type === 'set') {
-      setCalenderOpen({ checkInCalender: false });
-      if (selectedDate) {
-        const formattedDate = selectedDate.toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-        });
-        checkInTime = selectedDate
-        setCheckInCalender(selectedDate)
-        setSelectedCheckInDate(formattedDate)
-        const inputDate = new Date(selectedDate);
-        const dateString = inputDate.toISOString();
-        setCheckInDate(`${dateString.split("").slice(0, dateString.indexOf("T") + 1).join("")}00:00:00`)
-        if (checkOutTime) {
-          const nights = actions.diffNights(checkInTime, checkOutTime)
-          setHotelNights(nights)
-        }
-      }
-    } else {
-      setCalenderOpen({ checkInCalender: false });
-    }
-  }, []);
-
-  const handleSelectedCheckOutDate = useCallback((event, selectedDate) => {
-
-    if (event.type === 'set') {
-      setCalenderOpen({ checkOutCalender: false });
-      if (selectedDate) {
-        const formattedDate = selectedDate.toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-        });
-        checkOutTime = selectedDate
-        setCheckOutCalender(selectedDate)
-        setSelectedCheckOutDate(formattedDate)
-        const inputDate = new Date(selectedDate);
-        const dateString = inputDate.toISOString();
-        setCheckOutDate(`${dateString.split("").slice(0, dateString.indexOf("T") + 1).join("")}00:00:00`)
-        if (checkInTime) {
-          const nights = actions.diffNights(checkInTime, selectedDate)
-          setHotelNights(nights)
-        }
-      }
-
-    } else {
-      setCalenderOpen({ checkOutCalender: false });
-    }
-  }, []);
-  // const handleOpenCheckinCalender = useCallback(() => {
-  //   setCalenderOpen((prevState) => ({ ...prevState, checkInCalender: true }));
-  // }, []);
-  // const handleOpenCheckoutCalender = useCallback(() => {
-  //   setCalenderOpen((prevState) => ({ ...prevState, checkOutCalender: true }));
-  // }, []);
-  const handleChange = (val) => {
-    setHotelRoomArr({ adults: val })
-  }
-  const handleHotelRooms = (rooms) => {
-    var roomsArr = [...hotelRoomArr];
-    if (rooms > roomsArr.length) {
-      var diff = rooms - roomsArr.length;
-      for (var i = 1; i <= diff; i++) {
-        roomsArr.push({ adults: 1, child: 0, childAge: [] });
-      }
-    } else if (rooms < roomsArr.length) {
-      roomsArr = roomsArr.filter((room, r) => {
-        return r < rooms;
-      });
-    }
-
-    setHotelRooms(rooms);
-    setHotelRoomArr(roomsArr);
-  };
-  const handleHotelRoomsArr = (val, type, i) => {
-    var roomsArr = [...hotelRoomArr];
-
-    if (type === "adults") {
-      roomsArr[i].adults = val;
-    } else if (type === "child") {
-      roomsArr[i].child = val;
-      let childArr = [];
-
-      for (let i = 1; i <= val; i++) {
-        childArr.push({ age: 0 });
-      }
-      roomsArr[i].childAge = [...childArr];
-    }
-
-    setHotelRoomArr(roomsArr);
-  };
   const handleHotelSearch = () => {
-    // if (cityHotel && selectedCheckInDate) {
-    //   navigate("HotelResList")
-    //   actions.hotelSearch({
-    //     cityHotel,
-    //     cityDestName: `${cityHotelItem.DESTINATION}, ${cityHotelItem.STATEPROVINCE}`,
-    //     countryCode,
-    //     checkInDate,
-    //     checkOutDate,
-    //     hotelNights,
-    //     hotelRooms,
-    //     hotelRoomArr,
-    //     selectedCheckInDate,
-    //     selectedCheckOutDate
-    //   })
-    // }
-    navigate("HotelResList")
+    if(checkInTime&&checkOutTime)
+    {
+
+      navigate("HotelResList")
+    }
   }
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.mainContainer}>
-          {/* <SearchInputs btn={false} dropDown={false} placeholder='Destination' Value={cityHotelQuery} handleChangeText={handleChangeCityHotelQuery} /> */}
           <HotelSearchInput placeHolder={selectedHotel} value={cityHotelQuery} handleChange={handleChangeCityHotelQuery} />
           {cityHotelRes.length === 0 ? <View>
             <Text>No DataFound!!!</Text>
           </View> :
-           <FlatList data={cityHotelRes} renderItem={({ item: { item: { item } } }) => {
-              return (
-                <TouchableOpacity style={{ marginVertical: 5 }} onPress={() => handleSelectedHotel(item)}>
-                  <Text>{`${item.DESTINATION},${item?.STATEPROVINCE
-                    ? item?.STATEPROVINCE
-                    : item?.COUNTRY
-                    }`}</Text>
-                </TouchableOpacity>
-              )
-            }} style={{ borderWidth: 1, paddingHorizontal: responsiveWidth(5), borderRadius: responsiveHeight(1) }} />
+      cityHotelResBox?     <FlatList data={cityHotelRes} renderItem={({ item: { item: { item } } }) => {
+        return (
+          <TouchableOpacity style={{ marginVertical: 5 }} onPress={() =>{ handleSelectedHotel(item), actions.handleToggleHotelSearchInput()}}>
+            <Text>{`${item.DESTINATION},${item?.STATEPROVINCE
+              ? item?.STATEPROVINCE
+              : item?.COUNTRY
+              }`}</Text>
+          </TouchableOpacity>
+        )
+      }} style={{ borderWidth: 1, paddingHorizontal: responsiveWidth(5), borderRadius: responsiveHeight(1) }} />:null
           }
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
             <SearchInputs btn={true} dropDown={false} placeholder={selectedCheckInDate} customStyles={{ width: responsiveWidth(42) }} customFontStyles={{ fontSize: responsiveHeight(2.3) }} handleDatePicker={actions.handleOpenCheckinCalender} />

@@ -199,10 +199,16 @@ export default class MyProvider extends Component {
     checkOutTime:null,
     hotelSearchAdults:0,
     hotelSearchChild:0,
+    searchingHotels:true,
+    cityHotelResBox:false,
       actions: {
+handleHotelBackButton:()=>
+{
+this.setState({searchingHotels:true})
+},
 handleToggleHotelSearchInput:()=>
 {
-this.setState({hotelSearchInputToggle:!this.state.hotelSearchInputToggle})
+this.setState({cityHotelResBox:false})
 },
 loginAction:async()=>
         {
@@ -494,8 +500,10 @@ loginAction:async()=>
           });
         },
         handleChangeCityHotel: (keyword) => {
+
           this.setState({
-            cityHotelQuery:keyword
+            cityHotelQuery:keyword,
+            cityHotelResBox:true
           })
           this.state.actions.changeCityKeyword(keyword);
         },
@@ -1472,7 +1480,7 @@ handleHotelRoomsArr : (val, type, i)=>
           await this.state.actions.getRecommondedHotelList()
           this.setState({
             hotelSearchQuery: query,
-            searchingHotels: true,
+            // searchingHotels: true,
             hotelSessionStarted: false,
             hotelSessionEnded: false,
             // hotelSearchName:  `${this.state.cityHotelItem.DESTINATION}, ${this.state.cityHotelItem.STATEPROVINCE}`,
