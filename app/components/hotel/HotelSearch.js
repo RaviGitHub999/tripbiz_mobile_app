@@ -24,7 +24,7 @@ const HotelSearch = ({navigation:{navigate}}) => {
     if(checkInTime&&checkOutTime)
     {
 
-      navigate("HotelResList")
+      navigate("TestingScreen")
     }
   }
   return (

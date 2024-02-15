@@ -201,6 +201,7 @@ export default class MyProvider extends Component {
     hotelSearchChild:0,
     searchingHotels:true,
     cityHotelResBox:false,
+    filterActions:false,
       actions: {
 handleHotelBackButton:()=>
 {
@@ -209,6 +210,10 @@ this.setState({searchingHotels:true})
 handleToggleHotelSearchInput:()=>
 {
 this.setState({cityHotelResBox:false})
+},
+handleFilterActions:()=>
+{
+this.setState({filterActions:!this.state.filterActions})
 },
 loginAction:async()=>
         {

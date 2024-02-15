@@ -81,11 +81,18 @@ hotelCard: {
   },
   hotelNameContainer: {
     // marginBottom: 5,
+    flexDirection:"row",
+    justifyContent:"space-between",
+    // width:"50%",
+    // borderWidth:1,
+    alignItems:'center'
+   
   },
   hotelName: {
     fontSize: responsiveHeight(1.8),
     fontFamily: fonts.primary,
-    color:colors.primary
+    color:colors.primary,
+    width:"60%"
   },
   hotelDetailsBox: {
     flexDirection: 'row',
@@ -130,5 +137,18 @@ hotelCard: {
     fontFamily:fonts.textFont,
     color:colors.primary,
     textAlign:"center"
+  },
+  recommendedTitleContainer:{
+    backgroundColor:"#a6f0a6",
+    // alignItems:"center",
+    // justifyContent:"center",
+    paddingHorizontal:responsiveWidth(3),
+    paddingVertical:responsiveHeight(0.3),
+    borderTopLeftRadius:responsiveHeight(2),
+    borderBottomLeftRadius:responsiveHeight(2)
+    
+  },
+  recommendedTitle:{
+    
   }
 })

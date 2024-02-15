@@ -142,7 +142,7 @@ console.log("componenet")
                 <FlatList
       data={filteredHotels}
       renderItem={renderItem}
-      keyExtractor={(item, index) => index.toString()} // Assuming index is unique for each item
+      keyExtractor={(item, index) => index.toString()} 
     scrollEnabled={false}/>
             </View>
           </ScrollView>}

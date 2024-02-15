@@ -10,6 +10,7 @@ import Select from '../select/Select';
 import Login from '../../login/Login';
 import Splash from '../../splash/Splash';
 import HotelResList from '../../hotel/HotelResList/HotelResList';
+import TestingScreen from '../../hotel/TestingScreen';
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {
@@ -17,11 +18,12 @@ const AppNavigator = () => {
     <MyProvider>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          {/* <Stack.Screen name="Splash" component={Splash} /> */}
+          <Stack.Screen name="Splash" component={Splash} />
           {/* <Stack.Screen name="Login" component={Login} /> */}
-          <Stack.Screen name="CustomerBottomNavigation" component={BottomNavigation} />
+          {/* <Stack.Screen name="CustomerBottomNavigation" component={BottomNavigation} />
           <Stack.Screen name="OneWayFlights" component={FlightsSearchRes} />
           <Stack.Screen name="HotelResList" component={HotelResList} />
+          <Stack.Screen name="TestingScreen" component={TestingScreen} /> */}
         </Stack.Navigator>
       </NavigationContainer>
     </MyProvider>
