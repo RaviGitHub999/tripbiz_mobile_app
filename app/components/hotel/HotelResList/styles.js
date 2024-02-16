@@ -150,5 +150,54 @@ hotelCard: {
   },
   recommendedTitle:{
     
-  }
+  },
+  container: {
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    gap:responsiveHeight(1),
+    marginTop:responsiveHeight(1)
+  },
+  row: {
+    flexDirection: 'row',
+    columnGap:responsiveWidth(2)
+  },
+  ratingTitle:{
+    fontSize:responsiveHeight(2.3),
+    fontFamily:fonts.textFont,
+    color:colors.primary
+  },
+  priceTitle:{
+    fontSize:responsiveHeight(1.8),
+    color:colors.primary,
+    fontFamily:fonts.textFont
+  },
+  filterClosingIcon:{
+    alignSelf:'center'
+  },
+  selectedItem:{
+    borderWidth:1,
+    width:"100%",
+    padding:responsiveHeight(1),
+    borderRadius:responsiveHeight(1)
+  },
+  totalHotels:
+  {
+fontSize:responsiveHeight(2),
+fontFamily:fonts.primary,color:colors.primary
+  },
+  applyFiltersBtnText: {
+    fontSize: responsiveHeight(2),
+    fontFamily: fonts.primary,
+    color: colors.white
+  },
+  applyFiltersBtn: {
+    alignSelf: "flex-end",
+    borderWidth: 1,
+    paddingHorizontal: responsiveHeight(2),
+    paddingVertical: responsiveHeight(0.6),
+    borderRadius: responsiveHeight(1.2),
+    backgroundColor: colors.black,
+    alignItems:'center',
+    justifyContent:'center'
+  },
 })

@@ -202,6 +202,10 @@ export default class MyProvider extends Component {
     searchingHotels:true,
     cityHotelResBox:false,
     filterActions:false,
+    hotelRating:null,
+    hotelPriceStart: null,
+    hotelPriceEnd: null,
+    hotelSearchText: null,
       actions: {
 handleHotelBackButton:()=>
 {
@@ -665,7 +669,65 @@ handleHotelRoomsArr : (val, type, i)=>
   })
  } , 
         
+ setHotelRating: (value) => {
+  this.setState({
+    hotelRating: value
+  });
+},
+setHotelPriceStart: (value) => {
+  this.setState({
+    hotelPriceStart: value
+  });
+},
+setHotelPriceEnd: (value) => {
+  this.setState({
+    hotelPriceEnd: value
+  });
+},
+setHotelSearchText: (value) => {
+  this.setState({
+    hotelSearchText: value
+  });
+},
 
+ filterHotels: (hotelResList) => {
+  // console.log(this.state.byDuration);
+  var filteredArr = hotelResList;
+
+  if (this.state.hotelRating) {
+    //console.log(this.state.hotelRating);
+    filteredArr = filteredArr.filter(
+      (hotel) => hotel.StarRating === this.state.hotelRating
+    );
+  }
+  if (this.state.hotelPriceStart && this.state.hotelPriceEnd) {
+    //console.log(this.state.hotelPriceStart);
+    filteredArr = filteredArr.filter((hotel) => {
+      return (
+        hotel.Price.OfferedPriceRoundedOff >=
+        this.state.hotelPriceStart &&
+        hotel.Price.OfferedPriceRoundedOff < this.state.hotelPriceEnd
+      );
+    });
+  }
+  // if (this.state.hotelSearchText) {
+  //   filteredArr = filteredArr.filter((hotel) => {
+  //     const staticData = this.state.hotelStaticData[hotel.HotelCode];
+  //     if (hotel.HotelName) {
+  //       return hotel.HotelName.toLowerCase().includes(
+  //         this.state.hotelSearchText.toLowerCase()
+  //       );
+  //     }
+  //     else {
+  //       return staticData?.HotelName.toLowerCase().includes(
+  //         this.state.hotelSearchText.toLowerCase()
+  //       );
+  //     }
+
+  //   });
+  // }
+  return filteredArr;
+},
 
 
 

@@ -1,5 +1,5 @@
 import { View, Text, Image, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, ScrollView } from 'react-native'
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import MyContext from '../../context/Context'
 import { FlatList } from 'react-native-gesture-handler'
 import { styles } from './HotelResList/styles'
@@ -7,7 +7,77 @@ import IconSwitcher from '../common/icons/IconSwitcher'
 import ProgressBar from '../common/progressBar/ProgressBar'
 import { colors } from '../../config/theme'
 import { responsiveHeight, responsiveWidth } from '../../utils/responsiveScale'
+import FilterHeader from '../common/filterHeader/FilterHeader'
+const data = [
+    {
+        length: 1
+    },
+    {
+        length: 2
+    },
+    {
+        length: 3
+    },
+    {
+        length: 4
+    },
+    {
+        length: 5
+    },
+]
+const priceData =
+    [
+        {
+            price: "₹ 0 to ₹ 1500",
+            priceDetails: "price1and5k",
+            startingPrice: 0,
+            EndingPrice: 1500
+
+        },
+        {
+            price: "₹ 1500 - ₹ 2500",
+            priceDetails: "price2and5k",
+            startingPrice: 1500,
+            EndingPrice: 2500
+        },
+        {
+            price: "₹ 2500 - ₹ 4000",
+            priceDetails: "price4k",
+            startingPrice: 2500,
+            EndingPrice: 4000
+        },
+        {
+            price: "₹ 4000 - ₹ 6000",
+            priceDetails: "price6k",
+            startingPrice: 4000,
+            EndingPrice: 6000
+        },
+        {
+            price: "₹ 6000 - ₹ 8000",
+            priceDetails: "price8k",
+            startingPrice: 6000,
+            EndingPrice: 8000
+        },
+        {
+            price: "₹ 8000 - ₹ 10000",
+            priceDetails: "price10k",
+            startingPrice: 8000,
+            EndingPrice: 10000
+        },
+        {
+            price: "₹ 10000+",
+            priceDetails: "pricegt10k",
+            startingPrice: 10000,
+            EndingPrice: 10000
+        },
+    ]
 const TestingScreen = () => {
+    const [openFilters, setOpenFilters] = useState(false)
+    const [selectedItemIndex, setSelectedItemIndex] = useState();
+    const [selectedStarsItemIndex, setSelectedStarsItemIndex] = useState();
+    const [price, setPrice] = useState();
+    const [rating, setRating] = useState();
+    var [count, setCount] = useState(0);
     const { searchingHotels,
         hotelResList,
         actions, hotelStaticData,
@@ -28,7 +98,7 @@ const TestingScreen = () => {
         const hotelName = hotel.HotelName ? hotel.HotelName : staticData?.HotelName;
         return hotelName?.length > 0;
     })
-    const finalData = filteredHotels.sort((a, b) => {
+    const finalData = actions.filterHotels(filteredHotels).sort((a, b) => {
         // console.log(a.HotelCode)
         const indexA = idToIndex[a.HotelCode];
         const indexB = idToIndex[b.HotelCode];
@@ -99,9 +169,116 @@ const TestingScreen = () => {
             </View>
         );
     };
+
+    const handleOpenFilters = () => {
+        setOpenFilters(!openFilters)
+    }
+    const generatePattern = () => {
+        return data.map((row, index) => (
+            <TouchableOpacity key={index} style={[styles.row, index === selectedStarsItemIndex ? styles.selectedItem : null]} onPress={() => handleStarItemClick(index, row.length)}>
+                {[...Array(row.length).keys()].map((key) => (
+                    <IconSwitcher key={`${index}_${key}`} componentName='AntDesign' iconName='star' iconsize={2.5} color='#ffd700' />
+                ))}
+            </TouchableOpacity>
+        ));
+    };
+
+    const handleHotelPrices = () => {
+        return priceData.map((ele, index) => {
+            return (
+                <TouchableOpacity style={index === selectedItemIndex ? styles.selectedItem : null} onPress={() => handleItemClick(index, ele.priceDetails)}>
+        <Text style={styles.priceTitle}>{`${ele.price} (${handlehotelsLengthBasedOnPrice(ele.startingPrice,ele.EndingPrice)})`}</Text>
+                </TouchableOpacity>
+            )
+        })
+    }
+    const handleItemClick = (index, price) => {
+        setSelectedItemIndex(selectedItemIndex === index ? null : index);
+        setPrice((prevSelectedPrice) =>
+            prevSelectedPrice === price ? null : price);
+    };
+    const handleStarItemClick = async (index, ratings) => {
+        setRating((prevSelectedTime) =>
+            prevSelectedTime === ratings ? null : ratings
+        );
+        setSelectedStarsItemIndex(selectedStarsItemIndex === index ? null : index);
+        // await actions.setHotelRating(rating === ratings ? null : ratings);
+    };
+    var setPriceState = async (price) => {
+        // setIsPriceSelected((prevSelectedPrice) =>
+        //   prevSelectedPrice === price ? null : price
+        // );
+        if (price === "price1and5k") {
+            await actions.setHotelPriceStart(1);
+            await actions.setHotelPriceEnd(1500);
+        }
+        if (price === "price2and5k") {
+            await actions.setHotelPriceStart(1500);
+            await actions.setHotelPriceEnd(2500);
+        }
+        if (price === "price4k") {
+            await actions.setHotelPriceStart(2500);
+            await actions.setHotelPriceEnd(4000);
+        }
+        if (price === "price6k") {
+            await actions.setHotelPriceStart(4000);
+            await actions.setHotelPriceEnd(6000);
+        }
+        if (price === "price8k") {
+            await actions.setHotelPriceStart(6000);
+            await actions.setHotelPriceEnd(8000);
+        }
+        if (price === "price10k") {
+            await actions.setHotelPriceStart(8000);
+            await actions.setHotelPriceEnd(10000);
+        }
+        if (price === "pricegt10k") {
+            await actions.setHotelPriceStart(10000);
+            await actions.setHotelPriceEnd(1000000);
+        }
+        if (price === null) {
+            await actions.setHotelPriceStart(null);
+            await actions.setHotelPriceEnd(null);
+        }
+    };
+    const setRatingState = async (rating) => {
+        await actions.setHotelRating(rating);
+    };
+    const applyFilters = async () => {
+        setOpenFilters(false)
+        setCount(0);
+        await setRatingState(rating);
+        await setPriceState(price);
+        if (rating) {
+            setCount((prev) => prev + 1)
+          }
+          if (price) {
+            setCount((prev) => prev + 1);
+          }
+    }
+
+const handlehotelsLengthBasedOnPrice=(starting ,ending)=>
+{
+    return Array.isArray(hotelResList) ? hotelResList?.filter((hotel) =>
+     {
+       if(starting===ending)
+       {
+        return (
+            hotel.Price.OfferedPriceRoundedOff >= starting
+          )
+       }
+       else{
+        return (
+            hotel.Price.OfferedPriceRoundedOff >= starting &&
+            hotel.Price.OfferedPriceRoundedOff < ending
+          );
+       }
+      }).length : null;
+}
+
     useEffect(() => {
         if (searchingHotels) {
-            console.log("fun")
+
             actions.hotelSearch()
         }
         console.log("useEffect")
@@ -126,6 +303,22 @@ const TestingScreen = () => {
                     } | ${hotelNights} ${hotelNights > 1 ? "nights" : "night"
                     }`}</Text>
             </View>
+            {!searchingHotels && <FilterHeader handlefiltersToggleActions={handleOpenFilters} value={openFilters} customStyle={{ rowGap: responsiveHeight(1), paddingHorizontal: responsiveWidth(4) }} filtersCount={count}>
+                <Text style={styles.ratingTitle}>Rating</Text>
+                <View style={styles.container}>
+                    {generatePattern()}
+                </View>
+                <Text style={styles.ratingTitle}>Price</Text>
+                <View style={styles.container}>
+                    {handleHotelPrices()}
+                </View>
+                <TouchableOpacity style={styles.applyFiltersBtn} onPress={applyFilters} >
+                    <Text style={styles.applyFiltersBtnText} >Appy</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.filterClosingIcon} onPress={handleOpenFilters}>
+                    <IconSwitcher componentName='Ionicons' iconName='chevron-up' color={colors.black} iconsize={3.5} />
+                </TouchableOpacity>
+            </FilterHeader>}
 
             {searchingHotels ?
                 <View style={{ flex: 1, justifyContent: "center", alignItems: 'center' }}>
@@ -133,6 +326,12 @@ const TestingScreen = () => {
                 </View> : <ScrollView >
                     <View style={{ paddingHorizontal: responsiveHeight(2), paddingTop: responsiveHeight(2), flex: 1, rowGap: responsiveHeight(1) }}>
                         <TextInput placeholder='Search for your favourite hotel' style={{ borderWidth: 1, paddingHorizontal: responsiveWidth(5), borderRadius: responsiveHeight(2), fontSize: responsiveHeight(2.1) }} />
+                        <Text style={styles.totalHotels}>{`Hotel search results (${actions.filterHotels(hotelResList).filter((hotel) => {
+                      var staticData = hotelStaticData[hotel.HotelCode];
+                      var hotelName = hotel.HotelName ? hotel.HotelName : staticData?.HotelName;
+                      return hotelName?.length > 0;
+                    }).length
+                      })`}</Text>
                         <FlatList
                             data={finalData}
                             renderItem={renderItem}
@@ -144,4 +343,4 @@ const TestingScreen = () => {
     )
 }
 
-export default TestingScreen
+export default React.memo(TestingScreen)
