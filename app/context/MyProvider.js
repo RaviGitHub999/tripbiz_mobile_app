@@ -206,6 +206,8 @@ export default class MyProvider extends Component {
     hotelPriceStart: null,
     hotelPriceEnd: null,
     hotelSearchText: null,
+    hotelInfoRes: false,
+    fetchingHotelInfo:false,
       actions: {
 handleHotelBackButton:()=>
 {
@@ -710,22 +712,22 @@ setHotelSearchText: (value) => {
       );
     });
   }
-  // if (this.state.hotelSearchText) {
-  //   filteredArr = filteredArr.filter((hotel) => {
-  //     const staticData = this.state.hotelStaticData[hotel.HotelCode];
-  //     if (hotel.HotelName) {
-  //       return hotel.HotelName.toLowerCase().includes(
-  //         this.state.hotelSearchText.toLowerCase()
-  //       );
-  //     }
-  //     else {
-  //       return staticData?.HotelName.toLowerCase().includes(
-  //         this.state.hotelSearchText.toLowerCase()
-  //       );
-  //     }
+  if (this.state.hotelSearchText) {
+    filteredArr = filteredArr.filter((hotel) => {
+      const staticData = this.state.hotelStaticData[hotel.HotelCode];
+      if (hotel.HotelName) {
+        return hotel.HotelName.toLowerCase().includes(
+          this.state.hotelSearchText.toLowerCase()
+        );
+      }
+      else {
+        return staticData?.HotelName.toLowerCase().includes(
+          this.state.hotelSearchText.toLowerCase()
+        );
+      }
 
-  //   });
-  // }
+    });
+  }
   return filteredArr;
 },
 
@@ -1661,6 +1663,107 @@ setHotelSearchText: (value) => {
           }, 840000);
           clearTimeout(hotelSessionTimeout);
         },
+
+        calculateHotelFinalPrice: (selectedRoomType) => {
+          let finalPrice = 0;
+          selectedRoomType.forEach((room, r) => {
+            finalPrice += room.Price
+              ? room.Price.OfferedPriceRoundedOff
+                ? Number(room.Price.OfferedPriceRoundedOff)
+                : Number(room.Price.PublishedPriceRoundedOff)
+              : 0;
+          });
+  
+          return finalPrice
+        },
+
+        fetchHotelInfo: async (query) => {
+          if (!this.state.hotelSessionExpired) {
+            this.setState({
+              hotelInfoRes: [],
+              // fetchingHotelInfo: true
+            });
+  
+            var hotelInfoReq = {
+              traceId:
+                this.state.hotelTraceId,
+              tokenId: this.state.hotelTokenId,
+              resultIndex: query.resultIndex,
+              hotelCode: query.hotelCode,
+              categoryId: query.categoryId ? query.categoryId : null
+            };
+  
+            console.log("Hotel info req", hotelInfoReq);
+  
+            var hotelInfoRes = await fetch(
+              "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/hotelInfoRes",
+              {
+                method: "POST",
+                // credentials: "include",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify(hotelInfoReq)
+              }
+            )
+              .then((res) => res.json())
+              .catch((err) => console.log(err));
+  
+            hotelInfoRes.hotelSearchRes = query.hotelSearchRes;
+  
+            console.log("Hotel info res", hotelInfoRes);
+  
+            let roomTypes = this.state.hotelRoomArr.map((room, r) => {
+              return {
+                ...hotelInfoRes.roomResult?.GetHotelRoomResult
+                  ?.HotelRoomsDetails[0],
+  
+                roomTypeIndex: 0
+              };
+            });
+            var hotelImg = this.state.hotelImageList ? this.state.hotelImageList[query.hotelSearchRes.HotelCode] ? this.state.hotelImageList[query.hotelSearchRes.HotelCode].HotelPicture : hotelInfoRes.hotelInfo.HotelInfoResult.HotelDetails.Images[0] : hotelInfoRes.hotelInfo.HotelInfoResult.HotelDetails.Images[0]
+            this.setState({
+              hotelInfoRes,
+              fetchingHotelInfo: true,
+              bookingHotel: {
+                ...hotelInfoRes,
+                hotelCode: query.hotelSearchRes.HotelCode,
+                hotelPrice: query.hotelSearchRes.Price.OfferedPriceRoundedOff
+                  ? query.hotelSearchRes.Price.OfferedPriceRoundedOff
+                  : query.hotelSearchRes.Price.PublishedPriceRoundedOff,
+                hotelName: query.hotelSearchRes.HotelName,
+                selectedRoomType: [...roomTypes],
+                hotelFinalPrice: this.state.actions.calculateHotelFinalPrice([
+                  ...roomTypes
+                ]),
+                hotelTotalPrice: (this.state.actions.calculateHotelFinalPrice([
+                  ...roomTypes
+                ]) + (this.state.actions.calculateHotelFinalPrice([
+                  ...roomTypes
+                ]) * this.state.domesticHotel) / 100),
+                hotelSearchQuery: this.state.hotelSearchQuery,
+                hotelImages: hotelImg
+              }
+            });
+          } else {
+            this.setState({
+              hotelSessionExpired: true
+            });
+            console.log(
+              "Hotel session has expired please make a search request again!!"
+            );
+          }
+        },
+
+
+
+
+
+
+
+
+
+
         populateBookData: (bookingFlight, flightBookData) => {
           bookingFlight.forEach((book, bookIndex) => {
             if (flightBookData && flightBookData[bookIndex]) {

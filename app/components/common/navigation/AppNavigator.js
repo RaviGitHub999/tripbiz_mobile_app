@@ -10,7 +10,7 @@ import Select from '../select/Select';
 import Login from '../../login/Login';
 import Splash from '../../splash/Splash';
 import HotelResList from '../../hotel/HotelResList/HotelResList';
-import TestingScreen from '../../hotel/TestingScreen';
+import HotelInfo from '../../hotel/hotelInfo/HotelInfo';
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {
@@ -23,7 +23,7 @@ const AppNavigator = () => {
           <Stack.Screen name="CustomerBottomNavigation" component={BottomNavigation} />
           <Stack.Screen name="OneWayFlights" component={FlightsSearchRes} />
           <Stack.Screen name="HotelResList" component={HotelResList} />
-          <Stack.Screen name="TestingScreen" component={TestingScreen} />
+          <Stack.Screen name="HotelInfo" component={HotelInfo} />
         </Stack.Navigator>
       </NavigationContainer>
     </MyProvider>
