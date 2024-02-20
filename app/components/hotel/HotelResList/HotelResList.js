@@ -71,7 +71,7 @@ const priceData =
             EndingPrice: 10000
         },
     ]
-const HotelResList = ({navigation:{navigate}}) => {
+const HotelResList = ({navigation:{navigate,goBack}}) => {
     console.log("<<<<<<<<<<<<<<<<<<<<<<<----------------------------------------->>>>>>>>>>>>>>>>>")
     const [openFilters, setOpenFilters] = useState(false)
     const [selectedItemIndex, setSelectedItemIndex] = useState();
@@ -79,6 +79,7 @@ const HotelResList = ({navigation:{navigate}}) => {
     const [price, setPrice] = useState();
     const [rating, setRating] = useState();
     var [count, setCount] = useState(0);
+    const [imageError, setImageError] = useState(false);
     const { searchingHotels,
         hotelResList,
         actions, hotelStaticData,
@@ -94,6 +95,9 @@ const HotelResList = ({navigation:{navigate}}) => {
         {
             navigate("HotelInfo",{hotel})
         }
+        const handleImageError = () => {
+            setImageError(true);
+          };
     const hotelIdsInObject = recommondedHotels ? Object.keys(recommondedHotels).map(ele => { return { HotelCode: ele } }) : []
     const idToIndex = hotelIdsInObject.reduce((acc, item, index) => {
         acc[item.HotelCode] = index;
@@ -143,8 +147,10 @@ const HotelResList = ({navigation:{navigate}}) => {
         return (
             <View style={styles.hotelCard}>
                 <View style={styles.hotelImgContainer}>
-                    {isImageUri(hotelImg) ? (
-                        <Image source={{ uri: hotelImg }} style={styles.hotelImg} />
+                    {isImageUri(hotelImg)? (
+                       imageError ? (
+                        <Text>Failed to load image</Text>
+                      ) :  <Image source={{ uri: hotelImg }} style={styles.hotelImg} onError={handleImageError}/>
                     ) : (
                         <View style={styles.noImageContainer}>
                             <Text style={styles.noImgText}>No Image Available</Text>

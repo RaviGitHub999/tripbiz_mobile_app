@@ -1755,11 +1755,147 @@ setHotelSearchText: (value) => {
           }
         },
 
+handleGoBack:()=>
+{
+  this.setState({fetchingHotelInfo:false})
+},
+inclusionToStr: (inclusions) => {
+  var mealStr = "";
 
+  inclusions.forEach((inc, i) => {
+    mealStr += inc.toLowerCase().trim();
+  });
 
+  return mealStr;
+},
+checkIncludesDinner: (str) => {
+  if (str.includes("gala")) {
+    var splitStr = str.split("dinner");
 
+    for (var i = 0; i < splitStr.length - 1; i++) {
+      var galaSplit = splitStr[i].split("gala");
+      var galaSplitNxt = splitStr[i + 1].split("gala");
 
+      if (
+        !(
+          galaSplit[galaSplit.length - 1] === "" || galaSplitNxt[0] === ""
+        )
+      ) {
+        return true;
+      }
+    }
 
+    return false;
+  } else {
+    if (str.includes("dinner")) {
+      return true;
+    }
+    return false;
+  }
+},
+setMealType: (meals) => {
+  //[true,undefined,true]
+  var mealNames = {
+    0: "Breakfast",
+    1: "Lunch",
+    2: "Dinner"
+  };
+  var mealText = "";
+  meals = meals
+    .map((meal, m) => {
+      if (meal) {
+        return mealNames[m];
+      }
+      return meal;
+    })
+    .filter((meal) => meal);
+  //
+  meals.forEach((meal, m) => {
+    if (m === meals.length - 1 && meals.length > 1) {
+      mealText += ` and ${meal}`;
+    } else if (m === meals.length - 2 || meals.length === 1) {
+      mealText += meal;
+    } else {
+      mealText += `${meal}, `;
+    }
+  });
+  if (mealText === "") {
+    mealText = "No meals";
+  }
+  return mealText;
+},
+checkForTboMeals: (inclusions) => {
+  var meals = this.state.actions.inclusionToStr(inclusions);
+
+  var includedStr = "";
+  var mealsStr = meals.replace(/\s/g, "").toLowerCase();
+  var mealsArr = [false, false, false];
+
+  if (
+    mealsStr.includes("breakfast") ||
+    mealsStr.includes("halfboard") ||
+    mealsStr.includes("fullboard") ||
+    mealsStr.includes("allmeals")
+  ) {
+    mealsArr[0] = true;
+  }
+  if (
+    mealsStr.includes("lunch") ||
+    mealsStr.includes("fullboard") ||
+    mealsStr.includes("allmeals")
+  ) {
+    mealsArr[1] = true;
+  }
+  if (
+    // (mealsStr.includes("dinner") ||
+    this.state.actions.checkIncludesDinner(mealsStr) ||
+    mealsStr.includes("halfboard") ||
+    mealsStr.includes("fullboard") ||
+    mealsStr.includes("allmeals")
+  ) {
+    mealsArr[2] = true;
+  }
+
+  includedStr = this.state.actions.setMealType(mealsArr);
+
+  return includedStr;
+},
+
+validCancelDate: (date) => {
+  var cancelDate = new Date(date);
+  var currDate = new Date();
+  if (cancelDate > currDate) {
+    return true;
+  }
+  return false;
+},
+selectHotelRoomType: (room, selectedRoom, r) => {
+  var bookingHotel = { ...this.state.bookingHotel };
+
+  bookingHotel.selectedRoomType[selectedRoom] = {
+    ...room,
+    roomTypeIndex: r
+  };
+  bookingHotel.hotelFinalPrice =
+    this.state.actions.calculateHotelFinalPrice(
+      bookingHotel.selectedRoomType
+    );
+  bookingHotel.hotelTotalPrice = (this.state.actions.calculateHotelFinalPrice(
+    bookingHotel.selectedRoomType
+  ) + (this.state.actions.calculateHotelFinalPrice(
+    bookingHotel.selectedRoomType
+  ) * this.state.domesticHotel) / 100)
+
+  console.log(
+    this.state.actions.calculateHotelFinalPrice(
+      bookingHotel.selectedRoomType
+    )
+  );
+
+  this.setState({
+    bookingHotel
+  });
+},
 
 
 
