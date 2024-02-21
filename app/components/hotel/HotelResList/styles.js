@@ -200,4 +200,14 @@ fontFamily:fonts.primary,color:colors.primary
     alignItems:'center',
     justifyContent:'center'
   },
+  clearFilterContainer:{
+    alignSelf:"flex-end",
+    borderBottomWidth:1,
+    color:colors.black
+  },
+  clearFilterTitle:{
+    fontSize:responsiveHeight(2),
+    fontFamily:fonts.textFont,
+    color:colors.primary
+  }
 })

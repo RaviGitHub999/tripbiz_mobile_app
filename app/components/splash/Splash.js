@@ -18,51 +18,59 @@
 // }
 // export default Splash
 
-
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Animated, Text } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator } from 'react-native';
 
-const Com = () => {
-  const [heightAnim] = useState(new Animated.Value(100)); // Initial height of the view
-  const increasedHeight = 200; // Height to increase to
-  const initialHeight = 100; // Initial height of the view
-  const [isExpanded, setIsExpanded] = useState(false);
+const YourComponent = () => {
+  // Sample data with 100 objects
+  const data = Array.from({ length: 100 }, (_, index) => ({
+    id: index,
+    name: `Item ${index + 1}`,
+  }));
 
-  const toggleHeight = () => {
-    const toValue = isExpanded ? initialHeight : increasedHeight;
-    Animated.timing(heightAnim, {
-      toValue,
-      duration: 500, // Animation duration in milliseconds
-      useNativeDriver: false, // Make sure to set useNativeDriver to false for height animations
-    }).start();
-    setIsExpanded(!isExpanded);
+  // State to hold the currently rendered items and loading state
+  const [renderedData, setRenderedData] = useState(data.slice(0, 10));
+  const [loading, setLoading] = useState(false);
+
+  // Function to load more data
+  const loadMoreData = () => {
+    setLoading(true);
+    const remainingData = data.slice(renderedData.length, renderedData.length + 10);
+    // Simulate delay for fetching data (you can replace this with your actual data fetching logic)
+    setTimeout(() => {
+      setRenderedData(prevData => [...prevData, ...remainingData]);
+      setLoading(false);
+    }, 1000);
+  };
+
+  // Render item component
+  const renderItem = ({ item }) => (
+    <View style={{ padding: 10 }}>
+      <Text>{item.name}</Text>
+    </View>
+  );
+
+  // Render loading indicator
+  const renderFooter = () => {
+    if (!loading) return null;
+    return (
+      <View style={{ padding: 10 }}>
+        <ActivityIndicator size="small" color="#0000ff" />
+      </View>
+    );
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Animated.View
-        style={{
-          width: 200,
-          backgroundColor: 'blue',
-          height: heightAnim,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        {/* Content of the animated view */}
-      </Animated.View>
-      <TouchableOpacity
-        onPress={toggleHeight}
-        style={{ marginTop: 20, backgroundColor: 'black', padding: 10 }}
-      >
-        {/* Increase Height Button */}
-        <Text style={{ color: 'white' }}>{isExpanded ? 'Collapse' : 'Expand'}</Text>
-      </TouchableOpacity>
-    </View>
+    <FlatList
+      data={renderedData}
+      renderItem={renderItem}
+      keyExtractor={item => item.id.toString()}
+      onEndReached={loadMoreData} // Function to load more data when reaching the end
+      onEndReachedThreshold={0.1} // Trigger when 90% scrolled to the end
+      ListFooterComponent={renderFooter} // Render loading indicator
+    />
   );
 };
 
-export default Com;
-
-
+export default YourComponent;
 

@@ -8,8 +8,8 @@ export const styles = StyleSheet.create(
     mainContainer: {
       flex: 1,
       backgroundColor: colors.white,
-      borderWidth: 2,
-      borderColor: 'green',
+      // borderWidth: 2,
+      // borderColor: 'green',
       paddingHorizontal: responsiveWidth(4),
     },
     progessBarContainer: {

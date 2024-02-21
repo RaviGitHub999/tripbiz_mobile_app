@@ -1,7 +1,6 @@
-import { View, Text, Image, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, ScrollView } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
+import { View, Text, Image, FlatList, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, ScrollView } from 'react-native'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import MyContext from '../../../context/Context'
-import { FlatList } from 'react-native-gesture-handler'
 import { styles } from './styles'
 import IconSwitcher from '../../common/icons/IconSwitcher'
 import ProgressBar from '../../common/progressBar/ProgressBar'
@@ -71,8 +70,9 @@ const priceData =
             EndingPrice: 10000
         },
     ]
-const HotelResList = ({navigation:{navigate,goBack}}) => {
+const HotelResList = ({ navigation: { navigate, goBack } }) => {
     console.log("<<<<<<<<<<<<<<<<<<<<<<<----------------------------------------->>>>>>>>>>>>>>>>>")
+    // const [shouldRenderList, setShouldRenderList] = useState(false)
     const [openFilters, setOpenFilters] = useState(false)
     const [selectedItemIndex, setSelectedItemIndex] = useState();
     const [selectedStarsItemIndex, setSelectedStarsItemIndex] = useState();
@@ -91,23 +91,44 @@ const HotelResList = ({navigation:{navigate,goBack}}) => {
         hotelNights,
         hotelRoomArr,
         hotelSearchText } = useContext(MyContext)
-        const handleBooking=(hotel)=>
-        {
-            navigate("HotelInfo",{hotel})
-        }
-        const handleImageError = () => {
-            setImageError(true);
-          };
-    const hotelIdsInObject = recommondedHotels ? Object.keys(recommondedHotels).map(ele => { return { HotelCode: ele } }) : []
-    const idToIndex = hotelIdsInObject.reduce((acc, item, index) => {
-        acc[item.HotelCode] = index;
-        return acc;
-    }, {});
-    const filteredHotels = hotelResList.filter(hotel => {
-        const staticData = hotelStaticData[hotel.HotelCode];
-        const hotelName = hotel.HotelName ? hotel.HotelName : staticData?.HotelName;
-        return hotelName?.length > 0;
-    })
+    const handleBooking = (hotel) => {
+        navigate("HotelInfo", { item:hotel })
+    }
+    const handleImageError = () => {
+        setImageError(true);
+    };
+    // const hotelIdsInObject = recommondedHotels ? Object.keys(recommondedHotels).map(ele => { return { HotelCode: ele } }) : []
+    // const idToIndex = hotelIdsInObject.reduce((acc, item, index) => {
+    //     acc[item.HotelCode] = index;
+    //     return acc;
+    // }, {});
+    const hotelIdsInObject = useMemo(() => {
+        console.log("C1")
+        return recommondedHotels
+          ? Object.keys(recommondedHotels).map(ele => ({ HotelCode: ele }))
+          : [];
+          
+      }, [recommondedHotels]);
+    const idToIndex = useMemo(() => {
+        console.log("C2")
+        return hotelIdsInObject.reduce((acc, item, index) => {
+          acc[item.HotelCode] = index;
+          return acc;
+        }, {});
+      }, [hotelIdsInObject]);
+    // const filteredHotels = hotelResList.filter(hotel => {
+    //     const staticData = hotelStaticData[hotel.HotelCode];
+    //     const hotelName = hotel.HotelName ? hotel.HotelName : staticData?.HotelName;
+    //     return hotelName?.length > 0;
+    // })
+    const filteredHotels = useMemo(() => {
+        console.log("C3")
+        return hotelResList.filter(hotel => {
+          const staticData = hotelStaticData[hotel.HotelCode];
+          const hotelName = hotel.HotelName ? hotel.HotelName : staticData?.HotelName;
+          return hotelName?.length > 0;
+        });
+      }, [hotelResList, hotelStaticData]);
     const finalData = actions.filterHotels(filteredHotels).sort((a, b) => {
         // console.log(a.HotelCode)
         const indexA = idToIndex[a.HotelCode];
@@ -122,11 +143,28 @@ const HotelResList = ({navigation:{navigate,goBack}}) => {
         }
         return indexA - indexB;
     });
+    // const finalData = useMemo(() => {
+    //     console.log("C4")
+    //     return actions
+    //       .filterHotels(filteredHotels)
+    //       .sort((a, b) => {
+    //         const indexA = idToIndex[a.HotelCode];
+    //         const indexB = idToIndex[b.HotelCode];
+    //         if (indexA === undefined && indexB === undefined) {
+    //           return 0;
+    //         } else if (indexA === undefined) {
+    //           return 1;
+    //         } else if (indexB === undefined) {
+    //           return -1;
+    //         }
+    //         return indexA - indexB;
+    //       });
+    //   }, [filteredHotels]);
     const isImageUri = (uri) => {
         const imageExtensions = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg"];
         return imageExtensions.some((ext) => uri.endsWith(ext));
     };
-    const RenderHotelItem  = React.memo(({  hotel, index }) => {
+    const RenderHotelItem = React.memo(({ hotel, index }) => {
         const staticData = hotelStaticData[hotel.HotelCode];
         const starRatingFull = Math.floor(hotel.StarRating);
         const rating = [];
@@ -147,10 +185,7 @@ const HotelResList = ({navigation:{navigate,goBack}}) => {
         return (
             <View style={styles.hotelCard}>
                 <View style={styles.hotelImgContainer}>
-                    {isImageUri(hotelImg)? (
-                       imageError ? (
-                        <Text>Failed to load image</Text>
-                      ) :  <Image source={{ uri: hotelImg }} style={styles.hotelImg} onError={handleImageError}/>
+                    {isImageUri(hotelImg) ? (<Image source={{ uri: hotelImg }} style={styles.hotelImg} />
                     ) : (
                         <View style={styles.noImageContainer}>
                             <Text style={styles.noImgText}>No Image Available</Text>
@@ -172,7 +207,7 @@ const HotelResList = ({navigation:{navigate,goBack}}) => {
                         </View>
                         <View style={styles.hotelInfoButton}>
                             <View style={styles.hotelRating}>{rating}</View>
-                            <TouchableOpacity style={styles.bookingBtn} onPress={()=>handleBooking(hotel)}>
+                            <TouchableOpacity style={styles.bookingBtn} onPress={() => handleBooking(hotel)}>
                                 <Text style={styles.bookingBtnText}>Book</Text>
                             </TouchableOpacity>
                         </View>
@@ -198,23 +233,19 @@ const HotelResList = ({navigation:{navigate,goBack}}) => {
         return priceData.map((ele, index) => {
             return (
                 <TouchableOpacity style={index === selectedItemIndex ? styles.selectedItem : null} onPress={() => handleItemClick(index, ele.priceDetails)}>
-        <Text style={styles.priceTitle}>{`${ele.price} (${handlehotelsLengthBasedOnPrice(ele.startingPrice,ele.EndingPrice)})`}</Text>
+                    <Text style={styles.priceTitle}>{`${ele.price} (${handlehotelsLengthBasedOnPrice(ele.startingPrice, ele.EndingPrice)})`}</Text>
                 </TouchableOpacity>
             )
         })
     }
-    const handleItemClick = (index, price) => {
-        setSelectedItemIndex(selectedItemIndex === index ? null : index);
-        setPrice((prevSelectedPrice) =>
-            prevSelectedPrice === price ? null : price);
-    };
-    const handleStarItemClick = async (index, ratings) => {
-        setRating((prevSelectedTime) =>
-            prevSelectedTime === ratings ? null : ratings
-        );
-        setSelectedStarsItemIndex(selectedStarsItemIndex === index ? null : index);
-        // await actions.setHotelRating(rating === ratings ? null : ratings);
-    };
+    const handleItemClick = useCallback((index, price) => {
+        setSelectedItemIndex(index === selectedItemIndex ? null : index);
+        setPrice(prevSelectedPrice => prevSelectedPrice === price ? null : price);
+    }, [selectedItemIndex]);
+    const handleStarItemClick = useCallback((index, ratings) => {
+        setRating(prevSelectedTime => prevSelectedTime === ratings ? null : ratings);
+        setSelectedStarsItemIndex(index === selectedStarsItemIndex ? null : index);
+    }, [selectedStarsItemIndex]);
     var setPriceState = async (price) => {
         // setIsPriceSelected((prevSelectedPrice) =>
         //   prevSelectedPrice === price ? null : price
@@ -252,40 +283,40 @@ const HotelResList = ({navigation:{navigate,goBack}}) => {
             await actions.setHotelPriceEnd(null);
         }
     };
+    var removeFilters = async () => {
+        setCount(0)
+        // setIsRatingSelected(null);
+        // setIsPriceSelected(null);
+        await actions.setHotelPriceStart(null);
+        await actions.setHotelPriceEnd(null);
+        await actions.setHotelRating(null);
+        await actions.setHotelSearchText(null);
+    };
     const setRatingState = async (rating) => {
         await actions.setHotelRating(rating);
     };
-    const applyFilters = async () => {
+    const applyFilters =  () => {
         setOpenFilters(false)
         setCount(0);
-        await setRatingState(rating);
-        await setPriceState(price);
+     setRatingState(rating);
+     setPriceState(price);
         if (rating) {
             setCount((prev) => prev + 1)
-          }
-          if (price) {
+        }
+        if (price) {
             setCount((prev) => prev + 1);
-          }
+        }
     }
 
-const handlehotelsLengthBasedOnPrice=(starting ,ending)=>
-{
-    return Array.isArray(filteredHotels) ? filteredHotels?.filter((hotel) =>
-     {
-       if(starting===ending)
-       {
-        return (
-            hotel.Price.OfferedPriceRoundedOff >= starting
-          )
-       }
-       else{
-        return (
-            hotel.Price.OfferedPriceRoundedOff >= starting &&
-            hotel.Price.OfferedPriceRoundedOff < ending
-          );
-       }
-      }).length : null;
-}
+    const handlehotelsLengthBasedOnPrice = useCallback((starting, ending) => {
+        return Array.isArray(filteredHotels) ? filteredHotels.filter((hotel) => {
+            if (starting === ending) {
+                return hotel.Price.OfferedPriceRoundedOff >= starting;
+            } else {
+                return hotel.Price.OfferedPriceRoundedOff >= starting && hotel.Price.OfferedPriceRoundedOff < ending;
+            }
+        }).length : null;
+    }, [filteredHotels]);
 
     useEffect(() => {
         if (searchingHotels) {
@@ -294,6 +325,16 @@ const handlehotelsLengthBasedOnPrice=(starting ,ending)=>
         }
         console.log("useEffect")
     }, [])
+
+
+    // useEffect(() => {
+    //     if (searchingHotels) {
+    //       setShouldRenderList(true); 
+    //       actions.hotelSearch();
+    //     } else {
+    //       setShouldRenderList(false); 
+    //     }
+    //   }, [searchingHotels])
     return (
         <KeyboardAvoidingView style={{ flex: 1 }}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -334,30 +375,52 @@ const handlehotelsLengthBasedOnPrice=(starting ,ending)=>
             {searchingHotels ?
                 <View style={{ flex: 1, justifyContent: "center", alignItems: 'center' }}>
                     <ProgressBar />
-                </View> : <ScrollView >
+                    <Text>Ravi</Text>
+                </View> :
+                <ScrollView >
                     <View style={{ paddingHorizontal: responsiveHeight(2), paddingTop: responsiveHeight(2), flex: 1, rowGap: responsiveHeight(1) }}>
-                        <TextInput placeholder='Search for your favourite hotel' style={{ borderWidth: 1, paddingHorizontal: responsiveWidth(5), borderRadius: responsiveHeight(2), fontSize: responsiveHeight(2.1) }}  value={hotelSearchText} onChangeText={async (e) => {
-                  await actions.setHotelSearchText(e);
-                }}/>
+
+                        {count > 0 ? <TouchableOpacity style={styles.clearFilterContainer} onPress={removeFilters}>
+                            <Text style={styles.clearFilterTitle}>Clear Filters</Text>
+                        </TouchableOpacity> : null}
+
+
+                        <TextInput placeholder='Search for your favourite hotel' style={{ borderWidth: 1, paddingHorizontal: responsiveWidth(5), borderRadius: responsiveHeight(2), fontSize: responsiveHeight(2.1) }} value={hotelSearchText} onChangeText={async (e) => {
+                            await actions.setHotelSearchText(e);
+                        }} />
                         <Text style={styles.totalHotels}>{`Hotel search results (${actions.filterHotels(filteredHotels).filter((hotel) => {
-                      var staticData = hotelStaticData[hotel.HotelCode];
-                      var hotelName = hotel.HotelName ? hotel.HotelName : staticData?.HotelName;
-                      return hotelName?.length > 0;
-                    }).length
-                      })`}</Text>
-<FlatList
-    data={finalData}
-    renderItem={({ item, index }) => <RenderHotelItem  hotel={item} index={index} />}
-    keyExtractor={(item, index) => index.toString()}
-    scrollEnabled={false}
-    windowSize={5}
-    updateCellsBatchingPeriod={30} 
-    maxToRenderPerBatch={10} 
-/>
+                            var staticData = hotelStaticData[hotel.HotelCode];
+                            var hotelName = hotel.HotelName ? hotel.HotelName : staticData?.HotelName;
+                            return hotelName?.length > 0;
+                        }).length
+                            })`}</Text>
+  
+    { !openFilters&&<FlatList
+        data={finalData}
+        renderItem={({ item, index }) => <RenderHotelItem hotel={item} index={index} />}
+        keyExtractor={(item, index) => index.toString()}
+        scrollEnabled={false}
+        windowSize={5}
+        updateCellsBatchingPeriod={30}
+        maxToRenderPerBatch={10}
+      /> }
+    
                     </View>
                 </ScrollView>}
         </KeyboardAvoidingView>
     )
 }
 
-export default React.memo(HotelResList)
+export default (HotelResList)
+// import { View, Text } from 'react-native'
+// import React from 'react'
+
+// const HotelResList = (props) => {
+//   return (
+//     <View>
+//       <Text onPress={()=>props.navigation.navigate("HotelInfo")}>HotelResList</Text>
+//     </View>
+//   )
+// }
+
+// export default HotelResList

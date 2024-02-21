@@ -24,4 +24,4 @@ const FilterHeader = ({ handlefiltersToggleActions, children, value, customStyle
         </View>
     )
 }
-export default FilterHeader
+export default React.memo( FilterHeader)

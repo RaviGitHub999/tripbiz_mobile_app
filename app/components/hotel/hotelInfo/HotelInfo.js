@@ -12,29 +12,30 @@ const HotelInfo = ({ route: { params }, navigation: { goBack } }) => {
     const [selectedRoom, setSelectedRoom] = useState(0);
     const [breakfastFilter, setBreakfastFilter] = useState(false);
     const [cancelFilter, setCancelFilter] = useState(false);
-    const [heightAnim] = useState(new Animated.Value(100)); 
-    const increasedHeight = 250; 
-    const initialHeight = 60; 
+    const [heightAnim] = useState(new Animated.Value(responsiveHeight(8))); 
+    const increasedHeight = responsiveHeight(30); 
+    const initialHeight =responsiveHeight(8); 
     const [isExpanded, setIsExpanded] = useState(false);
-    const { ResultIndex, HotelCode, SupplierHotelCodes, } = params.hotel
+    const { ResultIndex, HotelCode, SupplierHotelCodes, } = params.item
     const { actions, fetchingHotelInfo, hotelInfoRes, bookingHotel, hotelStaticData, selectedHotelCheckInDate, selectedHotelCheckOutDate, hotelNights, hotelRoomArr, hotelSearchChild,domesticHotel } = useContext(MyContext)
     const hotelCheckIn = new Date(selectedHotelCheckInDate)
     const hotelCheckOut = new Date(selectedHotelCheckOutDate)
     useEffect(() => {
         if (!fetchingHotelInfo) {
             console.log("calling BookingData")
-            actions.fetchHotelInfo(
-                {
-                    resultIndex: ResultIndex,
-                    hotelCode: HotelCode,
-                    categoryId: SupplierHotelCodes &&
-                        SupplierHotelCodes.length > 0
-                        ? SupplierHotelCodes[0].CategoryId
-                        : "",
-                    hotelSearchRes: params.hotel
-                }
-            )
+           
         }
+        actions.fetchHotelInfo(
+            {
+                resultIndex: ResultIndex,
+                hotelCode: HotelCode,
+                categoryId: SupplierHotelCodes &&
+                    SupplierHotelCodes.length > 0
+                    ? SupplierHotelCodes[0].CategoryId
+                    : "",
+                hotelSearchRes: params.item
+            }
+        )
     }, [])
     const toggleHeight = () => {
         const toValue = isExpanded ? initialHeight : increasedHeight;
@@ -106,11 +107,11 @@ const HotelInfo = ({ route: { params }, navigation: { goBack } }) => {
             <View style={styles.mainContainer}>
                 {
                     !fetchingHotelInfo ? <View style={styles.progessBarContainer}><ProgressBar /></View> :
-                      <View>
+                      <View style={{flex:1}}>
                          <ScrollView showsVerticalScrollIndicator={false}  contentContainerStyle={{paddingBottom:responsiveHeight(10)}}>
                          <View style={styles.hotelDetailsContainer}>
                             <View style={styles.backIconContainer}>
-                                <TouchableOpacity onPress={() => { goBack(), actions.handleGoBack() }}>
+                                <TouchableOpacity onPress={() => { goBack() }}>
                                     <IconSwitcher componentName='AntDesign' iconName='arrowleft' color="black" iconsize={3} />
                                 </TouchableOpacity>
                             </View>
@@ -219,7 +220,9 @@ const HotelInfo = ({ route: { params }, navigation: { goBack } }) => {
               <TouchableOpacity style={styles.totalRoomPriceToggleContainer} onPress={toggleHeight}>
                 <IconSwitcher componentName='Ionicons' iconName={isExpanded ?"chevron-down":'chevron-up'} color='black' iconsize={3}/>
               </TouchableOpacity>
-        {isExpanded && <View style={{rowGap:responsiveHeight(1)}}>
+        {isExpanded && 
+        <View style={{height:responsiveHeight(20)}}>
+            <ScrollView style={{rowGap:responsiveHeight(1)}} >
           {bookingHotel?.selectedRoomType &&
               bookingHotel?.selectedRoomType?.map((room, r)=>
               {
@@ -278,7 +281,9 @@ const HotelInfo = ({ route: { params }, navigation: { goBack } }) => {
                 <Text style={styles.hotelPriceTP}>{` + ${(bookingHotel.hotelFinalPrice * domesticHotel) / 100}`}</Text>
               </View>
               <View style={styles.solidLine}/>
-          </View>}
+          </ScrollView>
+        </View>
+          }
 
 
 
