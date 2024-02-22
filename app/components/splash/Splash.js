@@ -18,57 +18,52 @@
 // }
 // export default Splash
 
-import React, { useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator } from 'react-native';
+// import React, { useState } from 'react';
+import { useState } from 'react';
+import { FlatList, View, Text, ActivityIndicator } from 'react-native';
 
 const YourComponent = () => {
-  // Sample data with 100 objects
-  const data = Array.from({ length: 100 }, (_, index) => ({
-    id: index,
-    name: `Item ${index + 1}`,
-  }));
+  const [data, setData] = useState(Array.from({ length: 200 }, (_, index) => `Item ${index + 1}`));
+  const [renderedData, setRenderedData] = useState(data.slice(0, 5));
+  const [remainingData, setRemainingData] = useState(data.slice(5));
+  const [isLoading, setIsLoading] = useState(false);
 
-  // State to hold the currently rendered items and loading state
-  const [renderedData, setRenderedData] = useState(data.slice(0, 10));
-  const [loading, setLoading] = useState(false);
-
-  // Function to load more data
-  const loadMoreData = () => {
-    setLoading(true);
-    const remainingData = data.slice(renderedData.length, renderedData.length + 10);
-    // Simulate delay for fetching data (you can replace this with your actual data fetching logic)
-    setTimeout(() => {
-      setRenderedData(prevData => [...prevData, ...remainingData]);
-      setLoading(false);
-    }, 1000);
+  const loadMoreItems = () => {
+    if (remainingData.length > 0) {
+      setIsLoading(true); // Set loading state to true
+      const nextBatch = remainingData.slice(0, 5);
+      setRenderedData(prevData => [...prevData, ...nextBatch]);
+      setRemainingData(prevData => prevData.slice(5));
+      setIsLoading(false); // Set loading state to false when data is loaded
+    }
   };
 
-  // Render item component
-  const renderItem = ({ item }) => (
-    <View style={{ padding: 10 }}>
-      <Text>{item.name}</Text>
-    </View>
-  );
-
-  // Render loading indicator
   const renderFooter = () => {
-    if (!loading) return null;
+    if (!isLoading) return null; // Don't render anything if loading is false
     return (
-      <View style={{ padding: 10 }}>
-        <ActivityIndicator size="small" color="#0000ff" />
+      <View style={{ paddingVertical: 20 }}>
+        <ActivityIndicator animating size="large" color="#007AFF" />
       </View>
     );
   };
 
   return (
-    <FlatList
-      data={renderedData}
-      renderItem={renderItem}
-      keyExtractor={item => item.id.toString()}
-      onEndReached={loadMoreData} // Function to load more data when reaching the end
-      onEndReachedThreshold={0.1} // Trigger when 90% scrolled to the end
-      ListFooterComponent={renderFooter} // Render loading indicator
-    />
+    <View style={{ flex: 1, marginTop: 50 }}>
+      <FlatList
+        data={renderedData}
+        renderItem={({ item,index}) =>{
+          console.log(index)
+          return (
+          <View style={{ padding: 50, borderBottomWidth: 1, borderBottomColor: '#ccc' }}>
+            <Text>{item}</Text>
+          </View>
+        )}}
+        keyExtractor={(item, index) => index.toString()}
+        onEndReached={loadMoreItems}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={renderFooter} 
+      />
+    </View>
   );
 };
 

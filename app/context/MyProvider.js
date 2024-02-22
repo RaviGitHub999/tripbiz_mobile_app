@@ -7,6 +7,7 @@ import HotelsData from "../components/jsonData/Hotels.json"
 import axios from 'axios';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import convert from "xml-js";
 const cabinclassMap = {
   1: "Any cabin class",
   2: "Economy",
@@ -1544,23 +1545,50 @@ setHotelSearchText: (value) => {
         
             return formattedDay + '/' + formattedMonth + '/' + year;
           } ,
+          convertXmlToJson: async (cityId) => {
+            var hotelStatic = await fetch(
+              "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/staticdata",
+              {
+                method: "POST",
+                // credentials: "include",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ cityId: cityId })
+              }
+            )
+              .then((res) => res.json())
+              .catch((err) => console.log(err));
+            // console.log(hotelStatic)
+            var jsonResult = convert.xml2json(hotelStatic.HotelData, {
+              compact: true,
+              spaces: 2
+            });
+            var jsonContent = JSON.parse(jsonResult);
+            var hotelObject = {};
+            console.log(jsonContent)
+            jsonContent.ArrayOfBasicPropertyInfo.BasicPropertyInfo.forEach(
+              (hotel) => {
+                var hotelCode = hotel["_attributes"]["TBOHotelCode"];
+                hotelObject[hotelCode] = {
+                  BrandCode: hotel["_attributes"]["BrandCode"],
+                  HotelCityCode: hotel["_attributes"]["HotelCityCode"],
+                  HotelName: hotel["_attributes"]["HotelName"],
+                  TBOHotelCode: hotel["_attributes"]["TBOHotelCode"],
+                  LocationCategoryCode:
+                    hotel["_attributes"]["LocationCategoryCode"],
+                  Address: hotel["Address"]
+                };
+              }
+            );
+            return hotelObject;
+          },
         hotelSearch: async (query) => {
-          //Fields needed:  city or hotel name, check-in, nights, check-out, nationality, rooms, adults, children, star-rating
           await this.state.actions.getRecommondedHotelList()
           this.setState({
             hotelSearchQuery: query,
-            // searchingHotels: true,
             hotelSessionStarted: false,
             hotelSessionEnded: false,
-            // hotelSearchName:  `${this.state.cityHotelItem.DESTINATION}, ${this.state.cityHotelItem.STATEPROVINCE}`,
-            // hotelSearchAdults: this.state.hotelRoomArr.reduce(
-            //   (acc, room, r) => acc + Number(room.adults),
-            //   0
-            // ),
-            // hotelSearchChild: this.state.hotelRoomArr.reduce(
-            //   (acc, room, r) => acc + Number(room.child),
-            //   0
-            // ),
           });
   
           let roomGuests = [];
@@ -1580,22 +1608,11 @@ setHotelSearchText: (value) => {
             noOfRooms: this.state.hotelRooms,
             roomGuests: [...roomGuests]
           };
-  
-          // console.log("Hotel req", request);
-          // const cityId = String(query.cityHotel);
-          // var accCollectionRef = db
-          //   .collection("hotelImages")
-          //   .doc(cityId);
-          // await accCollectionRef.set({
-          //   hotelImageList: []
-          // })
-  
           var hotelStatic = await Promise.all([
             fetch(
               "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/hotelSearchRes",
               {
                 method: "POST",
-                // credentials: "include",
                 headers: {
                   "Content-Type": "application/json"
                 },
@@ -1604,7 +1621,7 @@ setHotelSearchText: (value) => {
             )
               .then((res) => res.json())
               .catch((err) => console.log(err)),
-            // this.state.actions.convertXmlToJson(request.cityId),
+            this.state.actions.convertXmlToJson(request.cityId),
             //this.state.actions.convertXmlToJsonHotel({ cityId: "145710", hotelId: "00193836" })
             this.state.actions.getHotelImages(request.cityId)
           ]);
@@ -1613,29 +1630,43 @@ setHotelSearchText: (value) => {
   
           var hotelRes = hotelStatic[0];
           var staticdata = hotelStatic[1];
-  
-          // var hotelRes = await fetch(
-          //   "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/hotelSearchRes",
-          //   {
-          //     method: "POST",
-          //     // credentials: "include",
-          //     headers: {
-          //       "Content-Type": "application/json"
-          //     },
-          //     body: JSON.stringify(request)
-          //   }
-          // )
-          //   .then((res) => res.json())
-          //   .catch((err) => console.log(err));
-  
-          console.log("Hotel result", hotelRes);
+          // var size = Object.keys(staticdata).length;
+          // console.log( size,"myProviderererer")
+          // console.log("Hotel result", hotelRes);
+          const HotelListData=hotelRes.hotelResult?.HotelSearchResult?.HotelResults
+          const hotelIdsInObject = this.state.recommondedHotels ? Object.keys(this.state.recommondedHotels).map(ele => { return { HotelCode: ele } }) : []
+         const idToIndex = hotelIdsInObject.reduce((acc, item, index) => {
+        acc[item.HotelCode] = index;
+        return acc;
+    }, {});
+     const filteredHotels = HotelListData.filter(hotel => {
+        const staticData = staticdata[hotel.HotelCode];
+        const hotelName = hotel.HotelName ? hotel.HotelName : staticData?.HotelName;
+        return hotelName?.length > 0;
+    })
+        const finalData = filteredHotels.sort((a, b) => {
+        const indexA = idToIndex[a.HotelCode];
+        const indexB = idToIndex[b.HotelCode];
+
+        if (indexA === undefined && indexB === undefined) {
+            return 0;
+        } else if (indexA === undefined) {
+            return 1;
+        } else if (indexB === undefined) {
+            return -1;
+        }
+        return indexA - indexB;
+    });
+    // console.log(HotelListData.length,"==========1=======")
+    // console.log(finalData.length,"============2============")
           if (hotelRes?.error) {
             console.log('error');
             this.setState({
               hotelResList: [],
               hotelErrorMessage: hotelRes?.error,
               searchingHotels: false,
-              hotelSessionStarted: true
+              hotelSessionStarted: true,
+              hotelResList1: [],
             })
           }
           else {
@@ -1645,7 +1676,8 @@ setHotelSearchText: (value) => {
               hotelStaticData: staticdata,
               hotelTokenId: hotelRes.tokenId,
               searchingHotels: false,
-              hotelSessionStarted: true
+              hotelSessionStarted: true,
+              hotelResList1: finalData,
             });
           }
   
@@ -2246,7 +2278,7 @@ selectHotelRoomType: (room, selectedRoom, r) => {
   {
     await this.state.actions.setAdminData()
     console.log("calling1")
-    await this.state.actions.fetchHotelCityList();
+    this.state.actions.fetchHotelCityList();
     console.log("calling2")
 
   }
