@@ -307,15 +307,71 @@
 
 // export default HotelInfo
 
-import { View, Text } from 'react-native'
-import React from 'react'
+// import { View, Text } from 'react-native'
+// import React, { useContext, useEffect } from 'react'
+// import MyContext from '../../../context/Context'
 
-const HotelInfo = ({navigation:{goBack}}) => {
+// const HotelInfo = ({route: { params },navigation:{goBack}}) => {
+//   const { ResultIndex, HotelCode, SupplierHotelCodes, } = params.item
+//   const { actions, fetchingHotelInfo, hotelInfoRes, bookingHotel, hotelStaticData, selectedHotelCheckInDate, selectedHotelCheckOutDate, hotelNights, hotelRoomArr, hotelSearchChild,domesticHotel } = useContext(MyContext)
+//   useEffect(() => {
+//        actions.fetchHotelInfo({
+//           resultIndex: ResultIndex,
+//           hotelCode: HotelCode,
+//           categoryId: SupplierHotelCodes && SupplierHotelCodes.length > 0
+//             ? SupplierHotelCodes[0].CategoryId
+//             : "",
+//           hotelSearchRes: params.item
+//         });
+//   }, []);
+//   console.log("HotelInfo")
+//   return (
+//     <View>
+//       <Text onPress={()=>goBack()}>HotelInfo</Text>
+//     </View>
+//   )
+// }
+
+// export default HotelInfo
+import { View, Text, ActivityIndicator } from 'react-native'
+import React, { useContext, useEffect, useState } from 'react'
+import MyContext from '../../../context/Context'
+
+const HotelInfo = ({ route: { params }, navigation: { goBack } }) => {
+  const { ResultIndex, HotelCode, SupplierHotelCodes } = params.item
+  const { actions, fetchingHotelInfo } = useContext(MyContext)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchHotelInfo = async () => {
+      await actions.fetchHotelInfo({
+        resultIndex: ResultIndex,
+        hotelCode: HotelCode,
+        categoryId: SupplierHotelCodes && SupplierHotelCodes.length > 0
+          ? SupplierHotelCodes[0].CategoryId
+          : "",
+        hotelSearchRes: params.item
+      });
+      setIsLoading(false); // Once fetch is complete, set isLoading to false
+    };
+    fetchHotelInfo();
+  }, []);
+
+  // Render loading indicator if isLoading is true
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  // Render HotelInfo once loading is complete
   return (
     <View>
-      <Text onPress={()=>goBack()}>HotelInfo</Text>
+      <Text onPress={() => goBack()}>HotelInfo</Text>
     </View>
-  )
+  );
 }
 
 export default HotelInfo

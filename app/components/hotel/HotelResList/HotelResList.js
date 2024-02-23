@@ -413,14 +413,15 @@
 
 // export default (HotelResList)
 
-import { View, Text, TouchableOpacity, VirtualizedList } from 'react-native'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import { View, Text, TouchableOpacity, VirtualizedList,FlatList } from 'react-native'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import MyContext from '../../../context/Context'
 import { styles } from './styles'
 import IconSwitcher from '../../common/icons/IconSwitcher'
 import { colors } from '../../../config/theme'
 import { responsiveHeight, responsiveWidth } from '../../../utils/responsiveScale'
 import FilterHeader from '../../common/filterHeader/FilterHeader'
+import ProgressBar from '../../common/progressBar/ProgressBar'
 const data = [
     {
         length: 1
@@ -493,7 +494,7 @@ const HotelResList = ({navigation:{navigate,goBack}}) => {
  const [price, setPrice] = useState();
  const [rating, setRating] = useState();
     const {cityHotelItem,hotelResList,searchingHotels,actions,recommondedHotels,hotelStaticData,hotelResList1,selectedCheckInDate,
-       selectedCheckOutDate, hotelRooms,hotelRoomArr,hotelSearchChild,hotelNights}=useContext(MyContext)
+       selectedCheckOutDate, hotelRooms,hotelRoomArr,hotelSearchChild,hotelNights,idToIndex}=useContext(MyContext)
         useEffect(() => {
         if (searchingHotels) {
 
@@ -501,15 +502,73 @@ const HotelResList = ({navigation:{navigate,goBack}}) => {
         }
 
     }, [])
-    const renderItem = ({ item }) => (
-      <View style={{ padding: 20, borderBottomWidth: 1, borderBottomColor: '#ccc' }}>
-        <Text>{item.text}</Text>
-      </View>
-    );
-    const keyExtractor = item => item.key;
-     const handleOpenFilters = () => {
-        setOpenFilters(!openFilters)
+    // const renderItem = ({ item }) => (
+    //   <View style={{ padding: 20, borderBottomWidth: 1, borderBottomColor: '#ccc' }}>
+    //   <TouchableOpacity>
+    //   <Text>{item.text}</Text>
+    //   </TouchableOpacity>
+    //   </View>
+    // );
+        const handleBooking = (hotel) => {
+        navigate("HotelInfo",{item:hotel})
     }
+    const RenderHotelItem = ({ hotel, index }) => {
+                const staticData = hotelStaticData[hotel.HotelCode];
+                const starRatingFull = Math.floor(hotel.StarRating);
+                const rating = [];
+        
+                for (let i = 1; i <= Math.ceil(hotel.StarRating); i++) {
+                    if (i > starRatingFull) {
+                        rating.push(<IconSwitcher componentName='AntDesign' iconName='star' color='#ffd700' iconsize={1.8} />);
+                    } else {
+                        rating.push(<IconSwitcher componentName='AntDesign' iconName='star' color='#ffd700' iconsize={1.8} />);
+                    }
+                }
+        
+                // const img = hotelImageList?.hasOwnProperty(hotel.HotelCode) ? hotelImageList[hotel.HotelCode] : {};
+                // const hotelPic = img?.HotelPicture ? img?.HotelPicture : "https://i.travelapi.com/hotels/35000000/34870000/34867700/34867648/89943464_z.jpg";
+                // const hotelImg = hotel.HotelPicture === "https://images.cdnpath.com/Images/HotelNA.jpg" ? hotelPic : hotel?.HotelPicture;
+                // console.log(hotelImg,index)
+                const ind = idToIndex[hotel.HotelCode];
+                console.log("999")
+                return (
+                    <View style={styles.hotelCard}>
+                        {/* <View style={styles.hotelImgContainer}>
+                            {isImageUri(hotelImg) ? (<Image source={{ uri: hotelImg }} style={styles.hotelImg} />
+                            ) : (
+                                <View style={styles.noImageContainer}>
+                                    <Text style={styles.noImgText}>No Image Available</Text>
+                                </View>
+                            )}
+                        </View> */}
+                        <View style={styles.hotelDetailsContainer}>
+                            <View style={styles.hotelNameContainer}>
+                                <Text style={styles.hotelName}>{hotel.HotelName ? hotel.HotelName : staticData?.HotelName}</Text>
+                                {ind !== undefined ? <View style={styles.recommendedTitleContainer}><Text style={styles.recommendedTitle}>Recommended</Text></View> : null}
+                            </View>
+                            <View style={styles.hotelDetailsBox}>
+                                <View style={styles.hotelDetailsRow}>
+                                    <Text style={styles.hotelPrice}>
+                                        {/* <FontAwesomeIcon icon={faRupeeSign} />{' '} */}
+                                        {`${hotel.Price.OfferedPriceRoundedOff ? `₹ ${hotel.Price.OfferedPriceRoundedOff.toLocaleString("en-IN")}` : `₹ ${hotel.Price.PublishedPriceRoundedOff.toLocaleString("en-IN")}`}`}
+                                    </Text>
+        
+                                </View>
+                                <View style={styles.hotelInfoButton}>
+                                    <View style={styles.hotelRating}>{rating}</View>
+                                    <TouchableOpacity style={styles.bookingBtn} onPress={() => handleBooking(hotel)}>
+                                        <Text style={styles.bookingBtnText}>Book</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+                );
+            };
+    const keyExtractor = item => item.key;
+     const handleOpenFilters = useCallback(() => {
+        setOpenFilters(!openFilters)
+    },[openFilters])
         const handleStarItemClick = useCallback((index, ratings) => {
         setRating(prevSelectedTime => prevSelectedTime === ratings ? null : ratings);
         setSelectedStarsItemIndex(index === selectedStarsItemIndex ? null : index);
@@ -542,12 +601,21 @@ const HotelResList = ({navigation:{navigate,goBack}}) => {
         const handleHotelPrices = () => {
         return priceData.map((ele, index) => {
             return (
-                <TouchableOpacity style={index === selectedItemIndex ? styles.selectedItem : null} onPress={() => handleItemClick(index, ele.priceDetails)}>
+                <TouchableOpacity style={index === selectedItemIndex ? styles.selectedItem : null} onPress={() => handleItemClick(index, ele.priceDetails)} key={index}>
                     <Text style={styles.priceTitle}>{`${ele.price} (${handlehotelsLengthBasedOnPrice(ele.startingPrice, ele.EndingPrice)})`}</Text>
                 </TouchableOpacity>
             )
         })
     }
+    console.log("first")
+    const List=useMemo(()=>
+    {
+return   <FlatList
+data={hotelResList1}
+renderItem={({ item, index }) => <RenderHotelItem hotel={item} index={index} />}
+keyExtractor={keyExtractor}
+/>
+    },[])
   return (
            <View style={{flex:1,borderWidth:4,borderColor:"yellow"}}>
               <View style={styles.headerMainContainer}>
@@ -566,7 +634,12 @@ const HotelResList = ({navigation:{navigate,goBack}}) => {
                     }`}</Text>
             </View>
 
-             {!searchingHotels && <FilterHeader handlefiltersToggleActions={handleOpenFilters} value={openFilters} customStyle={{ rowGap: responsiveHeight(1), paddingHorizontal: responsiveWidth(4) }} filtersCount={count}>
+             {searchingHotels ?
+               <View style={{ flex: 1, justifyContent: "center", alignItems: 'center' }}>
+                    <ProgressBar />
+               </View> :
+               <View>
+               { <FilterHeader handlefiltersToggleActions={handleOpenFilters} value={openFilters} customStyle={{ rowGap: responsiveHeight(1), paddingHorizontal: responsiveWidth(4) }} filtersCount={count}>
                  <Text style={styles.ratingTitle}>Rating</Text>
                  <View style={styles.container}>
                      {generatePattern()}
@@ -584,17 +657,18 @@ const HotelResList = ({navigation:{navigate,goBack}}) => {
             </FilterHeader>}
 
 
-    {!openFilters&& <VirtualizedList
-      data={data1}
-      renderItem={renderItem}
-      keyExtractor={keyExtractor}
-      getItemCount={() => data.length}
-      getItem={(data, index) => data[index]}
-    />}
-
+   {
+    List
+//    <FlatList
+//       data={hotelResList1}
+//       renderItem={({ item, index }) => <RenderHotelItem hotel={item} index={index} />}
+//       keyExtractor={keyExtractor}
+//     />
+    
+   }</View>}
 
            </View>
   )
 }
 
-export default HotelResList
+export default React.memo(HotelResList)

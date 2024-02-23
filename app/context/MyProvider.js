@@ -209,6 +209,7 @@ export default class MyProvider extends Component {
     hotelSearchText: null,
     hotelInfoRes: false,
     fetchingHotelInfo:false,
+    idToIndex:{},
       actions: {
 handleHotelBackButton:()=>
 {
@@ -1639,6 +1640,8 @@ setHotelSearchText: (value) => {
         acc[item.HotelCode] = index;
         return acc;
     }, {});
+    this.setState({idToIndex:idToIndex})
+
      const filteredHotels = HotelListData.filter(hotel => {
         const staticData = staticdata[hotel.HotelCode];
         const hotelName = hotel.HotelName ? hotel.HotelName : staticData?.HotelName;
