@@ -74,44 +74,89 @@
 
 
 
-import React, { useState, useCallback } from 'react';
-import { View, Text, TouchableOpacity, FlatList } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import React, { useState, useRef, useMemo } from 'react';
+import { View, Text, FlatList, ActivityIndicator, Dimensions } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
-const Splash = () => {
-  const [popup, setPopUp] = useState(false);
-  const data1 = Array.from({ length: 100 }, (_, index) => ({ key: String(index), text: `Item ${index}` }));
+const YourComponent = () => {
+ const[popup,setPopUp]=useState(false)
+  const data = Array.from({ length: 1000 }, (_, index) => ({
+    id: index,
+    name: `Item ${index + 1}`,
+  }));
 
-  const handlePopUp = useCallback(() => {
-    setPopUp(!popup);
-  }, [popup]);
+  const [renderedData, setRenderedData] = useState(data.slice(0, 20)); // Initially render 20 items
+  const [loading, setLoading] = useState(false);
+  const flatListRef = useRef(null);
 
-  const renderItem = useCallback(({ item }) => {
-    console.log("call");
-    return <Text>{item.text}</Text>;
-  }, []);
+  // Function to load more data when reaching the end of the list
+  const loadMoreData = () => {
+    setLoading(true);
+    // Simulate delay for fetching data (you can replace this with your actual data fetching logic)
+    setTimeout(() => {
+      const endIndex = Math.min(renderedData.length + 20, data.length); // Calculate the end index for new data
+      setRenderedData(prevData => [...prevData, ...data.slice(prevData.length, endIndex)]); // Append new data to renderedData
+      setLoading(false);
+    }, 1000);
+  };
 
+  // Function to handle reaching the end of the list
+  const handleEndReached = () => {
+    if (renderedData.length < data.length) { // Check if there are more items to render
+      loadMoreData();
+    }
+  };
+
+  // Render item component
+  const renderItem = ({ item,index }) => {
+    console.log("-----===>",index)
+    return(
+        <View style={{ padding: 10 }} key={item.id}>
+          <Text>{item.name}</Text>
+        </View>
+      )
+  };
+
+  // Render loading indicator
+  const renderFooter = () => {
+    if (!loading) return null;
+    return (
+      <View style={{ padding: 10 }}>
+        <ActivityIndicator size="small" color="#0000ff" />
+      </View>
+    );
+  };
+const handleClick=()=>
+{
+    setPopUp(!popup)
+}
   return (
-    <View>
-      <TouchableOpacity onPress={handlePopUp}>
-        <Text>Open</Text>
-      </TouchableOpacity>
-      {popup && (
-        <TouchableOpacity onPress={handlePopUp}>
-          <Text>close</Text>
-        </TouchableOpacity>
-      )}
-
-      <FlatList
-        data={data1}
+   <View style={{flex:1}}>
+    <TouchableOpacity  onPress={handleClick} style={{borderWidth:1,padding:10}}>
+    <Text>{popup?"Open":"Close"}</Text>
+    </TouchableOpacity>
+    {useMemo( ()=>
+    {
+        return <FlatList
+        ref={flatListRef}
+        data={renderedData}
         renderItem={renderItem}
-        keyExtractor={(item) => item.key}
+        keyExtractor={item => item.id.toString()}
+        onEndReached={handleEndReached} // Function to handle reaching the end of the list
+        onEndReachedThreshold={0.1} // Trigger when 90% scrolled to the end
+        ListFooterComponent={renderFooter} // Render loading indicator
+        style={{ height: Dimensions.get('window').height }} // Set FlatList height to screen height
       />
+    },[renderedData])}
+   
     </View>
   );
 };
 
-export default React.memo(Splash);
+export default YourComponent;
+
+
+
 
 
 

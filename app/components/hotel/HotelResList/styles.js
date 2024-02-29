@@ -142,14 +142,15 @@ hotelCard: {
     backgroundColor:"#a6f0a6",
     // alignItems:"center",
     // justifyContent:"center",
-    paddingHorizontal:responsiveWidth(3),
+    paddingHorizontal:responsiveWidth(1.2),
     paddingVertical:responsiveHeight(0.3),
     borderTopLeftRadius:responsiveHeight(2),
     borderBottomLeftRadius:responsiveHeight(2)
     
   },
   recommendedTitle:{
-    
+    fontSize:responsiveHeight(1.3),
+    fontFamily:fonts.primary
   },
   container: {
     justifyContent: 'center',
@@ -209,5 +210,9 @@ fontFamily:fonts.primary,color:colors.primary
     fontSize:responsiveHeight(2),
     fontFamily:fonts.textFont,
     color:colors.primary
+  },
+  roomDetailsMainContainer:{
+// borderWidth:1,
+paddingHorizontal:responsiveWidth(3),
   }
 })

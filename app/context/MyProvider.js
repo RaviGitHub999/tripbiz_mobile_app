@@ -1647,7 +1647,7 @@ setHotelSearchText: (value) => {
         const hotelName = hotel.HotelName ? hotel.HotelName : staticData?.HotelName;
         return hotelName?.length > 0;
     })
-        const finalData = filteredHotels.sort((a, b) => {
+        const finalData = this.state.actions.filterHotels(filteredHotels).sort((a, b) => {
         const indexA = idToIndex[a.HotelCode];
         const indexB = idToIndex[b.HotelCode];
 
