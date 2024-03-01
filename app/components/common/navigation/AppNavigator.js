@@ -30,4 +30,4 @@ const AppNavigator = () => {
   );
 };
 
-export default AppNavigator;
+export default React.memo(AppNavigator);

@@ -13,13 +13,13 @@ const HotelInfo = ({ route: { params }, navigation: { goBack } }) => {
     const [breakfastFilter, setBreakfastFilter] = useState(false);
     const [cancelFilter, setCancelFilter] = useState(false);
     const [heightAnim] = useState(new Animated.Value(responsiveHeight(8))); 
-    const increasedHeight = responsiveHeight(30); 
-    const initialHeight =responsiveHeight(8); 
-    const [isExpanded, setIsExpanded] = useState(false);
     const { ResultIndex, HotelCode, SupplierHotelCodes, } = params.item
     const { actions, fetchingHotelInfo, hotelInfoRes, bookingHotel, hotelStaticData, selectedHotelCheckInDate, selectedHotelCheckOutDate, hotelNights, hotelRoomArr, hotelSearchChild,domesticHotel } = useContext(MyContext)
     const hotelCheckIn = new Date(selectedHotelCheckInDate)
     const hotelCheckOut = new Date(selectedHotelCheckOutDate)
+    const increasedHeight =bookingHotel?.selectedRoomType?.length>=3?responsiveHeight(35):responsiveHeight(30); 
+    const initialHeight =responsiveHeight(8); 
+    const [isExpanded, setIsExpanded] = useState(false);
     useEffect(() => {
         if (!fetchingHotelInfo) {
             console.log("calling BookingData")
@@ -62,9 +62,9 @@ const HotelInfo = ({ route: { params }, navigation: { goBack } }) => {
     };
     const renderItem = ({ item: room, index }) => 
     {
-      console.log("9")
+    //   console.log("9")
       return(
-        <TouchableOpacity style={styles.card} onPress={() => {actions.selectHotelRoomType(room, selectedRoom, index),console.log(selectedRoom,"pppp")}}>
+        <TouchableOpacity style={styles.card} onPress={() => {actions.selectHotelRoomType(room, selectedRoom, index)}}>
             <View style={styles.cardMainSubContainer}>
                 <View style={styles.cardSubContainer1}>
                     <Text style={styles.roomType}>{room.RoomTypeName}</Text>
@@ -138,11 +138,12 @@ const HotelInfo = ({ route: { params }, navigation: { goBack } }) => {
       scrollEnabled={false}
   />
     },[hotelInfoRes,breakfastFilter,cancelFilter,selectedRoom])
+    console.log( bookingHotel?.selectedRoomType.length)
     return (
             <View style={styles.mainContainer}>
                 {
                     !fetchingHotelInfo ? <View style={styles.progessBarContainer}><ProgressBar /></View> :
-                      <View style={{flex:1}}>
+                    hotelInfoRes&&<View style={{flex:1}}>
                          <ScrollView showsVerticalScrollIndicator={false}  contentContainerStyle={{paddingBottom:responsiveHeight(10)}}>
                          <View style={styles.hotelDetailsContainer}>
                             <View style={styles.backIconContainer}>
@@ -151,13 +152,21 @@ const HotelInfo = ({ route: { params }, navigation: { goBack } }) => {
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.hotelImgMainContainer}>
-                                {isImageUri(hotelInfoRes.hotelInfo.HotelInfoResult.HotelDetails.Images[0]) ? <View style={styles.hotelImgContainer}>
+                                {/* {isImageUri(hotelInfoRes.hotelInfo.HotelInfoResult.HotelDetails.Images[0]) ? <View style={styles.hotelImgContainer}>
                                     <Image source={{ uri: hotelInfoRes.hotelInfo.HotelInfoResult.HotelDetails.Images[0] }} style={styles.hotelImg} />
                                 </View> :
                                     <View style={styles.noImageContainer}>
                                         <Text style={styles.noImgText}>No Image Available</Text>
                                     </View>
-                                }
+                                } */}
+                                { hotelInfoRes?.hotelInfo?.HotelInfoResult!==undefined&&hotelInfoRes.hotelInfo.HotelInfoResult.HotelDetails.Images!==null?
+ <Image source={{ uri: hotelInfoRes.hotelInfo.HotelInfoResult?.HotelDetails.Images[0]}} style={styles.hotelImg} />
+
+                              
+                                :
+                                <View style={styles.noImageContainer}>
+                                    <Text style={styles.noImgText}>No Image Available</Text>
+                                </View>}
                                 <View style={styles.hotelDescriptions}>
                                     <Text style={styles.hotelName}>{bookingHotel?.hotelName ? bookingHotel?.hotelName : hotelStaticData[bookingHotel?.hotelCode]?.HotelName}</Text>
                                     <View style={{ flexDirection: 'row' }}>
@@ -176,12 +185,19 @@ const HotelInfo = ({ route: { params }, navigation: { goBack } }) => {
                                 </View>
 
                             </View>
+                                           {hotelInfoRes.hotelSearchRes.HotelLocation ?  <View style={{flexDirection:'row',alignItems:'center',columnGap:responsiveWidth(2)}}>
+                                                <Text  style={styles.addressTitle}>Location:</Text>
+                                                <Text style={styles.address}>{`${hotelInfoRes.hotelSearchRes.HotelLocation}`}</Text>
+                                            </View>:null}
+
+
+
                             <View>
                                 <Text style={styles.addressTitle}>
                                     Address:
                                 </Text>
                                 <Text style={styles.address}>
-                                    {`${hotelInfoRes.hotelInfo?.HotelInfoResult.HotelDetails.Address}`}
+                                    {`${hotelInfoRes.hotelInfo?.HotelInfoResult?.HotelDetails.Address}`}
                                 </Text>
                             </View>
                             <View style={styles.checkInAndCheckOutDatesContainer}>
@@ -231,7 +247,7 @@ const HotelInfo = ({ route: { params }, navigation: { goBack } }) => {
                 <IconSwitcher componentName='Ionicons' iconName={isExpanded ?"chevron-down":'chevron-up'} color='black' iconsize={3}/>
               </TouchableOpacity>
         {isExpanded && 
-        <View style={{height:responsiveHeight(20)}}>
+        <View style={bookingHotel?.selectedRoomType?.length>=3?{height:responsiveHeight(25)}:{height:responsiveHeight(20)}}>
             <ScrollView style={{rowGap:responsiveHeight(1)}} >
           {bookingHotel?.selectedRoomType &&
               bookingHotel?.selectedRoomType?.map((room, r)=>
@@ -317,71 +333,3 @@ const HotelInfo = ({ route: { params }, navigation: { goBack } }) => {
 
 export default React.memo(HotelInfo)
 
-// import { View, Text } from 'react-native'
-// import React, { useContext, useEffect } from 'react'
-// import MyContext from '../../../context/Context'
-
-// const HotelInfo = ({route: { params },navigation:{goBack}}) => {
-//   const { ResultIndex, HotelCode, SupplierHotelCodes, } = params.item
-//   const { actions, fetchingHotelInfo, hotelInfoRes, bookingHotel, hotelStaticData, selectedHotelCheckInDate, selectedHotelCheckOutDate, hotelNights, hotelRoomArr, hotelSearchChild,domesticHotel } = useContext(MyContext)
-//   useEffect(() => {
-//        actions.fetchHotelInfo({
-//           resultIndex: ResultIndex,
-//           hotelCode: HotelCode,
-//           categoryId: SupplierHotelCodes && SupplierHotelCodes.length > 0
-//             ? SupplierHotelCodes[0].CategoryId
-//             : "",
-//           hotelSearchRes: params.item
-//         });
-//   }, []);
-//   console.log("HotelInfo")
-//   return (
-//     <View>
-//       <Text onPress={()=>goBack()}>HotelInfo</Text>
-//     </View>
-//   )
-// }
-
-// export default HotelInfo
-// import { View, Text, ActivityIndicator } from 'react-native'
-// import React, { useContext, useEffect, useState } from 'react'
-// import MyContext from '../../../context/Context'
-
-// const HotelInfo = ({ route: { params }, navigation: { goBack } }) => {
-//   const { ResultIndex, HotelCode, SupplierHotelCodes } = params.item
-//   const { actions, fetchingHotelInfo } = useContext(MyContext)
-//   const [isLoading, setIsLoading] = useState(true)
-
-//   useEffect(() => {
-//     const fetchHotelInfo = async () => {
-//       await actions.fetchHotelInfo({
-//         resultIndex: ResultIndex,
-//         hotelCode: HotelCode,
-//         categoryId: SupplierHotelCodes && SupplierHotelCodes.length > 0
-//           ? SupplierHotelCodes[0].CategoryId
-//           : "",
-//         hotelSearchRes: params.item
-//       });
-//       setIsLoading(false); // Once fetch is complete, set isLoading to false
-//     };
-//     fetchHotelInfo();
-//   }, []);
-
-//   // Render loading indicator if isLoading is true
-//   if (isLoading) {
-//     return (
-//       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-//         <ActivityIndicator size="large" />
-//       </View>
-//     );
-//   }
-
-//   // Render HotelInfo once loading is complete
-//   return (
-//     <View>
-//       <Text onPress={() => goBack()}>HotelInfo</Text>
-//     </View>
-//   );
-// }
-
-// export default HotelInfo

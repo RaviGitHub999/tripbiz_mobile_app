@@ -235,7 +235,7 @@ color:colors.white,
       justifyContent:"space-between",
       alignItems:'center',
       position:'absolute',
-      bottom:0,
+      bottom:responsiveHeight(1),
       width:'100%'
     },
     totalPriceText:{

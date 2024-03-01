@@ -1756,7 +1756,7 @@ setHotelSearchText: (value) => {
                 roomTypeIndex: 0
               };
             });
-            var hotelImg = this.state.hotelImageList ? this.state.hotelImageList[query.hotelSearchRes.HotelCode] ? this.state.hotelImageList[query.hotelSearchRes.HotelCode].HotelPicture : hotelInfoRes.hotelInfo.HotelInfoResult.HotelDetails.Images[0] : hotelInfoRes.hotelInfo.HotelInfoResult.HotelDetails.Images[0]
+            var hotelImg = this.state.hotelImageList ? this.state.hotelImageList[query.hotelSearchRes.HotelCode] ? this.state.hotelImageList[query.hotelSearchRes.HotelCode].HotelPicture : hotelInfoRes?.hotelInfo?.HotelInfoResult?.HotelDetails?.Images[0] : hotelInfoRes?.hotelInfo?.HotelInfoResult?.HotelDetails?.Images[0]
             this.setState({
               hotelInfoRes,
               fetchingHotelInfo: true,

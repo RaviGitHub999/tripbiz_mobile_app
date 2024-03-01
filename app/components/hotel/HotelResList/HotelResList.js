@@ -961,7 +961,7 @@ const HotelResList = ({ navigation: { navigate, goBack } }) => {
     const [price, setPrice] = useState();
     const [rating, setRating] = useState();
     var [count, setCount] = useState(0);
-    const [imageError, setImageError] = useState(false);
+    const [error, setError] = useState(false);
     const { searchingHotels,
         hotelResList,
         actions, hotelStaticData,
@@ -1028,7 +1028,10 @@ setFiltersHotelsData(filteredHotels)
 
     }, [])
         const loadMoreData = () => {
-        setLoading(true);
+        if(renderedData.length!==data1.length)
+        {
+            setLoading(true);
+        }
         setTimeout(() => {
           const endIndex = Math.min(renderedData.length + 20, data1.length); // Calculate the end index for new data
           setRenderedData(prevData => [...prevData, ...data1.slice(prevData.length, endIndex)]); // Append new data to renderedData
@@ -1062,16 +1065,37 @@ setFiltersHotelsData(filteredHotels)
         const hotelPic = img?.HotelPicture ? img?.HotelPicture : "https://i.travelapi.com/hotels/35000000/34870000/34867700/34867648/89943464_z.jpg";
         const hotelImg = hotel.HotelPicture === "https://images.cdnpath.com/Images/HotelNA.jpg" ? hotelPic : hotel?.HotelPicture;
         const ind = idToIndex[hotel.HotelCode];
-        
+        // console.log(hotelImg,"00000000000")
+        const handleImageError = () => {
+            setError(true);
+          };
         return (
             <View style={styles.hotelCard}>
                 <View style={styles.hotelImgContainer}>
-                    {isImageUri(hotelImg) ? (<Image source={{ uri: hotelImg }} style={styles.hotelImg} />
+                    {/* {isImageUri(hotelImg) ? (<Image source={{ uri: hotelImg }} style={styles.hotelImg} />
                     ) : (
                         <View style={styles.noImageContainer}>
                             <Text style={styles.noImgText}>No Image Available</Text>
                         </View>
-                    )}
+                    )} */}
+     {/* {error ? (
+        <Text>Error: Image failed to load</Text>
+      ) : (
+        <Image
+          source={{ uri:hotelImg }}
+          style={styles.hotelImg}
+          onError={handleImageError}
+          accessibilityLabel="Description of the image"
+        />
+      )} */}
+ <Image
+          source={{ uri:hotelImg }}
+          style={styles.hotelImg}
+        //   onError={handleImageError}
+        accessible={true}
+        accessibilityRole="image"
+        accessibilityLabel="Description of the image"
+        />
                 </View>
                 <View style={styles.hotelDetailsContainer}>
                     <View style={styles.hotelNameContainer}>
@@ -1121,6 +1145,7 @@ setFiltersHotelsData(filteredHotels)
                          <TextInput placeholder='Search for your favourite hotel' style={{ borderWidth: 1, paddingHorizontal: responsiveWidth(5), borderRadius: responsiveHeight(2), fontSize: responsiveHeight(2.1) }} value={hotelSearchText} onChangeText={ (e) => {
                           actions.setHotelSearchText(e);
                          setApplyingFilters(!applyingfilters)
+                         setError(false)
                         }} />
                         <Text style={styles.totalHotels}>{`Hotel search results (${actions.filterHotels(filterhotelsdata).filter((hotel) => {
                             var staticData = hotelStaticData[hotel.HotelCode];
@@ -1274,6 +1299,14 @@ ListHeaderComponentStyle={{paddingVertical:10}}
 />
   
 },[renderedData])
+
+
+// data1.map((hotel,ind)=>{
+//     const img = hotelImageList?.hasOwnProperty(hotel.HotelCode) ? hotelImageList[hotel.HotelCode] : {};
+//     const hotelPic = img?.HotelPicture ? img?.HotelPicture : "https://i.travelapi.com/hotels/35000000/34870000/34867700/34867648/89943464_z.jpg";
+//     const hotelImg = hotel.HotelPicture === "https://images.cdnpath.com/Images/HotelNA.jpg" ? hotelPic : hotel?.HotelPicture;
+//     console.log(hotelImg,"hotelImg",ind)
+// })
   return (
     <View style={{flex:1}}>
                  <View style={styles.headerMainContainer}>
