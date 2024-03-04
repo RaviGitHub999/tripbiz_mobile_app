@@ -272,6 +272,11 @@ color:colors.white,
       borderBottomWidth:responsiveHeight(0.1),
       borderColor:colors.gray,
       marginTop:responsiveHeight(1)
+    },
+    popUpSelectedImg:{
+      height:responsiveHeight(20),
+      width:"100%",
+      borderRadius:responsiveHeight(2)
     }
   },
   
