@@ -210,7 +210,20 @@ export default class MyProvider extends Component {
     hotelInfoRes: false,
     fetchingHotelInfo:false,
     idToIndex:{},
+    userTripStatus: {
+      userTrips: [],
+      tripLoading: true,
+    },
+    offset: null,
+    userId: "Qkwu6fpPoWRLeqcEZQ5rZCIgeNu2",
       actions: {
+        setTrips: async (value) => {
+          this.setState({
+            userTripStatus: value
+          });
+        },
+
+
 handleHotelBackButton:()=>
 {
 this.setState({searchingHotels:true})
@@ -2271,7 +2284,142 @@ selectHotelRoomType: (room, selectedRoom, r) => {
             bookingFlight: [...value]
           });
         },
- 
+        setOffset: async (value) => {
+          this.setState({
+            offset: value
+          })
+        },
+        
+ getAllHotels :async (id, userId) => {
+  try {
+    const hotelCollectionRef = firestore()
+      .collection("Accounts")
+      .doc(userId)
+      .collection("trips")
+      .doc(id)
+      .collection("hotels");
+
+    const querySnapshot = await hotelCollectionRef.get();
+    const hotelsArray = [];
+
+    querySnapshot.forEach((doc) => {
+      hotelsArray.push({
+        id: doc.id,
+        data: doc.data()
+      });
+    });
+
+    return hotelsArray;
+  } catch (error) {
+    console.log(error);
+    return []; 
+  }
+},
+objToArr: (obj) => {
+  if (Array.isArray(obj)) {
+    return obj.map((element) => this.state.actions.objToArr(element));
+  } else if (typeof obj === "object" && obj !== null) {
+    const keys = Object.keys(obj);
+    if (keys.every((key) => !isNaN(key))) {
+      return keys.map((key) => this.state.actions.objToArr(obj[key]));
+    } else {
+      const newObj = {};
+      keys.forEach((key) => {
+        newObj[key] = this.state.actions.objToArr(obj[key]);
+      });
+      return newObj;
+    }
+  }
+  return obj;
+},
+getAllFlights :async (id, userId, actions) => {
+  try {
+    const flightCollectionRef = firestore()
+      .collection("Accounts")
+      .doc(userId)
+      .collection("trips")
+      .doc(id)
+      .collection("flights");
+
+    const querySnapshot = await flightCollectionRef.get();
+    const flightsArray = [];
+
+    let n = 0;
+    for (const doc of querySnapshot.docs) {
+      const modifiedFlightObj = await this.state.actions.objToArr(doc.data()[n]); // Assuming objToArr is a method from actions
+      flightsArray.push({
+        id: doc.id,
+        data: modifiedFlightObj
+      });
+      n++;
+    }
+
+    return flightsArray;
+  } catch (error) {
+    console.log(error);
+    return []; // or handle the error accordingly
+  }
+},
+        getLastDoc : async () => {
+          try {
+            const collectionRef = firestore().collection("Accounts").doc(this.state.userId);
+            const tripsCollecRef = collectionRef.collection("trips");
+            const docs = [];
+            if (!this.state.offset) {
+              this.state.actions.setTrips({ userTrips: docs, tripLoading: true });
+              const promises = [];
+              const querySnapshot = await tripsCollecRef.orderBy("date", "desc").limit(10).get();
+              querySnapshot.forEach((doc) => {
+                promises.push(new Promise(async (resolve) => {
+                  const hotels = await this.state.actions.getAllHotels(doc.id, this.state.userId);
+                  const flights = await this.state.actions.getAllFlights(doc.id, this.state.userId);
+                  docs.push({
+                    id: doc.id,
+                    data: doc.data(),
+                    hotels: hotels,
+                    flights: flights
+                  });
+                  resolve();
+                }));
+              });
+    
+              await Promise.all(promises);
+              this.state.actions.setTrips({ userTrips: docs, tripLoading: false });
+            } else {
+              this.state.actions.setTrips({ userTrips: docs, tripLoading: true });
+              const documentsToSkip = Math.max(0, this.state.offset - 10);
+              const querySnapshot = await tripsCollecRef.orderBy("date", "desc").limit(documentsToSkip + 10).get();
+              const reversedDocs = [];
+    
+              querySnapshot.forEach((doc) => {
+                reversedDocs.unshift(doc);
+              });
+    
+              const docsToDisplay = reversedDocs.slice(0, 10);
+    
+              const promises = [];
+    
+              docsToDisplay.forEach((doc) => {
+                promises.push(new Promise(async (resolve) => {
+                  const hotels = await actions.getAllHotels(doc.id, this.state.userId);
+                  const flights = await actions.getAllFlights(doc.id, this.state.userId);
+                  docs.push({
+                    id: doc.id,
+                    data: doc.data(),
+                    hotels: hotels,
+                    flights: flights
+                  });
+                  resolve();
+                }));
+              });
+    
+              await Promise.all(promises);
+              this.state.actions.setTrips({ userTrips: docs, tripLoading: false });
+            }
+          } catch (error) {
+            console.log(error);
+          }
+        },
 
 
       },
@@ -2283,6 +2431,7 @@ selectHotelRoomType: (room, selectedRoom, r) => {
     console.log("calling1")
     this.state.actions.fetchHotelCityList();
     console.log("calling2")
+    await this.state.actions.getLastDoc();
 
   }
   debounce = (cb, delay) => {

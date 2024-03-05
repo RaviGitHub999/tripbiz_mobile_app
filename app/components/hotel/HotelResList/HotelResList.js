@@ -974,7 +974,7 @@ const HotelResList = ({ navigation: { navigate, goBack } }) => {
         hotelRoomArr,
         hotelSearchText } = useContext(MyContext)
         const [data1,setData]=useState([])
-const [renderedData, setRenderedData] = useState(data1.slice(0, 20)); // Initially render 20 items
+const [renderedData, setRenderedData] = useState(data1.slice(0, 20));
   const [loading, setLoading] = useState(false);
   const[applyingfilters,setApplyingFilters]=useState(false)
 const [filterhotelsdata,setFiltersHotelsData]=useState([])
@@ -1067,7 +1067,9 @@ setFiltersHotelsData(filteredHotels)
         const ind = idToIndex[hotel.HotelCode];
         // console.log(hotelImg,"00000000000")
         const handleImageError = () => {
-            setError(true);
+          return(
+            <Text>hwghw</Text>
+          )
           };
         return (
             <View style={styles.hotelCard}>
@@ -1091,10 +1093,7 @@ setFiltersHotelsData(filteredHotels)
  <Image
           source={{ uri:hotelImg }}
           style={styles.hotelImg}
-        //   onError={handleImageError}
-        accessible={true}
-        accessibilityRole="image"
-        accessibilityLabel="Description of the image"
+          onError={handleImageError}
         />
                 </View>
                 <View style={styles.hotelDetailsContainer}>
