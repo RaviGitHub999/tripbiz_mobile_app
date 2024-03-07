@@ -1,4 +1,4 @@
-import { Animated, Modal, Text, View, FlatList, ScrollView, TouchableOpacity, StyleSheet } from 'react-native'
+import { TextInput, Animated, Modal, Text, View, FlatList, ScrollView, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native'
 import React, { useCallback, useContext, useMemo, useRef, useState } from 'react'
 import IconSwitcher from '../common/icons/IconSwitcher'
 import MyContext from '../../context/Context'
@@ -20,6 +20,8 @@ const seatsSelect = (seatsSeg, pax, seatCode) => {
 
     return { seatsSeg, rmSeat };
 };
+
+
 const FlightBooking = ({ navigation }) => {
     var [bookIndex, setBookIndex] = useState(0);
     var [segIndex, setSegIndex] = useState(0);
@@ -37,6 +39,17 @@ const FlightBooking = ({ navigation }) => {
     const { actions, flightBookDataLoading, bookingFlight, domesticFlight, internationalFlight, isInternationalRound, userTripStatus, } = useContext(MyContext)
     var { totalFareSum, totalSeatCharges, totalBaggagePrice, totalMealPrice } =
         actions.getTotalFares(bookingFlight);
+    // console.log(userTripStatus,"userTripStatus........")
+
+    var myDate = bookingFlight[0].flight.Segments[0][bookingFlight[0].flight.Segments[0].length - 1].Origin.DepTime;
+    // console.log(bookingFlight[0].flight.Segments[0][bookingFlight[0].flight.Segments[0].length - 1].Origin.DepTime)
+      var myStr = bookingFlight[0].flight.Segments[0][bookingFlight[0].flight.Segments[0].length - 1]?.Destination?.Airport?.CityName + "_trip"
+      const date = new Date(myDate)
+      const formattedDate = `${date.toLocaleString('default', { month: 'long' })} ${date.getDate()}`;
+      const combinedString = `${myStr}_${formattedDate}`;
+      var [defaultInput, setDefaultInput] = useState(combinedString);
+
+
     if (flightBookDataLoading) {
         return (
             <View style={styles.mainContainer}>
@@ -98,14 +111,12 @@ const FlightBooking = ({ navigation }) => {
         actions.setFlightResJType(0)
         // navigation.goBack()
     };
-    const sortedTrips = useMemo(() => {
-        if (!userTripStatus.userTrips) return [];
-        return userTripStatus.userTrips.slice().sort((a, b) => {
-            var aTime = new Date(a?.data?.date?.seconds * 1000);
-            var bTime = new Date(b?.data?.date?.seconds * 1000);
-            return bTime - aTime;
-        });
-    }, [userTripStatus]);
+    const sortedTrips = userTripStatus.userTrips.slice().sort((a, b) => {
+        var aTime = new Date(a?.data?.date?.seconds * 1000);
+        var bTime = new Date(b?.data?.date?.seconds * 1000);
+        return bTime - aTime;
+    });
+
     var getTime = (seconds) => {
         const timestampInSeconds = seconds;
         const timestampInMilliseconds = timestampInSeconds * 1000;
@@ -123,6 +134,19 @@ const FlightBooking = ({ navigation }) => {
             </TouchableOpacity>
         );
     };
+    const handleInputChange = (e) => {
+        setDefaultInput(e)
+      }
+    const handleAddToTrip = async () => {
+
+    //   const newtripid = await actions.editTripBtn(defaultInput, "flights", bookingFlight);
+        // //actions.setFlightSession(true);
+    
+    
+        // navigate(`/trips/${newtripid}`, { state: { userId: userId } })
+        // //await actions.getAllTrips(userId);
+        // await actions.getLastDoc();
+      }
     return (
         <View style={{ flex: 1 }}>
             <TouchableOpacity onPress={handleBackButtonPress} style={styles.backBtnContainer}>
@@ -582,12 +606,8 @@ const FlightBooking = ({ navigation }) => {
                             )
                         }} />}
                     </View>
-
                 </View>
             </Modal>
-
-
-
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -595,36 +615,61 @@ const FlightBooking = ({ navigation }) => {
             >
                 <View style={styles.modalMainContainer}>
                     <View style={styles.modalOpacityLayer}></View>
+                    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     <View style={styles.modelSubContainer1}>
                         <View style={styles.modelSubContainer2}>
                             <TouchableOpacity style={styles.modalIcon} onPress={() => setSubmitIsOpen(false)}>
                                 <IconSwitcher componentName='Entypo' iconName='cross' iconsize={3} color='black' />
                             </TouchableOpacity>
-                            <View style={styles.tripsContainer}>
-                                <TouchableOpacity style={styles.createNewTripBtn}>
+                            {activeTab === 'tab1' ? <View style={styles.tripsContainer}>
+                                <TouchableOpacity style={styles.createNewTripBtn} onPress={() => setActiveTab('tab2')}>
                                     <Text style={styles.createNewTripBtnTitle}>Create New Trip</Text>
                                     <IconSwitcher componentName='Entypo' iconName='plus' color={colors.black} iconsize={3} />
                                 </TouchableOpacity>
                                 <FlatList
-                                data={sortedTrips}
-                                renderItem={renderItem}
-                                keyExtractor={(item) => item.id}
-                                ListHeaderComponent={() => {
-                                    return (
-                                        <View >
-                                            <Text style={styles.triptitles}>Or</Text>
-                                            <Text style={styles.triptitles}>Select an existing trip</Text>
-                                        </View>
-                                    )
-                                }}
-                                ListHeaderComponentStyle={{marginTop:responsiveHeight(1)}}
-                           
-                          style={{height:responsiveHeight(50)}}
-                          contentContainerStyle={{paddingHorizontal:responsiveWidth(3)}}/>
-                            </View>
-                       
+                                    data={sortedTrips}
+                                    renderItem={renderItem}
+                                    keyExtractor={(item) => item.id}
+                                    ListHeaderComponent={() => {
+                                        return (
+                                            <View >
+                                                <Text style={styles.triptitles}>Or</Text>
+                                                <Text style={styles.triptitles}>Select an existing trip</Text>
+                                            </View>
+                                        )
+                                    }}
+                                    ListHeaderComponentStyle={{ marginTop: responsiveHeight(1) }}
+
+                                    style={{ height: responsiveHeight(50) }}
+                                    contentContainerStyle={{ paddingHorizontal: responsiveWidth(3) }} />
+                            </View> :
+                                <View style={styles.addingNewTripContainer}>
+                                    <TouchableOpacity onPress={() => setActiveTab('tab1')}>
+                                    <IconSwitcher componentName='MaterialCommunityIcons' iconName='arrow-left-thin' color={colors.primary} iconsize={4} />
+                                    </TouchableOpacity>
+                                    <View style={styles.addingNewTripSubContainer}>
+                                        <Text style={styles.newtriptitle}>Enter new trip Name</Text>
+                                        <TextInput
+                                            editable
+                                            multiline
+                                            numberOfLines={3}
+                                            placeholder='Enter name of your trip'
+                                            style={styles.multiTextContainer} 
+                                            value={defaultInput}
+                                            onChangeText={handleInputChange}/>
+                                        <TouchableOpacity style={styles.addingNewTripBtn}>
+                                            <Text style={styles.addingNewTripBtnText}>Add to trip</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+
+
+
+                            }
+
                         </View>
                     </View>
+                    </TouchableWithoutFeedback>
                 </View>
             </Modal>
         </View>

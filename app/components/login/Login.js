@@ -38,6 +38,7 @@ actions.handleOnChangeText({event,name})
         { cancelable: false }
       );
     } catch (error) {
+      setIsLoading(false)
       Alert.alert('Login failed', error.message);
     }
   };

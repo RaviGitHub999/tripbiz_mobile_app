@@ -5,9 +5,10 @@ import Fuse from 'fuse.js';
 import AirportsData from "../components/jsonData/Airports.json"
 import HotelsData from "../components/jsonData/Hotels.json"
 import axios from 'axios';
-import firestore from '@react-native-firebase/firestore';
+import firestore, { firebase } from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import convert from "xml-js";
+import moment from 'moment';
 const cabinclassMap = {
   1: "Any cabin class",
   2: "Economy",
@@ -769,22 +770,31 @@ setHotelSearchText: (value) => {
 
           return diffMinutes;
         },
-        diffDays: (dateStr1, dateStr2) => {
-          var date1 = new Date(dateStr1);
-          var date2 = new Date(dateStr2);
-
-          const diffTime = (date2 - date1);
+    diffDays : (dateStr1, dateStr2) => {
+          const date1 = new Date(dateStr1);
+          const date2 = new Date(dateStr2);
+          
+          const diffTime = Math.abs(date2 - date1);
           const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-          // console.log(date1,"diffDays")
           return diffDays;
         },
         diffNights:(dateStr1, dateStr2)=>
         {
-          const start = new Date(dateStr1);
-          const end = new Date(dateStr2);
-          const diffTime = Math.abs(end.getTime() - start.getTime());
-          const diffnights=Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-          return diffnights
+          const date1 = moment.utc(dateStr1);
+          const date2 = moment.utc(dateStr2);
+      
+          // Convert formatted date strings back to Date objects
+          const formattedDate1 = date1.local().toDate();
+          const formattedDate2 = date2.local().toDate();
+      
+          // Calculate the difference in milliseconds between the two dates
+          const diffTime = Math.abs(formattedDate2 - formattedDate1);
+          
+          // Convert milliseconds to days and round down
+          const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+          
+          return diffDays;
+     
         },
         isExitRow: (row) => {
           var firstSeat = row.Seats[0];
@@ -881,9 +891,13 @@ setHotelSearchText: (value) => {
   
               var dpTimeStr = seg.Origin.DepTime;
               var arTimeStr = seg.Destination.ArrTime;
-  
+              const dateObject1 = new Date(dpTimeStr);
+              const formattedDate1 = `${dateObject1.toDateString()} ${dateObject1.toTimeString()}`;
+              const dateObject2= new Date(dpTimeStr);
+              const formattedDate2 = `${dateObject2.toDateString()} ${dateObject2.toTimeString()}`;
               var depDate = new Date(dpTimeStr);
               var arrDate = new Date(arTimeStr);
+              // console.log(depDate,".........seg.Origin.DepTime........")
               var dpTimeArr = dpTimeStr.split("T")[1].split(":");
               var arTimeArr = arTimeStr.split("T")[1].split(":");
               var dpTime = `${dpTimeArr[0]}:${dpTimeArr[1]}`;
@@ -896,7 +910,7 @@ setHotelSearchText: (value) => {
                 layoverDur: stopDuration ? stopDuration : null,
                 depTime: dpTime,
                 arrTime: arTime,
-                arrAfterDays: this.state.actions.diffDays(depDate, arrDate),
+                arrAfterDays: this.state.actions.diffNights(depDate, arrDate),
                 arrCity: seg.Origin.Airport.CityName,
                 destCity: seg.Destination.Airport.CityName
               });
@@ -909,7 +923,7 @@ setHotelSearchText: (value) => {
             var duration = `${durHours ? `${durHours}h ` : ""}${durMins !== 0 ? `${durMins}m` : ""
               }`;
   
-            var arrAfterDays = this.state.actions.diffDays(
+            var arrAfterDays = this.state.actions.diffNights(
               depTimeDate,
               arrTimeDate
             );
@@ -2421,12 +2435,103 @@ getAllFlights :async (id, userId, actions) => {
           }
         },
 
+        editTripBtn : async (name, type, data) => {
+          const accountDocRef = firestore().collection("Accounts").doc(this.state.userAccountDetails.userid);
+          const tripcollectionRef = accountDocRef.collection("trips");
+          const newtripdocRef = await tripcollectionRef.add({
+            flights: [],
+            hotels: [],
+            date: new Date(),
+            name: newTripCompleteString,
+            status: "Not Submitted"
+          });
+          const tripDocRef = firestore().collection("Accounts").doc(this.state.userAccountDetails.userid)
+            .collection("trips").doc(newtripdocRef.id);
+        
+          await tripDocRef.update({
+            name: name
+          });
+        
+          await firestore().collection("Accounts").doc(this.state.userId).update({
+            trips: firestore.FieldValue.arrayUnion(newtripdocRef.id)
+          });
+        
+          if (type === "hotels") {
+            const hotelDocRef = tripDocRef.collection("hotels");
+            const newDocRef = await hotelDocRef.add(data);
+            await firestore().collection("Accounts").doc(this.state.userAccountDetails.userid)
+              .collection("trips").doc(tripDocRef.id).update({
+                hotels: firestore.FieldValue.arrayUnion({
+                  id: newDocRef.id,
+                  status: "Not Submitted",
+                  date: new Date(),
+                  requestStatus: "Not Requested"
+                })
+              });
+          }
+        
+          if (type === "flights") {
+            const hotelDocRef = tripDocRef.collection("flights");
+        
+            const fd = data.map((flight) => {
+              return this.state.actions.arrToObj([flight])
+            });
+        
+            const changedObj = data.map((flight) => {
+              return this.state.actions.objToArr(flight)
+            });
+        
+            console.log(changedObj);
+            this.setState({
+              bookingFlight: changedObj,
+            });
+        
+            fd.map(async (flight) => {
+              const flightDocRef = await hotelDocRef.add(flight);
+              await firestore().collection("Accounts").doc(this.state.userId)
+                .collection("trips").doc(tripDocRef.id).update({
+                  flights: firestore.FieldValue.arrayUnion({
+                    id: flightDocRef.id,
+                    status: "Not Submitted",
+                    date: new Date(),
+                    requestStatus: "Not Requested"
+                  })
+                });
+            });
+            // this.setState({
+            //   bookingFlight: data
+            // })
+          }
+        
+          await this.state.actions.getTripDocById(newtripdocRef.id, this.state.userId)
+          //await this.state.actions.getAllTrips(this.state.userAccountDetails.userid);
+          return newtripdocRef.id;
+        }
+        
+
+
 
       },
     }
   }
   componentDidMount= async ()=>
   {
+
+   firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        // User is signed in.
+       console.log("userLogin")
+      } else {
+        // No user is signed in.
+        console.log("userLogOut")
+
+      }
+    });
+
+
+
+
+
     await this.state.actions.setAdminData()
     console.log("calling1")
     this.state.actions.fetchHotelCityList();

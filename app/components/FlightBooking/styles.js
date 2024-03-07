@@ -265,7 +265,7 @@ export const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        marginHorizontal: responsiveWidth(3)
+        paddingHorizontal: responsiveWidth(3), 
     },
     modelSubContainer2: {
         backgroundColor: 'white',
@@ -292,6 +292,8 @@ export const styles = StyleSheet.create({
         borderStyle: 'dashed',
         backgroundColor: "#edf8f4",
         borderRadius: responsiveHeight(0.8),
+        width:'90%',
+        justifyContent:'center'
     },
     createNewTripBtnTitle: {
         fontSize: responsiveHeight(2),
@@ -315,7 +317,7 @@ export const styles = StyleSheet.create({
         shadowOpacity: responsiveHeight(0.3),
         shadowRadius: responsiveHeight(3),
         elevation: responsiveHeight(0.4),
-        width: responsiveWidth(60)
+        width: "100%"
     },
     tripTitle: {
         fontSize: responsiveHeight(2),
@@ -325,6 +327,41 @@ export const styles = StyleSheet.create({
     tripDate: {
         fontSize: responsiveHeight(1.7),
         fontFamily: fonts.textFont,
-        color: colors.gray
+        color: colors.highlight
+    },
+    addingNewTripContainer:{
+        gap:responsiveHeight(1.5)
+    },
+    addingNewTripSubContainer:{
+        gap:responsiveHeight(1)
+    },
+    addingNewTripBtn:{
+        borderWidth: 1,
+        padding: responsiveHeight(1),
+        paddingHorizontal: responsiveWidth(3),
+        paddingVertical:responsiveHeight(1.5),
+        borderRadius: responsiveHeight(1.3),
+        backgroundColor: colors.black,
+        alignItems:'center',
+        alignSelf:'center',
+        width:"60%"
+    },
+    addingNewTripBtnText:{
+        color: colors.white,
+        fontSize: responsiveHeight(2),
+        fontFamily: fonts.primary
+    },
+    multiTextContainer:{
+        borderWidth: 1, 
+        textAlignVertical: "top", 
+        borderRadius: responsiveHeight(1.3),
+        paddingHorizontal:responsiveWidth(3),
+        fontSize:responsiveHeight(2.3)
+    },
+    newtriptitle:{
+        fontSize: responsiveHeight(2.5),
+        fontFamily: fonts.primary,
+        color: colors.primary,
+        // textAlign: 'center'
     }
 })
