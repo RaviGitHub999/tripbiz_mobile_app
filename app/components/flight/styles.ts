@@ -51,5 +51,15 @@ backgroundColor:colors.primary
     },
     searchFlightsBtnConatainer:{
         marginBottom:responsiveHeight(5)
+    },
+    directFlightContainer:{
+        flexDirection:'row',
+        gap:responsiveHeight(1),
+        alignItems:'center'
+    },
+    directFlightTitle:{
+        fontSize:responsiveHeight(2.2),
+        fontFamily:fonts.primary,
+        color:colors.primary
     }
 })

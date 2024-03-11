@@ -10,7 +10,7 @@ const dropDownList = ["Economy", "Premium Economy", "Business", "First", "Any ca
 interface IProps {
   btn: boolean,
   dropDown: boolean,
-  placeholder: string,
+  placeholder?: string,
   customStyles?:any,
   customFontStyles?:any,
   handleDatePicker?:()=>void,
@@ -81,11 +81,20 @@ const SearchInputs: React.FC<IProps> = ({ btn, dropDown,selected, placeholder,cu
       {btn ?
         <View>
           <View style={[styles.btnMainContainer, activeBtn && { borderColor:colors.primary, borderWidth: responsiveHeight(0.3) },customStyles]}>
-            <TouchableWithoutFeedback onPressIn={() => handleFocus("btn")}
+           { !dropDown?<TouchableWithoutFeedback onPressIn={() => handleFocus("btn")}
               onPressOut={handlePressOut} style={styles.btn} onPress={handleDatePicker}>
               <Text style={[styles.btnText,customFontStyles]}>{dropDown ? classes: placeholder}</Text>
               {dropDown && (dropDownState.dropDownArrow ? <IconSwitcher componentName='AntDesign' iconName='caretup' iconsize={2.2} /> : <IconSwitcher componentName='AntDesign' iconName='caretdown' iconsize={2.2} />)}
             </TouchableWithoutFeedback>
+
+:
+            <View style={styles.btn}>
+<Text style={[styles.btnText,customFontStyles]}>{dropDown ? classes: placeholder}</Text>
+<TouchableWithoutFeedback onPressIn={() => handleFocus("btn")}
+              onPressOut={handlePressOut} >
+{dropDown && (dropDownState.dropDownArrow ? <IconSwitcher componentName='AntDesign' iconName='caretup' iconsize={2.2} /> : <IconSwitcher componentName='AntDesign' iconName='caretdown' iconsize={2.2} />)}
+</TouchableWithoutFeedback>
+             </View>}
           </View>
           {
             dropDown && dropDownState.dropDownHandle && <View style={styles.dropDownListContainer}>

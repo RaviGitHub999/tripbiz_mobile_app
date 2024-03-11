@@ -216,7 +216,8 @@ export default class MyProvider extends Component {
       tripLoading: true,
     },
     offset: null,
-    userId: "Qkwu6fpPoWRLeqcEZQ5rZCIgeNu2",
+    userId: "",
+    isLoading:false,
       actions: {
         setTrips: async (value) => {
           this.setState({
@@ -224,7 +225,10 @@ export default class MyProvider extends Component {
           });
         },
 
-
+handleDirectFlight:()=>
+{
+this.setState({directflight:!this.state.directflight})
+},
 handleHotelBackButton:()=>
 {
 this.setState({searchingHotels:true})
@@ -2516,28 +2520,27 @@ getAllFlights :async (id, userId, actions) => {
   }
   componentDidMount= async ()=>
   {
-
-   firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        // User is signed in.
-       console.log("userLogin")
-      } else {
-        // No user is signed in.
-        console.log("userLogOut")
-
-      }
+    
+auth().onAuthStateChanged(async(user)=>
+{
+  if (user) {
+    this.setState({
+      userId: user?.uid,
+      isLoading: true,
     });
-
-
-
-
-
     await this.state.actions.setAdminData()
-    console.log("calling1")
     this.state.actions.fetchHotelCityList();
-    console.log("calling2")
     await this.state.actions.getLastDoc();
+   console.log("userLogin")
+  } else {
+    this.setState({
+        isLoading: true,
+        userId:""
+    }); 
+    console.log("userLogOut")
 
+  }
+})
   }
   debounce = (cb, delay) => {
     let timer;

@@ -1,13 +1,16 @@
 import { View, Text, Image,StatusBar } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { splashimg } from './assets';
+import MyContext from '../../context/Context';
 
 const Splash = ({navigation:{navigate}}) => {
+    const {isLoading}=useContext(MyContext)
     useEffect(()=>
     {
        setTimeout(() => {
         navigate("Login")
        }, 3000); 
+       console.log("Splash")
     },[])
   return (
     <View>

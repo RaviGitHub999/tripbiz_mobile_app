@@ -7,6 +7,8 @@ import DropDown from '../common/dropDown/DropDown'
 import CustomButton from '../common/customButton/CustomButton'
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import MyContext from '../../context/Context'
+import IconSwitcher from '../common/icons/IconSwitcher'
+import { colors } from '../../config/theme'
 const btns = [{ journeyType: "One Way", journeyTypeNo: "1" }, { journeyType: "Round Trip", journeyTypeNo: "2" }]
 interface IBtns {
   journeyType: string,
@@ -25,7 +27,7 @@ const FlightsSearch: React.FC<IProps> = ({ navigation: { navigate } }) => {
   const [isSearchReady, setSearchReady] = useState(false);
   const [active, setActive] = useState(btns[0].journeyType)
   const [calenderOpen, setCalenderOpen] = useState<CalenderOpen>({ departureCalender: false, returCalender: false })
-  const { departureformattedDate, actions, oriRes, desRes, origin, airportOriginLoading, airportOriginData, destination, originSelectedAirport, originselected, destinationSelectedAirPort, destinationselected, departure, returnDate, dateValue, returnDateValue, airportDestData, airportDestLoading } = useContext<any>(MyContext)
+  const { departureformattedDate, actions, oriRes, desRes, origin, airportOriginLoading, airportOriginData, destination, originSelectedAirport, originselected, destinationSelectedAirPort, destinationselected, departure, returnDate, dateValue, returnDateValue, airportDestData, airportDestLoading,directflight } = useContext<any>(MyContext)
   const handleActive = useCallback((item: IBtns) => {
     setActive(item.journeyType);
     actions.handleJourneyWay(item.journeyTypeNo);
@@ -171,7 +173,21 @@ const FlightsSearch: React.FC<IProps> = ({ navigation: { navigate } }) => {
             <DropDown length={9} particularState='Children' placeHolder='Children'/>
             <DropDown length={9} particularState='Infants' placeHolder='Infants'/>
           </View>
-          <SearchInputs btn={true} dropDown={true} placeholder='Origin' />
+          <SearchInputs btn={true} dropDown={true}  />
+
+         
+   <View style={styles.directFlightContainer}>
+  <TouchableOpacity onPress={actions.handleDirectFlight}>
+  {!directflight? <IconSwitcher componentName='MaterialCommunityIcons' iconName='checkbox-blank-outline' color={colors.gray} iconsize={2.4}/>
+    :<IconSwitcher componentName='MaterialCommunityIcons' iconName='checkbox-marked' color={colors.facebook} iconsize={2.4}/>}
+  </TouchableOpacity>
+  <Text style={styles.directFlightTitle}>Direct flights only</Text>
+   </View>
+    
+
+
+
+
           <View style={styles.searchFlightsBtnConatainer}>
             <CustomButton title='Search Flight' handleSubmit={handleSearch} />
           </View>
