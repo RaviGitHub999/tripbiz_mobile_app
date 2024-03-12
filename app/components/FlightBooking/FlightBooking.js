@@ -22,7 +22,7 @@ const seatsSelect = (seatsSeg, pax, seatCode) => {
 };
 
 
-const FlightBooking = ({ navigation }) => {
+const FlightBooking = ({navigation:{navigate}}) => {
     var [bookIndex, setBookIndex] = useState(0);
     var [segIndex, setSegIndex] = useState(0);
     var [seatSegIdx, setSeatSegIdx] = useState(0);
@@ -35,6 +35,7 @@ const FlightBooking = ({ navigation }) => {
     var [seatOpen, setSeatOpen] = useState(true);
     var [activeTab, setActiveTab] = useState('tab1');
     const [isOpen, setIsOpen] = useState(false);
+    console.log('flightBooking')
     const animatedValue = useRef(new Animated.Value(0)).current;
     const { actions, flightBookDataLoading, bookingFlight, domesticFlight, internationalFlight, isInternationalRound, userTripStatus, } = useContext(MyContext)
     var { totalFareSum, totalSeatCharges, totalBaggagePrice, totalMealPrice } =
@@ -137,16 +138,21 @@ const FlightBooking = ({ navigation }) => {
     const handleInputChange = (e) => {
         setDefaultInput(e)
       }
-    const handleAddToTrip = async () => {
+    // const handleAddToTrip = async () => {
 
     //   const newtripid = await actions.editTripBtn(defaultInput, "flights", bookingFlight);
-        // //actions.setFlightSession(true);
+    //     // //actions.setFlightSession(true);
     
-    
-        // navigate(`/trips/${newtripid}`, { state: { userId: userId } })
-        // //await actions.getAllTrips(userId);
-        // await actions.getLastDoc();
-      }
+    //     navigate("TripDetails",{id:newtripid})
+    //     // navigate(`/trips/${newtripid}`, { state: { userId: userId } })
+    //     // //await actions.getAllTrips(userId);
+    //     await actions.getLastDoc();
+    //   }
+    const handleAddToTrip=()=>
+    {
+        setSubmitIsOpen(false)
+        navigate("TripDetails") 
+    }
     return (
         <View style={{ flex: 1 }}>
             <TouchableOpacity onPress={handleBackButtonPress} style={styles.backBtnContainer}>
@@ -414,6 +420,7 @@ const FlightBooking = ({ navigation }) => {
                     <Text style={styles.flightPrice}> {`₹ ${totalFareSum?.toLocaleString("en-IN")}/-`}</Text>
                     <TouchableOpacity style={styles.submitTripBtn} onPress={() => {
                         setSubmitIsOpen(true);
+                        console.log("l")
                     }}>
                         <Text style={styles.submitTripBtnText}>Add to trip</Text>
                     </TouchableOpacity>
@@ -657,7 +664,7 @@ const FlightBooking = ({ navigation }) => {
                                             style={styles.multiTextContainer} 
                                             value={defaultInput}
                                             onChangeText={handleInputChange}/>
-                                        <TouchableOpacity style={styles.addingNewTripBtn}>
+                                        <TouchableOpacity style={styles.addingNewTripBtn} onPress={handleAddToTrip}>
                                             <Text style={styles.addingNewTripBtnText}>Add to trip</Text>
                                         </TouchableOpacity>
                                     </View>
@@ -743,3 +750,31 @@ const wingsStyles = StyleSheet.create({
     }
 })
 export default (FlightBooking)
+// import { View, Text } from 'react-native'
+// import React, { useContext } from 'react'
+// import { TouchableOpacity } from 'react-native-gesture-handler'
+// import IconSwitcher from '../common/icons/IconSwitcher'
+// import MyContext from '../../context/Context'
+
+// const FlightBooking = ({navigation:{navigate}}) => {
+//     const{actions}=useContext(MyContext)
+//         const handleBackButtonPress = () => {
+//         actions.setFlightBookPage(false);
+//         actions.setBookingFlight([]);
+//         actions.setFlightResJType(0)
+//         // navigation.goBack()
+//     };
+//   return (
+//     <View>
+//                 <TouchableOpacity onPress={handleBackButtonPress} >
+//                 <IconSwitcher componentName='AntDesign' iconName='arrowleft' color='black' iconsize={3} />
+//             </TouchableOpacity>
+//       <TouchableOpacity onPress={()=>
+//     {navigate("TripDetails")}}>
+//       <Text>FlightBooking</Text>
+//       </TouchableOpacity>
+//     </View>
+//   )
+// }
+
+// export default FlightBooking

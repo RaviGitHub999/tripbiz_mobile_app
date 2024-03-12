@@ -185,7 +185,7 @@ const FlightsSearchRes = (props) => {
                  :
                     <View style={{flex:1}}>
                         {
-                            flightBookPage ? <FlightBooking /> : (
+                            flightBookPage ? <FlightBooking {...props}/> : (
                                 flightResJType === 0 ? <FlightList index={0} /> : <FlightList index={1} />
                             )
                         }

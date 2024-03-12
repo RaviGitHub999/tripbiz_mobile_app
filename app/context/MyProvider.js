@@ -81,6 +81,13 @@ const seatTypeObj = {
   60: "WindowAisleBulkhead",
   61: "WindowAisleBulkheadWing"
 };
+var dateObject = new Date();
+var options = {
+  month: "short",
+  day: "numeric"
+};
+var newTripDateString = dateObject.toLocaleString("en-US", options);
+var newTripCompleteString = "newTrip_" + newTripDateString;
 let abortAirportController;
 var fuse = new Fuse(AirportsData, {
   keys: ["cityName", "name", "iataCode", "countryName"],
@@ -218,6 +225,8 @@ export default class MyProvider extends Component {
     offset: null,
     userId: "",
     isLoading:false,
+    newtripid:"",
+    tripDetailsLoader:false,
       actions: {
         setTrips: async (value) => {
           this.setState({
@@ -2438,9 +2447,180 @@ getAllFlights :async (id, userId, actions) => {
             console.log(error);
           }
         },
+        // getRequests :async (req, userid) => {
+        //   try {
+        //     var reqs = [];
+        //     for (const reqe of req) {
+        //       var hotelCollectionRef = db
+        //         .collection("Accounts")
+        //         .doc(userid)
+        //         .collection("tripRequests")
+        //         .doc(reqe);
+        //       var doc = await hotelCollectionRef.get();
+        //       var sendData = await doc.data();
+        //       console.log(doc,"doc");
+        //       reqs.push({ data: sendData, id: doc.id });
+        //     }
+        //     return reqs;
+        //   } catch (error) {
+        //     console.log(error);
+        //     return [];
+        //   }
+        // },
+       getRequests : async (req, userid) => {
+          const reqs = [];
+        
+          // Assuming req is an array of request IDs
+          for (const reqe of req) {
+            const hotelCollectionRef = firestore()
+              .collection("Accounts")
+              .doc(userid)
+              .collection("tripRequests")
+              .doc(reqe);
+        
+            try {
+              const doc = await hotelCollectionRef.get();
+              const sendData = doc.data();
+              console.log(doc);
+              reqs.push({ data: sendData, id: doc.id });
+            } catch (error) {
+              console.error("Error getting request:", error);
+            }
+          }
+        
+          return reqs;
+        },
+
+
+        // getTripDocById:async(id, userid)=> {
+        //   try {
+        //     this.setState({
+        //       tripDataLoading: true
+        //     });
+      
+        //     var docCollectionRef = db
+        //       .collection("Accounts")
+        //       .doc(userid)
+        //       .collection("trips")
+        //       .doc(id);
+      
+        //     var doc = await docCollectionRef.get();
+        //     console.log(doc,"----doc");
+      
+        //     var sendData = await doc.data();
+        //     console.log(sendData,"sendData");
+      
+        //     const [flights, hotels, requestData] = await Promise.all([
+        //       this.state.actions.getAllFlights(docCollectionRef.id, userid),
+        //       this.state.actions.getAllHotels(docCollectionRef.id, userid),
+        //       sendData.requestId ? this.state.actions.getRequests(sendData.requestId, userid) : ''
+        //     ]);
+      
+        //     console.log(requestData,"requestData");
+      
+        //     this.setTripData({
+        //       id: doc.id,
+        //       data: doc.data(),
+        //       hotels: hotels,
+        //       flights: flights,
+        //       requestData: requestData
+        //     });
+      
+        //     this.setState({
+        //       tripDataLoading: false
+        //     });
+      
+        //     return sendData;
+        //   } catch (error) {
+        //     console.log(error);
+        //   }
+        // },
+        setTripData: (value) => {
+          this.setState({
+            tripData: value
+          });
+        },    
+ getTripDocById :async (id, userid) => {
+  try {
+    this.setState({
+      tripDataLoading: true
+    });
+
+    const docCollectionRef = firestore()
+      .collection("Accounts")
+      .doc(userid)
+      .collection("trips")
+      .doc(id);
+
+    const doc = await docCollectionRef.get();
+    console.log(doc, "----doc");
+
+    const sendData = doc.data();
+    console.log(sendData, "sendData");
+
+    let requestData = [];
+    if (sendData.requestId) {
+      requestData = await this.state.actions.getRequests(sendData.requestId, userid);
+    }
+
+    console.log(requestData, "requestData");
+
+    const [flights, hotels] = await Promise.all([
+      this.state.actions.getAllFlights(docCollectionRef.id, userid),
+      this.state.actions.getAllHotels(docCollectionRef.id, userid)
+    ]);
+
+    this.state.actions.setTripData({
+      id: doc.id,
+      data: doc.data(),
+      hotels: hotels,
+      flights: flights,
+      requestData: requestData
+    });
+
+    this.setState({
+      tripDataLoading: false
+    });
+
+    return sendData;
+  } catch (error) {
+    console.error(error);
+  }
+},
+        arrToObj: (varr) => {
+          if (Array.isArray(varr)) {
+            varr.forEach((cVarr, c) => {
+              cVarr = this.state.actions.arrToObj(cVarr);
+            });
+            varr = Object.assign({}, varr);
+          } else if (typeof varr === "object" && varr !== null) {
+            Object.keys(varr).forEach((key, k) => {
+              varr[key] = this.state.actions.arrToObj(varr[key]);
+            });
+            varr = Object.assign({}, varr);
+          }
+          return varr;
+        },
+        objToArr: (obj) => {
+          if (Array.isArray(obj)) {
+            return obj.map((element) => this.state.actions.objToArr(element));
+          } else if (typeof obj === "object" && obj !== null) {
+            const keys = Object.keys(obj);
+            if (keys.every((key) => !isNaN(key))) {
+              return keys.map((key) => this.state.actions.objToArr(obj[key]));
+            } else {
+              const newObj = {};
+              keys.forEach((key) => {
+                newObj[key] = this.state.actions.objToArr(obj[key]);
+              });
+              return newObj;
+            }
+          }
+          return obj;
+        },
 
         editTripBtn : async (name, type, data) => {
-          const accountDocRef = firestore().collection("Accounts").doc(this.state.userAccountDetails.userid);
+          const accountDocRef = firestore().collection("Accounts").doc(this.state.userId);
           const tripcollectionRef = accountDocRef.collection("trips");
           const newtripdocRef = await tripcollectionRef.add({
             flights: [],
@@ -2449,7 +2629,7 @@ getAllFlights :async (id, userId, actions) => {
             name: newTripCompleteString,
             status: "Not Submitted"
           });
-          const tripDocRef = firestore().collection("Accounts").doc(this.state.userAccountDetails.userid)
+          const tripDocRef = firestore().collection("Accounts").doc(this.state.userId)
             .collection("trips").doc(newtripdocRef.id);
         
           await tripDocRef.update({
@@ -2485,7 +2665,7 @@ getAllFlights :async (id, userId, actions) => {
               return this.state.actions.objToArr(flight)
             });
         
-            console.log(changedObj);
+            console.log(changedObj,"changedObj");
             this.setState({
               bookingFlight: changedObj,
             });
@@ -2509,6 +2689,8 @@ getAllFlights :async (id, userId, actions) => {
         
           await this.state.actions.getTripDocById(newtripdocRef.id, this.state.userId)
           //await this.state.actions.getAllTrips(this.state.userAccountDetails.userid);
+
+          this.setState({newtripid:newtripdocRef.id,tripDetailsLoader:true})
           return newtripdocRef.id;
         }
         
