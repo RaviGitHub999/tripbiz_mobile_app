@@ -225,8 +225,12 @@ export default class MyProvider extends Component {
     offset: null,
     userId: "",
     isLoading:false,
-    newtripid:"",
-    tripDetailsLoader:false,
+    tripData: {
+      id: null,
+      data: null,
+      hotels: null,
+      flights: null
+    },
       actions: {
         setTrips: async (value) => {
           this.setState({
@@ -2558,16 +2562,17 @@ getAllFlights :async (id, userId, actions) => {
     const sendData = doc.data();
     console.log(sendData, "sendData");
 
-    let requestData = [];
-    if (sendData.requestId) {
-      requestData = await this.state.actions.getRequests(sendData.requestId, userid);
-    }
+    // let requestData = [];
+    // if (sendData.requestId) {
+    //   requestData = await this.state.actions.getRequests(sendData.requestId, userid);
+    // }
 
     console.log(requestData, "requestData");
 
-    const [flights, hotels] = await Promise.all([
+    const [flights, hotels,requestData] = await Promise.all([
       this.state.actions.getAllFlights(docCollectionRef.id, userid),
-      this.state.actions.getAllHotels(docCollectionRef.id, userid)
+      this.state.actions.getAllHotels(docCollectionRef.id, userid),
+      sendData.requestId ? this.state.actions.getRequests(sendData.requestId, userid) : '',
     ]);
 
     this.state.actions.setTripData({
@@ -2689,12 +2694,78 @@ getAllFlights :async (id, userId, actions) => {
         
           await this.state.actions.getTripDocById(newtripdocRef.id, this.state.userId)
           //await this.state.actions.getAllTrips(this.state.userAccountDetails.userid);
-
-          this.setState({newtripid:newtripdocRef.id,tripDetailsLoader:true})
           return newtripdocRef.id;
-        }
+        },
         
-
+        editTripById : async (id, data, type) => {
+          try {
+            console.log('called');
+            this.setState({
+              searchingFlights: false,
+              searchingHotels: false,
+              fetchingHotelInfo: false,
+              hotelInfoRes: false,
+              flightResList: [],
+              hotelResList: [],
+              bookingFlight: [],
+              bookingHotel: [],
+            });
+      
+            this.state.actions.setFlightBookPage(false);
+      
+            const tripDocRef = firestore()
+              .collection("Accounts")
+              .doc(this.state.userAccountDetails.userid)
+              .collection("trips")
+              .doc(id);
+      
+            if (type === "hotels") {
+              const hotelDocRef = tripDocRef.collection("hotels");
+              const newHotelDocRef = await hotelDocRef.add(data);
+      
+              await firestore()
+                .collection("Accounts")
+                .doc(this.state.userId)
+                .collection("trips")
+                .doc(id)
+                .update({
+                  hotels: firestore.FieldValue.arrayUnion({
+                    id: newHotelDocRef.id,
+                    status: "Not Submitted",
+                    date: new Date(),
+                    requestStatus: "Not Requested"
+                  })
+                });
+            }
+      
+            if (type === "flights") {
+              const flightDocRef = tripDocRef.collection("flights");
+      
+              const flightData = data.map(flight => this.state.actions.arrToObj([flight]));
+      
+              await Promise.all(flightData.map(async (flight) => {
+                const docRef = await flightDocRef.add(flight);
+                await firestore()
+                  .collection("Accounts")
+                  .doc(this.state.userId)
+                  .collection("trips")
+                  .doc(id)
+                  .update({
+                    flights: firestore.FieldValue.arrayUnion({
+                      id: docRef.id,
+                      status: "Not Submitted",
+                      date: new Date(),
+                      requestStatus: "Not Requested"
+                    })
+                  });
+              }));
+            }
+      
+            await this.state.actions.getTripDocById(id, this.state.userId);
+          } catch (error) {
+            console.log(error);
+          }
+        }
 
 
       },

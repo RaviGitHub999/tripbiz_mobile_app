@@ -1,5 +1,5 @@
-import { TextInput, Animated, Modal, Text, View, FlatList, ScrollView, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native'
-import React, { useCallback, useContext, useMemo, useRef, useState } from 'react'
+import { TextInput, Animated, Modal, Text, View, FlatList, ScrollView, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard, ActivityIndicator } from 'react-native'
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import IconSwitcher from '../common/icons/IconSwitcher'
 import MyContext from '../../context/Context'
 import ProgressBar from '../common/progressBar/ProgressBar'
@@ -35,9 +35,10 @@ const FlightBooking = ({navigation:{navigate}}) => {
     var [seatOpen, setSeatOpen] = useState(true);
     var [activeTab, setActiveTab] = useState('tab1');
     const [isOpen, setIsOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     console.log('flightBooking')
     const animatedValue = useRef(new Animated.Value(0)).current;
-    const { actions, flightBookDataLoading, bookingFlight, domesticFlight, internationalFlight, isInternationalRound, userTripStatus, } = useContext(MyContext)
+    const { actions,flightBookDataLoading, bookingFlight, domesticFlight, internationalFlight, isInternationalRound, userTripStatus, } = useContext(MyContext)
     var { totalFareSum, totalSeatCharges, totalBaggagePrice, totalMealPrice } =
         actions.getTotalFares(bookingFlight);
     // console.log(userTripStatus,"userTripStatus........")
@@ -106,12 +107,12 @@ const FlightBooking = ({navigation:{navigate}}) => {
 
         setSelectedSeats(selectedSeats);
     }
-    const handleBackButtonPress = () => {
-        actions.setFlightBookPage(false);
-        actions.setBookingFlight([]);
-        actions.setFlightResJType(0)
-        // navigation.goBack()
-    };
+    // const handleBackButtonPress = () => {
+    //     actions.setFlightBookPage(false);
+    //     actions.setBookingFlight([]);
+    //     actions.setFlightResJType(0)
+    //     // navigation.goBack()
+    // };
     const sortedTrips = userTripStatus.userTrips.slice().sort((a, b) => {
         var aTime = new Date(a?.data?.date?.seconds * 1000);
         var bTime = new Date(b?.data?.date?.seconds * 1000);
@@ -124,12 +125,19 @@ const FlightBooking = ({navigation:{navigate}}) => {
         const date = new Date(timestampInMilliseconds);
         return date;
     };
+    var addtoTrip = async (id) => {
+        await actions.editTripById(id, [...bookingFlight], "flights");
+        await actions.getLastDoc();
+      }
     const renderItem = ({ item }) => {
         const date = getTime(item?.data?.date?.seconds);
         const dateStr = date.toString().slice(4, 10);
 
         return (
-            <TouchableOpacity style={styles.tripCard}>
+            <TouchableOpacity style={styles.tripCard} onPress={() => {
+                addtoTrip(item.id)
+                navigate("TripDetails",{id:item.id});
+              }}>
                 <Text style={styles.tripTitle}>{item.data.name}</Text>
                 <Text style={styles.tripDate}>{dateStr}</Text>
             </TouchableOpacity>
@@ -148,14 +156,24 @@ const FlightBooking = ({navigation:{navigate}}) => {
     //     // //await actions.getAllTrips(userId);
     //     await actions.getLastDoc();
     //   }
-    const handleAddToTrip=()=>
-    {
-        setSubmitIsOpen(false)
-        navigate("TripDetails") 
-    }
+   
+
+//     useEffect(()=>
+//     {
+//         // actions.editTripBtn(defaultInput, "flights", bookingFlight)
+// console.log("hsgda")
+//     },[])
+   const handleAddToTrip = async () => {
+    setIsLoading(true);
+    let newtripid = await actions.createNewTrip(defaultInput, "flights", bookingFlight);
+    setIsLoading(false);
+    setSubmitIsOpen(false);
+    navigate("TripDetails",{id:newtripid});
+  };
+    
     return (
-        <View style={{ flex: 1 }}>
-            <TouchableOpacity onPress={handleBackButtonPress} style={styles.backBtnContainer}>
+       isLoading?<View style={{flex:1,alignItems:'center',justifyContent:'center'}}><ProgressBar/></View>: <View style={{ flex: 1 }}>
+            <TouchableOpacity  style={styles.backBtnContainer}>
                 <IconSwitcher componentName='AntDesign' iconName='arrowleft' color='black' iconsize={3} />
             </TouchableOpacity>
             <View style={{ flex: 2 }}>
@@ -749,7 +767,7 @@ const wingsStyles = StyleSheet.create({
         backgroundColor: "#8d8d8d",
     }
 })
-export default (FlightBooking)
+export default React.memo(FlightBooking)
 // import { View, Text } from 'react-native'
 // import React, { useContext } from 'react'
 // import { TouchableOpacity } from 'react-native-gesture-handler'
