@@ -828,8 +828,166 @@ setHotelSearchText: (value) => {
           }
           return false;
         },
+        // modifyFlightObject: (flight) => {
+        //   var totalDuration = 0;
+        //   var segments = flight?.Segments?.map((segment, sg) => {
+        //     var seg1 = segment[0];
+        //     var segLast = segment[segment.length - 1];
+  
+        //     var originCityName = seg1.Origin.Airport.CityName;
+        //     var originAirportCode = seg1.Origin.Airport.AirportCode;
+        //     var originAirportName = seg1.Origin.Airport.AirportName;
+        //     var originTerminal = seg1.Origin.Airport.Terminal;
+  
+        //     var destCityName = segLast.Destination.Airport.CityName;
+        //     var destAirportCode = segLast.Destination.Airport.AirportCode;
+        //     var destAirportName = segLast.Destination.Airport.AirportName;
+        //     var destTerminal = segLast.Destination.Airport.Terminal;
+  
+        //     var depTimeDate = new Date(seg1.Origin.DepTime);
+        //     var arrTimeDate = new Date(segLast.Destination.ArrTime);
+  
+        //     var depTimeArr = seg1.Origin.DepTime.split("T")[1].split(":");
+        //     var arrTimeArr = segLast.Destination.ArrTime.split("T")[1].split(":");
+        //     var depTime = `${depTimeArr[0]}:${depTimeArr[1]}`;
+        //     var arrTime = `${arrTimeArr[0]}:${arrTimeArr[1]}`;
+  
+        //     var durationSum = 0;
+  
+        //     var stopOverPts = [];
+        //     var charNum = 0;
+  
+        //     var segRoutes = [];
+  
+        //     var dur = 0;
+        //     var flightCodes = [];
+  
+        //     segment.forEach((seg, s) => {
+        //       var flightCode = `${seg.Airline.AirlineCode} - ${seg.Airline.FlightNumber} ${seg.Airline.FareClass}`;
+        //       flightCodes[s] = flightCode;
+  
+        //       var flightDuration =
+        //         seg.Duration !== 0 ? seg.Duration : seg.AccumulatedDuration;
+  
+        //       dur += flightDuration + seg.GroundTime;
+  
+        //       durationSum += flightDuration;
+  
+        //       if (s > 0) {
+        //         var currDepTime = seg.Origin.DepTime;
+        //         var prevArrTime = segment[s - 1].Destination.ArrTime;
+  
+        //         var diffMin = this.state.actions.diffMinutes(
+        //           prevArrTime,
+        //           currDepTime
+        //         );
+        //         durationSum += diffMin;
+  
+        //         var stopDurationNum = diffMin / 60;
+        //         var stopDurHours = Math.floor(stopDurationNum);
+        //         var stopDurMins = Math.ceil(
+        //           60 * (stopDurationNum - Math.floor(stopDurationNum))
+        //         );
+        //         var stopDuration = `${stopDurHours ? `${stopDurHours}h ` : ""}${stopDurMins !== 0 ? `${stopDurMins}m` : ""
+        //           }`;
+  
+        //         charNum += seg.Origin.Airport.CityName.length;
+  
+        //         stopOverPts.push({
+        //           cityName: seg.Origin.Airport.CityName,
+        //           stopDuration,
+        //           charNum
+        //         });
+        //       }
+  
+        //       var durNum = flightDuration / 60;
+        //       var durHrs = Math.floor(durNum);
+        //       var durMns = Math.ceil(60 * (durNum - Math.floor(durNum)));
+        //       var durationStr = `${durHrs ? `${durHrs}h ` : ""}${durMns !== 0 ? `${durMns}m` : ""
+        //         }`;
+  
+        //       var dpTimeStr = seg.Origin.DepTime;
+        //       var arTimeStr = seg.Destination.ArrTime;
+        //       const dateObject1 = new Date(dpTimeStr);
+        //       const formattedDate1 = `${dateObject1.toDateString()} ${dateObject1.toTimeString()}`;
+        //       const dateObject2= new Date(dpTimeStr);
+        //       const formattedDate2 = `${dateObject2.toDateString()} ${dateObject2.toTimeString()}`;
+        //       var depDate = new Date(dpTimeStr);
+        //       var arrDate = new Date(arTimeStr);
+        //       // console.log(depDate,".........seg.Origin.DepTime........")
+        //       var dpTimeArr = dpTimeStr.split("T")[1].split(":");
+        //       var arTimeArr = arTimeStr.split("T")[1].split(":");
+        //       var dpTime = `${dpTimeArr[0]}:${dpTimeArr[1]}`;
+        //       var arTime = `${arTimeArr[0]}:${arTimeArr[1]}`;
+  
+        //       segRoutes.push({
+        //         originCode: seg.Origin.Airport.AirportCode,
+        //         destCode: seg.Destination.Airport.AirportCode,
+        //         flightDur: durationStr,
+        //         layoverDur: stopDuration ? stopDuration : null,
+        //         depTime: dpTime,
+        //         arrTime: arTime,
+        //         arrAfterDays: this.state.actions.diffNights(depDate, arrDate),
+        //         arrCity: seg.Origin.Airport.CityName,
+        //         destCity: seg.Destination.Airport.CityName
+        //       });
+        //     });
+  
+        //     var cabinClass = cabinclassMap[segment[0].CabinClass];
+        //     var durationNum = durationSum / 60;
+        //     var durHours = Math.floor(durationNum);
+        //     var durMins = Math.ceil(60 * (durationNum - Math.floor(durationNum)));
+        //     var duration = `${durHours ? `${durHours}h ` : ""}${durMins !== 0 ? `${durMins}m` : ""
+        //       }`;
+  
+        //     var arrAfterDays = this.state.actions.diffNights(
+        //       depTimeDate,
+        //       arrTimeDate
+        //     );
+  
+        //     totalDuration += dur;
+  
+        //     return {
+        //       airlineName: seg1.Airline.AirlineName,
+        //       mainFlgtCode: flightCodes[0],
+        //       flightCodes,
+        //       arrTime,
+        //       arrTimeDate,
+        //       depTime,
+        //       depTimeDate,
+        //       arrAfterDays,
+        //       originCityName,
+        //       originAirportCode,
+        //       originAirportName,
+        //       originTerminal,
+        //       destCityName,
+        //       destAirportCode,
+        //       destAirportName,
+        //       destTerminal,
+        //       duration,
+        //       dur,
+        //       stopOverPts,
+        //       segRoutes,
+        //       baggage: seg1.Baggage,
+        //       cabinBaggage: seg1.CabinBaggage,
+        //       cabinClass
+        //     };
+        //   });
+  
+        //   return {
+        //     segments,
+        //     fare: flight.Fare.OfferedFare
+        //       ? Math.ceil(flight.Fare.OfferedFare)
+        //       : Math.ceil(flight.Fare.PublishedFare),
+        //     fareType: flight.FareClassification?.Type,
+        //     fareRules: flight.MiniFareRules ? flight.MiniFareRules : [],
+        //     resultIndex: flight.ResultIndex,
+        //     totalDuration
+        //   };
+        // },
         modifyFlightObject: (flight) => {
           var totalDuration = 0;
+          var totalDur = 0;
           var segments = flight?.Segments?.map((segment, sg) => {
             var seg1 = segment[0];
             var segLast = segment[segment.length - 1];
@@ -857,22 +1015,25 @@ setHotelSearchText: (value) => {
             var stopOverPts = [];
             var charNum = 0;
   
+  
+            var finalDur = 0;
+  
             var segRoutes = [];
   
             var dur = 0;
             var flightCodes = [];
-  
             segment.forEach((seg, s) => {
               var flightCode = `${seg.Airline.AirlineCode} - ${seg.Airline.FlightNumber} ${seg.Airline.FareClass}`;
               flightCodes[s] = flightCode;
-  
               var flightDuration =
-                seg.Duration !== 0 ? seg.Duration : seg.AccumulatedDuration;
+                seg.Duration !== 0 ? seg.Duration : (seg.AccumulatedDuration ? seg.AccumulatedDuration : 0);
   
               dur += flightDuration + seg.GroundTime;
   
               durationSum += flightDuration;
-  
+              if (s === segment.length - 1) {
+                finalDur += seg.AccumulatedDuration;
+              }
               if (s > 0) {
                 var currDepTime = seg.Origin.DepTime;
                 var prevArrTime = segment[s - 1].Destination.ArrTime;
@@ -905,16 +1066,12 @@ setHotelSearchText: (value) => {
               var durMns = Math.ceil(60 * (durNum - Math.floor(durNum)));
               var durationStr = `${durHrs ? `${durHrs}h ` : ""}${durMns !== 0 ? `${durMns}m` : ""
                 }`;
-  
               var dpTimeStr = seg.Origin.DepTime;
               var arTimeStr = seg.Destination.ArrTime;
-              const dateObject1 = new Date(dpTimeStr);
-              const formattedDate1 = `${dateObject1.toDateString()} ${dateObject1.toTimeString()}`;
-              const dateObject2= new Date(dpTimeStr);
-              const formattedDate2 = `${dateObject2.toDateString()} ${dateObject2.toTimeString()}`;
+  
               var depDate = new Date(dpTimeStr);
               var arrDate = new Date(arTimeStr);
-              // console.log(depDate,".........seg.Origin.DepTime........")
+  
               var dpTimeArr = dpTimeStr.split("T")[1].split(":");
               var arTimeArr = arTimeStr.split("T")[1].split(":");
               var dpTime = `${dpTimeArr[0]}:${dpTimeArr[1]}`;
@@ -927,26 +1084,32 @@ setHotelSearchText: (value) => {
                 layoverDur: stopDuration ? stopDuration : null,
                 depTime: dpTime,
                 arrTime: arTime,
-                arrAfterDays: this.state.actions.diffNights(depDate, arrDate),
+                arrAfterDays: this.state.actions.diffDays(depDate, arrDate),
                 arrCity: seg.Origin.Airport.CityName,
                 destCity: seg.Destination.Airport.CityName
               });
             });
   
-            var cabinClass = cabinclassMap[segment[0].CabinClass];
+            var cabinClass = cabinclassMap[segment[0].CabinClass] ? cabinclassMap[segment[0].CabinClass] : '';
             var durationNum = durationSum / 60;
             var durHours = Math.floor(durationNum);
+  
             var durMins = Math.ceil(60 * (durationNum - Math.floor(durationNum)));
+            var finalSum = finalDur / 60;
+            var finalHrs = Math.floor(finalSum)
+  
+            var finalsMins = Math.ceil(60 * (finalSum - Math.floor(finalSum)));
             var duration = `${durHours ? `${durHours}h ` : ""}${durMins !== 0 ? `${durMins}m` : ""
               }`;
-  
-            var arrAfterDays = this.state.actions.diffNights(
+            var finalTime = `${finalHrs ? `${finalHrs}h ` : ""}${finalsMins !== 0 ? `${finalsMins}m` : ""
+              }`;
+            totalDur += durHours * 60 + durMins
+            var arrAfterDays = this.state.actions.diffDays(
               depTimeDate,
               arrTimeDate
             );
   
             totalDuration += dur;
-  
             return {
               airlineName: seg1.Airline.AirlineName,
               mainFlgtCode: flightCodes[0],
@@ -970,10 +1133,11 @@ setHotelSearchText: (value) => {
               segRoutes,
               baggage: seg1.Baggage,
               cabinBaggage: seg1.CabinBaggage,
-              cabinClass
+              cabinClass,
+              finalDur,
+              finalTime
             };
           });
-  
           return {
             segments,
             fare: flight.Fare.OfferedFare
@@ -982,7 +1146,8 @@ setHotelSearchText: (value) => {
             fareType: flight.FareClassification?.Type,
             fareRules: flight.MiniFareRules ? flight.MiniFareRules : [],
             resultIndex: flight.ResultIndex,
-            totalDuration
+            totalDuration,
+            totalDur
           };
         },
         editFlightSearch: () => {
@@ -2363,7 +2528,7 @@ objToArr: (obj) => {
   }
   return obj;
 },
-getAllFlights :async (id, userId, actions) => {
+getAllFlights :async (id, userId) => {
   try {
     const flightCollectionRef = firestore()
       .collection("Accounts")
@@ -2376,14 +2541,14 @@ getAllFlights :async (id, userId, actions) => {
     const flightsArray = [];
 
     let n = 0;
-    for (const doc of querySnapshot.docs) {
-      const modifiedFlightObj = await this.state.actions.objToArr(doc.data()[n]); // Assuming objToArr is a method from actions
+    querySnapshot.forEach(async (doc) => {
+      var modifiedFlightObj = await this.state.actions.objToArr(doc.data()[n])
       flightsArray.push({
         id: doc.id,
         data: modifiedFlightObj
       });
       n++;
-    }
+    });
 
     return flightsArray;
   } catch (error) {

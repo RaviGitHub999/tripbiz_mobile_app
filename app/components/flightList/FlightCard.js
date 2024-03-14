@@ -175,12 +175,12 @@ const FlightCard = ({
             <Text style={styles.flightTimings}> {item.arrTime}</Text>
           </View>
           <View>
-          {
+          {/* {
               <View>
                 <Text>{`+ ${item.arrAfterDays}`}</Text>
                 <Text>{`${item.arrAfterDays > 1 ? "Days" : "Day"}`}</Text>
                 </View>
-            } 
+            }  */}
           </View>
         </View>
         {/* {!bookingPage ?
