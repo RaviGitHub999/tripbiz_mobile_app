@@ -5,8 +5,8 @@ import { colors, fonts } from "../../../config/theme";
 export const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-        borderWidth: 3,
-        borderColor: "green",
+        // borderWidth: 3,
+        // borderColor: "green",
         paddingTop: responsiveHeight(1.5),
         paddingHorizontal: responsiveWidth(2),
         backgroundColor: colors.white
@@ -15,9 +15,9 @@ export const styles = StyleSheet.create({
         width: "8%",
     },
     subContainer: {
-        borderWidth: 2,
-        borderColor: "red",
-        paddingHorizontal: responsiveWidth(2.5)
+        // borderWidth: 2,
+        // borderColor: "red",
+        paddingHorizontal: responsiveWidth(2.5),
     },
     hotelCardTitle:
     {
@@ -56,7 +56,8 @@ export const styles = StyleSheet.create({
         shadowRadius: responsiveHeight(3),
         elevation: responsiveHeight(0.4),
         backgroundColor: colors.white,
-        borderRadius: responsiveHeight(1.5)
+        borderRadius: responsiveHeight(1.5),
+        marginHorizontal: responsiveWidth(1)
     },
     hotelImgContainer: {
         width: "35%",
@@ -180,6 +181,49 @@ export const styles = StyleSheet.create({
         borderWidth: 1,
         paddingVertical: responsiveHeight(2.5),
         paddingHorizontal: responsiveWidth(3),
+    },
+    flightCardTitle:
+    {
+        marginTop: responsiveHeight(1.3),
+        fontSize: responsiveHeight(2.1),
+        fontFamily: fonts.primary,
+        color: colors.primary,
+        // marginBottom: responsiveHeight(1.3)
+    },
+    totalPriceContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: responsiveWidth(3),
+        paddingVertical: responsiveHeight(2),
+        height: responsiveHeight(9),
+        elevation: responsiveHeight(0.09),
+        // backgroundColor: colors.white,
+    },
+    totalPriceTitle:
+    {
+        fontSize: responsiveHeight(2),
+        color: colors.black,
+        fontFamily: fonts.primary
+    },
+    proceedToBookingBtn:
+    {
+backgroundColor:colors.primary,
+height:responsiveHeight(5),
+alignItems:'center',
+justifyContent:'center',
+paddingHorizontal:responsiveWidth(3),
+borderRadius:responsiveHeight(0.9)
+    },
+    proceedToBookingBtnTitle:{
+        fontSize:responsiveHeight(1.8),
+        color:colors.white,
+        fontFamily:fonts.textFont
+    },
+    totalPrice:{
+        fontSize: responsiveHeight(2),
+        color: colors.secondary,
+        fontFamily: fonts.primary   
     }
 
 })

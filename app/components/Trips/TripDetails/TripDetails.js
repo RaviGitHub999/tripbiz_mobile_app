@@ -13,6 +13,7 @@ import { responsiveHeight } from '../../../utils/responsiveScale';
 import FlightCard from '../../flightList/FlightCard';
 import { ScrollView } from 'react-native';
 import { FlatList } from 'react-native';
+import TripDetailsFlightCard from './TripDetailsFlightCard';
 const TripDetails = ({ navigation }) => {
   const [mounted, setMounted] = useState(true)
   const [airlinelogos, setAirlinelogos] = useState([]);
@@ -34,7 +35,7 @@ const TripDetails = ({ navigation }) => {
   //     return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
   //   }, []) 
   // );
-  console.log(tripData.flights,"kkkkkkkk" )
+  console.log(tripData.flights, "kkkkkkkk")
   var statuses = [
     { status: "Paid and Submitted", color: "#4CAF50" },
     { status: "Need clarification", color: "#FFC107" },
@@ -74,6 +75,19 @@ const TripDetails = ({ navigation }) => {
       console.error("Error getting documents: ", error);
     }
   };
+
+ const tripFlightsData= tripData?.flights?.sort((a, b) => {
+    var aflightArr = [a.data.flight].map((flight, f) => {
+        return { ...actions.modifyFlightObject(flight) };
+    });
+    var bflightArr = [b.data.flight].map((flight, f) => {
+        return { ...actions.modifyFlightObject(flight) };
+    });
+    return aflightArr[0]?.segments[0]?.depTimeDate - bflightArr[0]?.segments[0]?.depTimeDate
+})
+
+
+
   useEffect(() => {
 
     if (mounted) {
@@ -118,8 +132,10 @@ const TripDetails = ({ navigation }) => {
       </View>
     );
   }
+  console.log(price,"price")
   return (
-    <ScrollView style={styles.mainContainer}>
+   <View style={{flex:1,backgroundColor:colors.white}}>
+     <ScrollView style={styles.mainContainer} contentContainerStyle={{ paddingBottom: responsiveHeight(13) }}>
       {/* {backNavigation} */}
       <View style={styles.backNavigationContainer}>
         <TouchableOpacity >
@@ -256,7 +272,7 @@ const TripDetails = ({ navigation }) => {
                                   }
 
                                   <Text>{`Approval Status : `}<Text>{hotelReq[0]?.requestStatus}</Text></Text>
-                                  <Text>{`Total Price : ₹ ${hotelPrice}`}</Text>
+                                  <Text>{`Total Price : ₹  ${Math.ceil(hotel.data.hotelTotalPrice).toLocaleString("en-IN")}`}</Text>
                                 </View>
                                 <View style={styles.addedHotelTimeAndDateContainer}>
                                   <View style={styles.addedHotelTitleContainer}>
@@ -287,83 +303,92 @@ const TripDetails = ({ navigation }) => {
               <View>
                 {tripData?.flights ?
                   <>
-                    <Text>Flights</Text>
-                    {/* {
-                                                        tripData?.flights?.sort((a, b) => {
-                                                            console.log(a,"llkjkjk")
-                                                            var aflightArr = [a.data.flight].map((flight, f) => {
-                                                                return { ...actions.modifyFlightObject(flight) };
-                                                            });
-                                                            var bflightArr = [b.data.flight].map((flight, f) => {
-                                                                return { ...actions.modifyFlightObject(flight) };
-                                                            });
-                                                            return aflightArr[0]?.segments[0]?.depTimeDate - bflightArr[0]?.segments[0]?.depTimeDate
-                                                        }).map((flight, f) => {
-                                                            var flightStatus = tripData.data.flights.filter((f) => f.id === flight.id)
-                                                            price = price + flight.data.totalFare
-                                                            var hotelData = tripData?.data?.flights.filter((hotels) => hotels.id === flight.id)
-                                                            var hotelTimeStamp = new Date(hotelData[0]?.date?.seconds * 1000);
-                                                            var flightReq = tripData.data.flights.filter((hotelMain) => {
-                                                                return hotelMain.id === flight.id
-                                                            });
-                                                            var reqColor = reqStatuses.filter((status) => { return status?.status === flightReq[0]?.requestStatus })
+                    <Text style={styles.flightCardTitle}>Flights</Text>
+                    {/* <FlatList
+                      data={tripFlightsData}
+                      keyExtractor={(item, index) => index.toString()}
+                      renderItem={({ item: flight, index }) => {
+                        // var aflightArr = [flight.data.flight].map((flight, f) => {
+                        //   return { ...actions.modifyFlightObject(flight) };
+                        // });
+                        var flightStatus = tripData.data.flights.filter((f) => f.id === flight.id);
+                        price = price + flight.data.finalPrice;
+                        console.log(price,"flight.data.finalPrice")
+                        var hotelData = tripData?.data?.flights.filter((hotels) => hotels.id === flight.id);
+                        var hotelTimeStamp = new Date(hotelData[0]?.date?.seconds * 1000);
+                        var flightReq = tripData.data.flights.filter((hotelMain) => {
+                          return hotelMain.id === flight.id;
+                        });
+                        var reqColor = reqStatuses.filter((status) => { return status?.status === flightReq[0]?.requestStatus });
 
-                                                            return (
-                                                                <>
-                                                                    <FlightCard
-                                                                        flightGrp={[flight.data.flight]}
-                                                                        index={f}
-                                                                        // tripsPage={true}
-                                                                        // bookingPage={true}
-                                                                        // flightBooking={flight.data}
-                                                                        // downloadUrl={flightStatus[0]?.downloadURL ? flightStatus[0].downloadURL : undefined}
-                                                                        // flightStatus={flightStatus[0]}
-                                                                        // timeStamp={hotelTimeStamp}
-                                                                        // flightId={flight.id}
-                                                                        // tripId={id}
-                                                                        // flightReq={flightReq}
-                                                                        // reqColor={reqColor}
-                                                                    />
-                                                                </>
-                                                            )
-                                                        })
-                                                    } */}
+                        return (
+                          // <FlightCard
+                          //     flightGrp={[flight.data.flight]}
+                          //     index={index}
+                          //     tripsPage={true}
+                          //     bookingPage={true}
+                          //     flightBooking={flight.data}
+                          //     downloadUrl={flightStatus[0]?.downloadURL ? flightStatus[0].downloadURL : undefined}
+                          //     flightStatus={flightStatus[0]}
+                          //     timeStamp={hotelTimeStamp}
+                          //     flightId={flight.id}
+                          //     tripId={id}
+                          //     flightReq={flightReq}
+                          //     reqColor={reqColor}
+                          // />
+                          <TripDetailsFlightCard
+                            flightGrp={[flight.data.flight]}
+                            index={index}
+                            flightBooking={flight.data}
+                            flightStatus={flightStatus[0]}
+                            flightReq={flightReq}
+                            timeStamp={hotelTimeStamp}
+                          />
+                          
+                        );
+                      }}
+                      contentContainerStyle={{ paddingBottom: responsiveHeight(0) }} /> */}
+    {
+                                                tripData?.flights?.sort((a, b) => {
+                                                    var aflightArr = [a.data.flight].map((flight, f) => {
+                                                        return { ...actions.modifyFlightObject(flight) };
+                                                    });
+                                                    var bflightArr = [b.data.flight].map((flight, f) => {
+                                                        return { ...actions.modifyFlightObject(flight) };
+                                                    });
+                                                    return aflightArr[0]?.segments[0]?.depTimeDate - bflightArr[0]?.segments[0]?.depTimeDate
+                                                }).map((flight, f) => {
+                                                    var flightStatus = tripData.data.flights.filter((f) => f.id === flight.id)
+                                                    price = price + flight.data.finalPrice
+                                                    console.log(flight.data.finalPrice,"flight.data.finalPrice")
+                                                    var hotelTimeStamp = new Date(hotelData[0]?.date?.seconds * 1000);
+                                                    var flightReq = tripData.data.flights.filter((hotelMain) => {
+                                                        return hotelMain.id === flight.id
+                                                    });
+                                                    const data = actions.objToArr(flight.data)
 
-<FlatList
-    data={tripData?.flights}
-    keyExtractor={(item, index) => index.toString()}
-    renderItem={({ item: flight, index }) => {
-        var aflightArr = [flight.data.flight].map((flight, f) => {
-            return { ...actions.modifyFlightObject(flight) };
-        });
-        var flightStatus = tripData.data.flights.filter((f) => f.id === flight.id);
-        price = price + flight.data.totalFare;
-        var hotelData = tripData?.data?.flights.filter((hotels) => hotels.id === flight.id);
-        var hotelTimeStamp = new Date(hotelData[0]?.date?.seconds * 1000);
-        var flightReq = tripData.data.flights.filter((hotelMain) => {
-            return hotelMain.id === flight.id;
-        });
-        var reqColor = reqStatuses.filter((status) => { return status?.status === flightReq[0]?.requestStatus });
+                                                    var reqColor = reqStatuses.filter((status) => { return status?.status === flightReq[0]?.requestStatus })
 
-        return (
-            <FlightCard
-                flightGrp={[flight.data.flight]}
-                index={index}
-                // tripsPage={true}
-                // bookingPage={true}
-                // flightBooking={flight.data}
-                // downloadUrl={flightStatus[0]?.downloadURL ? flightStatus[0].downloadURL : undefined}
-                // flightStatus={flightStatus[0]}
-                // timeStamp={hotelTimeStamp}
-                // flightId={flight.id}
-                // tripId={id}
-                // flightReq={flightReq}
-                // reqColor={reqColor}
-            />
-        );
-    }}
-contentContainerStyle={{paddingBottom:responsiveHeight(10)}}/>
-
+                                                    return (
+                                                        <>
+                                             <TripDetailsFlightCard
+                            flightGrp={[flight.data.flight]}
+                            index={f}
+                            flightBooking={flight.data}
+                            flightStatus={flightStatus[0]}
+                            flightReq={flightReq}
+                            timeStamp={hotelTimeStamp}
+                          />
+                                                        </>
+                                                    )
+                                                })
+                                            }
+                    <View style={styles.addingHotelBtnContainer}>
+                      <TouchableOpacity style={styles.addingHotelBtn}>
+                        <Text style={styles.addingHotelBtnTitle}>Add Hotel </Text>
+                        <IconSwitcher componentName='Feather' iconName='plus' color={colors.primary} iconsize={3} />
+                      </TouchableOpacity>
+                    </View>
                   </>
                   : null}
 
@@ -373,8 +398,17 @@ contentContainerStyle={{paddingBottom:responsiveHeight(10)}}/>
         }
 
       </View>
-
     </ScrollView>
+    <View style={styles.totalPriceContainer}>
+<Text style={styles.totalPriceTitle}>Total price:</Text>
+<Text style={styles.totalPrice}>{`₹ ${price}`}</Text>
+<TouchableOpacity style={styles.proceedToBookingBtn}>
+  <Text style={styles.proceedToBookingBtnTitle}>
+   Proceed to Booking 
+  </Text>
+</TouchableOpacity>
+    </View>
+   </View>
   );
 };
 

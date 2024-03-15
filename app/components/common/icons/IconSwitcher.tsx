@@ -6,6 +6,7 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import Foundation from "react-native-vector-icons/Foundation"
 import Ionicons from "react-native-vector-icons/Ionicons"
@@ -51,7 +52,8 @@ const IconSwitcher:React.FC<IProps>= ({componentName,iconName,color,iconsize}) =
     return <SimpleLineIcons name={iconName} color={color} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
     case "Zocial":
     return <Zocial name={iconName} color={color} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
-
+    case "FontAwesome6":
+        return <FontAwesome6 name={iconName} color={color} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
     default:
         console.warn(`Unknown Component Name ${componentName}`)
       return null

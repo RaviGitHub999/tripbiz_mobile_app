@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '../../home/HomeScreen';
 import IconSwitcher from '../icons/IconSwitcher';
 import { colors, fonts } from '../../../config/theme';
-import { responsiveFontSize } from '../../../utils/responsiveScale';
+import { responsiveFontSize, responsiveHeight } from '../../../utils/responsiveScale';
 const Demo1 = () => <></>
 const Tab = createBottomTabNavigator();
 const BottomNavigation = () => {
@@ -12,8 +12,18 @@ const BottomNavigation = () => {
     <Tab.Navigator
     screenOptions={{ headerShown: false ,tabBarActiveTintColor: colors.primaryLite,
     tabBarInactiveTintColor: 'gray',
-  tabBarLabelStyle:{fontSize:responsiveFontSize(1.5),fontFamily:fonts.primary},
-  tabBarHideOnKeyboard: true
+  tabBarLabelStyle:{fontSize:responsiveFontSize(1.5),fontFamily:fonts.primary,paddingBottom: responsiveHeight(1)},
+  tabBarHideOnKeyboard: true,
+  tabBarStyle: {
+    // paddingBottom: 8,
+    // paddingTop: 8,
+    height:responsiveHeight(9),
+    borderTopLeftRadius:responsiveHeight(5),
+    borderTopRightRadius:responsiveHeight(5)
+  },
+  tabBarItemStyle:{paddingTop: responsiveHeight(1)}
+  
+ 
   }}
 
   >
