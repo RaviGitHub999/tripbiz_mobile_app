@@ -72,12 +72,12 @@ export const styles = StyleSheet.create({
 
     },
     hotelBookedDate: {
-        fontSize: responsiveHeight(1.5),
-        fontFamily: fonts.textFont,
+        fontSize: responsiveHeight(1.7),
+        fontWeight:"600",
         color: colors.primary
     },
     hotelNights: {
-        fontSize: responsiveHeight(1.5),
+        fontSize: responsiveHeight(1.6),
         fontFamily: fonts.textFont,
         color: colors.primary,
     },
@@ -136,10 +136,10 @@ export const styles = StyleSheet.create({
         borderTopWidth: responsiveHeight(0.1),
         borderBottomWidth: responsiveHeight(0.1),
         borderStyle: "dotted",
-        marginTop: responsiveHeight(2),
+        marginTop: responsiveHeight(1.7),
         paddingHorizontal: responsiveWidth(2),
         paddingVertical: responsiveHeight(1),
-        gap: responsiveHeight(0.5)
+        gap: responsiveHeight(2)
     },
     addedHotelTimeAndDateContainer:
     {
@@ -152,6 +152,11 @@ export const styles = StyleSheet.create({
     addedHotelTitleContainer:
     {
         width: "90%"
+    },
+    addedHotelTimeAndDate:{
+        color:colors.primary,
+        fontSize:responsiveHeight(1.7),
+        fontFamily:fonts.primary
     },
     addingHotelBtnContainer: {
         alignSelf: 'center',
@@ -224,6 +229,65 @@ borderRadius:responsiveHeight(0.9)
         fontSize: responsiveHeight(2),
         color: colors.secondary,
         fontFamily: fonts.primary   
+    },
+    bookingStatusContainer:{
+        marginTop:responsiveHeight(0.5)
+    },
+    bookingStatus:{
+        fontFamily:fonts.textFont,
+        fontSize:responsiveHeight(1.6),
+        color:colors.lightGray
+    },
+    bookedHotelDatesContainer:{
+        gap:responsiveHeight(2)
+    },
+    hotelDates:{
+        marginRight: responsiveWidth(-3),
+        padding:responsiveHeight(0.7),
+        backgroundColor:colors.highlight,
+        borderTopLeftRadius:responsiveHeight(1.5),
+        borderBottomLeftRadius:responsiveHeight(1.5)
+    },
+    bookingStatusTitlesMainContainer:{
+        flexDirection: 'row', 
+        flexWrap: 'wrap',
+         alignItems: 'center' ,
+        //  marginTop:responsiveHeight(1.2)
+    },
+    bookingStatusTitles:
+    {
+fontSize:responsiveHeight(1.7),
+fontFamily:fonts.textInput,
+color:colors.lightGray
+    },
+    bookingStatusTextContainer:{
+        paddingHorizontal:responsiveWidth(2),
+        alignItems:'center',
+        borderRadius:responsiveHeight(1),
+        paddingVertical:responsiveHeight(0.3),
+        justifyContent:'center'
+        
+    },
+    bookingStatusText:{
+        color:colors.white,
+        fontSize:responsiveHeight(1.3),
+        fontFamily:fonts.primary
+    },
+    hotelTotalPriceContainer:{
+        flexDirection:'row',
+        flexWrap:"wrap",
+        alignItems:'center',
+        gap:responsiveHeight(1)
+    },
+    hotelTotalPrice:{
+        fontSize:responsiveHeight(2.2),
+        fontFamily:fonts.textFont,
+        color:colors.secondary
+    },
+    hotelRoomPrice:{
+        fontSize:responsiveHeight(1.8),
+        fontFamily:fonts.textFont,
+        color:colors.secondary  
     }
 
 })

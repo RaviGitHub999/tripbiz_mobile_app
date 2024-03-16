@@ -76,15 +76,15 @@ const TripDetails = ({ navigation }) => {
     }
   };
 
- const tripFlightsData= tripData?.flights?.sort((a, b) => {
+  const tripFlightsData = tripData?.flights?.sort((a, b) => {
     var aflightArr = [a.data.flight].map((flight, f) => {
-        return { ...actions.modifyFlightObject(flight) };
+      return { ...actions.modifyFlightObject(flight) };
     });
     var bflightArr = [b.data.flight].map((flight, f) => {
-        return { ...actions.modifyFlightObject(flight) };
+      return { ...actions.modifyFlightObject(flight) };
     });
     return aflightArr[0]?.segments[0]?.depTimeDate - bflightArr[0]?.segments[0]?.depTimeDate
-})
+  })
 
 
 
@@ -132,179 +132,213 @@ const TripDetails = ({ navigation }) => {
       </View>
     );
   }
-  console.log(price,"price")
+  console.log(price, "price")
   return (
-   <View style={{flex:1,backgroundColor:colors.white}}>
-     <ScrollView style={styles.mainContainer} contentContainerStyle={{ paddingBottom: responsiveHeight(13) }}>
-      {/* {backNavigation} */}
-      <View style={styles.backNavigationContainer}>
-        <TouchableOpacity >
-          <IconSwitcher componentName='AntDesign' iconName='arrowleft' color={colors.black} iconsize={3} />
-        </TouchableOpacity>
-      </View>
-      <View style={styles.subContainer}>
-        {/* {dateOfJourney} */}
-        <View style={styles.tripDetailsHeader}>
-          <Text style={styles.tripName}>{tripData.data?.name}</Text>
-          <Text style={styles.tripDateTitle}>{`created on: `}<Text style={styles.tripDate}>{`${newdate}`}</Text></Text>
+    <View style={{ flex: 1, backgroundColor: colors.white }}>
+      <ScrollView style={styles.mainContainer} contentContainerStyle={{ paddingBottom: responsiveHeight(13) }}>
+        {/* {backNavigation} */}
+        <View style={styles.backNavigationContainer}>
+          <TouchableOpacity >
+            <IconSwitcher componentName='AntDesign' iconName='arrowleft' color={colors.black} iconsize={3} />
+          </TouchableOpacity>
         </View>
-        {
-          tripData ?
-            <View>
+        <View style={styles.subContainer}>
+          {/* {dateOfJourney} */}
+          <View style={styles.tripDetailsHeader}>
+            <Text style={styles.tripName}>{tripData.data?.name}</Text>
+            <Text style={styles.tripDateTitle}>{`created on: `}<Text style={styles.tripDate}>{`${newdate}`}</Text></Text>
+          </View>
+          {/* bookingStatus */}
+          <View style={styles.bookingStatusContainer}>
+            {
+              tripData?.data?.flights?.filter((flight) => flight.status === "Not Submitted").length > 0 || tripData?.data?.hotels?.filter((flight) => flight.status === "Not Submitted").length > 0 ?
+                (
+                  <Text style={styles.bookingStatus}>
+                    {tripData?.data?.flights?.filter((flight) => flight.status === "Not Submitted").length > 0 ? (<>{tripData?.data?.flights?.filter((flight) => flight.status === "Not Submitted").length}-Flights</>) : (null)}
+                    {tripData?.data?.hotels?.filter((flight) => flight.status === "Not Submitted").length > 0 ? (<>,{tripData?.data?.hotels?.filter((flight) => flight.status === "Not Submitted").length}-Hotels</>) : null}
+                    &nbsp;not submitted for booking
+                  </Text>
+                ) : (null)
+            }
+          </View>
+          {
+            tripData ?
               <View>
-                {
-                  tripData?.hotels ?
-                    <>
-                      <Text style={styles.hotelCardTitle}>Hotels</Text>
-                      {
-                        tripData?.hotels?.sort((a, b) => {
-                          var atime = a?.data?.hotelSearchQuery?.checkInDate;
-                          var btime = b?.data?.hotelSearchQuery?.checkInDate;
-                          return atime - btime
-                        })?.map((hotel, ind) => {
-                          const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-                          ];
-                          var hotelData = tripData?.data?.hotels.filter((hotels) => hotels.id === hotel.id)
-                          var hotelTimeStamp = new Date(hotelData[0]?.date?.seconds * 1000);
-                          var hotelPrice = 0;
-                          var hotelStatus = tripData?.data?.hotels?.filter((f) => f.id === hotel.id)
-                          var color = statuses.filter((status) => { return status?.status === hotelStatus[0]?.status })
-                          const startdate = new Date(hotel?.data?.hotelSearchQuery?.checkInDate.seconds * 1000);
-                          const formattedDate1 = `${monthNames[startdate.getMonth()]} ${startdate.getDate()}`;
-                          var endDate = getDate(hotel?.data?.hotelSearchQuery?.checkOutDate.seconds)
-                          var img = hotel.data.hotelInfo.HotelInfoResult.HotelDetails.Images[0];
-                          var rating = [];
-                          var starRating = hotel.data.hotelInfo.HotelInfoResult.HotelDetails.StarRating;
-                          var starRatingFull = Math.floor(starRating);
-                          var adults = hotel?.data?.hotelSearchQuery?.hotelRoomArr.reduce((acc, obj) => {
-                            acc.adults += parseInt(obj.adults, 10);
-                            acc.child += parseInt(obj.child, 10);
-                            return acc;
-                          }, { adults: 0, child: 0 });
-                          var hotelReq = tripData.data.hotels.filter((hotelMain) => {
-                            return hotelMain.id === hotel.id
-                          });
-                          var reqColor = reqStatuses.filter((status) => { return status?.status === hotelReq[0]?.requestStatus })
-                          for (var i = 1; i <= Math.ceil(starRating); i++) {
-                            if (i > starRatingFull) {
-                              rating.push(
-                                <IconSwitcher componentName='AntDesign' iconName='star' color='#ffd700' iconsize={2} />
-                              );
-                            } else {
-                              rating.push(
-                                <IconSwitcher componentName='AntDesign' iconName='star' color='#ffd700' iconsize={2} />
-                              );
+                <View>
+                  {
+                    tripData?.hotels ?
+                      <>
+                        <Text style={styles.hotelCardTitle}>Hotels</Text>
+                        {
+                          tripData?.hotels?.sort((a, b) => {
+                            var atime = a?.data?.hotelSearchQuery?.checkInDate;
+                            var btime = b?.data?.hotelSearchQuery?.checkInDate;
+                            return atime - btime
+                          })?.map((hotel, ind) => {
+                            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+                            ];
+                            price = price + hotel.data.hotelTotalPrice
+                            var hotelData = tripData?.data?.hotels.filter((hotels) => hotels.id === hotel.id)
+                            var hotelTimeStamp = new Date(hotelData[0]?.date?.seconds * 1000);
+                            var hotelPrice = 0;
+                            var hotelStatus = tripData?.data?.hotels?.filter((f) => f.id === hotel.id)
+                            var color = statuses.filter((status) => { return status?.status === hotelStatus[0]?.status })
+                            const startdate = new Date(hotel?.data?.hotelSearchQuery?.checkInDate.seconds * 1000);
+                            const formattedDate1 = `${monthNames[startdate.getMonth()]} ${startdate.getDate()}`;
+                            var endDate = getDate(hotel?.data?.hotelSearchQuery?.checkOutDate.seconds)
+                            var img = hotel.data.hotelInfo.HotelInfoResult.HotelDetails.Images[0];
+                            var rating = [];
+                            var starRating = hotel.data.hotelInfo.HotelInfoResult.HotelDetails.StarRating;
+                            var starRatingFull = Math.floor(starRating);
+                            var adults = hotel?.data?.hotelSearchQuery?.hotelRoomArr.reduce((acc, obj) => {
+                              acc.adults += parseInt(obj.adults, 10);
+                              acc.child += parseInt(obj.child, 10);
+                              return acc;
+                            }, { adults: 0, child: 0 });
+                            var hotelReq = tripData.data.hotels.filter((hotelMain) => {
+                              return hotelMain.id === hotel.id
+                            });
+                            var reqColor = reqStatuses.filter((status) => { return status?.status === hotelReq[0]?.requestStatus })
+                            for (var i = 1; i <= Math.ceil(starRating); i++) {
+                              if (i > starRatingFull) {
+                                rating.push(
+                                  <IconSwitcher componentName='AntDesign' iconName='star' color='#ffd700' iconsize={2} />
+                                );
+                              } else {
+                                rating.push(
+                                  <IconSwitcher componentName='AntDesign' iconName='star' color='#ffd700' iconsize={2} />
+                                );
+                              }
                             }
-                          }
-                          return (
-                            <View key={ind} >
-                              <View style={styles.hotelCard}>
+                            return (
+                              <View key={ind} >
+                                <View style={styles.hotelCard}>
 
-                                <View style={styles.hotelDetailsContainer}>
-                                  <View style={styles.hotelImgContainer}>
-                                    <Image style={styles.hotelImg} src={img} alt='hotel' />
-                                  </View>
-                                  <View style={{ width: "65%", paddingLeft: responsiveHeight(1), gap: responsiveHeight(1) }}>
-                                    <View>
-                                      <Text style={styles.hotelTitle}>{hotel.data.hotelInfo.HotelInfoResult.HotelDetails.HotelName} </Text>
-                                      <Text style={styles.hotelBookedDate}>{`${formattedDate1} - ${endDate} `}<Text style={styles.hotelNights}>({hotel.data.hotelSearchQuery.hotelNights} Nights)</Text></Text>
+                                  <View style={styles.hotelDetailsContainer}>
+                                    <View style={styles.hotelImgContainer}>
+                                      <Image style={styles.hotelImg} src={img} alt='hotel' />
                                     </View>
-                                    <View style={styles.hotelRatingContainer}>
-                                      {rating.map((star, ind) => {
-                                        return (
-                                          <Text key={ind}>{star}</Text>
-                                        )
-                                      })}
-                                    </View>
-                                    <View style={styles.familyDetails}>
-                                      <Text>Adults-{adults?.adults}</Text>
-                                      <Text>Children-{adults?.child}</Text>
-                                    </View>
-                                  </View>
-                                </View>
-                                {
-                                  hotel?.data?.selectedRoomType && hotel?.data?.selectedRoomType.map((room, f) => {
-                                    price = price + room.Price.OfferedPriceRoundedOff;
-                                    hotelPrice = hotelPrice + room.Price.OfferedPriceRoundedOff;
-                                    return (
-                                      <View style={styles.hotelRoomFeatures}>
-                                        <View style={styles.hotelRoomFeaturesContainer1}>
-                                          <Text style={styles.roomType}>{room.RoomTypeName}</Text>
-                                          <Text>{`₹ ${room.Price.OfferedPriceRoundedOff ? room.Price.OfferedPriceRoundedOff.toLocaleString(
-                                            "en-IN"
-                                          )
-                                            : room.Price.PublishedPriceRoundedOff.toLocaleString(
-                                              "en-IN"
-                                            )}`}</Text>
-                                        </View>
-                                        <View style={styles.hotelRoomFeaturesContainer2}>
-                                          <View style={styles.mealsDeatils}>
-                                            <IconSwitcher componentName='MaterialIcons' iconName='dinner-dining' color={colors.primary} iconsize={2.5} />
-                                            <Text style={styles.foodAndCancellationTitle}>
-                                              {room.Inclusion && room.Inclusion.length > 0 ? actions.checkForTboMeals(room.Inclusion) : "No meals"}</Text>
-                                          </View>
-                                          <View style={styles.mealsDeatils}>
-                                            {
-                                              room.LastCancellationDate && actions.validCancelDate(room.LastCancellationDate) ?
-                                                <>
-                                                  <IconSwitcher componentName='MaterialCommunityIcons' iconName='cancel' color={colors.primary} iconsize={2.5} />
-                                                  <Text style={styles.foodAndCancellationTitle}>{`Free cancellation upto ${new Date(room.LastCancellationDate).toString().slice(4, 10)}`}</Text>
-                                                </>
-                                                :
-                                                <>
-                                                  <IconSwitcher componentName='MaterialCommunityIcons' iconName='cancel' color={colors.primary} iconsize={2.5} />
-                                                  <Text style={styles.foodAndCancellationTitle}>{"Non-refundable"}</Text>
-                                                </>
-                                            }
-
-                                          </View>
+                                    <View style={{ width: "65%", paddingLeft: responsiveHeight(1), gap: responsiveHeight(1) }}>
+                                      <View style={styles.bookedHotelDatesContainer}>
+                                        <Text style={styles.hotelTitle}>{hotel.data.hotelInfo.HotelInfoResult.HotelDetails.HotelName} </Text>
+                                        <View style={styles.hotelDates}>
+                                          <Text style={styles.hotelBookedDate}>{`${formattedDate1} - ${endDate} `}<Text style={styles.hotelNights}>({hotel.data.hotelSearchQuery.hotelNights} Nights)</Text></Text>
                                         </View>
                                       </View>
-                                    )
-                                  })
-                                }
-                                <View style={styles.hotelPriceMainContainer}>
-                                  {
-                                    hotelStatus[0]?.status ?
-                                      <Text>{`Submission Status : `}<Text>Pending</Text></Text> :
-                                      <Text>{`Submission Status : `}<Text>Not Submitted</Text></Text>
-                                  }
-
-                                  <Text>{`Approval Status : `}<Text>{hotelReq[0]?.requestStatus}</Text></Text>
-                                  <Text>{`Total Price : ₹  ${Math.ceil(hotel.data.hotelTotalPrice).toLocaleString("en-IN")}`}</Text>
-                                </View>
-                                <View style={styles.addedHotelTimeAndDateContainer}>
-                                  <View style={styles.addedHotelTitleContainer}>
-                                    <Text>{`Added Date: ${hotelTimeStamp.toLocaleString()}`}</Text>
+                                      <View style={styles.hotelRatingContainer}>
+                                        {rating.map((star, ind) => {
+                                          return (
+                                            <Text key={ind}>{star}</Text>
+                                          )
+                                        })}
+                                      </View>
+                                      <View style={styles.familyDetails}>
+                                        <Text>Adults-{adults?.adults}</Text>
+                                        <Text>Children-{adults?.child}</Text>
+                                      </View>
+                                    </View>
                                   </View>
-                                  <>
-                                    <TouchableOpacity>
-                                      <IconSwitcher componentName='MaterialIcons' iconName='delete' color={colors.red} iconsize={2.5} />
-                                    </TouchableOpacity>
-                                  </>
+                                  {
+                                    hotel?.data?.selectedRoomType && hotel?.data?.selectedRoomType.map((room, f) => {
+                                      // price = price + room.Price.OfferedPriceRoundedOff;
+                                      hotelPrice = hotelPrice + room.Price.OfferedPriceRoundedOff;
+                                      return (
+                                        <View style={styles.hotelRoomFeatures}>
+                                          <View style={styles.hotelRoomFeaturesContainer1}>
+                                            <Text style={styles.roomType}>{room.RoomTypeName}</Text>
+                                            <Text style={styles.hotelRoomPrice}>{`₹ ${room.Price.OfferedPriceRoundedOff ? room.Price.OfferedPriceRoundedOff.toLocaleString(
+                                              "en-IN"
+                                            )
+                                              : room.Price.PublishedPriceRoundedOff.toLocaleString(
+                                                "en-IN"
+                                              )}`}</Text>
+                                          </View>
+                                          <View style={styles.hotelRoomFeaturesContainer2}>
+                                            <View style={styles.mealsDeatils}>
+                                              <IconSwitcher componentName='MaterialIcons' iconName='dinner-dining' color={colors.primary} iconsize={2.5} />
+                                              <Text style={styles.foodAndCancellationTitle}>
+                                                {room.Inclusion && room.Inclusion.length > 0 ? actions.checkForTboMeals(room.Inclusion) : "No meals"}</Text>
+                                            </View>
+                                            <View style={styles.mealsDeatils}>
+                                              {
+                                                room.LastCancellationDate && actions.validCancelDate(room.LastCancellationDate) ?
+                                                  <>
+                                                    <IconSwitcher componentName='MaterialCommunityIcons' iconName='cancel' color={colors.primary} iconsize={2.5} />
+                                                    <Text style={styles.foodAndCancellationTitle}>{`Free cancellation upto ${new Date(room.LastCancellationDate).toString().slice(4, 10)}`}</Text>
+                                                  </>
+                                                  :
+                                                  <>
+                                                    <IconSwitcher componentName='MaterialCommunityIcons' iconName='cancel' color={colors.primary} iconsize={2.5} />
+                                                    <Text style={styles.foodAndCancellationTitle}>{"Non-refundable"}</Text>
+                                                  </>
+                                              }
+
+                                            </View>
+                                          </View>
+                                        </View>
+                                      )
+                                    })
+                                  }
+                                  <View style={styles.hotelPriceMainContainer}>
+                                    {
+                                      hotelStatus[0]?.status ?
+                                        <View style={styles.bookingStatusTitlesMainContainer}>
+                                          <Text style={styles.bookingStatusTitles}>{`Booking Status : `}</Text>
+                                          <View style={[styles.bookingStatusTextContainer,{ backgroundColor: color[0] ? color[0].color : '#808080' }]}><Text style={styles.bookingStatusText}>{hotelStatus[0]?.status}</Text></View>
+                                        </View> :
+                                        <View style={styles.bookingStatusTitlesMainContainer}>
+                                          <Text style={styles.bookingStatusTitles}>{`Booking Status : `}</Text>
+                                          <View style={[styles.bookingStatusTextContainer,{ backgroundColor: color[0] ? color[0].color : '#808080' }]}><Text style={styles.bookingStatusText}>{`Not Submitted`}</Text></View>
+                                        </View>
+                                    }
+
+                                    
+                                    <View style={styles.bookingStatusTitlesMainContainer}>
+                                    <Text style={styles.bookingStatusTitles}>{`Approval Status : `}</Text>
+                                    <View style={[styles.bookingStatusTextContainer,{ backgroundColor: color[0] ? color[0].color : '#808080' }]}>
+                                    <Text style={styles.bookingStatusText}>{hotelReq[0]?.requestStatus}</Text>
+                                    </View>
+                                    </View>
+
+                                   <View style={styles.hotelTotalPriceContainer}>
+                                   <Text style={styles.hotelTotalPrice}>{`Total Price : ₹ ${Math.ceil(hotel.data.hotelTotalPrice).toLocaleString("en-IN")}`}</Text>
+                                   <TouchableOpacity>
+                                   <IconSwitcher componentName='Entypo' iconName='info-with-circle' color={colors.black} iconsize={1.8}/>
+                                   </TouchableOpacity>
+                                   </View>
+                                  </View>
+                                  <View style={styles.addedHotelTimeAndDateContainer}>
+                                    <View style={styles.addedHotelTitleContainer}>
+                                      <Text style={styles.bookingStatusTitles}>{`Added Date: `}<Text style={styles.addedHotelTimeAndDate}>{`${hotelTimeStamp.toLocaleString()}`}</Text></Text>
+                                    </View>
+                                    <>
+                                      <TouchableOpacity>
+                                        <IconSwitcher componentName='MaterialIcons' iconName='delete' color={colors.red} iconsize={2.5} />
+                                      </TouchableOpacity>
+                                    </>
+                                  </View>
                                 </View>
                               </View>
-                            </View>
-                          )
-                        })
-                      }
-                      <View style={styles.addingHotelBtnContainer}>
-                        <TouchableOpacity style={styles.addingHotelBtn}>
-                          <Text style={styles.addingHotelBtnTitle}>Add Hotel </Text>
-                          <IconSwitcher componentName='Feather' iconName='plus' color={colors.primary} iconsize={3} />
-                        </TouchableOpacity>
-                      </View>
-                    </>
-                    : null
-                }
-              </View>
-              {/* flight */}
-              <View>
-                {tripData?.flights ?
-                  <>
-                    <Text style={styles.flightCardTitle}>Flights</Text>
-                    {/* <FlatList
+                            )
+                          })
+                        }
+                        <View style={styles.addingHotelBtnContainer}>
+                          <TouchableOpacity style={styles.addingHotelBtn}>
+                            <Text style={styles.addingHotelBtnTitle}>Add Hotel </Text>
+                            <IconSwitcher componentName='Feather' iconName='plus' color={colors.primary} iconsize={3} />
+                          </TouchableOpacity>
+                        </View>
+                      </>
+                      : null
+                  }
+                </View>
+                {/* flight */}
+                <View>
+                  {tripData?.flights ?
+                    <>
+                      <Text style={styles.flightCardTitle}>Flights</Text>
+                      {/* <FlatList
                       data={tripFlightsData}
                       keyExtractor={(item, index) => index.toString()}
                       renderItem={({ item: flight, index }) => {
@@ -348,67 +382,68 @@ const TripDetails = ({ navigation }) => {
                         );
                       }}
                       contentContainerStyle={{ paddingBottom: responsiveHeight(0) }} /> */}
-    {
-                                                tripData?.flights?.sort((a, b) => {
-                                                    var aflightArr = [a.data.flight].map((flight, f) => {
-                                                        return { ...actions.modifyFlightObject(flight) };
-                                                    });
-                                                    var bflightArr = [b.data.flight].map((flight, f) => {
-                                                        return { ...actions.modifyFlightObject(flight) };
-                                                    });
-                                                    return aflightArr[0]?.segments[0]?.depTimeDate - bflightArr[0]?.segments[0]?.depTimeDate
-                                                }).map((flight, f) => {
-                                                    var flightStatus = tripData.data.flights.filter((f) => f.id === flight.id)
-                                                    price = price + flight.data.finalPrice
-                                                    console.log(flight.data.finalPrice,"flight.data.finalPrice")
-                                                    var hotelTimeStamp = new Date(hotelData[0]?.date?.seconds * 1000);
-                                                    var flightReq = tripData.data.flights.filter((hotelMain) => {
-                                                        return hotelMain.id === flight.id
-                                                    });
-                                                    const data = actions.objToArr(flight.data)
+                      {
+                        tripData?.flights?.sort((a, b) => {
+                          var aflightArr = [a.data.flight].map((flight, f) => {
+                            return { ...actions.modifyFlightObject(flight) };
+                          });
+                          var bflightArr = [b.data.flight].map((flight, f) => {
+                            return { ...actions.modifyFlightObject(flight) };
+                          });
+                          return aflightArr[0]?.segments[0]?.depTimeDate - bflightArr[0]?.segments[0]?.depTimeDate
+                        }).map((flight, f) => {
+                          var flightStatus = tripData.data.flights.filter((f) => f.id === flight.id)
+                          console.log(price, "flight.data.finalPrice")
+                          price = price + flight.data.finalPrice
+                          console.log(flight.data.finalPrice, "flight.data.finalPrice")
+                          var hotelTimeStamp = new Date(flightStatus[0]?.date?.seconds * 1000);
+                          var flightReq = tripData.data.flights.filter((hotelMain) => {
+                            return hotelMain.id === flight.id
+                          });
+                          const data = actions.objToArr(flight.data)
 
-                                                    var reqColor = reqStatuses.filter((status) => { return status?.status === flightReq[0]?.requestStatus })
+                          var reqColor = reqStatuses.filter((status) => { return status?.status === flightReq[0]?.requestStatus })
 
-                                                    return (
-                                                        <>
-                                             <TripDetailsFlightCard
-                            flightGrp={[flight.data.flight]}
-                            index={f}
-                            flightBooking={flight.data}
-                            flightStatus={flightStatus[0]}
-                            flightReq={flightReq}
-                            timeStamp={hotelTimeStamp}
-                          />
-                                                        </>
-                                                    )
-                                                })
-                                            }
-                    <View style={styles.addingHotelBtnContainer}>
-                      <TouchableOpacity style={styles.addingHotelBtn}>
-                        <Text style={styles.addingHotelBtnTitle}>Add Hotel </Text>
-                        <IconSwitcher componentName='Feather' iconName='plus' color={colors.primary} iconsize={3} />
-                      </TouchableOpacity>
-                    </View>
-                  </>
-                  : null}
+                          return (
+                            <>
+                              <TripDetailsFlightCard
+                                flightGrp={[flight.data.flight]}
+                                index={f}
+                                flightBooking={flight.data}
+                                flightStatus={flightStatus[0]}
+                                flightReq={flightReq}
+                                timeStamp={hotelTimeStamp}
+                              />
+                            </>
+                          )
+                        })
+                      }
+                      <View style={styles.addingHotelBtnContainer}>
+                        <TouchableOpacity style={styles.addingHotelBtn}>
+                          <Text style={styles.addingHotelBtnTitle}>Add Hotel </Text>
+                          <IconSwitcher componentName='Feather' iconName='plus' color={colors.primary} iconsize={3} />
+                        </TouchableOpacity>
+                      </View>
+                    </>
+                    : null}
 
+                </View>
               </View>
-            </View>
-            : null
-        }
+              : null
+          }
 
+        </View>
+      </ScrollView>
+      <View style={styles.totalPriceContainer}>
+        <Text style={styles.totalPriceTitle}>Total price:</Text>
+        <Text style={styles.totalPrice}>{`₹ ${price}`}</Text>
+        <TouchableOpacity style={styles.proceedToBookingBtn}>
+          <Text style={styles.proceedToBookingBtnTitle}>
+            Proceed to Booking
+          </Text>
+        </TouchableOpacity>
       </View>
-    </ScrollView>
-    <View style={styles.totalPriceContainer}>
-<Text style={styles.totalPriceTitle}>Total price:</Text>
-<Text style={styles.totalPrice}>{`₹ ${price}`}</Text>
-<TouchableOpacity style={styles.proceedToBookingBtn}>
-  <Text style={styles.proceedToBookingBtnTitle}>
-   Proceed to Booking 
-  </Text>
-</TouchableOpacity>
     </View>
-   </View>
   );
 };
 
