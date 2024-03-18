@@ -73,7 +73,7 @@ export const styles = StyleSheet.create({
     },
     hotelBookedDate: {
         fontSize: responsiveHeight(1.7),
-        fontWeight:"600",
+        fontWeight: "600",
         color: colors.primary
     },
     hotelNights: {
@@ -153,10 +153,10 @@ export const styles = StyleSheet.create({
     {
         width: "90%"
     },
-    addedHotelTimeAndDate:{
-        color:colors.primary,
-        fontSize:responsiveHeight(1.7),
-        fontFamily:fonts.primary
+    addedHotelTimeAndDate: {
+        color: colors.primary,
+        fontSize: responsiveHeight(1.7),
+        fontFamily: fonts.primary
     },
     addingHotelBtnContainer: {
         alignSelf: 'center',
@@ -213,81 +213,112 @@ export const styles = StyleSheet.create({
     },
     proceedToBookingBtn:
     {
-backgroundColor:colors.primary,
-height:responsiveHeight(5),
-alignItems:'center',
-justifyContent:'center',
-paddingHorizontal:responsiveWidth(3),
-borderRadius:responsiveHeight(0.9)
+        backgroundColor: colors.primary,
+        height: responsiveHeight(5),
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: responsiveWidth(3),
+        borderRadius: responsiveHeight(0.9)
     },
-    proceedToBookingBtnTitle:{
-        fontSize:responsiveHeight(1.8),
-        color:colors.white,
-        fontFamily:fonts.textFont
+    proceedToBookingBtnTitle: {
+        fontSize: responsiveHeight(1.8),
+        color: colors.white,
+        fontFamily: fonts.textFont
     },
-    totalPrice:{
+    totalPrice: {
         fontSize: responsiveHeight(2),
         color: colors.secondary,
-        fontFamily: fonts.primary   
+        fontFamily: fonts.primary
     },
-    bookingStatusContainer:{
-        marginTop:responsiveHeight(0.5)
+    bookingStatusContainer: {
+        marginTop: responsiveHeight(0.5)
     },
-    bookingStatus:{
-        fontFamily:fonts.textFont,
-        fontSize:responsiveHeight(1.6),
-        color:colors.lightGray
+    bookingStatus: {
+        fontFamily: fonts.textFont,
+        fontSize: responsiveHeight(1.6),
+        color: colors.lightGray
     },
-    bookedHotelDatesContainer:{
-        gap:responsiveHeight(2)
+    bookedHotelDatesContainer: {
+        gap: responsiveHeight(2)
     },
-    hotelDates:{
+    hotelDates: {
         marginRight: responsiveWidth(-3),
-        padding:responsiveHeight(0.7),
-        backgroundColor:colors.highlight,
-        borderTopLeftRadius:responsiveHeight(1.5),
-        borderBottomLeftRadius:responsiveHeight(1.5)
+        padding: responsiveHeight(0.7),
+        backgroundColor: colors.highlight,
+        borderTopLeftRadius: responsiveHeight(1.5),
+        borderBottomLeftRadius: responsiveHeight(1.5)
     },
-    bookingStatusTitlesMainContainer:{
-        flexDirection: 'row', 
+    bookingStatusTitlesMainContainer: {
+        flexDirection: 'row',
         flexWrap: 'wrap',
-         alignItems: 'center' ,
+        alignItems: 'center',
         //  marginTop:responsiveHeight(1.2)
     },
     bookingStatusTitles:
     {
-fontSize:responsiveHeight(1.7),
-fontFamily:fonts.textInput,
-color:colors.lightGray
+        fontSize: responsiveHeight(1.7),
+        fontFamily: fonts.textInput,
+        color: colors.lightGray
     },
-    bookingStatusTextContainer:{
-        paddingHorizontal:responsiveWidth(2),
-        alignItems:'center',
-        borderRadius:responsiveHeight(1),
-        paddingVertical:responsiveHeight(0.3),
-        justifyContent:'center'
-        
+    bookingStatusTextContainer: {
+        paddingHorizontal: responsiveWidth(2),
+        alignItems: 'center',
+        borderRadius: responsiveHeight(1),
+        paddingVertical: responsiveHeight(0.3),
+        justifyContent: 'center'
+
     },
-    bookingStatusText:{
-        color:colors.white,
-        fontSize:responsiveHeight(1.3),
-        fontFamily:fonts.primary
+    bookingStatusText: {
+        color: colors.white,
+        fontSize: responsiveHeight(1.3),
+        fontFamily: fonts.primary
     },
-    hotelTotalPriceContainer:{
-        flexDirection:'row',
-        flexWrap:"wrap",
-        alignItems:'center',
-        gap:responsiveHeight(1)
+    hotelTotalPriceContainer: {
+        flexDirection: 'row',
+        flexWrap: "wrap",
+        alignItems: 'center',
+        gap: responsiveHeight(1)
     },
-    hotelTotalPrice:{
-        fontSize:responsiveHeight(2.2),
-        fontFamily:fonts.textFont,
-        color:colors.secondary
+    hotelTotalPrice: {
+        fontSize: responsiveHeight(2.2),
+        fontFamily: fonts.textFont,
+        color: colors.secondary
     },
-    hotelRoomPrice:{
+    hotelRoomPrice: {
+        fontSize: responsiveHeight(1.8),
+        fontFamily: fonts.textFont,
+        color: colors.secondary
+    },
+    PopHotelRoomFeatures:
+    {
+        backgroundColor: colors.whiteSmoke,
+        paddingHorizontal: responsiveWidth(2),
+        paddingVertical: responsiveHeight(0.8),
+        borderRadius: responsiveHeight(1.3),
+        gap: responsiveHeight(1),
+    },
+    popUpHotelPriceDescriptionMainContaioner:
+    {
+        marginTop: responsiveHeight(1.3),
+        gap: responsiveHeight(1)
+    },
+    popUpHotelPriceDescriptionContaioner:
+    {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    popUproomPriceTitle:
+    {
         fontSize:responsiveHeight(1.8),
         fontFamily:fonts.textFont,
-        color:colors.secondary  
+        color:colors.primary
+    },
+    popUproomserviceChargesTitle:
+    {
+        fontSize:responsiveHeight(1.8),
+        fontFamily:fonts.primary,
+        color:colors.lightGray
     }
 
 })

@@ -4,31 +4,33 @@ import { colors } from '../../../config/theme'
 import IconSwitcher from '../icons/IconSwitcher'
 import { responsiveHeight, responsiveWidth } from '../../../utils/responsiveScale'
 
-const PopUp = () => {
-    const [open, setOpen] = useState(false)
+const PopUp = (props) => {
+   const {value,handlePopUpClose}=props
+   
     return (
-        <View style={styles.mainContainer}>
-            <Text style={{ fontSize: 20 }} onPress={() => setOpen(!open)}>Open</Text>
+       value? 
             <Modal
                 animationType="slide"
                 transparent={true}
-                visible={open}>
+                visible={value}>
                 <View style={styles.modelMainContainer}>
                     <View style={styles.blurBackground}></View>
                     <View style={styles.popUpMainContainer}>
                         <View style={styles.popUpSubContainer}>
-                           <TouchableOpacity onPress={() => setOpen(!open)} style={{ alignItems: 'flex-end' }}>
+                           <TouchableOpacity onPress={handlePopUpClose} style={{ alignItems: 'flex-end' }}>
                                 <IconSwitcher componentName='Entypo' iconName='cross' iconsize={3} color='black' />
                             </TouchableOpacity>
-                            <View>
-                                
+                            <View style={styles.contentMainBox}>
+                                <View style={styles.contentSubBox}>
+                              {props.children}
+                                </View>
                             </View>
                            </View>
                        
                     </View>
                 </View>
             </Modal>
-        </View>
+      :null
     )
 }
 
@@ -60,8 +62,21 @@ const styles = StyleSheet.create(
         popUpSubContainer:{
             backgroundColor: 'white',
              width: '100%', 
-            // alignItems:'center',
-            // justifyContent:'center'
+            padding:responsiveHeight(3),
+            borderRadius:responsiveHeight(1.5),
+            gap:responsiveHeight(1.5)
+        },
+        contentMainBox:{
+            // borderWidth:1,
+            // height:60,
+            alignItems:'center',
+            justifyContent:'center'  
+        },
+        contentSubBox:{
+            // borderWidth:1,
+            // height:30,
+            // width:'100%',
+            padding:responsiveHeight(1)
         }
 
     })

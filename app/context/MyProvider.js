@@ -81,6 +81,28 @@ const seatTypeObj = {
   60: "WindowAisleBulkhead",
   61: "WindowAisleBulkheadWing"
 };
+const components = [
+  {
+    categoryName: "flights",
+    iconName: "flight-takeoff",
+    componentName: "MaterialIcons"
+  },
+  {
+    categoryName: "hotel",
+    iconName: "hotel",
+    componentName: "FontAwesome"
+  },
+  {
+    categoryName: "bus",
+    iconName: "bus",
+    componentName: "FontAwesome5"
+  },
+  {
+    categoryName: "train",
+    iconName: "train",
+    componentName: "MaterialIcons"
+  },
+];
 var dateObject = new Date();
 var options = {
   month: "short",
@@ -231,13 +253,19 @@ export default class MyProvider extends Component {
       hotels: null,
       flights: null
     },
+    activeComponent:components[0].categoryName,
+    selectedIndex:null,
       actions: {
         setTrips: async (value) => {
           this.setState({
             userTripStatus: value
           });
         },
-
+setActiveComponent:(component)=>
+{
+const selectedIndex = components.findIndex((item) => item.categoryName === component);
+this.setState({activeComponent:component,selectedIndex:selectedIndex})
+},
 handleDirectFlight:()=>
 {
 this.setState({directflight:!this.state.directflight})
@@ -2934,6 +2962,63 @@ getAllFlights :async (id, userId) => {
 
 
       },
+      setSelectedTrip: async (value) => {
+        this.setState({
+          selectedTrip: value
+        });
+      },
+      setSelectedTripId :async (value) => {
+        try {
+          // Reference to the trip document
+          const docSnapshot = await firestore()
+            .collection("Accounts")
+            .doc(this.state.userId)
+            .collection("trips")
+            .doc(value)
+            .get();
+      
+          // Get the data of the trip document
+          const tripData = docSnapshot.data();
+      
+          // Get flights and hotels data asynchronously
+          const [flights, hotels] = await Promise.all([
+            this.state.actions.getAllFlights(docSnapshot.id, this.state.userId),
+            this.state.actions.getAllHotels(docSnapshot.id, this.state.userId)
+          ]);
+      
+          // Set selected trip in state
+          this.state.actions.setSelectedTrip({
+            id: docSnapshot.id,
+            data: tripData,
+            hotels: hotels,
+            flights: flights
+          });
+      
+          // Set selectedTripId in state
+          // Assuming this function is part of a class component and using setState
+          this.setState({
+            selectedTripId: value
+          });
+        } catch (error) {
+          console.error(error);
+        }
+      },
+      setRes: async () => {
+        this.setState({
+          searchingFlights: false,
+          searchingHotels: false,
+          fetchingHotelInfo: false,
+          hotelInfoRes: false,
+          flightResList: [],
+          hotelResList: [],
+          bookingFlight: [],
+          bookingHotel: [],
+        })
+        this.state.actions.setFlightBookPage(false)
+      },
+
+
+
     }
   }
   componentDidMount= async ()=>

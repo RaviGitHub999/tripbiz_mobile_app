@@ -164,11 +164,13 @@ const FlightBooking = ({navigation:{navigate}}) => {
 // console.log("hsgda")
 //     },[])
    const handleAddToTrip = async () => {
+
     setIsLoading(true);
     let newtripid = await actions.createNewTrip(defaultInput, "flights", bookingFlight);
     setIsLoading(false);
     setSubmitIsOpen(false);
     navigate("TripDetails",{id:newtripid});
+    await actions.getLastDoc();
   };
     
     return (
