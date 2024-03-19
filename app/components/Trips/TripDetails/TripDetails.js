@@ -1,9 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, BackHandler, Image,ScrollView } from 'react-native';
+import { View, Text, BackHandler, Image, ScrollView,TouchableOpacity } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import MyContext from '../../../context/Context';
 import { styles } from './styles';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import IconSwitcher from '../../common/icons/IconSwitcher';
 import { colors } from '../../../config/theme';
 import firestore from '@react-native-firebase/firestore';
@@ -12,7 +11,8 @@ import { useRoute } from '@react-navigation/native';
 import { responsiveHeight } from '../../../utils/responsiveScale';
 import TripDetailsFlightCard from './TripDetailsFlightCard';
 import PopUp from '../../common/popup/PopUp';
-const TripDetails = ({ navigation:{navigate,goBack} }) => {
+import { RefreshControl } from 'react-native';
+const TripDetails = ({ navigation: { navigate, goBack } }) => {
   const [mounted, setMounted] = useState(true)
   const [airlinelogos, setAirlinelogos] = useState([]);
   const [popup, setPopUp] = useState({
@@ -21,8 +21,23 @@ const TripDetails = ({ navigation:{navigate,goBack} }) => {
   const [hotelTotalPrice, setHotelTotalPrice] = useState(0)
   const [hotelFinalPrice, setHotelFinalPrice] = useState(0)
   const [selectedRoom, setSelectedRoom] = useState([])
+  const [refreshing, setRefreshing] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false)
+  const [deleteId, setDeleteId] = useState(false)
+  const [deleteType, setDeleteType] = useState(false);
   const { actions, tripData, userId, tripDataLoading, userAccountDetails } = useContext(MyContext)
+  const onRefresh = () => {
+    setRefreshing(true);
 
+    // Perform data fetching or any necessary tasks here
+    // Once the tasks are completed, set refreshing to false
+
+    setTimeout(async () => {
+      await getTripData();
+      await getData()
+      setRefreshing(false);
+    }, 2000); // Simulating some async task with setTimeout
+  };
   //   const handleBackButtonPress = () => {
   //     actions.setFlightBookPage(false);
   //     actions.setBookingFlight([]);
@@ -39,13 +54,17 @@ const TripDetails = ({ navigation:{navigate,goBack} }) => {
   //     return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
   //   }, []) 
   // );
-
+const handleDelete = async () => {
+    await actions.deleteTripItem(id, deleteId, deleteType);
+    setOpenDelete(false)
+    // setSelectedTab("approval")
+    //await getTripData()
+}
   const handlePopUps = (arg) => {
-    if (arg === "hotelPrice") 
-    {
+    if (arg === "hotelPrice") {
       setPopUp({ ...popup, hotelPrice: !popup.hotelPrice })
     }
-    
+
   }
   var statuses = [
     { status: "Paid and Submitted", color: "#4CAF50" },
@@ -87,34 +106,32 @@ const TripDetails = ({ navigation:{navigate,goBack} }) => {
     }
   };
 
-const handlehotelPriceinfo=(hotel)=>
-{
-  handlePopUps("hotelPrice")
-  setHotelFinalPrice(hotel.data.hotelPrice)
-  setHotelTotalPrice(hotel.data.hotelTotalPrice)
-  setSelectedRoom(hotel.data.selectedRoomType)
-}
-const handlehotelPriceinfoClose=()=>
-{
-  handlePopUps("hotelPrice")
-  setHotelFinalPrice(0)
-  setHotelTotalPrice(0)
-  setSelectedRoom([])
-}
+  const handlehotelPriceinfo = (hotel) => {
+    handlePopUps("hotelPrice")
+    setHotelFinalPrice(hotel.data.hotelPrice)
+    setHotelTotalPrice(hotel.data.hotelTotalPrice)
+    setSelectedRoom(hotel.data.selectedRoomType)
+  }
+  const handlehotelPriceinfoClose = () => {
+    handlePopUps("hotelPrice")
+    setHotelFinalPrice(0)
+    setHotelTotalPrice(0)
+    setSelectedRoom([])
+  }
 
-const handleFlights = async () => {
-  actions.setSelectedTripId(id);
-  await actions.setRes();
-  navigate('/home/flights')
-}
-const handleHotels = async () => {
-  // actions.setSelectedTripId(id);
-  // await actions.setRes();
-  navigate('CustomerBottomNavigation')
-}
+  const handleFlights = async () => {
+    actions.setSelectedTripId(id);
+    await actions.setRes();
+    navigate('/home/flights')
+  }
+  const handleHotels = async () => {
+    // actions.setSelectedTripId(id);
+    // await actions.setRes();
+    navigate('CustomerBottomNavigation')
+  }
 
   useEffect(() => {
-
+    console.log("useEffect")
     if (mounted) {
       if (!tripDataLoading) {
         var fetchData = async () => {
@@ -158,10 +175,12 @@ const handleHotels = async () => {
   }
   return (
     <View style={{ flex: 1, backgroundColor: colors.white }}>
-      <ScrollView style={styles.mainContainer} contentContainerStyle={{ paddingBottom: responsiveHeight(13) }}>
+      <ScrollView style={styles.mainContainer} contentContainerStyle={{ paddingBottom: responsiveHeight(13) }}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
         {/* {backNavigation} */}
         <View style={styles.backNavigationContainer}>
-          <TouchableOpacity onPress={()=>goBack()}>
+          <TouchableOpacity onPress={() => goBack()}>
             <IconSwitcher componentName='AntDesign' iconName='arrowleft' color={colors.black} iconsize={3} />
           </TouchableOpacity>
         </View>
@@ -326,7 +345,7 @@ const handleHotels = async () => {
 
                                     <View style={styles.hotelTotalPriceContainer}>
                                       <Text style={styles.hotelTotalPrice}>{`Total Price : ₹ ${Math.ceil(hotel.data.hotelTotalPrice).toLocaleString("en-IN")}`}</Text>
-                                      <TouchableOpacity onPress={()=>handlehotelPriceinfo(hotel)}>
+                                      <TouchableOpacity onPress={() => handlehotelPriceinfo(hotel)}>
                                         <IconSwitcher componentName='Entypo' iconName='info-with-circle' color={colors.black} iconsize={1.8} />
                                       </TouchableOpacity>
                                     </View>
@@ -336,7 +355,11 @@ const handleHotels = async () => {
                                       <Text style={styles.bookingStatusTitles}>{`Added Date: `}<Text style={styles.addedHotelTimeAndDate}>{`${hotelTimeStamp.toLocaleString()}`}</Text></Text>
                                     </View>
                                     <>
-                                      <TouchableOpacity>
+                                      <TouchableOpacity onPress={() => {
+                                        setOpenDelete(true)
+                                        setDeleteType("hotels")
+                                        setDeleteId(hotel.id)
+                                      }}>
                                         <IconSwitcher componentName='MaterialIcons' iconName='delete' color={colors.red} iconsize={2.5} />
                                       </TouchableOpacity>
                                     </>
@@ -371,6 +394,7 @@ const handleHotels = async () => {
                           });
                           return aflightArr[0]?.segments[0]?.depTimeDate - bflightArr[0]?.segments[0]?.depTimeDate
                         }).map((flight, f) => {
+                          console.log(flight.data.finalPrice, "changes")
                           var flightStatus = tripData.data.flights.filter((f) => f.id === flight.id)
                           price = price + flight.data.finalPrice
                           var hotelTimeStamp = new Date(flightStatus[0]?.date?.seconds * 1000);
@@ -420,64 +444,79 @@ const handleHotels = async () => {
           </Text>
         </TouchableOpacity>
       </View>
-    
-<PopUp value={popup.hotelPrice}  handlePopUpClose={handlehotelPriceinfoClose}>
-<View>
-{
-    selectedRoom?.map((room, r) =>{
-     return(
-      <View style={styles.PopHotelRoomFeatures}>
-      <View style={styles.hotelRoomFeaturesContainer1}>
-        <Text style={styles.roomType}>{room.RoomTypeName}</Text>
-        <Text style={styles.hotelRoomPrice}>{`₹ ${room.Price.OfferedPriceRoundedOff ? room.Price.OfferedPriceRoundedOff.toLocaleString(
-          "en-IN"
-        )
-          : room.Price.PublishedPriceRoundedOff.toLocaleString(
-            "en-IN"
-          )}`}</Text>
-      </View>
-      <View style={styles.hotelRoomFeaturesContainer2}>
-        <View style={styles.mealsDeatils}>
-          <IconSwitcher componentName='MaterialIcons' iconName='dinner-dining' color={colors.primary} iconsize={2.5} />
-          <Text style={styles.foodAndCancellationTitle}>
-            {room.Inclusion && room.Inclusion.length > 0 ? actions.checkForTboMeals(room.Inclusion) : "No meals"}</Text>
-        </View>
-        <View style={styles.mealsDeatils}>
-          {
-            room.LastCancellationDate && actions.validCancelDate(room.LastCancellationDate) ?
-              <>
-                <IconSwitcher componentName='MaterialCommunityIcons' iconName='cancel' color={colors.primary} iconsize={2.5} />
-                <Text style={styles.foodAndCancellationTitle}>{`Free cancellation upto ${new Date(room.LastCancellationDate).toString().slice(4, 10)}`}</Text>
-              </>
-              :
-              <>
-                <IconSwitcher componentName='MaterialCommunityIcons' iconName='cancel' color={colors.primary} iconsize={2.5} />
-                <Text style={styles.foodAndCancellationTitle}>{"Non-refundable"}</Text>
-              </>
-          }
 
+      <PopUp value={popup.hotelPrice} handlePopUpClose={handlehotelPriceinfoClose}>
+        <View>
+          {
+            selectedRoom?.map((room, r) => {
+              return (
+                <View style={styles.PopHotelRoomFeatures}>
+                  <View style={styles.hotelRoomFeaturesContainer1}>
+                    <Text style={styles.roomType}>{room.RoomTypeName}</Text>
+                    <Text style={styles.hotelRoomPrice}>{`₹ ${room.Price.OfferedPriceRoundedOff ? room.Price.OfferedPriceRoundedOff.toLocaleString(
+                      "en-IN"
+                    )
+                      : room.Price.PublishedPriceRoundedOff.toLocaleString(
+                        "en-IN"
+                      )}`}</Text>
+                  </View>
+                  <View style={styles.hotelRoomFeaturesContainer2}>
+                    <View style={styles.mealsDeatils}>
+                      <IconSwitcher componentName='MaterialIcons' iconName='dinner-dining' color={colors.primary} iconsize={2.5} />
+                      <Text style={styles.foodAndCancellationTitle}>
+                        {room.Inclusion && room.Inclusion.length > 0 ? actions.checkForTboMeals(room.Inclusion) : "No meals"}</Text>
+                    </View>
+                    <View style={styles.mealsDeatils}>
+                      {
+                        room.LastCancellationDate && actions.validCancelDate(room.LastCancellationDate) ?
+                          <>
+                            <IconSwitcher componentName='MaterialCommunityIcons' iconName='cancel' color={colors.primary} iconsize={2.5} />
+                            <Text style={styles.foodAndCancellationTitle}>{`Free cancellation upto ${new Date(room.LastCancellationDate).toString().slice(4, 10)}`}</Text>
+                          </>
+                          :
+                          <>
+                            <IconSwitcher componentName='MaterialCommunityIcons' iconName='cancel' color={colors.primary} iconsize={2.5} />
+                            <Text style={styles.foodAndCancellationTitle}>{"Non-refundable"}</Text>
+                          </>
+                      }
+
+                    </View>
+                  </View>
+                </View>
+              )
+            })
+          }
         </View>
-      </View>
-    </View>
-     )
-    })
-  }
-</View>
-<View style={styles.popUpHotelPriceDescriptionMainContaioner}>
-  <View style={styles.popUpHotelPriceDescriptionContaioner}>
-  <Text style={styles.popUproomPriceTitle}>Room price:</Text>
-  <Text style={[styles.popUproomPriceTitle,{color:colors.secondary}]}>&#8377; 4,113</Text>
-  </View>
-  <View style={styles.popUpHotelPriceDescriptionContaioner}>
-  <Text style={styles.popUproomserviceChargesTitle}>Service Charges</Text>
-  <Text style={[styles.popUproomserviceChargesTitle,{color:colors.highlight}]}>+ &#8377;{Math.ceil((hotelTotalPrice - hotelFinalPrice))}</Text>
-  </View>
-  <View style={styles.popUpHotelPriceDescriptionContaioner}>
-  <Text style={[styles.totalPrice,{color:colors.primary}]}>Total price:</Text>
-  <Text style={styles.totalPrice}>&#8377; {`${Math.ceil(hotelTotalPrice).toLocaleString("en-IN")}`}</Text>
-  </View>
-</View>
-</PopUp> 
+        <View style={styles.popUpHotelPriceDescriptionMainContaioner}>
+          <View style={styles.popUpHotelPriceDescriptionContaioner}>
+            <Text style={styles.popUproomPriceTitle}>Room price:</Text>
+            <Text style={[styles.popUproomPriceTitle, { color: colors.secondary }]}>&#8377; 4,113</Text>
+          </View>
+          <View style={styles.popUpHotelPriceDescriptionContaioner}>
+            <Text style={styles.popUproomserviceChargesTitle}>Service Charges</Text>
+            <Text style={[styles.popUproomserviceChargesTitle, { color: colors.highlight }]}>+ &#8377;{Math.ceil((hotelTotalPrice - hotelFinalPrice))}</Text>
+          </View>
+          <View style={styles.popUpHotelPriceDescriptionContaioner}>
+            <Text style={[styles.totalPrice, { color: colors.primary }]}>Total price:</Text>
+            <Text style={styles.totalPrice}>&#8377; {`${Math.ceil(hotelTotalPrice).toLocaleString("en-IN")}`}</Text>
+          </View>
+        </View>
+      </PopUp>
+      <PopUp value={openDelete} handlePopUpClose={() => {
+        setOpenDelete(false)
+      }}>
+        <Text style={styles.hotelDeleteMsg}>Are you sure you want to delete the trip item</Text>
+        <View style={styles.hotelDeletingBtnsContainer}>
+          <TouchableOpacity style={styles.hotelDeleteBtn} onPress={handleDelete}>
+            <Text style={styles.hotelDeleteBtnTitle}>Delete</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.hotelDeleteBtn} onPress={() => {
+                            setOpenDelete(false)
+                        }}>
+            <Text style={styles.hotelDeleteBtnTitle}>Go Back</Text>
+          </TouchableOpacity>
+        </View>
+      </PopUp>
     </View>
   );
 };

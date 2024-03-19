@@ -2335,30 +2335,74 @@ selectHotelRoomType: (room, selectedRoom, r) => {
 
           return totalFare;
         },
+        // getTotalFares: (bookingFlight) => {
+        //   var totalFareSum = 0;
+        //   var totalSeatCharges = 0;
+        //   var totalBaggagePrice = 0;
+        //   var totalMealPrice = 0;
+  
+        //   bookingFlight.forEach((seg, s) => {
+        //     totalFareSum += seg.totalFare ? Number(seg.totalFare) : 0;
+        //     totalSeatCharges += seg.seatCharges ? Number(seg.seatCharges) : 0;
+  
+        //     if (Array.isArray(seg.baggagePrice)) {
+        //       seg?.baggagePrice &&
+        //         seg?.baggagePrice?.forEach((price, p) => {
+        //           totalBaggagePrice += price ? Number(price) : 0;
+        //         });
+        //     }
+        //     if (Array.isArray(seg.mealPrice)) {
+        //       seg.mealPrice &&
+        //         seg.mealPrice?.forEach((price, p) => {
+        //           totalMealPrice += price ? Number(price) : 0;
+        //         });
+        //     }
+        //   });
+        //   var finalPrice = totalFareSum + (totalFareSum * this.state.domesticFlight) / 100
+        //   return {
+        //     totalFareSum,
+        //     totalSeatCharges,
+        //     totalBaggagePrice,
+        //     totalMealPrice,
+        //     finalPrice
+        //   };
+        // },
+
         getTotalFares: (bookingFlight) => {
           var totalFareSum = 0;
           var totalSeatCharges = 0;
           var totalBaggagePrice = 0;
           var totalMealPrice = 0;
-  
+          var totSum = 0
           bookingFlight.forEach((seg, s) => {
+            totSum = 0
+            totSum += seg.totalFare ? Number(seg.totalFare) : 0;
             totalFareSum += seg.totalFare ? Number(seg.totalFare) : 0;
             totalSeatCharges += seg.seatCharges ? Number(seg.seatCharges) : 0;
+            var finalPrice = totSum + (totSum * this.state.domesticFlight) / 100
+            bookingFlight[s].finalPrice = finalPrice
+
+            if (Array.isArray(seg.selectedBaggage)) {
+              seg?.selectedBaggage?.forEach((baggage, p) => {
   
-            if (Array.isArray(seg.baggagePrice)) {
-              seg?.baggagePrice &&
-                seg?.baggagePrice?.forEach((price, p) => {
-                  totalBaggagePrice += price ? Number(price) : 0;
-                });
+                var x = 0;
+                baggage.forEach((bag) => {
+                  x += bag.price ? Number(bag.price) : 0;
+                })
+                totalBaggagePrice += x;
+              });
             }
-            if (Array.isArray(seg.mealPrice)) {
-              seg.mealPrice &&
-                seg.mealPrice?.forEach((price, p) => {
-                  totalMealPrice += price ? Number(price) : 0;
-                });
+            if (Array.isArray(seg.selectedMeals)) {
+              seg?.selectedMeals?.forEach((baggage, p) => {
+                var x = 0;
+                baggage.forEach((bag) => {
+                  x += bag.price ? Number(bag.price) : 0;
+                })
+                totalMealPrice += x;
+              });
             }
           });
-          var finalPrice = totalFareSum + (totalFareSum * this.state.domesticFlight) / 100
+          var finalPrice = totalFareSum + (totalFareSum * this.state.domesticFlight) / 100;
           return {
             totalFareSum,
             totalSeatCharges,
@@ -2590,7 +2634,7 @@ getAllFlights :async (id, userId) => {
             const tripsCollecRef = collectionRef.collection("trips");
             const docs = [];
             if (!this.state.offset) {
-              this.state.actions.setTrips({ userTrips: docs, tripLoading: true });
+              await this.state.actions.setTrips({ userTrips: docs, tripLoading: true });
               const promises = [];
               const querySnapshot = await tripsCollecRef.orderBy("date", "desc").limit(10).get();
               querySnapshot.forEach((doc) => {
@@ -2610,7 +2654,7 @@ getAllFlights :async (id, userId) => {
               await Promise.all(promises);
               this.state.actions.setTrips({ userTrips: docs, tripLoading: false });
             } else {
-              this.state.actions.setTrips({ userTrips: docs, tripLoading: true });
+              await this.state.actions.setTrips({ userTrips: docs, tripLoading: true });
               const documentsToSkip = Math.max(0, this.state.offset - 10);
               const querySnapshot = await tripsCollecRef.orderBy("date", "desc").limit(documentsToSkip + 10).get();
               const reversedDocs = [];
@@ -2668,13 +2712,18 @@ getAllFlights :async (id, userId) => {
           const reqs = [];
         
           // Assuming req is an array of request IDs
-          for (const reqe of req) {
-            const hotelCollectionRef = firestore()
-              .collection("Accounts")
-              .doc(userid)
-              .collection("tripRequests")
-              .doc(reqe);
-        
+          // for (const reqe of req) {
+          //   const hotelCollectionRef = firestore()
+          //     .collection("Accounts")
+          //     .doc(userid)
+          //     .collection("tripRequests")
+          //     .doc(reqe);
+              await req.forEach(async (reqe) => {
+                var hotelCollectionRef = firestore()
+                  .collection("Accounts")
+                  .doc(userid)
+                  .collection("tripRequests")
+                  .doc(reqe)
             try {
               const doc = await hotelCollectionRef.get();
               const sendData = doc.data();
@@ -2683,7 +2732,7 @@ getAllFlights :async (id, userId) => {
             } catch (error) {
               console.error("Error getting request:", error);
             }
-          }
+          })
         
           return reqs;
         },
@@ -2835,15 +2884,15 @@ getAllFlights :async (id, userId) => {
           });
         
           await firestore().collection("Accounts").doc(this.state.userId).update({
-            trips: firestore.FieldValue.arrayUnion(newtripdocRef.id)
+            trips:arrayUnion(newtripdocRef.id)
           });
         
           if (type === "hotels") {
             const hotelDocRef = tripDocRef.collection("hotels");
             const newDocRef = await hotelDocRef.add(data);
-            await firestore().collection("Accounts").doc(this.state.userAccountDetails.userid)
+            await firestore().collection("Accounts").doc(this.state.userId)
               .collection("trips").doc(tripDocRef.id).update({
-                hotels: firestore.FieldValue.arrayUnion({
+                hotels: arrayUnion({
                   id: newDocRef.id,
                   status: "Not Submitted",
                   date: new Date(),
@@ -2868,18 +2917,32 @@ getAllFlights :async (id, userId) => {
               bookingFlight: changedObj,
             });
         
-            fd.map(async (flight) => {
-              const flightDocRef = await hotelDocRef.add(flight);
-              await firestore().collection("Accounts").doc(this.state.userId)
-                .collection("trips").doc(tripDocRef.id).update({
-                  flights: firestore.FieldValue.arrayUnion({
-                    id: flightDocRef.id,
-                    status: "Not Submitted",
-                    date: new Date(),
-                    requestStatus: "Not Requested"
-                  })
+            // fd.map(async (flight) => {
+            //   const flightDocRef = await hotelDocRef.add(flight);
+            //   await firestore().collection("Accounts").doc(this.state.userId)
+            //     .collection("trips").doc(tripDocRef.id).update({
+            //       flights: firestore.FieldValue.arrayUnion({
+            //         id: flightDocRef.id,
+            //         status: "Not Submitted",
+            //         date: new Date(),
+            //         requestStatus: "Not Requested"
+            //       })
+            //     });
+            // });
+
+            await Promise.all(await fd.map(async (flight) => {
+              var docRef = await hotelDocRef.add(
+                flight
+              ); await firestore()
+                .collection("Accounts")
+                .doc(this.state.userId)
+                .collection("trips")
+                .doc(tripDocRef.id)
+                .update({
+                  flights: arrayUnion({ id: docRef.id, status: "Not Submitted", date: new Date(), requestStatus: "Not Requested" })
                 });
-            });
+            }))
+
             // this.setState({
             //   bookingFlight: data
             // })
@@ -2908,7 +2971,7 @@ getAllFlights :async (id, userId) => {
       
             const tripDocRef = firestore()
               .collection("Accounts")
-              .doc(this.state.userAccountDetails.userid)
+              .doc(this.state.userId)
               .collection("trips")
               .doc(id);
       
@@ -2936,7 +2999,7 @@ getAllFlights :async (id, userId) => {
       
               const flightData = data.map(flight => this.state.actions.arrToObj([flight]));
       
-              await Promise.all(flightData.map(async (flight) => {
+              await Promise.all( await flightData.map(async (flight) => {
                 const docRef = await flightDocRef.add(flight);
                 await firestore()
                   .collection("Accounts")
@@ -2944,7 +3007,7 @@ getAllFlights :async (id, userId) => {
                   .collection("trips")
                   .doc(id)
                   .update({
-                    flights: firestore.FieldValue.arrayUnion({
+                    flights:firestore.FieldValue.arrayUnion({
                       id: docRef.id,
                       status: "Not Submitted",
                       date: new Date(),
@@ -3017,7 +3080,47 @@ getAllFlights :async (id, userId) => {
         this.state.actions.setFlightBookPage(false)
       },
 
-
+       deleteTripItem : async (tripId, itemId, itemType) => {
+        try {
+          const docCollecRef = firestore().collection("Accounts").doc(this.state.userId).collection("trips").doc(tripId);
+          const docSnapshot = await docCollecRef.get();
+      
+          if (!docSnapshot.exists) {
+            throw new Error("Trip document not found");
+          }
+      
+          const tripData = docSnapshot.data();
+      
+          if (itemType === "hotels") {
+            const hotels = tripData.hotels || [];
+      
+            const deletedHotelIndex = hotels.findIndex(hotel => hotel.id === itemId);
+      
+            if (deletedHotelIndex !== -1) {
+              const updatedHotels = [...hotels.slice(0, deletedHotelIndex), ...hotels.slice(deletedHotelIndex + 1)];
+              await docCollecRef.update({ hotels: updatedHotels });
+              await firestore().collection("Accounts").doc(this.state.userId).collection("trips").doc(tripId).collection("hotels").doc(itemId).delete();
+            }
+          } else if (itemType === "flights") {
+            const flights = tripData.flights || [];
+      
+            const deletedFlightIndex = flights.findIndex(flight => flight.id === itemId);
+      
+            if (deletedFlightIndex !== -1) {
+              const updatedFlights = [...flights.slice(0, deletedFlightIndex), ...flights.slice(deletedFlightIndex + 1)];
+              await docCollecRef.update({ flights: updatedFlights });
+              await firestore().collection("Accounts").doc(this.state.userId).collection("trips").doc(tripId).collection("flights").doc(itemId).delete();
+            }
+          }
+      
+          // Update state or trigger any other action as needed
+          // For example, you can reload the trip data after deletion
+          // this.setState({ tripData: null, tripDataLoading: true });
+          // await this.state.actions.getTripDocById(tripId, userId);
+        } catch (error) {
+          console.error("Error deleting trip item:", error);
+        }
+      },
 
     }
   }

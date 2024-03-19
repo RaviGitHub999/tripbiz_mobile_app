@@ -47,6 +47,7 @@ const TripDetailsFlightCard = ({
                 flightCode += `${code}, `;
             }
         });
+        console.log(flightBooking?.finalPrice,",,,")
         return (
             <View style={styles.card}>
 

@@ -310,15 +310,41 @@ export const styles = StyleSheet.create({
     },
     popUproomPriceTitle:
     {
-        fontSize:responsiveHeight(1.8),
-        fontFamily:fonts.textFont,
-        color:colors.primary
+        fontSize: responsiveHeight(1.8),
+        fontFamily: fonts.textFont,
+        color: colors.primary
     },
     popUproomserviceChargesTitle:
     {
-        fontSize:responsiveHeight(1.8),
-        fontFamily:fonts.primary,
-        color:colors.lightGray
+        fontSize: responsiveHeight(1.8),
+        fontFamily: fonts.primary,
+        color: colors.lightGray
+    },
+    hotelDeleteMsg: {
+        fontSize: responsiveHeight(2),
+        fontFamily: fonts.textInput,
+        color: colors.primary
+    },
+    hotelDeletingBtnsContainer:
+    {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop:responsiveHeight(1.8),
+        paddingHorizontal:responsiveWidth(6)
+    },
+    hotelDeleteBtn:
+    {
+borderWidth:1,
+paddingHorizontal:responsiveWidth(3),
+paddingVertical:responsiveHeight(0.8),
+borderRadius:responsiveHeight(1),
+backgroundColor:colors.primary
+    },
+    hotelDeleteBtnTitle:
+    {
+        fontSize: responsiveHeight(2),
+        fontFamily: fonts.textInput,
+        color: colors.white
     }
 
 })

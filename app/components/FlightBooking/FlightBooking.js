@@ -39,7 +39,7 @@ const FlightBooking = ({navigation:{navigate}}) => {
     console.log('flightBooking')
     const animatedValue = useRef(new Animated.Value(0)).current;
     const { actions,flightBookDataLoading, bookingFlight, domesticFlight, internationalFlight, isInternationalRound, userTripStatus, } = useContext(MyContext)
-    var { totalFareSum, totalSeatCharges, totalBaggagePrice, totalMealPrice } =
+    var { totalFareSum, totalSeatCharges, totalBaggagePrice, totalMealPrice ,finalPrice} =
         actions.getTotalFares(bookingFlight);
     // console.log(userTripStatus,"userTripStatus........")
 
@@ -437,7 +437,7 @@ const FlightBooking = ({navigation:{navigate}}) => {
                 </View>
                 <View style={styles.totalFareFlightDetailsContainer}>
                     <Text style={styles.flighttotalFareText}>Total fare</Text>
-                    <Text style={styles.flightPrice}> {`₹ ${totalFareSum?.toLocaleString("en-IN")}/-`}</Text>
+                    <Text style={styles.flightPrice}>{`₹ ${Math.ceil(finalPrice)?.toLocaleString("en-IN")}/-`}</Text>
                     <TouchableOpacity style={styles.submitTripBtn} onPress={() => {
                         setSubmitIsOpen(true);
                         console.log("l")
