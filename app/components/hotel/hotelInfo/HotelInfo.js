@@ -140,7 +140,7 @@ const HotelInfo = ({ route: { params }, navigation: { goBack } }) => {
             scrollEnabled={false}
         />
     }, [hotelInfoRes, breakfastFilter, cancelFilter, selectedRoom])
-    console.log(bookingHotel?.selectedRoomType.length)
+    // console.log(bookingHotel?.selectedRoomType.length)
 
     const handleHotelDescriptionPopUp = () => {
         setHotelDescriptionPopUp(!hotelDescriptionPopUp)

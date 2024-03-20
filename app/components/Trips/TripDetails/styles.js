@@ -57,7 +57,8 @@ export const styles = StyleSheet.create({
         elevation: responsiveHeight(0.4),
         backgroundColor: colors.white,
         borderRadius: responsiveHeight(1.5),
-        marginHorizontal: responsiveWidth(1)
+        marginHorizontal: responsiveWidth(1),
+        marginBottom:responsiveHeight(1.5)
     },
     hotelImgContainer: {
         width: "35%",
@@ -87,8 +88,14 @@ export const styles = StyleSheet.create({
     familyDetails: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: responsiveHeight(1)
+        gap: responsiveHeight(1),
+        alignItems:'center'
 
+    },
+    familyDetailsTitle:
+    {
+fontSize:responsiveHeight(2),
+fontFamily:fonts.textFont
     },
     hotelDetailsContainer: {
         flexDirection: 'row'

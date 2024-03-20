@@ -166,7 +166,7 @@ const FlightBooking = ({navigation:{navigate}}) => {
    const handleAddToTrip = async () => {
 
     setIsLoading(true);
-    let newtripid = await actions.createNewTrip(defaultInput, "flights", bookingFlight);
+    let newtripid = await actions.editTripBtn(defaultInput, "flights", bookingFlight);
     setIsLoading(false);
     setSubmitIsOpen(false);
     navigate("TripDetails",{id:newtripid});

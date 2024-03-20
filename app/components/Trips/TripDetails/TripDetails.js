@@ -131,7 +131,6 @@ const handleDelete = async () => {
   }
 
   useEffect(() => {
-    console.log("useEffect")
     if (mounted) {
       if (!tripDataLoading) {
         var fetchData = async () => {
@@ -276,8 +275,8 @@ const handleDelete = async () => {
                                         })}
                                       </View>
                                       <View style={styles.familyDetails}>
-                                        <Text>Adults-{adults?.adults}</Text>
-                                        <Text>Children-{adults?.child}</Text>
+                                        <Text style={styles.familyDetailsTitle}>Adults-{adults?.adults}</Text>
+                                        <Text style={styles.familyDetailsTitle}>Children-{adults?.child}</Text>
                                       </View>
                                     </View>
                                   </View>
@@ -394,7 +393,6 @@ const handleDelete = async () => {
                           });
                           return aflightArr[0]?.segments[0]?.depTimeDate - bflightArr[0]?.segments[0]?.depTimeDate
                         }).map((flight, f) => {
-                          console.log(flight.data.finalPrice, "changes")
                           var flightStatus = tripData.data.flights.filter((f) => f.id === flight.id)
                           price = price + flight.data.finalPrice
                           var hotelTimeStamp = new Date(flightStatus[0]?.date?.seconds * 1000);
@@ -414,6 +412,9 @@ const handleDelete = async () => {
                                 flightStatus={flightStatus[0]}
                                 flightReq={flightReq}
                                 timeStamp={hotelTimeStamp}
+                                reqColor={reqColor}
+                                tripId={id}
+                                flightId={flight.id}
                               />
                             </>
                           )
@@ -421,7 +422,7 @@ const handleDelete = async () => {
                       }
                       <View style={styles.addingHotelBtnContainer}>
                         <TouchableOpacity style={styles.addingHotelBtn}>
-                          <Text style={styles.addingHotelBtnTitle}>Add Hotel </Text>
+                          <Text style={styles.addingHotelBtnTitle}>Add Flight </Text>
                           <IconSwitcher componentName='Feather' iconName='plus' color={colors.primary} iconsize={3} />
                         </TouchableOpacity>
                       </View>
@@ -437,7 +438,7 @@ const handleDelete = async () => {
       </ScrollView>
       <View style={styles.totalPriceContainer}>
         <Text style={styles.totalPriceTitle}>Total price:</Text>
-        <Text style={styles.totalPrice}>{`₹ ${price}`}</Text>
+        <Text style={styles.totalPrice}>{`₹ ${Math.ceil(price)}`}</Text>
         <TouchableOpacity style={styles.proceedToBookingBtn}>
           <Text style={styles.proceedToBookingBtnTitle}>
             Proceed to Booking

@@ -6,7 +6,6 @@ import IconSwitcher from '../../common/icons/IconSwitcher'
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from '../../../utils/responsiveScale'
 import { colors, fonts } from '../../../config/theme'
 import PopUp from '../../common/popup/PopUp'
-
 const TripDetailsFlightCard = ({
     flightGrp,
     index,
@@ -14,8 +13,10 @@ const TripDetailsFlightCard = ({
     flightBooking,
     flightStatus,
     flightReq,
-    timeStamp
-
+    timeStamp,
+    reqColor,
+    tripId,
+    flightId
 }) => {
     var [stopDtls, setStopDtls] = useState([]);
     var [showStopDtls, setShowStopDtls] = useState(false);
@@ -23,6 +24,9 @@ const TripDetailsFlightCard = ({
     var [tripsCancellation, setTripsCancellation] = useState(false)
     var [tripsMeals, setTripsMeals] = useState(false)
     var [tripsSeat, setTripsSeat] = useState(false)
+    const [openDelete, setOpenDelete] = useState(false)
+    const [deleteId, setDeleteId] = useState(false)
+    const [deleteType, setDeleteType] = useState(false)
     const { actions, flightsLogosData, flightResList, bookingFlight, flightResJType, } = useContext(MyContext)
     var flightArr = flightGrp.map((flight, f) => {
         return { ...actions.modifyFlightObject(flight) };
@@ -37,8 +41,11 @@ const TripDetailsFlightCard = ({
         },
         [flightsLogosData],
     );
+ const handleDelete = async () => {
+        await actions.deleteTripItem(tripId, deleteId, deleteType);
+        setOpenDelete(false)
+      }
     const handleRenderingFlightCard = ({ item }) => {
-        // console.log(item,"first")
         var flightCode = '';
         item.flightCodes.forEach((code, c) => {
             if (c === item.flightCodes.length - 1) {
@@ -47,7 +54,6 @@ const TripDetailsFlightCard = ({
                 flightCode += `${code}, `;
             }
         });
-        console.log(flightBooking?.finalPrice,",,,")
         return (
             <View style={styles.card}>
 
@@ -73,7 +79,7 @@ const TripDetailsFlightCard = ({
                                 <Text style={styles.airlineName}> {`${item.airlineName}`}</Text>
                             </View>
                             <View >
-                                <Text style={styles.flightNumbers}>({flightCode})</Text>
+                                <Text style={styles.flightNumbers}> ({flightCode})</Text>
                             </View>
                         </View>
                         <View style={{ backgroundColor: colors.highlight, padding: responsiveHeight(1), borderTopLeftRadius: responsiveHeight(2), borderBottomLeftRadius: responsiveHeight(2), marginRight: responsiveHeight(-1.5) }}>
@@ -122,26 +128,26 @@ const TripDetailsFlightCard = ({
                     </View>
 
                     <View style={styles.bookingFlightCityNameAirportName}>
-                        <View style={{ width: "50%" }}>
-                            <Text style={{ fontFamily: fonts.primary, color: colors.primary, fontSize: responsiveHeight(1.5) }}>{item.originCityName}</Text>
-                            <Text style={{ fontFamily: fonts.subTitle, color: colors.primary, fontSize: responsiveHeight(1.5) }}>{item.originAirportName}</Text>
+                        <View style={{ width: "50%", gap: responsiveHeight(0.3) }}>
+                            <Text style={{ fontFamily: fonts.primary, color: colors.lightGray, fontSize: responsiveHeight(1.5) }}>{item.originCityName}</Text>
+                            <Text style={{ fontFamily: fonts.primary, color: "#969696", fontSize: responsiveHeight(1.5) }}>{item.originAirportName}</Text>
                         </View>
-                        <View style={{ width: '50%', alignItems: 'flex-end', }}>
-                            <Text style={{ fontFamily: fonts.primary, color: colors.primary, fontSize: responsiveHeight(1.5) }}>{item.destCityName}</Text>
-                            <Text style={{ fontFamily: fonts.subTitle, color: colors.primary, fontSize: responsiveHeight(1.5) }}  >{item.destAirportName}</Text>
+                        <View style={{ width: '50%', alignItems: 'flex-end', gap: responsiveHeight(0.3) }}>
+                            <Text style={{ fontFamily: fonts.primary, color: colors.lightGray, fontSize: responsiveHeight(1.5) }}>{item.destCityName}</Text>
+                            <Text style={{ fontFamily: fonts.primary, color: "#969696", fontSize: responsiveHeight(1.5) }}  >{item.destAirportName}</Text>
                         </View>
                     </View>
                 </View>
 
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Text>{flightBooking.flightNew.fareType}</Text>
-                    <Text>{`${flightBooking.travellers
+                <View style={styles.flightBookingTravellerDetailsContainer}>
+                    <Text style={styles.flightBookingTravellerDetailsTitle}>{flightBooking.flightNew.fareType}</Text>
+                    <Text style={styles.flightBookingTravellerDetailsTitle}>{`${flightBooking.travellers
                         } ${flightBooking.travellers > 1 ? "travellers" : "traveller"
                         }`}</Text>
-                    <Text>{flightArr[0].segments[0].cabinClass}</Text>
+                    <Text style={styles.flightBookingTravellerDetailsTitle}>{flightArr[0].segments[0].cabinClass}</Text>
                 </View>
 
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: responsiveHeight(1) }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: responsiveHeight(3) }}>
                     <TouchableOpacity onPress={handlehoteltripsBaggageinfo}>
                         <IconSwitcher componentName='MaterialIcons' iconName='luggage' color={colors.primary} iconsize={3} />
                     </TouchableOpacity>
@@ -162,20 +168,50 @@ const TripDetailsFlightCard = ({
                             <>
                                 {
                                     flightStatus?.status ?
-                                        <Text>{`Booking Status : `}<Text>{flightStatus.status}</Text></Text> : null
+                                        <View style={styles.bookingStatusTitlesMainContainer}>
+                                            <Text style={styles.bookingStatusTitles}>{`Booking Status : `}</Text>
+                                            <View style={[styles.bookingStatusTextContainer, { backgroundColor:  reqColor[0] ? reqColor[0]?.color : "#808080" }]}>
+                                                <Text style={styles.bookingStatusText}>{flightStatus.status}</Text>
+                                            </View>
+                                        </View> : null
                                 }
-                            </> : <Text>{`Booking Status : `}<Text>Not Submitted</Text></Text>
+                            </> :
+
+                            <View style={styles.bookingStatusTitlesMainContainer}>
+                                <Text style={styles.bookingStatusTitles}>{`Booking Status : `}</Text>
+                                <View style={[styles.bookingStatusTextContainer, { backgroundColor:  reqColor[0] ? reqColor[0]?.color : "#808080" }]}>
+                                    <Text style={styles.bookingStatusText}>Not Submitted</Text>
+                                </View>
+                            </View>
                     }
-                    <Text>{`Approval Status : `}<Text>{flightReq[0]?.requestStatus}</Text></Text>
-                    <Text>{`Total Price : ₹ ${Math.ceil(flightBooking?.finalPrice)?.toLocaleString("en-IN")}`}</Text>
+
+                    <View style={styles.bookingStatusTitlesMainContainer}>
+                        <Text style={styles.bookingStatusTitles}>{`Approval Status : `}</Text>
+                        <View style={[styles.bookingStatusTextContainer, { backgroundColor:  reqColor[0] ? reqColor[0]?.color : "#808080"}]}>
+                            <Text style={styles.bookingStatusText}>{flightReq[0]?.requestStatus}</Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.hotelTotalPriceContainer}>
+                        <Text style={styles.hotelTotalPrice}>{`Total Price : ₹ ${Math.ceil(flightBooking?.finalPrice)?.toLocaleString("en-IN")}`}</Text>
+                        <TouchableOpacity onPress={() => { }}>
+                            <IconSwitcher componentName='Entypo' iconName='info-with-circle' color={colors.black} iconsize={1.8} />
+                        </TouchableOpacity>
+                    </View>
+                    {/* <Text>{`Approval Status : `}<Text>{flightReq[0]?.requestStatus}</Text></Text>
+                    <Text>{`Total Price : ₹ ${Math.ceil(flightBooking?.finalPrice)?.toLocaleString("en-IN")}`}</Text> */}
                 </View>
 
                 <View style={styles.addedFlightTimeAndDateContainer}>
                     <View style={styles.addedFlightTitleContainer}>
-                        <Text>{`Added Date: ${timeStamp.toLocaleString()}`}</Text>
+                        <Text style={styles.bookingStatusTitles}>{`Added Date: `}<Text style={styles.addedHotelTimeAndDate}>{`${timeStamp.toLocaleString()}`}</Text></Text>
                     </View>
                     <>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={() => {
+                    setOpenDelete(true)
+                    setDeleteType("flights")
+                    setDeleteId(flightId)
+                  }}>
                             <IconSwitcher componentName='MaterialIcons' iconName='delete' color={colors.red} iconsize={2.5} />
                         </TouchableOpacity>
                     </>
@@ -282,77 +318,93 @@ const TripDetailsFlightCard = ({
             <PopUp value={tripsBaggage} handlePopUpClose={handlehoteltripsBaggageinfoClose}>
                 <Text>No extra baggage</Text>
             </PopUp>
+
             <PopUp value={tripsCancellation} handlePopUpClose={handlehoteltripsCancellationinfoClose}>
-                <Text style={styles.CancellationAndDateChangeTitle}>Cancellation and date change</Text>
-                <View style={styles.CancellationAndDateChangeCon}>
+                {
+                    Array.isArray(flightBooking?.flight?.MiniFareRules) ? (
+                        <>
+                            {
+                                flightBooking?.flight?.MiniFareRules &&
+                                    flightBooking?.flight?.MiniFareRules ? (
+                                    <>
+                                        <Text style={styles.CancellationAndDateChangeTitle}>Cancellation and date change</Text>
+                                        <View style={styles.CancellationAndDateChangeCon}>
+                                            <View style={styles.cancel}>
+                                                <Text style={styles.CancellationAndDateChangesubTitle}>Cancellation</Text>
+                                                {
+                                                    flightBooking?.flight?.MiniFareRules &&
+                                                    flightBooking?.flight?.MiniFareRules[0]
+                                                        .map((rule, r) => {
+                                                            if (rule.Type === "Cancellation") {
+                                                                return (
+                                                                    <View style={styles.cancellationContainer}>
+                                                                        <IconSwitcher componentName='AntDesign' iconName='arrowright' color={colors.lightGray} iconsize={2.5} />
+                                                                        <Text>{rule.To === null ||
+                                                                            rule.From === null ||
+                                                                            rule.Unit === null
+                                                                            ? ""
+                                                                            : rule.To === ""
+                                                                                ? `> ${rule.From} ${rule.Unit} of departure date`
+                                                                                : rule.From === "0"
+                                                                                    ? `0- ${rule.To} ${rule.Unit} of departure date`
+                                                                                    : `Between ${rule.To} & ${rule.From} ${rule.Unit} of departure date`}
+                                                                        </Text>
+                                                                        <Text style={[styles.CancellationAndDateChangesubTitle, { color: colors.highlight }]}>{rule.Details}</Text>
+                                                                    </View>
+                                                                )
+                                                            }
+                                                            return null
+                                                        }
+                                                        ).filter((rule, r) => rule !== null)
+                                                }
 
-                    <View style={styles.cancel}>
-                        <Text style={styles.CancellationAndDateChangesubTitle}>Cancellation</Text>
-                        {
-                            flightBooking?.flight?.MiniFareRules &&
-                            flightBooking?.flight?.MiniFareRules[0]
-                                .map((rule, r) => {
-                                    if (rule.Type === "Cancellation"){
-                                    return (
-                                        <View style={styles.cancellationContainer}>
-                                            <IconSwitcher componentName='AntDesign' iconName='arrowright' color={colors.lightGray} iconsize={2.5} />
-                                            <Text>{rule.To === null ||
-                                rule.From === null ||
-                                rule.Unit === null
-                                ? ""
-                                : rule.To === ""
-                                  ? `> ${rule.From} ${rule.Unit} of departure date`
-                                  : rule.From === "0"
-                                    ? `0- ${rule.To} ${rule.Unit} of departure date`
-                                    : `Between ${rule.To} & ${rule.From} ${rule.Unit} of departure date`}
-                                            </Text>
-                                            <Text style={[styles.CancellationAndDateChangesubTitle, { color: colors.highlight }]}>{rule.Details}</Text>
+
+
+                                            </View>
+                                            <View style={styles.dashedLine} />
+                                            <View style={styles.cancel}>
+                                                <Text style={styles.CancellationAndDateChangesubTitle}>Date change</Text>
+                                                {
+                                                    flightBooking?.flight?.MiniFareRules &&
+                                                    flightBooking?.flight?.MiniFareRules[0]
+                                                        .map((rule, r) => {
+                                                            if (rule.Type === "Reissue") {
+                                                                return (
+                                                                    <View style={styles.cancellationContainer}>
+                                                                        <IconSwitcher componentName='AntDesign' iconName='arrowright' color={colors.lightGray} iconsize={2.5} />
+                                                                        <Text>{rule.To === null ||
+                                                                            rule.From === null ||
+                                                                            rule.Unit === null
+                                                                            ? ""
+                                                                            : rule.To === ""
+                                                                                ? `> ${rule.From} ${rule.Unit} of departure date`
+                                                                                : rule.From === "0"
+                                                                                    ? `0- ${rule.To} ${rule.Unit} of departure date`
+                                                                                    : `Between ${rule.To} & ${rule.From} ${rule.Unit} of departure date`}
+                                                                        </Text>
+                                                                        <Text style={[styles.CancellationAndDateChangesubTitle, { color: colors.highlight }]}>{rule.Details}</Text>
+                                                                    </View>
+                                                                )
+                                                            }
+                                                            return null
+                                                        }
+                                                        ).filter((rule, r) => rule !== null)
+                                                }
+
+
+
+                                            </View>
                                         </View>
-                                    )
-                                            }
-                                            return null
-                                }
-                                ).filter((rule, r) => rule !== null)
-                                }
-                        
+                                    </>
+                                ) : null
+                            }
+                        </>
+                    ) : null
+                }
 
 
-                    </View>
-                    <View style={styles.dashedLine} />
-                    <View style={styles.cancel}>
-                        <Text style={styles.CancellationAndDateChangesubTitle}>Date change</Text>
-                        {
-                            flightBooking?.flight?.MiniFareRules &&
-                            flightBooking?.flight?.MiniFareRules[0]
-                                .map((rule, r) => {
-                                    if (rule.Type === "Reissue"){
-                                    return (
-                                        <View style={styles.cancellationContainer}>
-                                            <IconSwitcher componentName='AntDesign' iconName='arrowright' color={colors.lightGray} iconsize={2.5} />
-                                            <Text>{rule.To === null ||
-                                rule.From === null ||
-                                rule.Unit === null
-                                ? ""
-                                : rule.To === ""
-                                  ? `> ${rule.From} ${rule.Unit} of departure date`
-                                  : rule.From === "0"
-                                    ? `0- ${rule.To} ${rule.Unit} of departure date`
-                                    : `Between ${rule.To} & ${rule.From} ${rule.Unit} of departure date`}
-                                            </Text>
-                                            <Text style={[styles.CancellationAndDateChangesubTitle, { color: colors.highlight }]}>{rule.Details}</Text>
-                                        </View>
-                                    )
-                                            }
-                                            return null
-                                }
-                                ).filter((rule, r) => rule !== null)
-                                }
-                        
 
 
-                    </View>
-
-                </View>
             </PopUp>
 
             <PopUp value={tripsMeals} handlePopUpClose={handlehoteltripsMealsinfoClose}>
@@ -363,6 +415,22 @@ const TripDetailsFlightCard = ({
             <PopUp value={tripsSeat} handlePopUpClose={handlehoteltripsSeatinfoClose}>
 
             </PopUp>
+
+            <PopUp value={openDelete} handlePopUpClose={() => {
+        setOpenDelete(false)
+      }}>
+        <Text style={styles.hotelDeleteMsg}>Are you sure you want to delete the trip item</Text>
+        <View style={styles.hotelDeletingBtnsContainer}>
+          <TouchableOpacity style={styles.hotelDeleteBtn} onPress={handleDelete}>
+            <Text style={styles.hotelDeleteBtnTitle}>Delete</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.hotelDeleteBtn} onPress={() => {
+                            setOpenDelete(false)
+                        }}>
+            <Text style={styles.hotelDeleteBtnTitle}>Go Back</Text>
+          </TouchableOpacity>
+        </View>
+      </PopUp>
         </View>
 
     )
@@ -393,14 +461,14 @@ const styles = StyleSheet.create({
         width: responsiveWidth(7),
     },
     airlineName: {
-        fontSize: responsiveFontSize(2.2),
+        fontSize: responsiveFontSize(2),
         fontFamily: fonts.primary,
         color: colors.black,
     },
     flightNumbers: {
-        fontSize: responsiveFontSize(1.6),
-        fontFamily: fonts.textInput,
-        color: colors.gray,
+        fontSize: responsiveFontSize(1.4),
+        fontFamily: fonts.primary,
+        color: colors.lightGray,
         // borderWidth:1,
         // paddingHorizontal:10
     },
@@ -456,7 +524,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         // marginBottom: responsiveHeight(2),
-        flexWrap: 'wrap'
+        flexWrap: 'wrap',
     },
     mainContainer: {
         // paddingHorizontal: responsiveWidth(3.5),
@@ -481,7 +549,7 @@ const styles = StyleSheet.create({
         marginTop: responsiveHeight(2),
         paddingHorizontal: responsiveWidth(2),
         paddingVertical: responsiveHeight(1),
-        gap: responsiveHeight(0.5)
+        gap: responsiveHeight(1.8)
     },
     addedFlightTimeAndDateContainer:
     {
@@ -527,6 +595,92 @@ const styles = StyleSheet.create({
         borderTopWidth: responsiveHeight(0.1),
         marginVertical: responsiveHeight(1.5),
         borderStyle: 'dashed'
+    },
+    flightBookingTravellerDetailsContainer:
+    {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: responsiveHeight(1)
+    },
+    flightBookingTravellerDetailsTitle:
+    {
+        fontSize: responsiveHeight(1.5),
+        color: colors.lightGray,
+        fontFamily: fonts.primary
+    },
+    bookingStatusTitles:
+    {
+        fontSize: responsiveHeight(1.7),
+        fontFamily: fonts.textInput,
+        color: colors.lightGray
+    },
+    bookingStatusTitlesMainContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        //  marginTop:responsiveHeight(1.2)
+    },
+    bookingStatusTextContainer: {
+        paddingHorizontal: responsiveWidth(2),
+        alignItems: 'center',
+        borderRadius: responsiveHeight(1),
+        paddingVertical: responsiveHeight(0.3),
+        justifyContent: 'center'
+
+    },
+    bookingStatusText: {
+        color: colors.white,
+        fontSize: responsiveHeight(1.3),
+        fontFamily: fonts.primary
+    },
+    hotelTotalPriceContainer: {
+        flexDirection: 'row',
+        flexWrap: "wrap",
+        alignItems: 'center',
+        gap: responsiveHeight(1)
+    },
+    hotelTotalPrice: {
+        fontSize: responsiveHeight(2.2),
+        fontFamily: fonts.textFont,
+        color: colors.secondary
+    },
+    bookingStatusTitles:
+    {
+        fontSize: responsiveHeight(1.7),
+        fontFamily: fonts.textInput,
+        color: colors.lightGray
+    },
+    addedHotelTimeAndDate: {
+        color: colors.primary,
+        fontSize: responsiveHeight(1.7),
+        fontFamily: fonts.primary
+    },
+    hotelDeleteMsg: {
+        fontSize: responsiveHeight(2),
+        fontFamily: fonts.textInput,
+        color: colors.primary
+    },
+    hotelDeletingBtnsContainer:
+    {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop:responsiveHeight(1.8),
+        paddingHorizontal:responsiveWidth(6)
+    },
+    hotelDeleteBtn:
+    {
+borderWidth:1,
+paddingHorizontal:responsiveWidth(3),
+paddingVertical:responsiveHeight(0.8),
+borderRadius:responsiveHeight(1),
+backgroundColor:colors.primary
+    },
+    hotelDeleteBtnTitle:
+    {
+        fontSize: responsiveHeight(2),
+        fontFamily: fonts.textInput,
+        color: colors.white
     }
 })
 export default TripDetailsFlightCard
