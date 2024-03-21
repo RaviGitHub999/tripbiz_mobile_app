@@ -57,7 +57,6 @@ const styles = StyleSheet.create(
             alignItems: 'center',
              justifyContent: 'center', 
              paddingHorizontal: responsiveWidth(3),
-             borderWidth:1 
         },
         popUpSubContainer:{
             backgroundColor: 'white',

@@ -6,24 +6,81 @@ import ProgressBar from '../../common/progressBar/ProgressBar'
 import IconSwitcher from '../../common/icons/IconSwitcher'
 import { colors } from '../../../config/theme'
 import { responsiveHeight, responsiveWidth } from '../../../utils/responsiveScale'
-import { ScrollView } from 'react-native-gesture-handler'
+import { ScrollView, TextInput } from 'react-native-gesture-handler'
+import { TouchableWithoutFeedback } from 'react-native'
+import { Keyboard } from 'react-native'
 
-const HotelInfo = ({ route: { params }, navigation: { goBack } }) => {
+const HotelInfo = ({ route: { params }, navigation: { goBack ,navigate} }) => {
     const [selectedRoom, setSelectedRoom] = useState(0);
     const [breakfastFilter, setBreakfastFilter] = useState(false);
     const [cancelFilter, setCancelFilter] = useState(false);
     const [heightAnim] = useState(new Animated.Value(responsiveHeight(8)));
     const { ResultIndex, HotelCode, SupplierHotelCodes, } = params.item
-    const { actions, fetchingHotelInfo, hotelInfoRes, bookingHotel, hotelStaticData, selectedHotelCheckInDate, selectedHotelCheckOutDate, hotelNights, hotelRoomArr, hotelSearchChild, domesticHotel } = useContext(MyContext)
+    const { actions, fetchingHotelInfo, hotelInfoRes, bookingHotel, hotelStaticData, selectedHotelCheckInDate, selectedHotelCheckOutDate, hotelNights, hotelRoomArr, hotelSearchChild, domesticHotel, userTripStatus } = useContext(MyContext)
     const hotelCheckIn = new Date(selectedHotelCheckInDate)
     const hotelCheckOut = new Date(selectedHotelCheckOutDate)
     const increasedHeight = bookingHotel?.selectedRoomType?.length >= 3 ? responsiveHeight(35) : responsiveHeight(30);
     const initialHeight = responsiveHeight(8);
     const [isExpanded, setIsExpanded] = useState(false);
     const [hotelDescriptionPopUp, setHotelDescriptionPopUp] = useState(false)
-    const[hotelImagesPopUp,setHotelImagesPopUp]=useState(false)
+    const [hotelImagesPopUp, setHotelImagesPopUp] = useState(false)
     const [mainImgIdx, setMainImgIdx] = useState(0);
-   const images=hotelInfoRes?.hotelInfo?.HotelInfoResult?.HotelDetails?.Images ? [...hotelInfoRes?.hotelInfo?.HotelInfoResult?.HotelDetails?.Images] : []
+    const [activeTab, setActiveTab] = useState("tab1");
+    const [submitIsOpen, setSubmitIsOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const myDate = new Date();
+    const myString = bookingHotel?.hotelSearchQuery?.split(',')[0].trim() + "trip";
+    const formattedDate = `${myDate.toLocaleString("default", {
+        month: "long"
+    })} ${myDate.getDate()}`;
+    const combinedString = `${myString}_${formattedDate}`;
+    var [defaultInput, setDefaultInput] = useState(combinedString);
+
+    const sortedTrips = userTripStatus.userTrips.slice().sort((a, b) => {
+        var aTime = new Date(a?.data?.date?.seconds * 1000);
+        var bTime = new Date(b?.data?.date?.seconds * 1000);
+        return bTime - aTime;
+    });
+    var addtoTrip = async (id) => {
+        await actions.editTripById(id,bookingHotel,"hotels");
+        await actions.getLastDoc();
+      }
+    const bookingrenderItem = ({ item }) => {
+        const date = getTime(item?.data?.date?.seconds);
+        const dateStr = date.toString().slice(4, 10);
+
+        return (
+            <TouchableOpacity style={styles.tripCard} onPress={() => {
+                addtoTrip(item.id)
+                navigate("TripDetails", { id: item.id });
+            }}>
+                <Text style={styles.tripTitle}>{item.data.name}</Text>
+                <Text style={styles.tripDate}>{dateStr}</Text>
+            </TouchableOpacity>
+        );
+    };
+
+    const handleInputChange = (e) => {
+        setDefaultInput(e)
+    }
+    const handleAddToTrip = async () => {
+
+        setIsLoading(true);
+        let newtripid = await actions.editTripBtn(defaultInput, "hotels", bookingHotel);
+        setIsLoading(false);
+        setSubmitIsOpen(false);
+        navigate("TripDetails", { id: newtripid });
+        await actions.getLastDoc();
+    };
+
+    var getTime = (seconds) => {
+        const timestampInSeconds = seconds;
+        const timestampInMilliseconds = timestampInSeconds * 1000;
+        const date = new Date(timestampInMilliseconds);
+        return date;
+    };
+
+    const images = hotelInfoRes?.hotelInfo?.HotelInfoResult?.HotelDetails?.Images ? [...hotelInfoRes?.hotelInfo?.HotelInfoResult?.HotelDetails?.Images] : []
     useEffect(() => {
         if (!fetchingHotelInfo) {
             console.log("calling BookingData")
@@ -146,24 +203,22 @@ const HotelInfo = ({ route: { params }, navigation: { goBack } }) => {
         setHotelDescriptionPopUp(!hotelDescriptionPopUp)
     }
 
-    const handleHotelImagesPopUp=()=>
-    {
+    const handleHotelImagesPopUp = () => {
         setHotelImagesPopUp(!hotelImagesPopUp)
     }
 
-    const handleSelectedHotelImage=(ind)=>
-    {
+    const handleSelectedHotelImage = (ind) => {
         setMainImgIdx(ind)
     }
-    const handleRenderHotelImages =({item,index})=>{
-return(
-    <TouchableOpacity style={{margin:responsiveHeight(1)}} onPress={()=>handleSelectedHotelImage(index)}>
-  <Image source={{uri:item}} style={{height:responsiveHeight(8),width:responsiveHeight(8),borderRadius:responsiveHeight(1)}}/>
-    </TouchableOpacity>
-)
+    const handleRenderHotelImages = ({ item, index }) => {
+        return (
+            <TouchableOpacity style={{ margin: responsiveHeight(1) }} onPress={() => handleSelectedHotelImage(index)}>
+                <Image source={{ uri: item }} style={{ height: responsiveHeight(8), width: responsiveHeight(8), borderRadius: responsiveHeight(1) }} />
+            </TouchableOpacity>
+        )
     }
     return (
-        <View style={styles.mainContainer}>
+        isLoading?<View style={{flex:1,alignItems:'center',justifyContent:'center'}}><ProgressBar/></View>:<View style={styles.mainContainer}>
             {
                 !fetchingHotelInfo ? <View style={styles.progessBarContainer}><ProgressBar /></View> :
                     hotelInfoRes && <View style={{ flex: 1 }}>
@@ -352,7 +407,10 @@ return(
 
                             <View style={styles.roomPriceContainer}>
                                 <Text style={styles.totalPriceText}>Total Price: <Text style={styles.totalPrice}>{` ₹ ${Math.ceil(bookingHotel?.hotelTotalPrice).toLocaleString("en-IN")} `}</Text></Text>
-                                <TouchableOpacity style={styles.addtotripBtn}>
+                                <TouchableOpacity style={styles.addtotripBtn} onPress={() => {
+                                    setSubmitIsOpen(true);
+                                    setDefaultInput(combinedString);
+                                }}>
                                     <Text style={styles.addtotripBtnText}>Add to trip</Text>
                                 </TouchableOpacity>
                             </View>
@@ -381,7 +439,6 @@ return(
                 </View>
             </Modal>
 
-
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -395,15 +452,80 @@ return(
                                 <IconSwitcher componentName='Entypo' iconName='cross' iconsize={3} color='black' />
                             </TouchableOpacity>
                             <View>
-                                <Image source={{uri:images[mainImgIdx]}} style={styles.popUpSelectedImg}/>
+                                <Image source={{ uri: images[mainImgIdx] }} style={styles.popUpSelectedImg} />
                             </View>
-                           {images.length > 0 ?
-                            <View style={{height:responsiveHeight(50),alignItems:"center",justifyContent:'center',paddingTop:responsiveHeight(2)}}>
-                                <FlatList data={images} renderItem={handleRenderHotelImages} numColumns={4} showsVerticalScrollIndicator={false}/>
-                            </View>
-                            :null}
+                            {images.length > 0 ?
+                                <View style={{ height: responsiveHeight(50), alignItems: "center", justifyContent: 'center', paddingTop: responsiveHeight(2) }}>
+                                    <FlatList data={images} renderItem={handleRenderHotelImages} numColumns={4} showsVerticalScrollIndicator={false} />
+                                </View>
+                                : null}
                         </View>
                     </View>
+                </View>
+            </Modal>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={submitIsOpen}
+            >
+                <View style={styles.modalMainContainer}>
+                    <View style={styles.modalOpacityLayer}></View>
+                    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                        <View style={styles.modelSubContainer1}>
+                            <View style={styles.modelSubContainer2}>
+                                <TouchableOpacity style={styles.modalIcon} onPress={() => setSubmitIsOpen(false)}>
+                                    <IconSwitcher componentName='Entypo' iconName='cross' iconsize={3} color='black' />
+                                </TouchableOpacity>
+                                {activeTab === 'tab1' ? <View style={styles.tripsContainer}>
+                                    <TouchableOpacity style={styles.createNewTripBtn} onPress={() => setActiveTab('tab2')}>
+                                        <Text style={styles.createNewTripBtnTitle}>Create New Trip</Text>
+                                        <IconSwitcher componentName='Entypo' iconName='plus' color={colors.black} iconsize={3} />
+                                    </TouchableOpacity>
+                                    <FlatList
+                                        data={sortedTrips}
+                                        renderItem={bookingrenderItem}
+                                        keyExtractor={(item) => item.id}
+                                        ListHeaderComponent={() => {
+                                            return (
+                                                <View >
+                                                    <Text style={styles.triptitles}>Or</Text>
+                                                    <Text style={styles.triptitles}>Select an existing trip</Text>
+                                                </View>
+                                            )
+                                        }}
+                                        ListHeaderComponentStyle={{ marginTop: responsiveHeight(1) }}
+
+                                        style={{ height: responsiveHeight(50) }}
+                                        contentContainerStyle={{ paddingHorizontal: responsiveWidth(3) }} />
+                                </View> :
+                                    <View style={styles.addingNewTripContainer}>
+                                        <TouchableOpacity onPress={() => setActiveTab('tab1')}>
+                                            <IconSwitcher componentName='MaterialCommunityIcons' iconName='arrow-left-thin' color={colors.primary} iconsize={4} />
+                                        </TouchableOpacity>
+                                        <View style={styles.addingNewTripSubContainer}>
+                                            <Text style={styles.newtriptitle}>Enter new trip Name</Text>
+                                            <TextInput
+                                                editable
+                                                multiline
+                                                numberOfLines={3}
+                                                placeholder='Enter name of your trip'
+                                                style={styles.multiTextContainer}
+                                                value={defaultInput}
+                                                onChangeText={handleInputChange} />
+                                            <TouchableOpacity style={styles.addingNewTripBtn} onPress={handleAddToTrip}>
+                                                <Text style={styles.addingNewTripBtnText}>Add to trip</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+
+
+
+                                }
+
+                            </View>
+                        </View>
+                    </TouchableWithoutFeedback>
                 </View>
             </Modal>
 

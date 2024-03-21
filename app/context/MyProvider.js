@@ -1821,10 +1821,10 @@ setHotelSearchText: (value) => {
             );
             return hotelObject;
           },
-        hotelSearch: async (query) => {
+        hotelSearch: async () => {
           await this.state.actions.getRecommondedHotelList()
           this.setState({
-            hotelSearchQuery: query,
+            hotelSearchQuery:this.state.selectedHotel ,
             hotelSessionStarted: false,
             hotelSessionEnded: false,
           });
@@ -2014,6 +2014,10 @@ setHotelSearchText: (value) => {
                   ...roomTypes
                 ]) * this.state.domesticHotel) / 100),
                 hotelSearchQuery: this.state.hotelSearchQuery,
+                hotelSearchQuery: {
+                  // cityHotel:this.state.hotelSearchQuery,
+                  cityDestName:this.state.selectedHotel,
+                },
                 hotelImages: hotelImg
               }
             });
@@ -2924,10 +2928,9 @@ getAllFlights :async (id, userId) => {
           return newtripdocRef.id;
         },
         
-        editTripById : async (id, data, type) => {
+        editTripById: async (id, data, type) => {
           try {
-            console.log('called');
-            this.setState({
+            const newState = {
               searchingFlights: false,
               searchingHotels: false,
               fetchingHotelInfo: false,
@@ -2936,63 +2939,55 @@ getAllFlights :async (id, userId) => {
               hotelResList: [],
               bookingFlight: [],
               bookingHotel: [],
-            });
-      
+            };
+            this.setState(newState);
             this.state.actions.setFlightBookPage(false);
-      
+        
             const tripDocRef = firestore()
               .collection("Accounts")
               .doc(this.state.userId)
               .collection("trips")
               .doc(id);
-      
+        
             if (type === "hotels") {
               const hotelDocRef = tripDocRef.collection("hotels");
               const newHotelDocRef = await hotelDocRef.add(data);
-      
-              await firestore()
-                .collection("Accounts")
-                .doc(this.state.userId)
-                .collection("trips")
-                .doc(id)
-                .update({
-                  hotels: firestore.FieldValue.arrayUnion({
-                    id: newHotelDocRef.id,
-                    status: "Not Submitted",
-                    date: new Date(),
-                    requestStatus: "Not Requested"
-                  })
-                });
+              await tripDocRef.update({
+                hotels: firestore.FieldValue.arrayUnion({
+                  id: newHotelDocRef.id,
+                  status: "Not Submitted",
+                  date: new Date(),
+                  requestStatus: "Not Requested",
+                }),
+              });
             }
-      
+        
             if (type === "flights") {
               const flightDocRef = tripDocRef.collection("flights");
-      
-              const flightData = data.map(flight => this.state.actions.arrToObj([flight]));
-      
-              await Promise.all( await flightData.map(async (flight) => {
-                const docRef = await flightDocRef.add(flight);
-                await firestore()
-                  .collection("Accounts")
-                  .doc(this.state.userId)
-                  .collection("trips")
-                  .doc(id)
-                  .update({
-                    flights:firestore.FieldValue.arrayUnion({
+        
+              const flightData = data.map((flight) => this.state.actions.arrToObj([flight]));
+        
+              // Adding flights to the trip
+              await Promise.all(
+                flightData.map(async (flight) => {
+                  const docRef = await flightDocRef.add(flight);
+                  await tripDocRef.update({
+                    flights: firestore.FieldValue.arrayUnion({
                       id: docRef.id,
                       status: "Not Submitted",
                       date: new Date(),
-                      requestStatus: "Not Requested"
-                    })
+                      requestStatus: "Not Requested",
+                    }),
                   });
-              }));
+                })
+              );
             }
-      
             await this.state.actions.getTripDocById(id, this.state.userId);
           } catch (error) {
             console.log(error);
           }
         },
+        
         deleteTripItem : async (tripId, itemId, itemType) => {
           try {
             const docRef = firestore().collection('Accounts').doc(this.state.userId).collection('trips').doc(tripId);

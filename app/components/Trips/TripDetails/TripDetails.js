@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+  import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, BackHandler, Image, ScrollView,TouchableOpacity } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import MyContext from '../../../context/Context';
@@ -415,6 +415,7 @@ const handleDelete = async () => {
                                 reqColor={reqColor}
                                 tripId={id}
                                 flightId={flight.id}
+                                tripsPage={true}
                               />
                             </>
                           )

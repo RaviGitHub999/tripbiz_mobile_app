@@ -16,7 +16,8 @@ const TripDetailsFlightCard = ({
     timeStamp,
     reqColor,
     tripId,
-    flightId
+    flightId,
+    tripsPage,
 }) => {
     var [stopDtls, setStopDtls] = useState([]);
     var [showStopDtls, setShowStopDtls] = useState(false);
@@ -27,7 +28,9 @@ const TripDetailsFlightCard = ({
     const [openDelete, setOpenDelete] = useState(false)
     const [deleteId, setDeleteId] = useState(false)
     const [deleteType, setDeleteType] = useState(false)
-    const { actions, flightsLogosData, flightResList, bookingFlight, flightResJType, } = useContext(MyContext)
+    const [openFlightPrice, setOpenFlightPrice] = useState(false)
+    const { actions, flightsLogosData, flightResList, bookingFlight, flightResJType,domesticFlight } = useContext(MyContext)
+    var fareData = tripsPage ? actions.getTotalFares([flightBooking]) : '';
     var flightArr = flightGrp.map((flight, f) => {
         return { ...actions.modifyFlightObject(flight) };
     });
@@ -41,10 +44,10 @@ const TripDetailsFlightCard = ({
         },
         [flightsLogosData],
     );
- const handleDelete = async () => {
+    const handleDelete = async () => {
         await actions.deleteTripItem(tripId, deleteId, deleteType);
         setOpenDelete(false)
-      }
+    }
     const handleRenderingFlightCard = ({ item }) => {
         var flightCode = '';
         item.flightCodes.forEach((code, c) => {
@@ -170,7 +173,7 @@ const TripDetailsFlightCard = ({
                                     flightStatus?.status ?
                                         <View style={styles.bookingStatusTitlesMainContainer}>
                                             <Text style={styles.bookingStatusTitles}>{`Booking Status : `}</Text>
-                                            <View style={[styles.bookingStatusTextContainer, { backgroundColor:  reqColor[0] ? reqColor[0]?.color : "#808080" }]}>
+                                            <View style={[styles.bookingStatusTextContainer, { backgroundColor: reqColor[0] ? reqColor[0]?.color : "#808080" }]}>
                                                 <Text style={styles.bookingStatusText}>{flightStatus.status}</Text>
                                             </View>
                                         </View> : null
@@ -179,7 +182,7 @@ const TripDetailsFlightCard = ({
 
                             <View style={styles.bookingStatusTitlesMainContainer}>
                                 <Text style={styles.bookingStatusTitles}>{`Booking Status : `}</Text>
-                                <View style={[styles.bookingStatusTextContainer, { backgroundColor:  reqColor[0] ? reqColor[0]?.color : "#808080" }]}>
+                                <View style={[styles.bookingStatusTextContainer, { backgroundColor: reqColor[0] ? reqColor[0]?.color : "#808080" }]}>
                                     <Text style={styles.bookingStatusText}>Not Submitted</Text>
                                 </View>
                             </View>
@@ -187,14 +190,16 @@ const TripDetailsFlightCard = ({
 
                     <View style={styles.bookingStatusTitlesMainContainer}>
                         <Text style={styles.bookingStatusTitles}>{`Approval Status : `}</Text>
-                        <View style={[styles.bookingStatusTextContainer, { backgroundColor:  reqColor[0] ? reqColor[0]?.color : "#808080"}]}>
+                        <View style={[styles.bookingStatusTextContainer, { backgroundColor: reqColor[0] ? reqColor[0]?.color : "#808080" }]}>
                             <Text style={styles.bookingStatusText}>{flightReq[0]?.requestStatus}</Text>
                         </View>
                     </View>
 
                     <View style={styles.hotelTotalPriceContainer}>
                         <Text style={styles.hotelTotalPrice}>{`Total Price : ₹ ${Math.ceil(flightBooking?.finalPrice)?.toLocaleString("en-IN")}`}</Text>
-                        <TouchableOpacity onPress={() => { }}>
+                        <TouchableOpacity onPress={() => {
+                            setOpenFlightPrice((prev) => !prev)
+                        }}>
                             <IconSwitcher componentName='Entypo' iconName='info-with-circle' color={colors.black} iconsize={1.8} />
                         </TouchableOpacity>
                     </View>
@@ -208,10 +213,10 @@ const TripDetailsFlightCard = ({
                     </View>
                     <>
                         <TouchableOpacity onPress={() => {
-                    setOpenDelete(true)
-                    setDeleteType("flights")
-                    setDeleteId(flightId)
-                  }}>
+                            setOpenDelete(true)
+                            setDeleteType("flights")
+                            setDeleteId(flightId)
+                        }}>
                             <IconSwitcher componentName='MaterialIcons' iconName='delete' color={colors.red} iconsize={2.5} />
                         </TouchableOpacity>
                     </>
@@ -417,20 +422,61 @@ const TripDetailsFlightCard = ({
             </PopUp>
 
             <PopUp value={openDelete} handlePopUpClose={() => {
-        setOpenDelete(false)
-      }}>
-        <Text style={styles.hotelDeleteMsg}>Are you sure you want to delete the trip item</Text>
-        <View style={styles.hotelDeletingBtnsContainer}>
-          <TouchableOpacity style={styles.hotelDeleteBtn} onPress={handleDelete}>
-            <Text style={styles.hotelDeleteBtnTitle}>Delete</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.hotelDeleteBtn} onPress={() => {
-                            setOpenDelete(false)
-                        }}>
-            <Text style={styles.hotelDeleteBtnTitle}>Go Back</Text>
-          </TouchableOpacity>
-        </View>
-      </PopUp>
+                setOpenDelete(false)
+            }}>
+                <Text style={styles.hotelDeleteMsg}>Are you sure you want to delete the trip item</Text>
+                <View style={styles.hotelDeletingBtnsContainer}>
+                    <TouchableOpacity style={styles.hotelDeleteBtn} onPress={handleDelete}>
+                        <Text style={styles.hotelDeleteBtnTitle}>Delete</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.hotelDeleteBtn} onPress={() => {
+                        setOpenDelete(false)
+                    }}>
+                        <Text style={styles.hotelDeleteBtnTitle}>Go Back</Text>
+                    </TouchableOpacity>
+                </View>
+            </PopUp>
+
+            <PopUp value={openFlightPrice} handlePopUpClose={() => {
+                setOpenFlightPrice((prev) => !prev)
+            }}>
+                <View style={styles.flightPriceAndChargesContainer}>
+                    {
+                        tripsPage ?
+                            <>
+                                {
+                                    [flightBooking].map((book, b) => {
+                                        return (
+                                            <View style={styles.flightDirectionMainContainer}>
+                                                <View style={styles.flightDirectionContainer}>
+                                                    <Text style={styles.airportName}>{`${book.flightNew.segments[0].originAirportCode}`}</Text>
+                                                    <IconSwitcher componentName='AntDesign' iconName='arrowright' color='black' iconsize={2} />
+                                                    <Text style={styles.airportName}>{`${book.flightNew.segments[0].destAirportCode}`}</Text>
+                                                </View>
+                                                <Text style={styles.flightPrice}>
+                                                    &#8377; {`${book.flight.Fare.OfferedFare
+                                                        ? Math.ceil(book.flight.Fare.OfferedFare).toLocaleString("en-IN")
+                                                        : Math.ceil(book.flight.Fare.PublishedFare).toLocaleString("en-IN")
+                                                        }`}
+                                                </Text>
+
+                                            </View>
+                                        )
+                                    })
+                                }
+                            </> : null
+                    }
+                    <View style={styles.horizontalLine} />
+                    <View style={styles.serviceCharges}>
+                        <Text style={styles.flightCharges}>Service Charges</Text>
+                        <Text style={styles.flightChargesPrice}>+ &#8377;{`${Math.ceil((fareData?.totalFareSum * domesticFlight) / 100)}`}</Text>
+                    </View>
+                </View>
+                <View style={styles.flightPriceContainer}>
+                    <Text style={styles.totalFareTitle}>Total fare</Text>
+                    <Text style={styles.totalFare}>&#8377; {` ${Math.ceil(fareData?.finalPrice).toLocaleString("en-IN")}`}</Text>
+                </View>
+            </PopUp>
         </View>
 
     )
@@ -665,22 +711,81 @@ const styles = StyleSheet.create({
     {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginTop:responsiveHeight(1.8),
-        paddingHorizontal:responsiveWidth(6)
+        marginTop: responsiveHeight(1.8),
+        paddingHorizontal: responsiveWidth(6)
     },
     hotelDeleteBtn:
     {
-borderWidth:1,
-paddingHorizontal:responsiveWidth(3),
-paddingVertical:responsiveHeight(0.8),
-borderRadius:responsiveHeight(1),
-backgroundColor:colors.primary
+        borderWidth: 1,
+        paddingHorizontal: responsiveWidth(3),
+        paddingVertical: responsiveHeight(0.8),
+        borderRadius: responsiveHeight(1),
+        backgroundColor: colors.primary
     },
     hotelDeleteBtnTitle:
     {
         fontSize: responsiveHeight(2),
         fontFamily: fonts.textInput,
         color: colors.white
+    },
+    flightDirectionMainContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+    flightDirectionContainer: {
+        flexDirection: "row",
+        alignItems: 'center',
+        gap: responsiveHeight(1)
+    },
+    flightPriceAndChargesContainer:
+    {
+        width: responsiveWidth(50),
+        gap: responsiveHeight(1.2)
+    },
+    airportName: {
+        fontSize: responsiveHeight(2),
+        fontFamily: fonts.textFont,
+        color: colors.lightGray
+    },
+    flightCharges: {
+        fontSize: responsiveHeight(2),
+        fontFamily: fonts.textFont,
+        color: colors.lightGray
+    },
+    flightChargesPrice: {
+        fontSize: responsiveHeight(2.2),
+        fontFamily: fonts.primary,
+        color: colors.highlight
+    },
+    flightPrice: {
+        fontSize: responsiveHeight(2.2),
+        fontFamily: fonts.primary,
+        color: colors.highlight
+    },
+    horizontalLine: {
+        borderTopWidth: responsiveHeight(0.13),
+        borderStyle: 'dashed',
+        borderColor: colors.gray
+    },
+    flightPriceContainer:
+    {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: responsiveHeight(2.8)
+    },
+    totalFareTitle: {
+        fontSize: responsiveHeight(2.5),
+        fontFamily: fonts.primary,
+        color: colors.primary
+    }, totalFare: {
+        fontSize: responsiveHeight(2.5),
+        fontFamily: fonts.primary,
+        color: colors.secondary
+    },
+    serviceCharges: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: "center"
     }
 })
 export default TripDetailsFlightCard

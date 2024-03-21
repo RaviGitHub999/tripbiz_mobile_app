@@ -8,8 +8,6 @@ export const styles = StyleSheet.create(
     mainContainer: {
       flex: 1,
       backgroundColor: colors.white,
-      // borderWidth: 2,
-      // borderColor: 'green',
       paddingHorizontal: responsiveWidth(4),
     },
     progessBarContainer: {
@@ -277,7 +275,120 @@ color:colors.white,
       height:responsiveHeight(20),
       width:"100%",
       borderRadius:responsiveHeight(2)
-    }
+    },
+    modalMainContainer: {
+      flex: 1
+  },
+  modalOpacityLayer: {
+    height: "100%",
+    width: "100%",
+    backgroundColor: colors.black,
+    position: "absolute",
+    opacity: 0.5,
+},
+modelSubContainer1: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: responsiveWidth(3), 
+},
+modelSubContainer2: {
+    backgroundColor: 'white',
+    width: '100%',
+    paddingVertical: responsiveHeight(2),
+    paddingHorizontal: responsiveWidth(2.5),
+    borderRadius: responsiveHeight(1.2),
+
+},
+modalIcon: {
+    alignItems: 'flex-end'
+},
+tripsContainer: {
+    // borderWidth: 1,
+    alignItems: 'center',
+},
+createNewTripBtn: {
+    borderWidth: responsiveHeight(0.2),
+    flexDirection: 'row',
+    gap: responsiveHeight(1),
+    alignItems: 'center',
+    paddingHorizontal: responsiveWidth(8),
+    paddingVertical: responsiveHeight(1),
+    borderStyle: 'dashed',
+    backgroundColor: "#edf8f4",
+    borderRadius: responsiveHeight(0.8),
+    width:'90%',
+    justifyContent:'center'
+},
+createNewTripBtnTitle: {
+    fontSize: responsiveHeight(2),
+    fontFamily: fonts.primary,
+    color: colors.primary
+},
+triptitles: {
+    fontSize: responsiveHeight(2),
+    fontFamily: fonts.primary,
+    color: colors.primary,
+    textAlign: 'center'
+},
+tripCard: {
+    marginVertical: responsiveHeight(0.5),
+    paddingHorizontal: responsiveWidth(4),
+    paddingVertical: responsiveHeight(2),
+    borderRadius: responsiveHeight(1.5),
+    backgroundColor: colors.white,
+    shadowColor: colors.black,
+    shadowOffset: { width: responsiveWidth(-0.2), height: responsiveHeight(-5) },
+    shadowOpacity: responsiveHeight(0.3),
+    shadowRadius: responsiveHeight(3),
+    elevation: responsiveHeight(0.4),
+    width: "100%"
+},
+tripTitle: {
+    fontSize: responsiveHeight(2),
+    fontFamily: fonts.primary,
+    color: colors.primary
+},
+tripDate: {
+    fontSize: responsiveHeight(1.7),
+    fontFamily: fonts.textFont,
+    color: colors.highlight
+},
+addingNewTripContainer:{
+    gap:responsiveHeight(1.5)
+},
+addingNewTripSubContainer:{
+    gap:responsiveHeight(1)
+},
+addingNewTripBtn:{
+    borderWidth: 1,
+    padding: responsiveHeight(1),
+    paddingHorizontal: responsiveWidth(3),
+    paddingVertical:responsiveHeight(1.5),
+    borderRadius: responsiveHeight(1.3),
+    backgroundColor: colors.black,
+    alignItems:'center',
+    alignSelf:'center',
+    width:"60%"
+},
+addingNewTripBtnText:{
+    color: colors.white,
+    fontSize: responsiveHeight(2),
+    fontFamily: fonts.primary
+},
+multiTextContainer:{
+    borderWidth: 1, 
+    textAlignVertical: "top", 
+    borderRadius: responsiveHeight(1.3),
+    paddingHorizontal:responsiveWidth(3),
+    fontSize:responsiveHeight(2.3)
+},
+newtriptitle:{
+    fontSize: responsiveHeight(2.5),
+    fontFamily: fonts.primary,
+    color: colors.primary,
+    // textAlign: 'center'
+}
   },
   
 )
