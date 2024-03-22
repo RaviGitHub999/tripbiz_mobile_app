@@ -363,5 +363,33 @@ export const styles = StyleSheet.create({
         fontFamily: fonts.primary,
         color: colors.primary,
         // textAlign: 'center'
+    },
+    fareRuleBtn:{
+        marginTop: responsiveHeight(2),
+        marginHorizontal: responsiveHeight(1.8),
+    },
+    fareRule:{
+        fontSize:responsiveHeight(2),
+        fontFamily:fonts.primary,
+        color:colors.facebook,
+        textDecorationLine:'underline',
+    },
+    noteCon:{
+        marginTop: responsiveHeight(2),
+        marginHorizontal: responsiveHeight(1.8),
+        padding:responsiveHeight(1.2),
+        borderRadius:responsiveHeight(1.5),
+        backgroundColor:'#ffe3d5'
+    },
+    imp:{
+        fontSize: responsiveHeight(1.6),
+        fontFamily: fonts.primary,
+        color: colors.primary,  
+    },
+    note:{
+        fontSize: responsiveHeight(1.3),
+        fontFamily: fonts.textFont,
+        color: colors.lightGray,
+        lineHeight:responsiveHeight(2)
     }
 })

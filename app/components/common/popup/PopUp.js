@@ -5,7 +5,7 @@ import IconSwitcher from '../icons/IconSwitcher'
 import { responsiveHeight, responsiveWidth } from '../../../utils/responsiveScale'
 
 const PopUp = (props) => {
-   const {value,handlePopUpClose}=props
+   const {value,handlePopUpClose,customStyles}=props
    
     return (
        value? 
@@ -21,7 +21,7 @@ const PopUp = (props) => {
                                 <IconSwitcher componentName='Entypo' iconName='cross' iconsize={3} color='black' />
                             </TouchableOpacity>
                             <View style={styles.contentMainBox}>
-                                <View style={styles.contentSubBox}>
+                                <View style={customStyles?customStyles:styles.contentSubBox}>
                               {props.children}
                                 </View>
                             </View>

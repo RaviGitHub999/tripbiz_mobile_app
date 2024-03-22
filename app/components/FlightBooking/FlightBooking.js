@@ -8,6 +8,8 @@ import FlightCard from '../flightList/FlightCard'
 import { colors, fonts } from '../../config/theme'
 import Select from '../common/select/Select'
 import { responsiveHeight, responsiveWidth } from '../../utils/responsiveScale'
+import { WebView } from 'react-native-webview';
+import PopUp from '../common/popup/PopUp'
 const seatsSelect = (seatsSeg, pax, seatCode) => {
     if (!seatsSeg) {
         seatsSeg = [];
@@ -22,7 +24,7 @@ const seatsSelect = (seatsSeg, pax, seatCode) => {
 };
 
 
-const FlightBooking = ({navigation:{navigate}}) => {
+const FlightBooking = ({ navigation: { navigate } }) => {
     var [bookIndex, setBookIndex] = useState(0);
     var [segIndex, setSegIndex] = useState(0);
     var [seatSegIdx, setSeatSegIdx] = useState(0);
@@ -38,18 +40,18 @@ const FlightBooking = ({navigation:{navigate}}) => {
     const [isLoading, setIsLoading] = useState(false);
     console.log('flightBooking')
     const animatedValue = useRef(new Animated.Value(0)).current;
-    const { actions,flightBookDataLoading, bookingFlight, domesticFlight, internationalFlight, isInternationalRound, userTripStatus, } = useContext(MyContext)
-    var { totalFareSum, totalSeatCharges, totalBaggagePrice, totalMealPrice ,finalPrice} =
+    const { actions, flightBookDataLoading, bookingFlight, domesticFlight, internationalFlight, isInternationalRound, userTripStatus, } = useContext(MyContext)
+    var { totalFareSum, totalSeatCharges, totalBaggagePrice, totalMealPrice, finalPrice } =
         actions.getTotalFares(bookingFlight);
     // console.log(userTripStatus,"userTripStatus........")
 
     var myDate = bookingFlight[0].flight.Segments[0][bookingFlight[0].flight.Segments[0].length - 1].Origin.DepTime;
     // console.log(bookingFlight[0].flight.Segments[0][bookingFlight[0].flight.Segments[0].length - 1].Origin.DepTime)
-      var myStr = bookingFlight[0].flight.Segments[0][bookingFlight[0].flight.Segments[0].length - 1]?.Destination?.Airport?.CityName + "_trip"
-      const date = new Date(myDate)
-      const formattedDate = `${date.toLocaleString('default', { month: 'long' })} ${date.getDate()}`;
-      const combinedString = `${myStr}_${formattedDate}`;
-      var [defaultInput, setDefaultInput] = useState(combinedString);
+    var myStr = bookingFlight[0].flight.Segments[0][bookingFlight[0].flight.Segments[0].length - 1]?.Destination?.Airport?.CityName + "_trip"
+    const date = new Date(myDate)
+    const formattedDate = `${date.toLocaleString('default', { month: 'long' })} ${date.getDate()}`;
+    const combinedString = `${myStr}_${formattedDate}`;
+    var [defaultInput, setDefaultInput] = useState(combinedString);
 
 
     if (flightBookDataLoading) {
@@ -128,7 +130,7 @@ const FlightBooking = ({navigation:{navigate}}) => {
     var addtoTrip = async (id) => {
         await actions.editTripById(id, [...bookingFlight], "flights");
         await actions.getLastDoc();
-      }
+    }
     const renderItem = ({ item }) => {
         const date = getTime(item?.data?.date?.seconds);
         const dateStr = date.toString().slice(4, 10);
@@ -136,8 +138,8 @@ const FlightBooking = ({navigation:{navigate}}) => {
         return (
             <TouchableOpacity style={styles.tripCard} onPress={() => {
                 addtoTrip(item.id)
-                navigate("TripDetails",{id:item.id});
-              }}>
+                navigate("TripDetails", { id: item.id });
+            }}>
                 <Text style={styles.tripTitle}>{item.data.name}</Text>
                 <Text style={styles.tripDate}>{dateStr}</Text>
             </TouchableOpacity>
@@ -145,41 +147,41 @@ const FlightBooking = ({navigation:{navigate}}) => {
     };
     const handleInputChange = (e) => {
         setDefaultInput(e)
-      }
+    }
     // const handleAddToTrip = async () => {
 
     //   const newtripid = await actions.editTripBtn(defaultInput, "flights", bookingFlight);
     //     // //actions.setFlightSession(true);
-    
+
     //     navigate("TripDetails",{id:newtripid})
     //     // navigate(`/trips/${newtripid}`, { state: { userId: userId } })
     //     // //await actions.getAllTrips(userId);
     //     await actions.getLastDoc();
     //   }
-   
 
-//     useEffect(()=>
-//     {
-//         // actions.editTripBtn(defaultInput, "flights", bookingFlight)
-// console.log("hsgda")
-//     },[])
-   const handleAddToTrip = async () => {
 
-    setIsLoading(true);
-    let newtripid = await actions.editTripBtn(defaultInput, "flights", bookingFlight);
-    setIsLoading(false);
-    setSubmitIsOpen(false);
-    navigate("TripDetails",{id:newtripid});
-    await actions.getLastDoc();
-  };
-    
+    //     useEffect(()=>
+    //     {
+    //         // actions.editTripBtn(defaultInput, "flights", bookingFlight)
+    // console.log("hsgda")
+    //     },[])
+    const handleAddToTrip = async () => {
+
+        setIsLoading(true);
+        let newtripid = await actions.editTripBtn(defaultInput, "flights", bookingFlight);
+        setIsLoading(false);
+        setSubmitIsOpen(false);
+        navigate("TripDetails", { id: newtripid });
+        await actions.getLastDoc();
+    };
+    console.log(bookingFlight[bookIndex].fareRules, "fareRules");
     return (
-       isLoading?<View style={{flex:1,alignItems:'center',justifyContent:'center'}}><ProgressBar/></View>: <View style={{ flex: 1 }}>
-            <TouchableOpacity  style={styles.backBtnContainer}>
+        isLoading ? <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><ProgressBar /></View> : <View style={{ flex: 1 }}>
+            <TouchableOpacity style={styles.backBtnContainer}>
                 <IconSwitcher componentName='AntDesign' iconName='arrowleft' color='black' iconsize={3} />
             </TouchableOpacity>
             <View style={{ flex: 2 }}>
-                <ScrollView nestedScrollEnabled contentContainerStyle={{ paddingBottom: 20 }} style={{ backgroundColor: colors.white }}>
+                <ScrollView nestedScrollEnabled contentContainerStyle={{ paddingBottom: 20 }} style={{ backgroundColor: colors.white }} >
                     <FlatList data={bookingFlight} renderItem={({ item, index }) => {
                         return (
                             <View style={{ paddingVertical: responsiveHeight(1) }}>
@@ -322,6 +324,14 @@ const FlightBooking = ({navigation:{navigate}}) => {
                             </View>
                         </View>
                     </View> : null}
+                    <TouchableOpacity style={styles.fareRuleBtn} onPress={() => setFareIsOpen(true)}>
+                        <Text style={styles.fareRule}>Fare Rules</Text>
+                    </TouchableOpacity>
+
+                    <View style={styles.noteCon}>
+                        <Text style={styles.imp}>*Important  <Text style={styles.note}>The airline fee is indicative. We do not guarantee the accuracy of this information. All fees mentioned are per passenger. Date change charges are applicable only on selecting the same airline on a new date. The difference in fares between the old and the new booking will also be payable by the user. If you require further information, please refer the Airline website for detailed fare rales for different fare types.</Text></Text>
+                    </View>                      
+
                     {
                         bookingFlight[bookIndex].seatData &&
                             bookingFlight[bookIndex].seatData[segIndex] &&
@@ -371,6 +381,7 @@ const FlightBooking = ({navigation:{navigate}}) => {
                                 </TouchableOpacity>
                             </View> : null
                     }
+
                 </ScrollView>
             </View>
             <View style={[styles.totalFareContainer, isOpen && { flex: 1 }]}>
@@ -643,62 +654,69 @@ const FlightBooking = ({navigation:{navigate}}) => {
                 <View style={styles.modalMainContainer}>
                     <View style={styles.modalOpacityLayer}></View>
                     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                    <View style={styles.modelSubContainer1}>
-                        <View style={styles.modelSubContainer2}>
-                            <TouchableOpacity style={styles.modalIcon} onPress={() => setSubmitIsOpen(false)}>
-                                <IconSwitcher componentName='Entypo' iconName='cross' iconsize={3} color='black' />
-                            </TouchableOpacity>
-                            {activeTab === 'tab1' ? <View style={styles.tripsContainer}>
-                                <TouchableOpacity style={styles.createNewTripBtn} onPress={() => setActiveTab('tab2')}>
-                                    <Text style={styles.createNewTripBtnTitle}>Create New Trip</Text>
-                                    <IconSwitcher componentName='Entypo' iconName='plus' color={colors.black} iconsize={3} />
+                        <View style={styles.modelSubContainer1}>
+                            <View style={styles.modelSubContainer2}>
+                                <TouchableOpacity style={styles.modalIcon} onPress={() => setSubmitIsOpen(false)}>
+                                    <IconSwitcher componentName='Entypo' iconName='cross' iconsize={3} color='black' />
                                 </TouchableOpacity>
-                                <FlatList
-                                    data={sortedTrips}
-                                    renderItem={renderItem}
-                                    keyExtractor={(item) => item.id}
-                                    ListHeaderComponent={() => {
-                                        return (
-                                            <View >
-                                                <Text style={styles.triptitles}>Or</Text>
-                                                <Text style={styles.triptitles}>Select an existing trip</Text>
-                                            </View>
-                                        )
-                                    }}
-                                    ListHeaderComponentStyle={{ marginTop: responsiveHeight(1) }}
-
-                                    style={{ height: responsiveHeight(50) }}
-                                    contentContainerStyle={{ paddingHorizontal: responsiveWidth(3) }} />
-                            </View> :
-                                <View style={styles.addingNewTripContainer}>
-                                    <TouchableOpacity onPress={() => setActiveTab('tab1')}>
-                                    <IconSwitcher componentName='MaterialCommunityIcons' iconName='arrow-left-thin' color={colors.primary} iconsize={4} />
+                                {activeTab === 'tab1' ? <View style={styles.tripsContainer}>
+                                    <TouchableOpacity style={styles.createNewTripBtn} onPress={() => setActiveTab('tab2')}>
+                                        <Text style={styles.createNewTripBtnTitle}>Create New Trip</Text>
+                                        <IconSwitcher componentName='Entypo' iconName='plus' color={colors.black} iconsize={3} />
                                     </TouchableOpacity>
-                                    <View style={styles.addingNewTripSubContainer}>
-                                        <Text style={styles.newtriptitle}>Enter new trip Name</Text>
-                                        <TextInput
-                                            editable
-                                            multiline
-                                            numberOfLines={3}
-                                            placeholder='Enter name of your trip'
-                                            style={styles.multiTextContainer} 
-                                            value={defaultInput}
-                                            onChangeText={handleInputChange}/>
-                                        <TouchableOpacity style={styles.addingNewTripBtn} onPress={handleAddToTrip}>
-                                            <Text style={styles.addingNewTripBtnText}>Add to trip</Text>
+                                    <FlatList
+                                        data={sortedTrips}
+                                        renderItem={renderItem}
+                                        keyExtractor={(item) => item.id}
+                                        ListHeaderComponent={() => {
+                                            return (
+                                                <View >
+                                                    <Text style={styles.triptitles}>Or</Text>
+                                                    <Text style={styles.triptitles}>Select an existing trip</Text>
+                                                </View>
+                                            )
+                                        }}
+                                        ListHeaderComponentStyle={{ marginTop: responsiveHeight(1) }}
+
+                                        style={{ height: responsiveHeight(50) }}
+                                        contentContainerStyle={{ paddingHorizontal: responsiveWidth(3) }} />
+                                </View> :
+                                    <View style={styles.addingNewTripContainer}>
+                                        <TouchableOpacity onPress={() => setActiveTab('tab1')}>
+                                            <IconSwitcher componentName='MaterialCommunityIcons' iconName='arrow-left-thin' color={colors.primary} iconsize={4} />
                                         </TouchableOpacity>
+                                        <View style={styles.addingNewTripSubContainer}>
+                                            <Text style={styles.newtriptitle}>Enter new trip Name</Text>
+                                            <TextInput
+                                                editable
+                                                multiline
+                                                numberOfLines={3}
+                                                placeholder='Enter name of your trip'
+                                                style={styles.multiTextContainer}
+                                                value={defaultInput}
+                                                onChangeText={handleInputChange} />
+                                            <TouchableOpacity style={styles.addingNewTripBtn} onPress={handleAddToTrip}>
+                                                <Text style={styles.addingNewTripBtnText}>Add to trip</Text>
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
-                                </View>
 
 
 
-                            }
+                                }
 
+                            </View>
                         </View>
-                    </View>
                     </TouchableWithoutFeedback>
                 </View>
             </Modal>
+            <PopUp value={fareIsOpen} handlePopUpClose={() => setFareIsOpen(false)} customStyles={{ width: "100%" }}>
+                <View style={{ height: responsiveHeight(40) }}>
+                    <WebView
+                        source={{ html: bookingFlight[bookIndex].fareRules }}
+                        nestedScrollEnabled />
+                </View>
+            </PopUp>
         </View>
     )
 }

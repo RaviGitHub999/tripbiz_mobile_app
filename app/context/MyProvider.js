@@ -1719,7 +1719,9 @@ setHotelSearchText: (value) => {
             flightResult: flightRes.flightResult.Response,
             flightSearchToken: flightRes.tokenId,
             searchingFlights: false,
-            flightSessionStarted: true
+            flightSessionStarted: true,
+            flightTraceId: flightRes.flightResult.Response.TraceId,
+            flightResult: flightRes.flightResult.Response,
           });
           setTimeout(() => {
             this.setState(
@@ -2173,16 +2175,47 @@ selectHotelRoomType: (room, selectedRoom, r) => {
   });
 },
 
+fetchFareRule: async (resultIndex, airlineName, fare) => {
+  if (!this.state.flightSessionExpired) {
+    console.log(
+      `Fare rule running for ${airlineName}(${fare.toLocaleString(
+        "en-IN"
+      )}/-)`
+    );
+    var request = {
+      traceId: this.state.flightTraceId,
+      resultIndex
+    };
+
+    var fareRuleRes = await fetch(
+      "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/flightFareRule",
+      {
+        method: "POST",
+        // credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(request)
+      }
+    )
+      .then((res) => res.json())
+      .catch((err) => console.log(err));
+    return fareRuleRes.fareRuleResult.Response.FareRules[0].FareRuleDetail
+  } else {
+    console.log(
+      "Flight session expired, Please make a search request again"
+    );
+  }
+},
 
 
-
-        populateBookData: (bookingFlight, flightBookData) => {
+        populateBookData: (bookingFlight, flightBookData,fareData) => {
           bookingFlight.forEach((book, bookIndex) => {
             if (flightBookData && flightBookData[bookIndex]) {
               // if(flightBookData[bookIndex].fareRules){
 
               // }
-
+              book.fareRules = fareData[bookIndex]
               if (
                 flightBookData[bookIndex].ssrResult &&
                 flightBookData[bookIndex].ssrResult.Response
@@ -2216,16 +2249,16 @@ selectHotelRoomType: (room, selectedRoom, r) => {
 
             var bookReqs = [];
             var bookReqList = [];
-
+            var fareReq = []
             bookingFlight.forEach((flightB, b) => {
               var request = {
                 tokenId: this.state.flightSearchToken,
-                traceId: this.state.flightResult.TraceId,
+                traceId: this.state.flightTraceId,
                 resultIndex: flightB.resultIndex
               };
 
               bookReqList.push(request);
-
+              fareReq.push(this.state.actions.fetchFareRule(flightB.resultIndex, "indigo", 100),)
               bookReqs.push(
                 fetch(
                   "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/flightBookData",
@@ -2246,8 +2279,8 @@ selectHotelRoomType: (room, selectedRoom, r) => {
             console.log("Flight booking req", bookReqList);
 
             var flightBookData = await Promise.all(bookReqs);
-
-            this.state.actions.populateBookData(bookingFlight, flightBookData);
+            var fareData = await Promise.all(fareReq)
+            this.state.actions.populateBookData(bookingFlight, flightBookData,fareData);
 
             console.log("Flight booking res", flightBookData);
             this.setState({
