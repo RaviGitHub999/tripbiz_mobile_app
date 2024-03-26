@@ -29,12 +29,12 @@ const HotelInfo = ({ route: { params }, navigation: { goBack ,navigate} }) => {
     const [submitIsOpen, setSubmitIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const myDate = new Date();
-    const myString = bookingHotel?.hotelSearchQuery?.split(',')[0].trim() + "trip";
-    const formattedDate = `${myDate.toLocaleString("default", {
-        month: "long"
-    })} ${myDate.getDate()}`;
-    const combinedString = `${myString}_${formattedDate}`;
-    var [defaultInput, setDefaultInput] = useState(combinedString);
+    // const myString = bookingHotel?.hotelSearchQuery?.split(',')[0].trim() + "trip";
+    // const formattedDate = `${myDate.toLocaleString("default", {
+    //     month: "long"
+    // })} ${myDate.getDate()}`;
+    // const combinedString = `${myString}_${formattedDate}`;
+    // var [defaultInput, setDefaultInput] = useState(combinedString);
 
     const sortedTrips = userTripStatus.userTrips.slice().sort((a, b) => {
         var aTime = new Date(a?.data?.date?.seconds * 1000);
@@ -42,8 +42,8 @@ const HotelInfo = ({ route: { params }, navigation: { goBack ,navigate} }) => {
         return bTime - aTime;
     });
     var addtoTrip = async (id) => {
-        await actions.editTripById(id,bookingHotel,"hotels");
-        await actions.getLastDoc();
+        // await actions.editTripById(id,bookingHotel,"hotels");
+        // await actions.getLastDoc();
       }
     const bookingrenderItem = ({ item }) => {
         const date = getTime(item?.data?.date?.seconds);

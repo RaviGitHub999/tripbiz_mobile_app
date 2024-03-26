@@ -1,5 +1,5 @@
 
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useContext, useMemo, useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import IconSwitcher from '../common/icons/IconSwitcher';
 import { colors, fonts } from '../../config/theme';
@@ -9,6 +9,7 @@ import FlightsSearch from '../flight/FlightsSearch';
 import HotelSearch from '../hotel/HotelSearch';
 import { KeyboardAvoidingView } from 'react-native';
 import { Platform } from 'react-native';
+import MyContext from '../../context/Context';
 //'flights', 'hotel', 'bus', 'train'
 const components = [
   {
@@ -35,7 +36,7 @@ const components = [
 
 
 const HomeScreen = (props: any) => {
-  const [activeComponent, setActiveComponent] = useState(components[0].categoryName);
+  const{activeComponent,actions,flatListRef}=useContext(MyContext)
   const getContentMemoized = useMemo(() => {
     return (component: string, props: any) => {
       switch (component) {
@@ -52,13 +53,6 @@ const HomeScreen = (props: any) => {
       }
     };
   }, [])
-  const flatListRef = useRef<FlatList>(null)
-  const switchComponent = (component: string) => {
-    setActiveComponent(component);
-    const selectedIndex = components.findIndex((item) => item.categoryName === component);
-    flatListRef.current?.scrollToIndex({ animated: true, index: selectedIndex });
-  };
-console.log("home")
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -70,7 +64,7 @@ console.log("home")
             return (
               <TouchableOpacity
                 style={[styles.navItem, activeComponent === item.categoryName && styles.active]}
-                onPress={() => switchComponent(item.categoryName)}>
+                onPress={() => actions.switchComponent(item.categoryName)}>
                 <View style={styles.categoriesContainer}>
                   <IconSwitcher componentName={item.componentName} color={activeComponent === item.categoryName ? colors.white : colors.primary} iconName={item.iconName} iconsize={3.2} />
                   <Text style={activeComponent === item.categoryName ? styles.categoryName : { ...styles.categoryName, color: colors.primary }}>{item.categoryName}</Text>

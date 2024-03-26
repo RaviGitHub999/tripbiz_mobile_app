@@ -336,7 +336,7 @@ const FlightCard = ({
       )}
 { flightArr.length > 1?<TouchableOpacity style={styles.viewAllPrice} onPress={toggle}>
         <Text style={styles.viewAllPriceTitle}>View Prices</Text>
-        <IconSwitcher componentName='Feather' iconName={isOpen ? "chevron-down" : 'chevron-up'} iconsize={2.5} color={colors.black} />
+        <IconSwitcher componentName='Feather' iconName={isOpen ? "chevron-up" : 'chevron-down'} iconsize={2.5} color={colors.black} />
       </TouchableOpacity>:null}
      {isOpen&& <View>
         {

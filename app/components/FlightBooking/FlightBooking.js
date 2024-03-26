@@ -1,5 +1,5 @@
-import { TextInput, Animated, Modal, Text, View, FlatList, ScrollView, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard, ActivityIndicator } from 'react-native'
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { TextInput,Modal, Text, View, FlatList, ScrollView, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard, LayoutAnimation } from 'react-native'
+import React, {useContext,useState } from 'react'
 import IconSwitcher from '../common/icons/IconSwitcher'
 import MyContext from '../../context/Context'
 import ProgressBar from '../common/progressBar/ProgressBar'
@@ -36,17 +36,12 @@ const FlightBooking = ({ navigation: { navigate } }) => {
     var [submitIsOpen, setSubmitIsOpen] = useState(false);
     var [seatOpen, setSeatOpen] = useState(true);
     var [activeTab, setActiveTab] = useState('tab1');
-    const [isOpen, setIsOpen] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    console.log('flightBooking')
-    const animatedValue = useRef(new Animated.Value(0)).current;
-    const { actions, flightBookDataLoading, bookingFlight, domesticFlight, internationalFlight, isInternationalRound, userTripStatus, } = useContext(MyContext)
+    const { actions, selectedTripId, selectedTrip, flightBookDataLoading, bookingFlight, domesticFlight, internationalFlight, isInternationalRound, userTripStatus, } = useContext(MyContext)
     var { totalFareSum, totalSeatCharges, totalBaggagePrice, totalMealPrice, finalPrice } =
         actions.getTotalFares(bookingFlight);
-    // console.log(userTripStatus,"userTripStatus........")
-
     var myDate = bookingFlight[0].flight.Segments[0][bookingFlight[0].flight.Segments[0].length - 1].Origin.DepTime;
-    // console.log(bookingFlight[0].flight.Segments[0][bookingFlight[0].flight.Segments[0].length - 1].Origin.DepTime)
     var myStr = bookingFlight[0].flight.Segments[0][bookingFlight[0].flight.Segments[0].length - 1]?.Destination?.Airport?.CityName + "_trip"
     const date = new Date(myDate)
     const formattedDate = `${date.toLocaleString('default', { month: 'long' })} ${date.getDate()}`;
@@ -61,21 +56,9 @@ const FlightBooking = ({ navigation: { navigate } }) => {
             </View>
         );
     }
-    const toggleView = () => {
-        Animated.timing(animatedValue, {
-            toValue: isOpen ? 0 : 1,
-            duration: 300,
-            useNativeDriver: true,
-        }).start(() => {
-            setIsOpen(!isOpen);
-        });
-    };
-    const translateY = animatedValue.interpolate({
-        inputRange: [0, 1],
-        outputRange: [300, 0],
-    });
-    const animatedStyles = {
-        transform: [{ translateY }],
+    const toggleHeight = () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setIsExpanded(!isExpanded);
     };
     const changeBookIndex = (value) => {
         setBookIndex(value);
@@ -109,12 +92,6 @@ const FlightBooking = ({ navigation: { navigate } }) => {
 
         setSelectedSeats(selectedSeats);
     }
-    // const handleBackButtonPress = () => {
-    //     actions.setFlightBookPage(false);
-    //     actions.setBookingFlight([]);
-    //     actions.setFlightResJType(0)
-    //     // navigation.goBack()
-    // };
     const sortedTrips = userTripStatus.userTrips.slice().sort((a, b) => {
         var aTime = new Date(a?.data?.date?.seconds * 1000);
         var bTime = new Date(b?.data?.date?.seconds * 1000);
@@ -148,25 +125,7 @@ const FlightBooking = ({ navigation: { navigate } }) => {
     const handleInputChange = (e) => {
         setDefaultInput(e)
     }
-    // const handleAddToTrip = async () => {
-
-    //   const newtripid = await actions.editTripBtn(defaultInput, "flights", bookingFlight);
-    //     // //actions.setFlightSession(true);
-
-    //     navigate("TripDetails",{id:newtripid})
-    //     // navigate(`/trips/${newtripid}`, { state: { userId: userId } })
-    //     // //await actions.getAllTrips(userId);
-    //     await actions.getLastDoc();
-    //   }
-
-
-    //     useEffect(()=>
-    //     {
-    //         // actions.editTripBtn(defaultInput, "flights", bookingFlight)
-    // console.log("hsgda")
-    //     },[])
     const handleAddToTrip = async () => {
-
         setIsLoading(true);
         let newtripid = await actions.editTripBtn(defaultInput, "flights", bookingFlight);
         setIsLoading(false);
@@ -174,13 +133,16 @@ const FlightBooking = ({ navigation: { navigate } }) => {
         navigate("TripDetails", { id: newtripid });
         await actions.getLastDoc();
     };
-    console.log(bookingFlight[bookIndex].fareRules, "fareRules");
     return (
-        isLoading ? <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><ProgressBar /></View> : <View style={{ flex: 1 }}>
-            <TouchableOpacity style={styles.backBtnContainer}>
-                <IconSwitcher componentName='AntDesign' iconName='arrowleft' color='black' iconsize={3} />
-            </TouchableOpacity>
-            <View style={{ flex: 2 }}>
+        isLoading ? <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><ProgressBar /></View> :
+            <View style={{ flex: 1 }}>
+                <TouchableOpacity style={styles.backBtnContainer} onPress={() => {
+                    actions.setFlightBookPage(false);
+                    actions.setBookingFlight([]);
+                }}>
+                    <IconSwitcher componentName='AntDesign' iconName='arrowleft' color='black' iconsize={3} />
+                </TouchableOpacity>
+                {/* <View style={{ flex: 2 }}> */}
                 <ScrollView nestedScrollEnabled contentContainerStyle={{ paddingBottom: 20 }} style={{ backgroundColor: colors.white }} >
                     <FlatList data={bookingFlight} renderItem={({ item, index }) => {
                         return (
@@ -236,18 +198,102 @@ const FlightBooking = ({ navigation: { navigate } }) => {
                                     <Text style={styles.flightBaggageText}>Check-in baggage:<Text style={styles.flightBaggageDataText}> {bookingFlight[bookIndex].baggageDtls?.baggage}</Text></Text>
                                 </View> : null}
                             </View>
-                            {bookingFlight[bookIndex].baggageData.length > 0 && <View style={styles.horizontalLine} />}
-                            {bookingFlight[bookIndex].baggageData &&
-                                bookingFlight[bookIndex].baggageData.length > 0 ? <View style={styles.flightextrabagAndMealContainer}>
-                                <Text style={styles.flightextrabagAndMealTitle}>Select extra baggage</Text>
-                                <Select bookIndex={bookIndex} bookingFlight={bookingFlight} segIndex={segIndex} name={"baggage"} />
-                            </View> : null}
-                            {bookingFlight[bookIndex].mealData.length > 0 && <View style={styles.horizontalLine} />}
-                            {bookingFlight[bookIndex].mealData &&
-                                bookingFlight[bookIndex].mealData.length > 0 ? <View style={styles.flightextrabagAndMealContainer}>
-                                <Text style={styles.flightextrabagAndMealTitle}>Select add-on meal</Text>
-                                <Select bookIndex={bookIndex} bookingFlight={bookingFlight} segIndex={segIndex} name={"meal"} />
-                            </View> : null}
+                            <>
+                                {
+                                    bookIndex === 0 ?
+                                        <>
+                                            {bookingFlight[bookIndex].baggageData.length > 0 && <View style={styles.horizontalLine} />}
+                                            {bookingFlight[bookIndex].baggageData &&
+                                                bookingFlight[bookIndex].baggageData.length > 0 ? <View style={styles.flightextrabagAndMealContainer}>
+                                                <Text style={styles.flightextrabagAndMealTitle}>Select extra baggage</Text>
+                                                {
+                                                    [...Array(bookingFlight[bookIndex].travellers
+                                                    )].map((trav, index) => {
+                                                        return (
+                                                            <>
+                                                                <Text>{index + 1 <= Number(bookingFlight[bookIndex].adults) ? 'Adult' : (index + 1 <= (Number(bookingFlight[bookIndex].adults) + Number(bookingFlight[bookIndex].child)) ? "Child" : "Infant")}
+                                                                    -{index + 1 <= Number(bookingFlight[bookIndex].adults) ? index + 1 : (index + 1 <= (Number(bookingFlight[bookIndex].adults) + Number(bookingFlight[bookIndex].child)) ? index + 1 - Number(bookingFlight[bookIndex].adults) : index + 1 - (Number(bookingFlight[bookIndex].adults) + Number(bookingFlight[bookIndex].child)))}</Text>
+                                                                <Select bookIndex={bookIndex} bookingFlight={bookingFlight} segIndex={segIndex} name={"baggage"} traveller={index} />
+                                                            </>
+                                                        )
+                                                    })
+                                                }
+
+                                            </View> : null}
+                                        </>
+                                        :
+                                        <>
+                                            {bookingFlight[bookIndex].baggageData.length > 0 && <View style={styles.horizontalLine} />}
+                                            {bookingFlight[bookIndex].baggageData &&
+                                                bookingFlight[bookIndex].baggageData.length > 0 ? <View style={styles.flightextrabagAndMealContainer}>
+                                                <Text style={styles.flightextrabagAndMealTitle}>Select extra baggage</Text>
+                                                {
+                                                    [...Array(bookingFlight[bookIndex].travellers
+                                                    )].map((trav, index) => {
+                                                        return (
+                                                            <>
+                                                                <Text>{index + 1 <= Number(bookingFlight[bookIndex].adults) ? 'Adult' : (index + 1 <= (Number(bookingFlight[bookIndex].adults) + Number(bookingFlight[bookIndex].child)) ? "Child" : "Infant")}
+                                                                    -{index + 1 <= Number(bookingFlight[bookIndex].adults) ? index + 1 : (index + 1 <= (Number(bookingFlight[bookIndex].adults) + Number(bookingFlight[bookIndex].child)) ? index + 1 - Number(bookingFlight[bookIndex].adults) : index + 1 - (Number(bookingFlight[bookIndex].adults) + Number(bookingFlight[bookIndex].child)))}</Text>
+                                                                <Select bookIndex={bookIndex} bookingFlight={bookingFlight} segIndex={segIndex} name={"baggage"} traveller={index} />
+                                                            </>
+                                                        )
+                                                    })
+                                                }
+
+                                            </View> : null}
+                                        </>
+                                }
+                            </>
+
+                            <>
+                                {
+                                    bookIndex === 0 ?
+                                        <>
+                                            {bookingFlight[bookIndex].mealData.length > 0 && <View style={styles.horizontalLine} />}
+                                            {bookingFlight[bookIndex].mealData &&
+                                                bookingFlight[bookIndex].mealData.length > 0 ? <View style={styles.flightextrabagAndMealContainer}>
+                                                <Text style={styles.flightextrabagAndMealTitle}>Select add-on meal</Text>
+                                                {
+                                                    [...Array(bookingFlight[bookIndex].travellers
+                                                    )].map((trav, index) => {
+                                                        return (
+                                                            <>
+                                                                <Text>{index + 1 <= Number(bookingFlight[bookIndex].adults) ? 'Adult' : (index + 1 <= (Number(bookingFlight[bookIndex].adults) + Number(bookingFlight[bookIndex].child)) ? "Child" : "Infant")}
+                                                                    -{index + 1 <= Number(bookingFlight[bookIndex].adults) ? index + 1 : (index + 1 <= (Number(bookingFlight[bookIndex].adults) + Number(bookingFlight[bookIndex].child)) ? index + 1 - Number(bookingFlight[bookIndex].adults) : index + 1 - (Number(bookingFlight[bookIndex].adults) + Number(bookingFlight[bookIndex].child)))}</Text>
+                                                                <Select bookIndex={bookIndex} bookingFlight={bookingFlight} segIndex={segIndex} name={"meal"} traveller={index} />
+                                                            </>
+                                                        )
+                                                    })
+                                                }
+                                            </View> : null}
+                                        </>
+                                        :
+                                        <>
+                                            {bookingFlight[bookIndex].mealData.length > 0 && <View style={styles.horizontalLine} />}
+                                            {bookingFlight[bookIndex].mealData &&
+                                                bookingFlight[bookIndex].mealData.length > 0 ? <View style={styles.flightextrabagAndMealContainer}>
+                                                <Text style={styles.flightextrabagAndMealTitle}>Select add-on meal</Text>
+                                                {
+                                                    [...Array(bookingFlight[bookIndex].travellers
+                                                    )].map((trav, index) => {
+                                                        return (
+                                                            <>
+                                                                <Text>{index + 1 <= Number(bookingFlight[bookIndex].adults) ? 'Adult' : (index + 1 <= (Number(bookingFlight[bookIndex].adults) + Number(bookingFlight[bookIndex].child)) ? "Child" : "Infant")}
+                                                                    -{index + 1 <= Number(bookingFlight[bookIndex].adults) ? index + 1 : (index + 1 <= (Number(bookingFlight[bookIndex].adults) + Number(bookingFlight[bookIndex].child)) ? index + 1 - Number(bookingFlight[bookIndex].adults) : index + 1 - (Number(bookingFlight[bookIndex].adults) + Number(bookingFlight[bookIndex].child)))}</Text>
+                                                                <Select bookIndex={bookIndex} bookingFlight={bookingFlight} segIndex={segIndex} name={"meal"} traveller={index} />
+                                                            </>
+                                                        )
+                                                    })
+                                                }
+                                            </View> : null}
+                                        </>
+                                }
+                            </>
+
+
+
+
+
                         </View>
                     </View>
                     {/* Cancellation and date change */}
@@ -330,7 +376,7 @@ const FlightBooking = ({ navigation: { navigate } }) => {
 
                     <View style={styles.noteCon}>
                         <Text style={styles.imp}>*Important  <Text style={styles.note}>The airline fee is indicative. We do not guarantee the accuracy of this information. All fees mentioned are per passenger. Date change charges are applicable only on selecting the same airline on a new date. The difference in fares between the old and the new booking will also be payable by the user. If you require further information, please refer the Airline website for detailed fare rales for different fare types.</Text></Text>
-                    </View>                      
+                    </View>
 
                     {
                         bookingFlight[bookIndex].seatData &&
@@ -383,341 +429,367 @@ const FlightBooking = ({ navigation: { navigate } }) => {
                     }
 
                 </ScrollView>
-            </View>
-            <View style={[styles.totalFareContainer, isOpen && { flex: 1 }]}>
-                <View >
-                    <TouchableOpacity onPress={toggleView} style={styles.totalFareToggleIconContainer}>
-                        <IconSwitcher componentName='Ionicons' iconName={isOpen ? "chevron-down-sharp" : 'chevron-up-sharp'} color={colors.black} iconsize={3} />
+                <View style={styles.totalFareContainer}>
+                    <TouchableOpacity onPress={toggleHeight} style={styles.totalFareToggleIconContainer}>
+                        <IconSwitcher componentName='Ionicons' iconName={isExpanded ? "chevron-down-sharp" : 'chevron-up-sharp'} color={colors.black} iconsize={3} />
                     </TouchableOpacity>
-                    {isOpen && <Animated.View style={[{ borderBottomWidth: 1, justifyContent: 'space-between', marginHorizontal: responsiveWidth(3) }, animatedStyles]}>
-                        {
-                            bookingFlight.map((book, b) => {
-                                return (
-                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
-                                        <View style={styles.flightDepAndArrContainer} key={b}>
-                                            <Text style={styles.flightDepAndArrText}>{`${book?.flightNew?.segments[0].originAirportCode}`}</Text>
-                                            <IconSwitcher componentName='AntDesign' iconName='arrowright' color={colors.secondary} iconsize={2.8} />
-                                            <Text style={styles.flightDepAndArrText}>{`${book?.flightNew?.segments[0].destAirportCode}`}</Text>
-                                        </View>
-                                        <View >
-                                            <Text style={[styles.flightPrice, { color: colors.highlight }]}>
-                                                {`₹ ${book.flight.Fare.OfferedFare
-                                                    ? Math.ceil(
-                                                        book.flight.Fare.OfferedFare
-                                                    ).toLocaleString("en-IN")
-                                                    : Math.ceil(
-                                                        book.flight.Fare.PublishedFare
-                                                    ).toLocaleString("en-IN")
-                                                    }`}
-                                            </Text>
-                                        </View>
-                                    </View>)
-                            })
-                        }
-                        <View style={{ borderTopWidth: 1, borderStyle: "dashed", rowGap: responsiveHeight(0.8), marginVertical: responsiveHeight(1) }}>
+                    {isExpanded &&
+                        <View style={styles.totalFareFlightDetailsMainContainer}>
                             {
-                                totalBaggagePrice ? <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                    <Text style={styles.ExcessBagChargesTitle}>Excess baggage</Text>
-                                    <Text style={styles.ExcessBagCharges}>{`+ ₹ ${totalBaggagePrice.toLocaleString("en-IN")}`}</Text>
-                                </View> : null
+                                bookingFlight.map((book, b) => {
+                                    return (
+                                        <View style={styles.flightDepAndArrMainContainer}>
+                                            <View style={styles.flightDepAndArrContainer} key={b}>
+                                                <Text style={styles.flightDepAndArrText}>{`${book?.flightNew?.segments[0].originAirportCode}`}</Text>
+                                                <IconSwitcher componentName='AntDesign' iconName='arrowright' color={colors.secondary} iconsize={2.8} />
+                                                <Text style={styles.flightDepAndArrText}>{`${book?.flightNew?.segments[0].destAirportCode}`}</Text>
+                                            </View>
+                                            <View >
+                                                <Text style={[styles.flightPrice, { color: colors.highlight }]}>
+                                                    {`₹ ${book.flight.Fare.OfferedFare
+                                                        ? Math.ceil(
+                                                            book.flight.Fare.OfferedFare
+                                                        ).toLocaleString("en-IN")
+                                                        : Math.ceil(
+                                                            book.flight.Fare.PublishedFare
+                                                        ).toLocaleString("en-IN")
+                                                        }`}
+                                                </Text>
+                                            </View>
+                                        </View>)
+                                })
                             }
-                            {
-                                totalMealPrice ? <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                    <Text style={styles.ExcessBagChargesTitle}>Add-on meal</Text>
-                                    <Text style={styles.ExcessBagCharges}>{`+ ₹ ${totalMealPrice.toLocaleString("en-IN")}`}</Text>
-                                </View> : null
-                            }
-                            {
-                                totalSeatCharges ? <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                    <Text style={styles.ExcessBagChargesTitle}>Seat Charges</Text>
-                                    <Text style={styles.ExcessBagCharges}>{`+ ₹ ${totalSeatCharges?.toLocaleString("en-IN")}`}</Text>
-                                </View> : null
-                            }
-                            {
-                                isInternationalRound ? <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                    <Text style={styles.ExcessBagChargesTitle}>Service Charges</Text>
-                                    <Text style={styles.ExcessBagCharges}>{`+ ₹ ${Math.ceil((totalFareSum * domesticFlight) / 100)}`}</Text>
-                                </View> : <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                    <Text style={styles.ExcessBagChargesTitle}>Service Charges</Text>
-                                    <Text style={styles.ExcessBagCharges}>{`+ ₹ ${Math.ceil((totalFareSum * internationalFlight) / 100)}`}</Text>
-                                </View>
-                            }
-                        </View>
 
-                    </Animated.View>}
-                </View>
-                <View style={styles.totalFareFlightDetailsContainer}>
-                    <Text style={styles.flighttotalFareText}>Total fare</Text>
-                    <Text style={styles.flightPrice}>{`₹ ${Math.ceil(finalPrice)?.toLocaleString("en-IN")}/-`}</Text>
-                    <TouchableOpacity style={styles.submitTripBtn} onPress={() => {
-                        setSubmitIsOpen(true);
-                        console.log("l")
-                    }}>
-                        <Text style={styles.submitTripBtnText}>Add to trip</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-            <Modal
-                animationType="slide"
-                visible={selectSeats}
-            >
-                <View style={{ height: "100%", width: "100%", backgroundColor: colors.black, position: "absolute", opacity: 0.5, }}></View>
-                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginHorizontal: 10 }}>
-                    <View style={styles.flightSeatsDataCard}>
-                        <TouchableOpacity onPress={() => setSelectSeats(false)} style={{ alignItems: 'flex-end', margin: 10 }}>
-                            <IconSwitcher componentName='Entypo' iconName='cross' iconsize={3} color='black' />
-                        </TouchableOpacity>
-                        {
-                            seatData.length > 1 ? (
-                                <View style={styles.flightBookSelectSeatsSegNav}>
-                                    {
-                                        seatData.map((seatSeg, s) => {
-                                            return (
-                                                <TouchableOpacity style={seatSegIdx === s ? [styles.flightBookSelectSeatsSegNavItem, styles.flightBookSelectSeatsSegNavSelectedItem] : styles.flightBookSelectSeatsSegNavItem} onPress={() => setSeatSegIdx(s)}>
-                                                    <Text style={seatSegIdx === s ? [styles.flightBookSelectSeatsSegNavItemText, styles.flightBookSelectSeatsSegNavItemSelectedText] : styles.flightBookSelectSeatsSegNavItemText}>{`${bookingFlight[bookIndex].flightNew.segments[segIndex].segRoutes[s]?.originCode} -> ${bookingFlight[bookIndex].flightNew.segments[segIndex].segRoutes[s]?.destCode}`}</Text>
-                                                </TouchableOpacity>
-                                            )
-                                        })
-                                    }
-                                </View>
-                            ) : null
-                        }
-                        {bookingFlight[bookIndex].seats &&
-                            bookingFlight[bookIndex].seats[segIndex] &&
-                            bookingFlight[bookIndex].seats[segIndex][seatSegIdx] &&
-                            Object.keys(bookingFlight[bookIndex].seats[segIndex][seatSegIdx])
-                                .length > 0 ?
-                            <View style={styles.selectedSeatContainer}>
-                                <Text style={styles.selectedSeatTitle}>Selected seats</Text>
-                                <View style={{ flexDirection: "row", }}>
-                                    {Object.keys(
-                                        bookingFlight[bookIndex].seats[segIndex][seatSegIdx]
-                                    ).map((seatCode, c) => {
-                                        if (
-                                            c ===
-                                            Object.keys(
-                                                bookingFlight[bookIndex].seats[segIndex][seatSegIdx]
-                                            ).length -
-                                            1
-                                        ) {
-                                            return <Text style={styles.seatCode}>{seatCode}</Text>;
-                                        }
-                                        return <Text style={styles.seatCode}>{`${seatCode}, `}</Text>;
-                                    })}
-                                </View>
-                            </View>
-                            : null
-                        }
-                        {seatData[seatSegIdx] && <FlatList data={seatData[seatSegIdx].RowSeats} renderItem={({ item: row }) => {
-                            return (
-                                <>
-                                    {
-                                        actions.isExitRow(row) ?
-                                            <View style={wingsStyles.emergencyExitMainContainer}>
-                                                <View style={wingsStyles.emergencyExitContainer}>
-                                                    <IconSwitcher componentName='Feather' iconName='chevrons-left' color={colors.emergency} iconsize={3} />
-                                                    <Text style={wingsStyles.emergencyText}> Emergency exit</Text>
-                                                    <IconSwitcher componentName='Feather' iconName='chevrons-right' color={colors.emergency} iconsize={3} />
-                                                </View>
-                                            </View> : null
-                                    }
+                            <View style={[styles.horizontalLine, { borderColor: '#c8c8c8', marginVertical: 0 }]} />
 
-                                    <View>
-                                        {wingPosArr &&
-                                            wingPosArr.length > 0 &&
-                                            row.Seats &&
-                                            row.Seats[0] &&
-                                            wingPosArr[seatSegIdx].includes(row.Seats[0].RowNo) ? (
-                                            <View style={!actions.isExitRow(row)
-                                                ? wingPosArr[seatSegIdx].indexOf(
-                                                    row.Seats[0].RowNo
-                                                ) === 0 ?
-                                                    [wingsStyles.rightWing, wingsStyles.rightWingFirst] : wingPosArr[seatSegIdx].indexOf(
-                                                        row.Seats[0].RowNo
-                                                    ) ===
-                                                        wingPosArr[seatSegIdx].length - 1
-                                                        ? [wingsStyles.rightWing, wingsStyles.rightWingLast] : wingsStyles.rightWing : wingsStyles.rightWing}></View>
-
-                                        ) : null}
-                                        <View style={{ alignSelf: 'center' }}>
-                                            <FlatList
-                                                data={row?.Seats}
-                                                numColumns={6}
-                                                keyExtractor={(seat, index) => index.toString()}
-                                                renderItem={({ item, index }) => (
-                                                    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-
-                                                        <TouchableOpacity style={[wingsStyles.flightBookSeat, index % 6 === 2 ? wingsStyles.spaceBetween : null, item.AvailablityType === 3 ? wingsStyles.flightBookSeatReserved : item.AvailablityType === 1 ? [wingsStyles.flightBookSeat, { borderWidth: 1 }] : wingsStyles.flightBookSeat, bookingFlight[bookIndex].seats &&
-                                                            bookingFlight[bookIndex].seats[segIndex] &&
-                                                            bookingFlight[bookIndex].seats[segIndex][
-                                                            seatSegIdx
-                                                            ] &&
-                                                            bookingFlight[bookIndex].seats[segIndex][
-                                                            seatSegIdx
-                                                            ][item.Code] ? { backgroundColor: '#0080007c' } : "",
-                                                        item.Code === "NoSeat" ? { width: "100%" } : null]}
-                                                            disabled={item.AvailablityType === 3 && true}
-                                                            onPress={!item.noSeat && item.AvailablityType === 1
-                                                                ? () => {
-                                                                    var seats = [...selectedSeats];
-                                                                    if (
-                                                                        seats[segIndex] &&
-                                                                        seats[segIndex][seatSegIdx] &&
-                                                                        seats[segIndex][
-                                                                            seatSegIdx
-                                                                        ].includes(item.Code)
-                                                                    ) {
-                                                                        seats[segIndex][seatSegIdx] = seats[
-                                                                            segIndex
-                                                                        ][seatSegIdx].filter(
-                                                                            (seatCode, c) => {
-                                                                                return seatCode !== item.Code;
-                                                                            }
-                                                                        );
-                                                                        actions.handleChangeFlightBook(
-                                                                            null,
-                                                                            "seats",
-                                                                            bookIndex,
-                                                                            segIndex,
-                                                                            null,
-                                                                            seatSegIdx,
-                                                                            item.Code
-                                                                        );
-                                                                    } else {
-                                                                        var { seatsSeg, rmSeat } =
-                                                                            seatsSelect(
-                                                                                seats[segIndex][seatSegIdx],
-                                                                                Number(
-                                                                                    bookingFlight[bookIndex]
-                                                                                        .adults
-                                                                                ) +
-                                                                                Number(
-                                                                                    bookingFlight[bookIndex]
-                                                                                        .child
-                                                                                ),
-                                                                                item.Code
-                                                                            );
-                                                                        seats[segIndex][seatSegIdx] = [
-                                                                            ...seatsSeg
-                                                                        ];
-
-                                                                        actions.handleChangeFlightBook(
-                                                                            null,
-                                                                            "seats",
-                                                                            bookIndex,
-                                                                            segIndex,
-                                                                            item,
-                                                                            seatSegIdx,
-                                                                            rmSeat
-                                                                        );
-                                                                    }
-
-                                                                    setSelectedSeats(seats);
-                                                                }
-                                                                : null}>
-                                                            <Text style={{ fontSize: responsiveHeight(1.5) }}>{item.Code}</Text>
-                                                        </TouchableOpacity>
-                                                        {item.Price ? <View style={[index % 6 === 2 ? wingsStyles.spaceBetween : null]}>
-                                                            <Text style={{ fontSize: responsiveHeight(1.5) }}>{`${item.Price.toLocaleString("en-IN")}`}</Text>
-                                                        </View> : <Text></Text>}
-                                                    </View>
-                                                )}
-                                            />
-                                        </View>
-                                        {wingPosArr &&
-                                            wingPosArr.length > 0 &&
-                                            row.Seats &&
-                                            row.Seats[0] &&
-                                            wingPosArr[seatSegIdx].includes(row.Seats[0].RowNo) ? (
-                                            <View style={!actions.isExitRow(row)
-                                                ? wingPosArr[seatSegIdx].indexOf(
-                                                    row.Seats[0].RowNo
-                                                ) === 0 ?
-                                                    [wingsStyles.leftWing, wingsStyles.leftWingFirst] : wingPosArr[seatSegIdx].indexOf(
-                                                        row.Seats[0].RowNo
-                                                    ) ===
-                                                        wingPosArr[seatSegIdx].length - 1
-                                                        ? [wingsStyles.leftWing, wingsStyles.leftWingLast] : wingsStyles.leftWing : wingsStyles.leftWing}></View>
-                                        ) : null}
+                            <View style={styles.flightDepAndArrSubContainer}>
+                                {
+                                    totalBaggagePrice ? <View style={styles.totalFareFlightEachChargeDetails}>
+                                        <Text style={styles.ExcessBagChargesTitle}>Excess baggage</Text>
+                                        <Text style={styles.ExcessBagCharges}>{`+ ₹ ${totalBaggagePrice.toLocaleString("en-IN")}`}</Text>
+                                    </View> : null
+                                }
+                                {
+                                    totalMealPrice ? <View style={styles.totalFareFlightEachChargeDetails}>
+                                        <Text style={styles.ExcessBagChargesTitle}>Add-on meal</Text>
+                                        <Text style={styles.ExcessBagCharges}>{`+ ₹ ${totalMealPrice.toLocaleString("en-IN")}`}</Text>
+                                    </View> : null
+                                }
+                                {
+                                    totalSeatCharges ? <View style={styles.totalFareFlightEachChargeDetails}>
+                                        <Text style={styles.ExcessBagChargesTitle}>Seat Charges</Text>
+                                        <Text style={styles.ExcessBagCharges}>{`+ ₹ ${totalSeatCharges?.toLocaleString("en-IN")}`}</Text>
+                                    </View> : null
+                                }
+                                {
+                                    isInternationalRound ? <View style={styles.totalFareFlightEachChargeDetails}>
+                                        <Text style={styles.ExcessBagChargesTitle}>Service Charges</Text>
+                                        <Text style={styles.ExcessBagCharges}>{`+ ₹ ${Math.ceil((totalFareSum * domesticFlight) / 100)}`}</Text>
+                                    </View> : <View style={styles.totalFareFlightEachChargeDetails}>
+                                        <Text style={styles.ExcessBagChargesTitle}>Service Charges</Text>
+                                        <Text style={styles.ExcessBagCharges}>{`+ ₹ ${Math.ceil((totalFareSum * internationalFlight) / 100)}`}</Text>
                                     </View>
-                                </>
-                            )
-                        }} />}
+                                }
+                            </View>
+
+                        </View>}
+                    <View style={styles.totalFareFlightDetailsContainer}>
+                        <Text style={styles.flighttotalFareText}>Total fare</Text>
+                        <Text style={styles.flightPrice}>{`₹ ${Math.ceil(finalPrice)?.toLocaleString("en-IN")}/-`}</Text>
+                        {
+                            selectedTripId ?
+                                <View style={{ width: '40%' }}>
+                                    <Text style={{ fontSize: responsiveHeight(2), color: colors.primary }}>{`Do you want to add to ${selectedTrip?.data?.name ? selectedTrip?.data?.name : selectedTripId}`}</Text>
+                                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly' }}>
+                                        <TouchableOpacity onPress={
+                                            () => {
+                                                navigate("TripDetails", { id: selectedTripId })
+                                                actions.editTripById(selectedTripId, bookingFlight, "flights");
+                                            }
+                                        } style={styles.yesBtn}>
+                                            <Text style={styles.yesBtnText}>yes</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity style={styles.yesBtn} onPress={() => {
+                                            actions.setFlightBookPage(false);
+                                            actions.setBookingFlight([]);
+                                        }}>
+                                            <Text style={styles.yesBtnText}>Back</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                                :
+                                <TouchableOpacity style={styles.submitTripBtn} onPress={() => {
+                                    setSubmitIsOpen(true);
+                                }}>
+                                    <Text style={styles.submitTripBtnText}>Add to trip</Text>
+                                </TouchableOpacity>
+                        }
+
+
+
                     </View>
                 </View>
-            </Modal>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={submitIsOpen}
-            >
-                <View style={styles.modalMainContainer}>
-                    <View style={styles.modalOpacityLayer}></View>
-                    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                        <View style={styles.modelSubContainer1}>
-                            <View style={styles.modelSubContainer2}>
-                                <TouchableOpacity style={styles.modalIcon} onPress={() => setSubmitIsOpen(false)}>
-                                    <IconSwitcher componentName='Entypo' iconName='cross' iconsize={3} color='black' />
-                                </TouchableOpacity>
-                                {activeTab === 'tab1' ? <View style={styles.tripsContainer}>
-                                    <TouchableOpacity style={styles.createNewTripBtn} onPress={() => setActiveTab('tab2')}>
-                                        <Text style={styles.createNewTripBtnTitle}>Create New Trip</Text>
-                                        <IconSwitcher componentName='Entypo' iconName='plus' color={colors.black} iconsize={3} />
-                                    </TouchableOpacity>
-                                    <FlatList
-                                        data={sortedTrips}
-                                        renderItem={renderItem}
-                                        keyExtractor={(item) => item.id}
-                                        ListHeaderComponent={() => {
-                                            return (
-                                                <View >
-                                                    <Text style={styles.triptitles}>Or</Text>
-                                                    <Text style={styles.triptitles}>Select an existing trip</Text>
-                                                </View>
-                                            )
-                                        }}
-                                        ListHeaderComponentStyle={{ marginTop: responsiveHeight(1) }}
-
-                                        style={{ height: responsiveHeight(50) }}
-                                        contentContainerStyle={{ paddingHorizontal: responsiveWidth(3) }} />
-                                </View> :
-                                    <View style={styles.addingNewTripContainer}>
-                                        <TouchableOpacity onPress={() => setActiveTab('tab1')}>
-                                            <IconSwitcher componentName='MaterialCommunityIcons' iconName='arrow-left-thin' color={colors.primary} iconsize={4} />
-                                        </TouchableOpacity>
-                                        <View style={styles.addingNewTripSubContainer}>
-                                            <Text style={styles.newtriptitle}>Enter new trip Name</Text>
-                                            <TextInput
-                                                editable
-                                                multiline
-                                                numberOfLines={3}
-                                                placeholder='Enter name of your trip'
-                                                style={styles.multiTextContainer}
-                                                value={defaultInput}
-                                                onChangeText={handleInputChange} />
-                                            <TouchableOpacity style={styles.addingNewTripBtn} onPress={handleAddToTrip}>
-                                                <Text style={styles.addingNewTripBtnText}>Add to trip</Text>
-                                            </TouchableOpacity>
-                                        </View>
+                <Modal
+                    animationType="slide"
+                    visible={selectSeats}
+                >
+                    <View style={{ height: "100%", width: "100%", backgroundColor: colors.black, position: "absolute", opacity: 0.5, }}></View>
+                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginHorizontal: 10 }}>
+                        <View style={styles.flightSeatsDataCard}>
+                            <TouchableOpacity onPress={() => setSelectSeats(false)} style={{ alignItems: 'flex-end', margin: 10 }}>
+                                <IconSwitcher componentName='Entypo' iconName='cross' iconsize={3} color='black' />
+                            </TouchableOpacity>
+                            {
+                                seatData.length > 1 ? (
+                                    <View style={styles.flightBookSelectSeatsSegNav}>
+                                        {
+                                            seatData.map((seatSeg, s) => {
+                                                return (
+                                                    <TouchableOpacity style={seatSegIdx === s ? [styles.flightBookSelectSeatsSegNavItem, styles.flightBookSelectSeatsSegNavSelectedItem] : styles.flightBookSelectSeatsSegNavItem} onPress={() => setSeatSegIdx(s)}>
+                                                        <Text style={seatSegIdx === s ? [styles.flightBookSelectSeatsSegNavItemText, styles.flightBookSelectSeatsSegNavItemSelectedText] : styles.flightBookSelectSeatsSegNavItemText}>{`${bookingFlight[bookIndex].flightNew.segments[segIndex].segRoutes[s]?.originCode} -> ${bookingFlight[bookIndex].flightNew.segments[segIndex].segRoutes[s]?.destCode}`}</Text>
+                                                    </TouchableOpacity>
+                                                )
+                                            })
+                                        }
                                     </View>
+                                ) : null
+                            }
+                            {bookingFlight[bookIndex].seats &&
+                                bookingFlight[bookIndex].seats[segIndex] &&
+                                bookingFlight[bookIndex].seats[segIndex][seatSegIdx] &&
+                                Object.keys(bookingFlight[bookIndex].seats[segIndex][seatSegIdx])
+                                    .length > 0 ?
+                                <View style={styles.selectedSeatContainer}>
+                                    <Text style={styles.selectedSeatTitle}>Selected seats</Text>
+                                    <View style={{ flexDirection: "row", }}>
+                                        {Object.keys(
+                                            bookingFlight[bookIndex].seats[segIndex][seatSegIdx]
+                                        ).map((seatCode, c) => {
+                                            if (
+                                                c ===
+                                                Object.keys(
+                                                    bookingFlight[bookIndex].seats[segIndex][seatSegIdx]
+                                                ).length -
+                                                1
+                                            ) {
+                                                return <Text style={styles.seatCode}>{seatCode}</Text>;
+                                            }
+                                            return <Text style={styles.seatCode}>{`${seatCode}, `}</Text>;
+                                        })}
+                                    </View>
+                                </View>
+                                : null
+                            }
+                            {seatData[seatSegIdx] && <FlatList data={seatData[seatSegIdx].RowSeats} renderItem={({ item: row }) => {
+                                return (
+                                    <>
+                                        {
+                                            actions.isExitRow(row) ?
+                                                <View style={wingsStyles.emergencyExitMainContainer}>
+                                                    <View style={wingsStyles.emergencyExitContainer}>
+                                                        <IconSwitcher componentName='Feather' iconName='chevrons-left' color={colors.emergency} iconsize={3} />
+                                                        <Text style={wingsStyles.emergencyText}> Emergency exit</Text>
+                                                        <IconSwitcher componentName='Feather' iconName='chevrons-right' color={colors.emergency} iconsize={3} />
+                                                    </View>
+                                                </View> : null
+                                        }
 
+                                        <View>
+                                            {wingPosArr &&
+                                                wingPosArr.length > 0 &&
+                                                row.Seats &&
+                                                row.Seats[0] &&
+                                                wingPosArr[seatSegIdx].includes(row.Seats[0].RowNo) ? (
+                                                <View style={!actions.isExitRow(row)
+                                                    ? wingPosArr[seatSegIdx].indexOf(
+                                                        row.Seats[0].RowNo
+                                                    ) === 0 ?
+                                                        [wingsStyles.rightWing, wingsStyles.rightWingFirst] : wingPosArr[seatSegIdx].indexOf(
+                                                            row.Seats[0].RowNo
+                                                        ) ===
+                                                            wingPosArr[seatSegIdx].length - 1
+                                                            ? [wingsStyles.rightWing, wingsStyles.rightWingLast] : wingsStyles.rightWing : wingsStyles.rightWing}></View>
 
+                                            ) : null}
+                                            <View style={{ alignSelf: 'center' }}>
+                                                <FlatList
+                                                    data={row?.Seats}
+                                                    numColumns={6}
+                                                    keyExtractor={(seat, index) => index.toString()}
+                                                    renderItem={({ item, index }) => (
+                                                        <View style={{ alignItems: 'center', justifyContent: 'center' }}>
 
-                                }
+                                                            <TouchableOpacity style={[wingsStyles.flightBookSeat, index % 6 === 2 ? wingsStyles.spaceBetween : null, item.AvailablityType === 3 ? wingsStyles.flightBookSeatReserved : item.AvailablityType === 1 ? [wingsStyles.flightBookSeat, { borderWidth: 1 }] : wingsStyles.flightBookSeat, bookingFlight[bookIndex].seats &&
+                                                                bookingFlight[bookIndex].seats[segIndex] &&
+                                                                bookingFlight[bookIndex].seats[segIndex][
+                                                                seatSegIdx
+                                                                ] &&
+                                                                bookingFlight[bookIndex].seats[segIndex][
+                                                                seatSegIdx
+                                                                ][item.Code] ? { backgroundColor: '#0080007c' } : "",
+                                                            item.Code === "NoSeat" ? { width: "100%" } : null]}
+                                                                disabled={item.AvailablityType === 3 && true}
+                                                                onPress={!item.noSeat && item.AvailablityType === 1
+                                                                    ? () => {
+                                                                        var seats = [...selectedSeats];
+                                                                        if (
+                                                                            seats[segIndex] &&
+                                                                            seats[segIndex][seatSegIdx] &&
+                                                                            seats[segIndex][
+                                                                                seatSegIdx
+                                                                            ].includes(item.Code)
+                                                                        ) {
+                                                                            seats[segIndex][seatSegIdx] = seats[
+                                                                                segIndex
+                                                                            ][seatSegIdx].filter(
+                                                                                (seatCode, c) => {
+                                                                                    return seatCode !== item.Code;
+                                                                                }
+                                                                            );
+                                                                            actions.handleChangeFlightBook(
+                                                                                null,
+                                                                                "seats",
+                                                                                bookIndex,
+                                                                                segIndex,
+                                                                                null,
+                                                                                seatSegIdx,
+                                                                                item.Code
+                                                                            );
+                                                                        } else {
+                                                                            var { seatsSeg, rmSeat } =
+                                                                                seatsSelect(
+                                                                                    seats[segIndex][seatSegIdx],
+                                                                                    Number(
+                                                                                        bookingFlight[bookIndex]
+                                                                                            .adults
+                                                                                    ) +
+                                                                                    Number(
+                                                                                        bookingFlight[bookIndex]
+                                                                                            .child
+                                                                                    ),
+                                                                                    item.Code
+                                                                                );
+                                                                            seats[segIndex][seatSegIdx] = [
+                                                                                ...seatsSeg
+                                                                            ];
 
-                            </View>
+                                                                            actions.handleChangeFlightBook(
+                                                                                null,
+                                                                                "seats",
+                                                                                bookIndex,
+                                                                                segIndex,
+                                                                                item,
+                                                                                seatSegIdx,
+                                                                                rmSeat
+                                                                            );
+                                                                        }
+
+                                                                        setSelectedSeats(seats);
+                                                                    }
+                                                                    : null}>
+                                                                <Text style={{ fontSize: responsiveHeight(1.5) }}>{item.Code}</Text>
+                                                            </TouchableOpacity>
+                                                            {item.Price ? <View style={[index % 6 === 2 ? wingsStyles.spaceBetween : null]}>
+                                                                <Text style={{ fontSize: responsiveHeight(1.5) }}>{`${item.Price.toLocaleString("en-IN")}`}</Text>
+                                                            </View> : <Text></Text>}
+                                                        </View>
+                                                    )}
+                                                />
+                                            </View>
+                                            {wingPosArr &&
+                                                wingPosArr.length > 0 &&
+                                                row.Seats &&
+                                                row.Seats[0] &&
+                                                wingPosArr[seatSegIdx].includes(row.Seats[0].RowNo) ? (
+                                                <View style={!actions.isExitRow(row)
+                                                    ? wingPosArr[seatSegIdx].indexOf(
+                                                        row.Seats[0].RowNo
+                                                    ) === 0 ?
+                                                        [wingsStyles.leftWing, wingsStyles.leftWingFirst] : wingPosArr[seatSegIdx].indexOf(
+                                                            row.Seats[0].RowNo
+                                                        ) ===
+                                                            wingPosArr[seatSegIdx].length - 1
+                                                            ? [wingsStyles.leftWing, wingsStyles.leftWingLast] : wingsStyles.leftWing : wingsStyles.leftWing}></View>
+                                            ) : null}
+                                        </View>
+                                    </>
+                                )
+                            }} />}
                         </View>
-                    </TouchableWithoutFeedback>
-                </View>
-            </Modal>
-            <PopUp value={fareIsOpen} handlePopUpClose={() => setFareIsOpen(false)} customStyles={{ width: "100%" }}>
-                <View style={{ height: responsiveHeight(40) }}>
-                    <WebView
-                        source={{ html: bookingFlight[bookIndex].fareRules }}
-                        nestedScrollEnabled />
-                </View>
-            </PopUp>
-        </View>
+                    </View>
+                </Modal>
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={submitIsOpen}
+                >
+                    <View style={styles.modalMainContainer}>
+                        <View style={styles.modalOpacityLayer}></View>
+                        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                            <View style={styles.modelSubContainer1}>
+                                <View style={styles.modelSubContainer2}>
+                                    <TouchableOpacity style={styles.modalIcon} onPress={() => setSubmitIsOpen(false)}>
+                                        <IconSwitcher componentName='Entypo' iconName='cross' iconsize={3} color='black' />
+                                    </TouchableOpacity>
+                                    {activeTab === 'tab1' ? <View style={styles.tripsContainer}>
+                                        <TouchableOpacity style={styles.createNewTripBtn} onPress={() => setActiveTab('tab2')}>
+                                            <Text style={styles.createNewTripBtnTitle}>Create New Trip</Text>
+                                            <IconSwitcher componentName='Entypo' iconName='plus' color={colors.black} iconsize={3} />
+                                        </TouchableOpacity>
+                                        <FlatList
+                                            data={sortedTrips}
+                                            renderItem={renderItem}
+                                            keyExtractor={(item) => item.id}
+                                            ListHeaderComponent={() => {
+                                                return (
+                                                    <View >
+                                                        <Text style={styles.triptitles}>Or</Text>
+                                                        <Text style={styles.triptitles}>Select an existing trip</Text>
+                                                    </View>
+                                                )
+                                            }}
+                                            ListHeaderComponentStyle={{ marginTop: responsiveHeight(1) }}
+
+                                            style={{ height: responsiveHeight(50) }}
+                                            contentContainerStyle={{ paddingHorizontal: responsiveWidth(3) }} />
+                                    </View> :
+                                        <View style={styles.addingNewTripContainer}>
+                                            <TouchableOpacity onPress={() => setActiveTab('tab1')}>
+                                                <IconSwitcher componentName='MaterialCommunityIcons' iconName='arrow-left-thin' color={colors.primary} iconsize={4} />
+                                            </TouchableOpacity>
+                                            <View style={styles.addingNewTripSubContainer}>
+                                                <Text style={styles.newtriptitle}>Enter new trip Name</Text>
+                                                <TextInput
+                                                    editable
+                                                    multiline
+                                                    numberOfLines={3}
+                                                    placeholder='Enter name of your trip'
+                                                    style={styles.multiTextContainer}
+                                                    value={defaultInput}
+                                                    onChangeText={handleInputChange} />
+                                                <TouchableOpacity style={styles.addingNewTripBtn} onPress={handleAddToTrip}>
+                                                    <Text style={styles.addingNewTripBtnText}>Add to trip</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
+
+
+
+                                    }
+
+                                </View>
+                            </View>
+                        </TouchableWithoutFeedback>
+                    </View>
+                </Modal>
+                <PopUp value={fareIsOpen} handlePopUpClose={() => setFareIsOpen(false)} customStyles={{ width: "100%" }}>
+                    <View style={{ height: responsiveHeight(40) }}>
+                        <WebView
+                            source={{ html: bookingFlight[bookIndex].fareRules }}
+                            nestedScrollEnabled />
+                    </View>
+                </PopUp>
+            </View>
     )
 }
 const wingsStyles = StyleSheet.create({
@@ -788,31 +860,3 @@ const wingsStyles = StyleSheet.create({
     }
 })
 export default React.memo(FlightBooking)
-// import { View, Text } from 'react-native'
-// import React, { useContext } from 'react'
-// import { TouchableOpacity } from 'react-native-gesture-handler'
-// import IconSwitcher from '../common/icons/IconSwitcher'
-// import MyContext from '../../context/Context'
-
-// const FlightBooking = ({navigation:{navigate}}) => {
-//     const{actions}=useContext(MyContext)
-//         const handleBackButtonPress = () => {
-//         actions.setFlightBookPage(false);
-//         actions.setBookingFlight([]);
-//         actions.setFlightResJType(0)
-//         // navigation.goBack()
-//     };
-//   return (
-//     <View>
-//                 <TouchableOpacity onPress={handleBackButtonPress} >
-//                 <IconSwitcher componentName='AntDesign' iconName='arrowleft' color='black' iconsize={3} />
-//             </TouchableOpacity>
-//       <TouchableOpacity onPress={()=>
-//     {navigate("TripDetails")}}>
-//       <Text>FlightBooking</Text>
-//       </TouchableOpacity>
-//     </View>
-//   )
-// }
-
-// export default FlightBooking

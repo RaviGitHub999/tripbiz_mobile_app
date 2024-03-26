@@ -1,5 +1,5 @@
 
-import React, { Component, ReactNode } from 'react';
+import React, { Component, ReactNode, } from 'react';
 import MyContext from './Context';
 import Fuse from 'fuse.js';
 import AirportsData from "../components/jsonData/Airports.json"
@@ -119,6 +119,7 @@ var fuse = new Fuse(AirportsData, {
 export default class MyProvider extends Component {
   constructor(props) {
     super(props);
+  
     this.state = {
       loading: false,
       email: "",
@@ -254,18 +255,19 @@ export default class MyProvider extends Component {
       flights: null
     },
     activeComponent:components[0].categoryName,
-    selectedIndex:null,
+    flatListRef : React.createRef(null),
       actions: {
         setTrips: async (value) => {
           this.setState({
             userTripStatus: value
           });
         },
-setActiveComponent:(component)=>
-{
-const selectedIndex = components.findIndex((item) => item.categoryName === component);
-this.setState({activeComponent:component,selectedIndex:selectedIndex})
-},
+   switchComponent : (component) => {
+          this.setState({activeComponent:component})
+          const selectedIndex = components.findIndex((item) => item.categoryName === component);
+          this.state.flatListRef.current?.scrollToIndex({ animated: true, index: selectedIndex });
+        },         
+
 handleDirectFlight:()=>
 {
 this.setState({directflight:!this.state.directflight})
@@ -2307,6 +2309,28 @@ fetchFareRule: async (resultIndex, airlineName, fare) => {
             ? [...this.state.bookingFlight]
             : [];
 
+            var addedMeals = [];
+            var addedBaggage = [];
+            for (let i = 0; i < flight.Segments.length; i++) {
+              const selectedMeals = [];
+              const selectedBaggage = [];
+              for (let j = 0; j < this.state.flightTravellers; j++) {
+                const mealObj = {
+                  price: 0,
+                  mealDesc: 0,
+                };
+                const baggageObj = {
+                  price: 0,
+                  baggage: 0,
+                  text: '',
+                };
+                selectedMeals.push(mealObj);
+                selectedBaggage.push(baggageObj);
+              }
+    
+              addedMeals.push(selectedMeals);
+              addedBaggage.push(selectedBaggage);
+            }           
           bookingFlight[this.state.flightResJType] = {
             flight,
             flightNew: this.state.actions.modifyFlightObject(flight),
@@ -2324,6 +2348,8 @@ fetchFareRule: async (resultIndex, airlineName, fare) => {
             baggageDtls,
             resultIndex,
             arrIndex,
+            selectedMeals: addedMeals,
+            selectedBaggage: addedBaggage,
             adults: this.state.adults,
             child: this.state.children,
             infant: this.state.infants,
@@ -2349,18 +2375,51 @@ fetchFareRule: async (resultIndex, airlineName, fare) => {
             }
           }
         },
+        // calculateTotalFlightFare: (bookingFlight, bookIndex) => {
+        //   var totalFare = 0;
+
+        //   totalFare += bookingFlight[bookIndex].flight?.Fare?.OfferedFare
+        //     ? Math.ceil(bookingFlight[bookIndex].flight?.Fare?.OfferedFare)
+        //     : Math.ceil(bookingFlight[bookIndex].flight?.Fare?.PublishedFare);
+
+        //   bookingFlight[bookIndex].baggagePrice.forEach((bgp, b) => {
+        //     totalFare += bgp;
+        //   });
+        //   bookingFlight[bookIndex].mealPrice.forEach((mp, b) => {
+        //     totalFare += mp;
+        //   });
+        //   bookingFlight[bookIndex].seats.forEach((seatSeg, sg) => {
+        //     seatSeg.forEach((seat, s) => {
+        //       Object.values(seat).forEach((sp, b) => {
+        //         totalFare += sp.Price ? sp.Price : 0;
+        //       });
+        //     });
+        //   });
+
+        //   return totalFare;
+        // },
+
         calculateTotalFlightFare: (bookingFlight, bookIndex) => {
           var totalFare = 0;
-
+  
           totalFare += bookingFlight[bookIndex].flight?.Fare?.OfferedFare
             ? Math.ceil(bookingFlight[bookIndex].flight?.Fare?.OfferedFare)
             : Math.ceil(bookingFlight[bookIndex].flight?.Fare?.PublishedFare);
-
-          bookingFlight[bookIndex].baggagePrice.forEach((bgp, b) => {
-            totalFare += bgp;
+  
+          bookingFlight[bookIndex].selectedBaggage.forEach((bgp, b) => {
+            var x = 0;
+            var x = 0;
+            bgp.forEach((bag) => {
+              x += bag.price ? Number(bag.price) : 0;
+            })
+            totalFare += x;
           });
-          bookingFlight[bookIndex].mealPrice.forEach((mp, b) => {
-            totalFare += mp;
+          bookingFlight[bookIndex].selectedMeals.forEach((mp, b) => {
+            var x = 0;
+            mp.forEach((bag) => {
+              x += bag.price ? Number(bag.price) : 0;
+            })
+            totalFare += x;
           });
           bookingFlight[bookIndex].seats.forEach((seatSeg, sg) => {
             seatSeg.forEach((seat, s) => {
@@ -2369,9 +2428,9 @@ fetchFareRule: async (resultIndex, airlineName, fare) => {
               });
             });
           });
-
           return totalFare;
         },
+
         // getTotalFares: (bookingFlight) => {
         //   var totalFareSum = 0;
         //   var totalSeatCharges = 0;
@@ -2418,7 +2477,6 @@ fetchFareRule: async (resultIndex, airlineName, fare) => {
             totalSeatCharges += seg.seatCharges ? Number(seg.seatCharges) : 0;
             var finalPrice = totSum + (totSum * this.state.domesticFlight) / 100
             bookingFlight[s].finalPrice = finalPrice
-
             if (Array.isArray(seg.selectedBaggage)) {
               seg?.selectedBaggage?.forEach((baggage, p) => {
   
@@ -2575,6 +2633,50 @@ fetchFareRule: async (resultIndex, airlineName, fare) => {
           bookingFlight[bookIndex].totalFare =
             this.state.actions.calculateTotalFlightFare(bookingFlight, bookIndex);
 
+          this.setState({
+            bookingFlight
+          });
+        },
+        handleMeal: async (
+          e,
+          type,
+          bookIndex,
+          segIndex,
+          traveller
+        ) => {
+          var bookingFlight = [...this.state.bookingFlight];
+          if (type === "meal") {
+            if (e !== "No add-on meal") {
+              bookingFlight[bookIndex].selectedMeals[segIndex][traveller].price = Number(
+                e.split("->")[1].split("Rs")[1].split("/")[0].trim()
+              );
+              bookingFlight[bookIndex].selectedMeals[segIndex][traveller].mealDesc = e
+                .split("->")[0]
+                .trim();
+            } else {
+              bookingFlight[bookIndex].selectedMeals[segIndex][traveller].price = 0;
+              bookingFlight[bookIndex].selectedMeals[segIndex][traveller].mealDesc = "";
+            }
+          } else if (type === "baggage") {
+            if (e !== "No excess baggage") {
+              console.log(bookingFlight[bookIndex].selectedBaggage[segIndex][traveller].price,"........>>>>>>>>>")
+              bookingFlight[bookIndex].selectedBaggage[segIndex][traveller].price = Number(
+                e.split("at")[1].split("Rs")[1].split("/-")[0].split(" ")[1].trim()
+              );
+              bookingFlight[bookIndex].selectedBaggage[segIndex][traveller].baggage = Number(
+                e.split("at")[0].split("KG")[0].trim()
+              );
+              bookingFlight[bookIndex].selectedBaggage[segIndex][traveller].text =
+                e.split("at")[1].split("Rs")[1].split("/-")[0].split(" ").slice(2).join(' ')
+  
+            } else {
+              bookingFlight[bookIndex].selectedBaggage[segIndex][traveller].price = 0;
+              bookingFlight[bookIndex].selectedBaggage[segIndex][traveller].baggage = 0;
+              bookingFlight[bookIndex].selectedBaggage[segIndex][traveller].text = ''
+            }
+          }
+          bookingFlight[bookIndex].totalFare =
+            this.state.actions.calculateTotalFlightFare(bookingFlight, bookIndex)
           this.setState({
             bookingFlight
           });
@@ -3056,7 +3158,82 @@ getAllFlights :async (id, userId) => {
             console.error(error);
           }
         },
-      
+        setRes: async () => { 
+          this.setState({
+            searchingFlights: true,
+            searchingHotels: false,
+            fetchingHotelInfo: false,
+            hotelInfoRes: false,
+            flightResList: [],
+            hotelResList: [],
+            bookingFlight: [],
+            bookingHotel: [],
+            outbound: "",
+            inbound: "",
+            cabinClassId: "2",
+            journeyWay: "1",
+            // originSelectedAirport: {
+            //   name: "",
+            //   iataCode: "",
+            //   address: {
+            //     cityName: "",
+            //     countryName: ""
+            //   }
+            // },
+          //   destinationSelectedAirPort: {
+          //     name: "",
+          //     iataCode: "",
+          //     address: {
+          //       cityName: "",
+          //       countryName: ""
+          //     },
+          // },
+          origin: "",
+          destination: "",
+          departure: "Departure Date",
+          returnDate: "Return Date",
+            adults: 1,
+            children: 0,
+            infants: 0,
+            directflight: false,
+            oneStopFlight: false,
+          })
+          this.state.actions.setFlightBookPage(false)
+        },
+
+
+        setSelectedTrip: async (value) => {
+          this.setState({
+            selectedTrip: value
+          });
+        },
+        setSelectedTripId :async (value) => {
+          try {
+            // Reference to the trip document
+            const docSnapshot = await firestore()
+              .collection("Accounts")
+              .doc(this.state.userId)
+              .collection("trips")
+              .doc(value)
+              .get();
+            const tripData = docSnapshot.data();
+            const [flights, hotels] = await Promise.all([
+              this.state.actions.getAllFlights(docSnapshot.id, this.state.userId),
+              this.state.actions.getAllHotels(docSnapshot.id, this.state.userId)
+            ]);
+            this.state.actions.setSelectedTrip({
+              id: docSnapshot.id,
+              data: tripData,
+              hotels: hotels,
+              flights: flights
+            });
+            this.setState({
+              selectedTripId: value
+            });
+          } catch (error) {
+            console.error(error);
+          }
+        },
 
       },
       // deleteTripItem : async (tripId, itemId, itemType) => {
@@ -3102,60 +3279,7 @@ getAllFlights :async (id, userId) => {
       // },
       
     
-      setSelectedTrip: async (value) => {
-        this.setState({
-          selectedTrip: value
-        });
-      },
-      setSelectedTripId :async (value) => {
-        try {
-          // Reference to the trip document
-          const docSnapshot = await firestore()
-            .collection("Accounts")
-            .doc(this.state.userId)
-            .collection("trips")
-            .doc(value)
-            .get();
-      
-          // Get the data of the trip document
-          const tripData = docSnapshot.data();
-      
-          // Get flights and hotels data asynchronously
-          const [flights, hotels] = await Promise.all([
-            this.state.actions.getAllFlights(docSnapshot.id, this.state.userId),
-            this.state.actions.getAllHotels(docSnapshot.id, this.state.userId)
-          ]);
-      
-          // Set selected trip in state
-          this.state.actions.setSelectedTrip({
-            id: docSnapshot.id,
-            data: tripData,
-            hotels: hotels,
-            flights: flights
-          });
-      
-          // Set selectedTripId in state
-          // Assuming this function is part of a class component and using setState
-          this.setState({
-            selectedTripId: value
-          });
-        } catch (error) {
-          console.error(error);
-        }
-      },
-      setRes: async () => {
-        this.setState({
-          searchingFlights: false,
-          searchingHotels: false,
-          fetchingHotelInfo: false,
-          hotelInfoRes: false,
-          flightResList: [],
-          hotelResList: [],
-          bookingFlight: [],
-          bookingHotel: [],
-        })
-        this.state.actions.setFlightBookPage(false)
-      },
+
 
       
 
@@ -3217,9 +3341,14 @@ auth().onAuthStateChanged(async(user)=>
     };
 
     return (
+      // <MyContext.Provider value={contextValue}>
+      //   {this.props.children}
+      // </MyContext.Provider>
       <MyContext.Provider value={contextValue}>
-        {this.props.children}
-      </MyContext.Provider>
+  {React.Children.map(this.props.children, child =>
+    React.cloneElement(child, { additionalProp: "ravi" })
+  )}
+</MyContext.Provider>
     );
   }
 }

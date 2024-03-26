@@ -79,7 +79,7 @@ const data = [
     { name: "ravi789" },
 ];
 
-const Select = ({ bookIndex, segIndex, bookingFlight, name }) => {
+const Select = ({ bookIndex, segIndex, bookingFlight, name,traveller }) => {
     const [viewAll, setViewAll] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [selectedItemIndex, setSelectedItemIndex] = useState(null);
@@ -93,11 +93,19 @@ const{actions}=useContext(MyContext)
         setSelectedItem(pickedItem);
         setSelectedItemIndex(index);
         setViewAll(false);
-        actions.handleChangeFlightBook(
+        // actions.handleChangeFlightBook(
+        //     pickedItem,
+        //     type,
+        //     bookIndex,
+        //     segIndex,
+        //     index
+        //   )
+        actions.handleMeal(
             pickedItem,
             type,
             bookIndex,
-            segIndex
+            segIndex,
+            traveller
           )
     };
     return (

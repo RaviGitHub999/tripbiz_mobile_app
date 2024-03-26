@@ -33,7 +33,7 @@ export const styles = StyleSheet.create({
         paddingBottom: responsiveHeight(3)
     },
     horizontalLine: {
-        borderTopWidth: 1,
+        borderTopWidth: responsiveHeight(0.2),
         borderStyle: 'dashed',
         marginVertical: responsiveHeight(2)
     },
@@ -84,18 +84,36 @@ export const styles = StyleSheet.create({
         backgroundColor: colors.whiteSmoke
     },
     totalFareContainer: {
-        flex: 0.5 / 2,
-        backgroundColor: colors.white
+        backgroundColor:colors.white,
     },
     totalFareToggleIconContainer: {
         alignSelf: 'center',
+    },
+    totalFareFlightDetailsMainContainer:{
+        borderBottomWidth: responsiveHeight(0.1),
+         justifyContent: 'space-between',
+          marginHorizontal: responsiveWidth(3),
+           gap: responsiveHeight(1),
+           paddingBottom:responsiveHeight(2)
+    },
+    flightDepAndArrMainContainer:
+    {
+        flexDirection: 'row',
+         justifyContent: 'space-between'
+    },
+    flightDepAndArrSubContainer:{
+        rowGap: responsiveHeight(0.8)
+    },
+    totalFareFlightEachChargeDetails:{
+        flexDirection: 'row',
+         justifyContent: 'space-between'
     },
     totalFareFlightDetailsContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingHorizontal: responsiveWidth(3.5),
-        flex: 1,
-        alignItems: 'center'
+        alignItems: 'center',
+        paddingVertical:responsiveHeight(1)
     },
     flighttotalFareText: {
         fontSize: responsiveHeight(2.3),
@@ -391,5 +409,18 @@ export const styles = StyleSheet.create({
         fontFamily: fonts.textFont,
         color: colors.lightGray,
         lineHeight:responsiveHeight(2)
+    },
+    yesBtn:{
+        borderRadius:responsiveHeight(1),
+        paddingHorizontal:responsiveHeight(1),
+        alignItems:'center',
+        justifyContent:'center',
+        backgroundColor:colors.primary,
+        paddingVertical:responsiveHeight(0.5)
+    },
+    yesBtnText:{
+        fontSize:responsiveHeight(1.6),
+        fontFamily:fonts.textFont,
+        color:colors.white
     }
 })

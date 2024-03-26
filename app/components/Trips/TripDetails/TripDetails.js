@@ -122,7 +122,8 @@ const handleDelete = async () => {
   const handleFlights = async () => {
     actions.setSelectedTripId(id);
     await actions.setRes();
-    navigate('/home/flights')
+    actions.switchComponent("flights")
+    navigate("CustomerBottomNavigation") 
   }
   const handleHotels = async () => {
     // actions.setSelectedTripId(id);
@@ -205,7 +206,7 @@ const handleDelete = async () => {
           {
             tripData ?
               <View>
-                <View>
+                {/* <View>
                   {
                     tripData?.hotels ?
                       <>
@@ -377,7 +378,7 @@ const handleDelete = async () => {
                       </>
                       : null
                   }
-                </View>
+                </View> */}
                 {/* flight */}
                 <View>
                   {tripData?.flights ?
@@ -422,7 +423,7 @@ const handleDelete = async () => {
                         })
                       }
                       <View style={styles.addingHotelBtnContainer}>
-                        <TouchableOpacity style={styles.addingHotelBtn}>
+                        <TouchableOpacity style={styles.addingHotelBtn} onPress={handleFlights}>
                           <Text style={styles.addingHotelBtnTitle}>Add Flight </Text>
                           <IconSwitcher componentName='Feather' iconName='plus' color={colors.primary} iconsize={3} />
                         </TouchableOpacity>
