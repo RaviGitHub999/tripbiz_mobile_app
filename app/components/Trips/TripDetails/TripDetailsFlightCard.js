@@ -6,6 +6,8 @@ import IconSwitcher from '../../common/icons/IconSwitcher'
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from '../../../utils/responsiveScale'
 import { colors, fonts } from '../../../config/theme'
 import PopUp from '../../common/popup/PopUp'
+import WebView from 'react-native-webview'
+import { styles } from './tripdetailsFlightCardstyles'
 const TripDetailsFlightCard = ({
     flightGrp,
     index,
@@ -29,7 +31,8 @@ const TripDetailsFlightCard = ({
     const [deleteId, setDeleteId] = useState(false)
     const [deleteType, setDeleteType] = useState(false)
     const [openFlightPrice, setOpenFlightPrice] = useState(false)
-    const { actions, flightsLogosData, flightResList, bookingFlight, flightResJType,domesticFlight } = useContext(MyContext)
+    const [openFareRules, setOpenFareRules] = useState(false)
+    const { actions, flightsLogosData, flightResList, bookingFlight, flightResJType, domesticFlight } = useContext(MyContext)
     var fareData = tripsPage ? actions.getTotalFares([flightBooking]) : '';
     var flightArr = flightGrp.map((flight, f) => {
         return { ...actions.modifyFlightObject(flight) };
@@ -150,17 +153,20 @@ const TripDetailsFlightCard = ({
                     <Text style={styles.flightBookingTravellerDetailsTitle}>{flightArr[0].segments[0].cabinClass}</Text>
                 </View>
 
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: responsiveHeight(3) }}>
-                    <TouchableOpacity onPress={handlehoteltripsBaggageinfo}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: responsiveHeight(3), alignItems: 'center' }}>
+                    <TouchableOpacity onPress={handletripsBaggageinfo}>
                         <IconSwitcher componentName='MaterialIcons' iconName='luggage' color={colors.primary} iconsize={3} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={handlehoteltripsCancellationinfo}>
+                    <TouchableOpacity onPress={handletripsCancellationinfo}>
                         <IconSwitcher componentName='FontAwesome6' iconName='calendar-xmark' color={colors.primary} iconsize={2.5} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={handlehoteltripsMealsinfo}>
+                    <TouchableOpacity onPress={handletripsMealsinfo}>
                         <IconSwitcher componentName='MaterialCommunityIcons' iconName='silverware-fork-knife' color={colors.primary} iconsize={2.5} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={handlehoteltripsSeatinfo}>
+                    <TouchableOpacity onPress={handleFareRulesInfo}>
+                        <IconSwitcher componentName='Entypo' iconName='info-with-circle' color={colors.primary} iconsize={2.3} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handletripsSeatinfo}>
                         <IconSwitcher componentName='FontAwesome5' iconName='chair' color={colors.primary} iconsize={2.5} />
                     </TouchableOpacity>
                 </View>
@@ -234,29 +240,35 @@ const TripDetailsFlightCard = ({
         setStopDtls([]);
         setShowStopDtls(false);
     }
-    const handlehoteltripsBaggageinfo = () => {
+    const handletripsBaggageinfo = () => {
         setTripsBaggage(true)
     }
-    const handlehoteltripsBaggageinfoClose = () => {
+    const handletripsBaggageinfoClose = () => {
         setTripsBaggage(false)
     }
-    const handlehoteltripsCancellationinfo = () => {
+    const handletripsCancellationinfo = () => {
         setTripsCancellation(true)
     }
-    const handlehoteltripsCancellationinfoClose = () => {
+    const handletripsCancellationinfoClose = () => {
         setTripsCancellation(false)
     }
-    const handlehoteltripsMealsinfo = () => {
+    const handletripsMealsinfo = () => {
         setTripsMeals(true)
     }
-    const handlehoteltripsMealsinfoClose = () => {
+    const handletripsMealsinfoClose = () => {
         setTripsMeals(false)
     }
-    const handlehoteltripsSeatinfo = () => {
+    const handletripsSeatinfo = () => {
         setTripsSeat(true)
     }
-    const handlehoteltripsSeatinfoClose = () => {
+    const handletripsSeatinfoClose = () => {
         setTripsSeat(false)
+    }
+    const handleFareRulesInfo = () => {
+        setOpenFareRules(true)
+    }
+    const handleFareRulesClose = () => {
+        setOpenFareRules(false)
     }
     return (
 
@@ -320,11 +332,11 @@ const TripDetailsFlightCard = ({
                     </View>
                 </View>
             </Modal>
-            <PopUp value={tripsBaggage} handlePopUpClose={handlehoteltripsBaggageinfoClose}>
+            <PopUp value={tripsBaggage} handlePopUpClose={handletripsBaggageinfoClose}>
                 <Text>No extra baggage</Text>
             </PopUp>
 
-            <PopUp value={tripsCancellation} handlePopUpClose={handlehoteltripsCancellationinfoClose}>
+            <PopUp value={tripsCancellation} handlePopUpClose={handletripsCancellationinfoClose}>
                 {
                     Array.isArray(flightBooking?.flight?.MiniFareRules) ? (
                         <>
@@ -412,12 +424,12 @@ const TripDetailsFlightCard = ({
 
             </PopUp>
 
-            <PopUp value={tripsMeals} handlePopUpClose={handlehoteltripsMealsinfoClose}>
+            <PopUp value={tripsMeals} handlePopUpClose={handletripsMealsinfoClose}>
                 <Text>No meal selected</Text>
 
             </PopUp>
 
-            <PopUp value={tripsSeat} handlePopUpClose={handlehoteltripsSeatinfoClose}>
+            <PopUp value={tripsSeat} handlePopUpClose={handletripsSeatinfoClose}>
 
             </PopUp>
 
@@ -439,7 +451,7 @@ const TripDetailsFlightCard = ({
 
             <PopUp value={openFlightPrice} handlePopUpClose={() => {
                 setOpenFlightPrice((prev) => !prev)
-            }}>
+            }} >
                 <View style={styles.flightPriceAndChargesContainer}>
                     {
                         tripsPage ?
@@ -467,6 +479,33 @@ const TripDetailsFlightCard = ({
                             </> : null
                     }
                     <View style={styles.horizontalLine} />
+                    {
+                        fareData?.totalBaggagePrice ?
+                            <View style={styles.serviceCharges}>
+                                <Text style={styles.flightCharges}>Excess baggage</Text>
+                                <Text style={styles.flightChargesPrice}>+ &#8377;{` ${fareData?.totalBaggagePrice?.toLocaleString("en-IN")}`}</Text>
+                            </View>
+                            : null
+                    }
+
+                    {
+                        fareData?.totalMealPrice ?
+                            <View style={styles.serviceCharges}>
+                                <Text style={styles.flightCharges}>Add-on meal</Text>
+                                <Text style={styles.flightChargesPrice}>+ &#8377;{` ${fareData?.totalMealPrice?.toLocaleString("en-IN")}`}</Text>
+                            </View> :
+                            null
+                    }
+
+                    {
+                        fareData?.totalSeatCharges ?
+                            <View style={styles.serviceCharges}>
+                                <Text style={styles.flightCharges}>Seat Charges</Text>
+                                <Text style={styles.flightChargesPrice}>+ &#8377;{` ${fareData?.totalSeatCharges?.toLocaleString("en-IN")}`}</Text>
+                            </View> :
+                            null
+                    }
+
                     <View style={styles.serviceCharges}>
                         <Text style={styles.flightCharges}>Service Charges</Text>
                         <Text style={styles.flightChargesPrice}>+ &#8377;{`${Math.ceil((fareData?.totalFareSum * domesticFlight) / 100)}`}</Text>
@@ -477,315 +516,21 @@ const TripDetailsFlightCard = ({
                     <Text style={styles.totalFare}>&#8377; {` ${Math.ceil(fareData?.finalPrice).toLocaleString("en-IN")}`}</Text>
                 </View>
             </PopUp>
+            <PopUp value={openFareRules} handlePopUpClose={handleFareRulesClose} customStyles={{ width: "100%" }}>
+
+                {flightBooking?.fareRules ?
+                    <View style={{ height: responsiveHeight(40) }}>
+                        <WebView
+                            source={{ html: flightBooking?.fareRules }} />
+                    </View>
+                    : <View style={styles.notfoundFareRuleContainer}>
+                        <Text style={styles.notfoundFareRuleTitle}>Not Found Any FareRules</Text>
+                    </View>}
+
+            </PopUp>
         </View>
 
     )
 }
-const styles = StyleSheet.create({
-    card: {
-        backgroundColor: 'white',
-        borderRadius: responsiveHeight(1.5),
-        marginHorizontal: responsiveWidth(1),
-        marginTop: responsiveHeight(1),
-        marginBottom: responsiveHeight(1),
-        padding: responsiveHeight(1.5),
-        // Shadow properties for iOS
-        shadowColor: colors.black,
-        shadowOffset: { width: responsiveWidth(-0.2), height: responsiveHeight(-5) },
-        shadowOpacity: responsiveHeight(0.3),
-        shadowRadius: responsiveHeight(3),
-        elevation: responsiveHeight(0.4),
-    },
-    flightLogoContainer: {
-        height: responsiveHeight(4),
-        width: responsiveHeight(4),
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    flightLogo: {
-        height: responsiveHeight(7),
-        width: responsiveWidth(7),
-    },
-    airlineName: {
-        fontSize: responsiveFontSize(2),
-        fontFamily: fonts.primary,
-        color: colors.black,
-    },
-    flightNumbers: {
-        fontSize: responsiveFontSize(1.4),
-        fontFamily: fonts.primary,
-        color: colors.lightGray,
-        // borderWidth:1,
-        // paddingHorizontal:10
-    },
-    flightsTimingContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    originContainer: {
-        rowGap: responsiveHeight(0.5),
-        width: '25%',
-    },
-    originTitle: {
-        fontSize: responsiveFontSize(2.2),
-        fontFamily: fonts.primary,
-        color: colors.black,
-    },
-    flightTimings: {
-        fontSize: responsiveFontSize(1.8),
-        fontFamily: fonts.textFont,
-        color: colors.black,
-    },
-    directionContainer: {
-        width: '50%',
-        rowGap: 4,
-    },
-    stopsBtn: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        // columnGap: responsiveWidth(2),
-    },
-    stopsBtnText: {
-        color: colors.highlight,
-    },
-    flighttotalTime: {
-        fontSize: responsiveFontSize(1.8),
-        textAlign: 'center',
-        fontFamily: fonts.textFont,
-        color: colors.black,
-        letterSpacing: responsiveHeight(0.5),
-    },
-    destinationContainer: {
-        alignItems: 'flex-end',
-        rowGap: responsiveHeight(0.5),
-        width: '25%',
-    },
-    destinationTitle: {
-        fontSize: responsiveFontSize(2.2),
-        fontFamily: fonts.primary,
-        color: colors.black,
-    },
-    bookingFlightCityNameAirportName: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        // marginBottom: responsiveHeight(2),
-        flexWrap: 'wrap',
-    },
-    mainContainer: {
-        // paddingHorizontal: responsiveWidth(3.5),
-        // paddingVertical: responsiveHeight(3),
-        backgroundColor: colors.white,
-        borderRadius: responsiveHeight(2),
-        // rowGap: responsiveHeight(2.5),
-        // elevation: responsiveHeight(0.8),
-        shadowColor: colors.black,
-        shadowOffset: { width: responsiveWidth(-0.2), height: responsiveHeight(-5) },
-        shadowOpacity: responsiveHeight(0.3),
-        shadowRadius: responsiveHeight(3),
-        elevation: responsiveHeight(0.4),
-        // marginHorizontal: responsiveWidth(3.5),
-        // marginTop: responsiveHeight(2.5),
-    },
-    flightPriceMainContainer:
-    {
-        borderTopWidth: responsiveHeight(0.1),
-        borderBottomWidth: responsiveHeight(0.1),
-        borderStyle: "dotted",
-        marginTop: responsiveHeight(2),
-        paddingHorizontal: responsiveWidth(2),
-        paddingVertical: responsiveHeight(1),
-        gap: responsiveHeight(1.8)
-    },
-    addedFlightTimeAndDateContainer:
-    {
-        paddingTop: responsiveHeight(0.5),
-        paddingHorizontal: responsiveWidth(2),
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-    },
-    addedFlightTitleContainer:
-    {
-        width: "90%"
-    },
-    CancellationAndDateChangeTitle: {
-        fontSize: responsiveHeight(2.4),
-        color: colors.primary,
-        fontFamily: fonts.primary
-    },
-    CancellationAndDateChangesubTitle:
-    {
-        fontSize: responsiveHeight(2),
-        color: colors.primary,
-        fontFamily: fonts.primary
-    },
-    CancellationAndDateChangeCon: {
-        backgroundColor: colors.whiteSmoke,
-        borderRadius: responsiveHeight(1),
-        paddingHorizontal: responsiveWidth(3),
-        paddingVertical: responsiveHeight(1.5),
-        marginTop: responsiveHeight(2)
-    },
-    cancel:
-    {
-        gap: responsiveHeight(1.5)
-    },
-    cancellationContainer:
-    {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: responsiveHeight(0.6)
-    },
-    dashedLine: {
-        borderTopWidth: responsiveHeight(0.1),
-        marginVertical: responsiveHeight(1.5),
-        borderStyle: 'dashed'
-    },
-    flightBookingTravellerDetailsContainer:
-    {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: responsiveHeight(1)
-    },
-    flightBookingTravellerDetailsTitle:
-    {
-        fontSize: responsiveHeight(1.5),
-        color: colors.lightGray,
-        fontFamily: fonts.primary
-    },
-    bookingStatusTitles:
-    {
-        fontSize: responsiveHeight(1.7),
-        fontFamily: fonts.textInput,
-        color: colors.lightGray
-    },
-    bookingStatusTitlesMainContainer: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        alignItems: 'center',
-        //  marginTop:responsiveHeight(1.2)
-    },
-    bookingStatusTextContainer: {
-        paddingHorizontal: responsiveWidth(2),
-        alignItems: 'center',
-        borderRadius: responsiveHeight(1),
-        paddingVertical: responsiveHeight(0.3),
-        justifyContent: 'center'
 
-    },
-    bookingStatusText: {
-        color: colors.white,
-        fontSize: responsiveHeight(1.3),
-        fontFamily: fonts.primary
-    },
-    hotelTotalPriceContainer: {
-        flexDirection: 'row',
-        flexWrap: "wrap",
-        alignItems: 'center',
-        gap: responsiveHeight(1)
-    },
-    hotelTotalPrice: {
-        fontSize: responsiveHeight(2.2),
-        fontFamily: fonts.textFont,
-        color: colors.secondary
-    },
-    bookingStatusTitles:
-    {
-        fontSize: responsiveHeight(1.7),
-        fontFamily: fonts.textInput,
-        color: colors.lightGray
-    },
-    addedHotelTimeAndDate: {
-        color: colors.primary,
-        fontSize: responsiveHeight(1.7),
-        fontFamily: fonts.primary
-    },
-    hotelDeleteMsg: {
-        fontSize: responsiveHeight(2),
-        fontFamily: fonts.textInput,
-        color: colors.primary
-    },
-    hotelDeletingBtnsContainer:
-    {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginTop: responsiveHeight(1.8),
-        paddingHorizontal: responsiveWidth(6)
-    },
-    hotelDeleteBtn:
-    {
-        borderWidth: 1,
-        paddingHorizontal: responsiveWidth(3),
-        paddingVertical: responsiveHeight(0.8),
-        borderRadius: responsiveHeight(1),
-        backgroundColor: colors.primary
-    },
-    hotelDeleteBtnTitle:
-    {
-        fontSize: responsiveHeight(2),
-        fontFamily: fonts.textInput,
-        color: colors.white
-    },
-    flightDirectionMainContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between'
-    },
-    flightDirectionContainer: {
-        flexDirection: "row",
-        alignItems: 'center',
-        gap: responsiveHeight(1)
-    },
-    flightPriceAndChargesContainer:
-    {
-        width: responsiveWidth(50),
-        gap: responsiveHeight(1.2)
-    },
-    airportName: {
-        fontSize: responsiveHeight(2),
-        fontFamily: fonts.textFont,
-        color: colors.lightGray
-    },
-    flightCharges: {
-        fontSize: responsiveHeight(2),
-        fontFamily: fonts.textFont,
-        color: colors.lightGray
-    },
-    flightChargesPrice: {
-        fontSize: responsiveHeight(2.2),
-        fontFamily: fonts.primary,
-        color: colors.highlight
-    },
-    flightPrice: {
-        fontSize: responsiveHeight(2.2),
-        fontFamily: fonts.primary,
-        color: colors.highlight
-    },
-    horizontalLine: {
-        borderTopWidth: responsiveHeight(0.13),
-        borderStyle: 'dashed',
-        borderColor: colors.gray
-    },
-    flightPriceContainer:
-    {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginTop: responsiveHeight(2.8)
-    },
-    totalFareTitle: {
-        fontSize: responsiveHeight(2.5),
-        fontFamily: fonts.primary,
-        color: colors.primary
-    }, totalFare: {
-        fontSize: responsiveHeight(2.5),
-        fontFamily: fonts.primary,
-        color: colors.secondary
-    },
-    serviceCharges: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: "center"
-    }
-})
 export default TripDetailsFlightCard

@@ -111,15 +111,29 @@ var options = {
 var newTripDateString = dateObject.toLocaleString("en-US", options);
 var newTripCompleteString = "newTrip_" + newTripDateString;
 let abortAirportController;
+let controller;
 var fuse = new Fuse(AirportsData, {
   keys: ["cityName", "name", "iataCode", "countryName"],
   includeScore: true,
   threshold: 0.2
 });
+var hotelFuse = new Fuse(HotelsData, {
+  keys: [
+    "CITYID",
+    "DESTINATION",
+    "STATEPROVINCE",
+    "STATEPROVINCECODE",
+    "COUNTRY",
+    "COUNTRYCODE"
+  ],
+  includeScore: true,
+  threshold: 0.2
+});
+
 export default class MyProvider extends Component {
   constructor(props) {
     super(props);
-  
+
     this.state = {
       loading: false,
       email: "",
@@ -179,118 +193,115 @@ export default class MyProvider extends Component {
       airlineName: "",
       destStartTime: null,
       destEndTime: null,
-      stopPts:null,
+      stopPts: null,
       byDuration: false,
       byCost: true,
-      intStopPts1:null,
-      intStopPts2:null,
+      intStopPts1: null,
+      intStopPts2: null,
       flightTravellers: 0,
       originStartTime: null,
-    originEndTime: null,
-    destStartTime: null,
-    intOriginStartTime1: null,
-    intOriginEndTime1: null,
-    intOriginStartTime2: null,
-    intOriginEndTime2: null,
-    intDestStartTime1: null,
-    intDestEndTime1: null,
-    intDestStartTime2: null,
-    intDestEndTime2: null,
-    adminDetails: {},
-    domesticFlight: 0,
-    internationalFlight: 0,
-    domesticHotel: 0,
-    internationalHotel: 0,
-    hotelRooms:"1",
-    hotelNights:0,
-    hotelRoomArr:[{
-      adults: "1", 
-      child: 0, 
-      childAge: []
-    }],
-    cityHotelRes: [],
-    hotelSearchInputToggle:false,
-    hotelResList: [],
-    hotelSessionExpired: false,
-    hotelSessionStarted: false,
-    selectedHotel:"Destination",
-    cityHotelQuery:"",
-    cityHotel:"",
-    countryCode:"IN",
-    cityHotelItem:{},
-    selectedCheckInDate:"Check-In date",
-    selectedCheckOutDate:"Check-Out date",
-    calenderOpen: {
-      checkInCalender: false,
-      checkOutCalender: false 
-    },
-    selectedHotelCheckInDate:new Date,
-    selectedHotelCheckOutDate:new Date,
-    // hotelSearchNights:0,
-    checkInTime:null,
-    checkOutTime:null,
-    hotelSearchAdults:0,
-    hotelSearchChild:0,
-    searchingHotels:true,
-    cityHotelResBox:false,
-    filterActions:false,
-    hotelRating:null,
-    hotelPriceStart: null,
-    hotelPriceEnd: null,
-    hotelSearchText: null,
-    hotelInfoRes: false,
-    fetchingHotelInfo:false,
-    idToIndex:{},
-    userTripStatus: {
-      userTrips: [],
-      tripLoading: true,
-    },
-    offset: null,
-    userId: "",
-    isLoading:false,
-    tripData: {
-      id: null,
-      data: null,
-      hotels: null,
-      flights: null
-    },
-    activeComponent:components[0].categoryName,
-    flatListRef : React.createRef(null),
+      originEndTime: null,
+      destStartTime: null,
+      intOriginStartTime1: null,
+      intOriginEndTime1: null,
+      intOriginStartTime2: null,
+      intOriginEndTime2: null,
+      intDestStartTime1: null,
+      intDestEndTime1: null,
+      intDestStartTime2: null,
+      intDestEndTime2: null,
+      adminDetails: {},
+      domesticFlight: 0,
+      internationalFlight: 0,
+      domesticHotel: 0,
+      internationalHotel: 0,
+      hotelRooms: "1",
+      hotelNights: 0,
+      hotelRoomArr: [{
+        adults: "1",
+        child: 0,
+        childAge: []
+      }],
+      cityHotelRes: [],
+      hotelSearchInputToggle: false,
+      hotelResList: [],
+      hotelSessionExpired: false,
+      hotelSessionStarted: false,
+      selectedHotel: "Destination",
+      cityHotelQuery: "",
+      cityHotel: "",
+      countryCode: "IN",
+      cityHotelItem: {},
+      selectedCheckInDate: "Check-In date",
+      selectedCheckOutDate: "Check-Out date",
+      calenderOpen: {
+        checkInCalender: false,
+        checkOutCalender: false
+      },
+      selectedHotelCheckInDate: new Date,
+      selectedHotelCheckOutDate: new Date,
+      // hotelSearchNights:0,
+      checkInTime: null,
+      checkOutTime: null,
+      hotelSearchAdults: 0,
+      hotelSearchChild: 0,
+      searchingHotels: true,
+      cityHotelResBox: false,
+      filterActions: false,
+      hotelRating: null,
+      hotelPriceStart: null,
+      hotelPriceEnd: null,
+      hotelSearchText: null,
+      hotelInfoRes: false,
+      fetchingHotelInfo: false,
+      idToIndex: {},
+      userTripStatus: {
+        userTrips: [],
+        tripLoading: true,
+      },
+      offset: null,
+      userId: "",
+      isLoading: false,
+      tripData: {
+        id: null,
+        data: null,
+        hotels: null,
+        flights: null
+      },
+      activeComponent: components[0].categoryName,
+      flatListRef: React.createRef(null),
+      hotelCityLoading:false,
+      hotelListData:[],
       actions: {
         setTrips: async (value) => {
           this.setState({
             userTripStatus: value
           });
         },
-   switchComponent : (component) => {
-          this.setState({activeComponent:component})
+        switchComponent: (component) => {
+          this.setState({ activeComponent: component })
           const selectedIndex = components.findIndex((item) => item.categoryName === component);
           this.state.flatListRef.current?.scrollToIndex({ animated: true, index: selectedIndex });
-        },         
+        },
 
-handleDirectFlight:()=>
-{
-this.setState({directflight:!this.state.directflight})
-},
-handleHotelBackButton:()=>
-{
-this.setState({searchingHotels:true})
-},
-handleToggleHotelSearchInput:()=>
-{
-this.setState({cityHotelResBox:false})
-},
-handleFilterActions:()=>
-{
-this.setState({filterActions:!this.state.filterActions})
-},
-loginAction:async()=>
-        {
+        handleDirectFlight: () => {
+          this.setState({ directflight: !this.state.directflight })
+        },
+        handleHotelBackButton: () => {
+          this.setState({ searchingHotels: true })
+        },
+        handleToggleHotelSearchInput: () => {
+          this.setState({ cityHotelResBox: false })
+        },
+        handleFilterActions: () => {
+          this.setState({ filterActions: !this.state.filterActions })
+        },
+        loginAction: async () => {
           try {
-            const email1="pavan@gmail.com"
-            const password1='pavan@gmail'
+            const email1 = "pavan@gmail.com"
+            const password1 = 'pavan@gmail'
             const response = await auth().signInWithEmailAndPassword(email1, password1);
-            return {user:response.user};
+            return { user: response.user };
           } catch (error) {
             throw error;
           }
@@ -393,7 +404,7 @@ loginAction:async()=>
           })
         },
         handleOnChangeText: (action) => {
-         this.setState({ [action.name]: action.event})
+          this.setState({ [action.name]: action.event })
         }
         ,
         handleFlightsFilter: (payload) => {
@@ -406,17 +417,17 @@ loginAction:async()=>
         },
         handlesearchingFlights: () => {
           this.setState({
-         searchingFlights: true ,
-          origin:"",
-          destination: "",
-          departure: "Departure Date",
-          returnDate: "Return Date",
-          cabinClassId: "2",
-          journeyWay: "1",
-          departureformattedDate: "",
-          returnformattedDate: "",
+            searchingFlights: true,
+            origin: "",
+            destination: "",
+            departure: "Departure Date",
+            returnDate: "Return Date",
+            cabinClassId: "2",
+            journeyWay: "1",
+            departureformattedDate: "",
+            returnformattedDate: "",
           })
-          
+
         },
         handleFlightsLogos: async () => {
           const querySnapshot = await firestore().collection("airlinelogos").get();
@@ -533,266 +544,303 @@ loginAction:async()=>
             { signal: abortAirportController.signal }
           );
         },
-        fetchHotelCityList: () => {
-          try {
-            // const accountDocRef = firestore().collection("hotelAutoComplete");
-            // const hotelLists = [];
-    
-            // const querySnapshot = await accountDocRef.get();
-    
-            // querySnapshot.forEach(async (doc) => {
-            //   doc.data().hotelList.forEach((hotel) => {
-            //     hotelLists.push(hotel);
-            //   });
-            // });
-         
-            var fuse = new Fuse(HotelsData, {
-              keys: [
-                "item.CITYID",
-                "item.DESTINATION",
-                "item.STATEPROVINCE",
-                "item.STATEPROVINCECODE",
-                "item.COUNTRY",
-                "item.COUNTRYCODE"
-              ],
-              includeScore: true,
-              threshold: 0.2
-            });
-            this.setState({
-              hotelFuse: fuse
-            })
-          } catch (error) {
-            console.error("Error fetching hotel city list:", error);
+        // fetchHotelCityList: async() => {
+        //   console.log(("calling.............."))
+        //   try {
+        //     const accountDocRef = firestore().collection("hotelAutoComplete");
+        //     const hotelLists = [];
+
+        //     const querySnapshot = await accountDocRef.get();
+           
+        //     querySnapshot.forEach(async (doc) => {
+        //       doc.data().hotelList.forEach((hotel) => {
+        //         hotelLists.push(hotel);
+        //       });
+        //     });
+        //     console.log(hotelLists,"hotelLists")
+        //     var fuse = new Fuse(hotelLists, {
+        //       keys: [
+        //         "CITYID",
+        //         "DESTINATION",
+        //         "STATEPROVINCE",
+        //         "STATEPROVINCECODE",
+        //         "COUNTRY",
+        //         "COUNTRYCODE"
+        //       ],
+        //       includeScore: true,
+        //       threshold: 0.2
+        //     });
+        //     this.setState({
+        //       hotelListData: fuse
+        //     })
+        //   } catch (error) {
+        //     console.error("Error fetching hotel city list:", error);
+        //   }
+        // },
+
+        // changeCityKeyword :  (query) => {
+        //   // console.log(query,"=======>")
+        //   var results =  this.state.hotelFuse.search(query);
+        //   // console.log("Search results", results[0]?.item?.item);
+        //   this.setState({
+        //     cityHotelRes:results
+        //   });
+        // },
+        fetchHotelCityList:async(keyword)=>
+        {
+
+          if(controller)
+          {
+            controller.abort()
           }
+          controller=new AbortController()
+          const { signal } = controller;
+          const querySnapshot  =await firestore().collection("hotelAutoComplete").where("DESTINATION","==",'Parbhani').get(signal)
+          const hotels = querySnapshot.docs.map(doc => doc.data());
+          console.log(hotels,"lll")
+          return hotels
         },
-        changeCityKeyword :  (query) => {
-          // console.log(query,"=======>")
-          var results =  this.state.hotelFuse.search(query);
-          // console.log("Search results", results[0]?.item?.item);
-          this.setState({
-            cityHotelRes:results
-          });
-        },
+        changeCityKeyword: this.debounce(async (keyword) => {
+          if (keyword !== "") {
+            try {
+              var results1 = hotelFuse.search(keyword)
+              if (results1.length > 0) 
+              {
+                console.log("1")
+                  this.setState({
+                    cityHotelRes:results1,
+                    hotelCityLoading:false
+                  });
+
+              }
+              else{
+                console.log("2")
+                // const results2=this.state.hotelListData.search(keyword)
+                const results2=this.state.actions.fetchHotelCityList(keyword)
+                // this.setState({
+                //   cityHotelRes:results2,
+                //   hotelCityLoading:false
+                // });
+                console.log(results2,"results2")
+              }
+            } catch (err) {
+              console.log(err);
+            }
+          }
+          else {
+
+          }
+
+        }, 500),
         handleChangeCityHotel: (keyword) => {
 
+          // this.setState({
+          //   cityHotelQuery:keyword,
+          //   cityHotelResBox:true
+          // })
           this.setState({
-            cityHotelQuery:keyword,
-            cityHotelResBox:true
+            hotelCityLoading:true
           })
           this.state.actions.changeCityKeyword(keyword);
         },
 
-        selectedHotel:(item)=>
-        {
-this.setState({
-  selectedHotel:`${item.DESTINATION},${item?.STATEPROVINCE
-    ? item?.STATEPROVINCE
-    : item?.COUNTRY
-    }`,
-    cityHotel:item.CITYID,
-    countryCode:item.COUNTRYCODE,
-    cityHotelItem:item
-})
+        selectedHotel: (item) => {
+          this.setState({
+            selectedHotel: `${item.DESTINATION},${item?.STATEPROVINCE
+              ? item?.STATEPROVINCE
+              : item?.COUNTRY
+              }`,
+            cityHotel: item.CITYID,
+            countryCode: item.COUNTRYCODE,
+            cityHotelItem: item
+          })
         },
-handleOpenCheckinCalender:()=>
-{
-  this.setState(prevState => ({
-    calenderOpen: {
-      ...prevState.calenderOpen,
-      checkInCalender: true
-    }
-  }));
-},    
-handleOpenCheckoutCalender:()=>
-{
-  this.setState(prevState => ({
-    calenderOpen: {
-      ...prevState.calenderOpen,
-      checkOutCalender: true
-    }
-  }));
-},   
-handleCheckInCalender:(event, selectedDate)=>
-{
-  if (event.type === 'set')
-  {
-    this.setState(prevState => ({
-      calenderOpen: {
-        ...prevState.calenderOpen,
-        checkInCalender: false
-      }
-    }))
-    if(selectedDate)
-    {
-      const formattedDate = selectedDate.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-      });
-      this.setState({
-        selectedHotelCheckInDate:selectedDate,
-        selectedCheckInDate:formattedDate,
-        checkInTime:selectedDate
-      })
-    }
-    if(this.state.checkOutTime)
-    {
-      const nights =   Number(this.state.actions.diffNights(selectedDate,this.state.selectedHotelCheckOutDate))
-      this.setState({hotelNights:nights})
-    }
-  }
-  else{
-    this.setState(prevState => ({
-      calenderOpen: {
-        ...prevState.calenderOpen,
-        checkInCalender: false
-      }
-    }))
-  }
-},
+        handleOpenCheckinCalender: () => {
+          this.setState(prevState => ({
+            calenderOpen: {
+              ...prevState.calenderOpen,
+              checkInCalender: true
+            }
+          }));
+        },
+        handleOpenCheckoutCalender: () => {
+          this.setState(prevState => ({
+            calenderOpen: {
+              ...prevState.calenderOpen,
+              checkOutCalender: true
+            }
+          }));
+        },
+        handleCheckInCalender: (event, selectedDate) => {
+          if (event.type === 'set') {
+            this.setState(prevState => ({
+              calenderOpen: {
+                ...prevState.calenderOpen,
+                checkInCalender: false
+              }
+            }))
+            if (selectedDate) {
+              const formattedDate = selectedDate.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+              });
+              this.setState({
+                selectedHotelCheckInDate: selectedDate,
+                selectedCheckInDate: formattedDate,
+                checkInTime: selectedDate
+              })
+            }
+            if (this.state.checkOutTime) {
+              const nights = Number(this.state.actions.diffNights(selectedDate, this.state.selectedHotelCheckOutDate))
+              this.setState({ hotelNights: nights })
+            }
+          }
+          else {
+            this.setState(prevState => ({
+              calenderOpen: {
+                ...prevState.calenderOpen,
+                checkInCalender: false
+              }
+            }))
+          }
+        },
 
-handleCheckOutCalender:(event, selectedDate)=>
-{
-  if (event.type === 'set')
-  {
-    this.setState(prevState => ({
-      calenderOpen: {
-        ...prevState.calenderOpen,
-        checkOutCalender: false
-      }
-    }))
-    if(selectedDate)
-    {
-      const formattedDate = selectedDate.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-      });
-      this.setState({
-        selectedHotelCheckOutDate:selectedDate,
-        selectedCheckOutDate:formattedDate,
-        checkOutTime:selectedDate
-      })
-    }
-    if(this.state.checkInTime)
-    {
-      const nights = Number(this.state.actions.diffNights(selectedDate,this.state.selectedHotelCheckInDate))
-     this.setState({hotelNights:nights})
-    }
-  }
-  else{
-    this.setState(prevState => ({
-      calenderOpen: {
-        ...prevState.calenderOpen,
-        checkOutCalender: false
-      }
-    }))
-  }
-},
-handleHotelRooms:(rooms)=>
-{
-  var roomsArr = [...this.state.hotelRoomArr];
-  if (rooms > roomsArr.length) {
-    var diff = rooms - roomsArr.length;
-    for (var i = 1; i <= diff; i++) {
-      roomsArr.push({ adults: 1, child: 0, childAge: [] });
-    }
-  } else if (rooms < roomsArr.length) {
-    roomsArr = roomsArr.filter((room, r) => {
-      return r < rooms;
-    });
-  }
-  this.setState({hotelRooms:rooms})
-  this.setState({
-    hotelRoomArr:roomsArr
-  })
-},
+        handleCheckOutCalender: (event, selectedDate) => {
+          if (event.type === 'set') {
+            this.setState(prevState => ({
+              calenderOpen: {
+                ...prevState.calenderOpen,
+                checkOutCalender: false
+              }
+            }))
+            if (selectedDate) {
+              const formattedDate = selectedDate.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+              });
+              this.setState({
+                selectedHotelCheckOutDate: selectedDate,
+                selectedCheckOutDate: formattedDate,
+                checkOutTime: selectedDate
+              })
+            }
+            if (this.state.checkInTime) {
+              const nights = Number(this.state.actions.diffNights(selectedDate, this.state.selectedHotelCheckInDate))
+              this.setState({ hotelNights: nights })
+            }
+          }
+          else {
+            this.setState(prevState => ({
+              calenderOpen: {
+                ...prevState.calenderOpen,
+                checkOutCalender: false
+              }
+            }))
+          }
+        },
+        handleHotelRooms: (rooms) => {
+          var roomsArr = [...this.state.hotelRoomArr];
+          if (rooms > roomsArr.length) {
+            var diff = rooms - roomsArr.length;
+            for (var i = 1; i <= diff; i++) {
+              roomsArr.push({ adults: 1, child: 0, childAge: [] });
+            }
+          } else if (rooms < roomsArr.length) {
+            roomsArr = roomsArr.filter((room, r) => {
+              return r < rooms;
+            });
+          }
+          this.setState({ hotelRooms: rooms })
+          this.setState({
+            hotelRoomArr: roomsArr
+          })
+        },
 
-handleHotelRoomsArr : (val, type, i)=>
-{
-  var roomsArr = [...this.state.hotelRoomArr];
+        handleHotelRoomsArr: (val, type, i) => {
+          var roomsArr = [...this.state.hotelRoomArr];
 
-    if (type === "adults") {
-      roomsArr[i].adults = val;
-      this.setState({hotelSearchAdults:val})
-    } else if (type === "child") {
-      roomsArr[i].child = val;
-      this.setState({hotelSearchChild:val})
-      let childArr = [];
+          if (type === "adults") {
+            roomsArr[i].adults = val;
+            this.setState({ hotelSearchAdults: val })
+          } else if (type === "child") {
+            roomsArr[i].child = val;
+            this.setState({ hotelSearchChild: val })
+            let childArr = [];
 
-      for (let i = 1; i <= val; i++) {
-        childArr.push({ age: 0 });
-      }
-      roomsArr[i].childAge = [...childArr];
-    }
-    this.setState({
-      hotelRoomArr:roomsArr,
-    })
-},
- handleChildAge:(roomsArr)=>
- {
-  this.setState({
-    hotelRoomArr:roomsArr
-  })
- } , 
-        
- setHotelRating: (value) => {
-  this.setState({
-    hotelRating: value
-  });
-},
-setHotelPriceStart: (value) => {
-  this.setState({
-    hotelPriceStart: value
-  });
-},
-setHotelPriceEnd: (value) => {
-  this.setState({
-    hotelPriceEnd: value
-  });
-},
-setHotelSearchText: (value) => {
-  this.setState({
-    hotelSearchText: value
-  });
-},
+            for (let i = 1; i <= val; i++) {
+              childArr.push({ age: 0 });
+            }
+            roomsArr[i].childAge = [...childArr];
+          }
+          this.setState({
+            hotelRoomArr: roomsArr,
+          })
+        },
+        handleChildAge: (roomsArr) => {
+          this.setState({
+            hotelRoomArr: roomsArr
+          })
+        },
 
- filterHotels: (hotelResList) => {
-  // console.log(this.state.byDuration);
-  var filteredArr = hotelResList;
+        setHotelRating: (value) => {
+          this.setState({
+            hotelRating: value
+          });
+        },
+        setHotelPriceStart: (value) => {
+          this.setState({
+            hotelPriceStart: value
+          });
+        },
+        setHotelPriceEnd: (value) => {
+          this.setState({
+            hotelPriceEnd: value
+          });
+        },
+        setHotelSearchText: (value) => {
+          this.setState({
+            hotelSearchText: value
+          });
+        },
 
-  if (this.state.hotelRating) {
-    //console.log(this.state.hotelRating);
-    filteredArr = filteredArr.filter(
-      (hotel) => hotel.StarRating === this.state.hotelRating
-    );
-  }
-  if (this.state.hotelPriceStart && this.state.hotelPriceEnd) {
-    //console.log(this.state.hotelPriceStart);
-    filteredArr = filteredArr.filter((hotel) => {
-      return (
-        hotel.Price.OfferedPriceRoundedOff >=
-        this.state.hotelPriceStart &&
-        hotel.Price.OfferedPriceRoundedOff < this.state.hotelPriceEnd
-      );
-    });
-  }
-  if (this.state.hotelSearchText) {
-    filteredArr = filteredArr.filter((hotel) => {
-      const staticData = this.state.hotelStaticData[hotel.HotelCode];
-      if (hotel.HotelName) {
-        return hotel.HotelName.toLowerCase().includes(
-          this.state.hotelSearchText.toLowerCase()
-        );
-      }
-      else {
-        return staticData?.HotelName.toLowerCase().includes(
-          this.state.hotelSearchText.toLowerCase()
-        );
-      }
+        filterHotels: (hotelResList) => {
+          // console.log(this.state.byDuration);
+          var filteredArr = hotelResList;
 
-    });
-  }
-  return filteredArr;
-},
+          if (this.state.hotelRating) {
+            //console.log(this.state.hotelRating);
+            filteredArr = filteredArr.filter(
+              (hotel) => hotel.StarRating === this.state.hotelRating
+            );
+          }
+          if (this.state.hotelPriceStart && this.state.hotelPriceEnd) {
+            //console.log(this.state.hotelPriceStart);
+            filteredArr = filteredArr.filter((hotel) => {
+              return (
+                hotel.Price.OfferedPriceRoundedOff >=
+                this.state.hotelPriceStart &&
+                hotel.Price.OfferedPriceRoundedOff < this.state.hotelPriceEnd
+              );
+            });
+          }
+          if (this.state.hotelSearchText) {
+            filteredArr = filteredArr.filter((hotel) => {
+              const staticData = this.state.hotelStaticData[hotel.HotelCode];
+              if (hotel.HotelName) {
+                return hotel.HotelName.toLowerCase().includes(
+                  this.state.hotelSearchText.toLowerCase()
+                );
+              }
+              else {
+                return staticData?.HotelName.toLowerCase().includes(
+                  this.state.hotelSearchText.toLowerCase()
+                );
+              }
+
+            });
+          }
+          return filteredArr;
+        },
 
 
 
@@ -817,31 +865,30 @@ setHotelSearchText: (value) => {
 
           return diffMinutes;
         },
-    diffDays : (dateStr1, dateStr2) => {
+        diffDays: (dateStr1, dateStr2) => {
           const date1 = new Date(dateStr1);
           const date2 = new Date(dateStr2);
-          
+
           const diffTime = Math.abs(date2 - date1);
           const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
           return diffDays;
         },
-        diffNights:(dateStr1, dateStr2)=>
-        {
+        diffNights: (dateStr1, dateStr2) => {
           const date1 = moment.utc(dateStr1);
           const date2 = moment.utc(dateStr2);
-      
+
           // Convert formatted date strings back to Date objects
           const formattedDate1 = date1.local().toDate();
           const formattedDate2 = date2.local().toDate();
-      
+
           // Calculate the difference in milliseconds between the two dates
           const diffTime = Math.abs(formattedDate2 - formattedDate1);
-          
+
           // Convert milliseconds to days and round down
           const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-          
+
           return diffDays;
-     
+
         },
         isExitRow: (row) => {
           var firstSeat = row.Seats[0];
@@ -863,56 +910,56 @@ setHotelSearchText: (value) => {
         //   var segments = flight?.Segments?.map((segment, sg) => {
         //     var seg1 = segment[0];
         //     var segLast = segment[segment.length - 1];
-  
+
         //     var originCityName = seg1.Origin.Airport.CityName;
         //     var originAirportCode = seg1.Origin.Airport.AirportCode;
         //     var originAirportName = seg1.Origin.Airport.AirportName;
         //     var originTerminal = seg1.Origin.Airport.Terminal;
-  
+
         //     var destCityName = segLast.Destination.Airport.CityName;
         //     var destAirportCode = segLast.Destination.Airport.AirportCode;
         //     var destAirportName = segLast.Destination.Airport.AirportName;
         //     var destTerminal = segLast.Destination.Airport.Terminal;
-  
+
         //     var depTimeDate = new Date(seg1.Origin.DepTime);
         //     var arrTimeDate = new Date(segLast.Destination.ArrTime);
-  
+
         //     var depTimeArr = seg1.Origin.DepTime.split("T")[1].split(":");
         //     var arrTimeArr = segLast.Destination.ArrTime.split("T")[1].split(":");
         //     var depTime = `${depTimeArr[0]}:${depTimeArr[1]}`;
         //     var arrTime = `${arrTimeArr[0]}:${arrTimeArr[1]}`;
-  
+
         //     var durationSum = 0;
-  
+
         //     var stopOverPts = [];
         //     var charNum = 0;
-  
+
         //     var segRoutes = [];
-  
+
         //     var dur = 0;
         //     var flightCodes = [];
-  
+
         //     segment.forEach((seg, s) => {
         //       var flightCode = `${seg.Airline.AirlineCode} - ${seg.Airline.FlightNumber} ${seg.Airline.FareClass}`;
         //       flightCodes[s] = flightCode;
-  
+
         //       var flightDuration =
         //         seg.Duration !== 0 ? seg.Duration : seg.AccumulatedDuration;
-  
+
         //       dur += flightDuration + seg.GroundTime;
-  
+
         //       durationSum += flightDuration;
-  
+
         //       if (s > 0) {
         //         var currDepTime = seg.Origin.DepTime;
         //         var prevArrTime = segment[s - 1].Destination.ArrTime;
-  
+
         //         var diffMin = this.state.actions.diffMinutes(
         //           prevArrTime,
         //           currDepTime
         //         );
         //         durationSum += diffMin;
-  
+
         //         var stopDurationNum = diffMin / 60;
         //         var stopDurHours = Math.floor(stopDurationNum);
         //         var stopDurMins = Math.ceil(
@@ -920,22 +967,22 @@ setHotelSearchText: (value) => {
         //         );
         //         var stopDuration = `${stopDurHours ? `${stopDurHours}h ` : ""}${stopDurMins !== 0 ? `${stopDurMins}m` : ""
         //           }`;
-  
+
         //         charNum += seg.Origin.Airport.CityName.length;
-  
+
         //         stopOverPts.push({
         //           cityName: seg.Origin.Airport.CityName,
         //           stopDuration,
         //           charNum
         //         });
         //       }
-  
+
         //       var durNum = flightDuration / 60;
         //       var durHrs = Math.floor(durNum);
         //       var durMns = Math.ceil(60 * (durNum - Math.floor(durNum)));
         //       var durationStr = `${durHrs ? `${durHrs}h ` : ""}${durMns !== 0 ? `${durMns}m` : ""
         //         }`;
-  
+
         //       var dpTimeStr = seg.Origin.DepTime;
         //       var arTimeStr = seg.Destination.ArrTime;
         //       const dateObject1 = new Date(dpTimeStr);
@@ -949,7 +996,7 @@ setHotelSearchText: (value) => {
         //       var arTimeArr = arTimeStr.split("T")[1].split(":");
         //       var dpTime = `${dpTimeArr[0]}:${dpTimeArr[1]}`;
         //       var arTime = `${arTimeArr[0]}:${arTimeArr[1]}`;
-  
+
         //       segRoutes.push({
         //         originCode: seg.Origin.Airport.AirportCode,
         //         destCode: seg.Destination.Airport.AirportCode,
@@ -962,21 +1009,21 @@ setHotelSearchText: (value) => {
         //         destCity: seg.Destination.Airport.CityName
         //       });
         //     });
-  
+
         //     var cabinClass = cabinclassMap[segment[0].CabinClass];
         //     var durationNum = durationSum / 60;
         //     var durHours = Math.floor(durationNum);
         //     var durMins = Math.ceil(60 * (durationNum - Math.floor(durationNum)));
         //     var duration = `${durHours ? `${durHours}h ` : ""}${durMins !== 0 ? `${durMins}m` : ""
         //       }`;
-  
+
         //     var arrAfterDays = this.state.actions.diffNights(
         //       depTimeDate,
         //       arrTimeDate
         //     );
-  
+
         //     totalDuration += dur;
-  
+
         //     return {
         //       airlineName: seg1.Airline.AirlineName,
         //       mainFlgtCode: flightCodes[0],
@@ -1003,7 +1050,7 @@ setHotelSearchText: (value) => {
         //       cabinClass
         //     };
         //   });
-  
+
         //   return {
         //     segments,
         //     fare: flight.Fare.OfferedFare
@@ -1021,35 +1068,35 @@ setHotelSearchText: (value) => {
           var segments = flight?.Segments?.map((segment, sg) => {
             var seg1 = segment[0];
             var segLast = segment[segment.length - 1];
-  
+
             var originCityName = seg1.Origin.Airport.CityName;
             var originAirportCode = seg1.Origin.Airport.AirportCode;
             var originAirportName = seg1.Origin.Airport.AirportName;
             var originTerminal = seg1.Origin.Airport.Terminal;
-  
+
             var destCityName = segLast.Destination.Airport.CityName;
             var destAirportCode = segLast.Destination.Airport.AirportCode;
             var destAirportName = segLast.Destination.Airport.AirportName;
             var destTerminal = segLast.Destination.Airport.Terminal;
-  
+
             var depTimeDate = new Date(seg1.Origin.DepTime);
             var arrTimeDate = new Date(segLast.Destination.ArrTime);
-  
+
             var depTimeArr = seg1.Origin.DepTime.split("T")[1].split(":");
             var arrTimeArr = segLast.Destination.ArrTime.split("T")[1].split(":");
             var depTime = `${depTimeArr[0]}:${depTimeArr[1]}`;
             var arrTime = `${arrTimeArr[0]}:${arrTimeArr[1]}`;
-  
+
             var durationSum = 0;
-  
+
             var stopOverPts = [];
             var charNum = 0;
-  
-  
+
+
             var finalDur = 0;
-  
+
             var segRoutes = [];
-  
+
             var dur = 0;
             var flightCodes = [];
             segment.forEach((seg, s) => {
@@ -1057,9 +1104,9 @@ setHotelSearchText: (value) => {
               flightCodes[s] = flightCode;
               var flightDuration =
                 seg.Duration !== 0 ? seg.Duration : (seg.AccumulatedDuration ? seg.AccumulatedDuration : 0);
-  
+
               dur += flightDuration + seg.GroundTime;
-  
+
               durationSum += flightDuration;
               if (s === segment.length - 1) {
                 finalDur += seg.AccumulatedDuration;
@@ -1067,13 +1114,13 @@ setHotelSearchText: (value) => {
               if (s > 0) {
                 var currDepTime = seg.Origin.DepTime;
                 var prevArrTime = segment[s - 1].Destination.ArrTime;
-  
+
                 var diffMin = this.state.actions.diffMinutes(
                   prevArrTime,
                   currDepTime
                 );
                 durationSum += diffMin;
-  
+
                 var stopDurationNum = diffMin / 60;
                 var stopDurHours = Math.floor(stopDurationNum);
                 var stopDurMins = Math.ceil(
@@ -1081,16 +1128,16 @@ setHotelSearchText: (value) => {
                 );
                 var stopDuration = `${stopDurHours ? `${stopDurHours}h ` : ""}${stopDurMins !== 0 ? `${stopDurMins}m` : ""
                   }`;
-  
+
                 charNum += seg.Origin.Airport.CityName.length;
-  
+
                 stopOverPts.push({
                   cityName: seg.Origin.Airport.CityName,
                   stopDuration,
                   charNum
                 });
               }
-  
+
               var durNum = flightDuration / 60;
               var durHrs = Math.floor(durNum);
               var durMns = Math.ceil(60 * (durNum - Math.floor(durNum)));
@@ -1098,15 +1145,15 @@ setHotelSearchText: (value) => {
                 }`;
               var dpTimeStr = seg.Origin.DepTime;
               var arTimeStr = seg.Destination.ArrTime;
-  
+
               var depDate = new Date(dpTimeStr);
               var arrDate = new Date(arTimeStr);
-  
+
               var dpTimeArr = dpTimeStr.split("T")[1].split(":");
               var arTimeArr = arTimeStr.split("T")[1].split(":");
               var dpTime = `${dpTimeArr[0]}:${dpTimeArr[1]}`;
               var arTime = `${arTimeArr[0]}:${arTimeArr[1]}`;
-  
+
               segRoutes.push({
                 originCode: seg.Origin.Airport.AirportCode,
                 destCode: seg.Destination.Airport.AirportCode,
@@ -1119,15 +1166,15 @@ setHotelSearchText: (value) => {
                 destCity: seg.Destination.Airport.CityName
               });
             });
-  
+
             var cabinClass = cabinclassMap[segment[0].CabinClass] ? cabinclassMap[segment[0].CabinClass] : '';
             var durationNum = durationSum / 60;
             var durHours = Math.floor(durationNum);
-  
+
             var durMins = Math.ceil(60 * (durationNum - Math.floor(durationNum)));
             var finalSum = finalDur / 60;
             var finalHrs = Math.floor(finalSum)
-  
+
             var finalsMins = Math.ceil(60 * (finalSum - Math.floor(finalSum)));
             var duration = `${durHours ? `${durHours}h ` : ""}${durMins !== 0 ? `${durMins}m` : ""
               }`;
@@ -1138,7 +1185,7 @@ setHotelSearchText: (value) => {
               depTimeDate,
               arrTimeDate
             );
-  
+
             totalDuration += dur;
             return {
               airlineName: seg1.Airline.AirlineName,
@@ -1184,8 +1231,8 @@ setHotelSearchText: (value) => {
           this.setState({
             flightResult: {},
             flightResList: [],
-            searchingFlights:true,
-            flightBookPage:false
+            searchingFlights: true,
+            flightBookPage: false
           });
         },
         setAirlineName: (value) => {
@@ -1278,10 +1325,8 @@ setHotelSearchText: (value) => {
             byCost: value
           });
         },
-        isOpenViewPrices:()=>
-        {
-          flightArr[0].segments.map((ele)=>
-          {
+        isOpenViewPrices: () => {
+          flightArr[0].segments.map((ele) => {
             console.log(ele.ResultIndex)
           })
         },
@@ -1290,12 +1335,12 @@ setHotelSearchText: (value) => {
           //console.log(seatData);
           seatData.SegmentSeat.forEach((seg, s) => {
             var firstRow = seg.RowSeats[1];
-  
+
             if (firstRow.Seats.length === 6) {
               valid = true;
             }
           });
-  
+
           return valid;
         },
         fillUpRowSeats: (rowSeats) => {
@@ -1303,7 +1348,7 @@ setHotelSearchText: (value) => {
           var firstRow = rowSeats[1];
           rowsNum = Number(firstRow.Seats[0].RowNo) - 1;
           var rows = [];
-  
+
           for (var i = 1; i <= rowsNum; i++) {
             rows.push({
               Seats: [
@@ -1352,9 +1397,9 @@ setHotelSearchText: (value) => {
               ]
             });
           }
-  
+
           rowSeats.shift();
-  
+
           var seatsNo = {
             0: "A",
             1: "B",
@@ -1363,7 +1408,7 @@ setHotelSearchText: (value) => {
             4: "E",
             5: "F"
           };
-  
+
           rowSeats.forEach((row, r) => {
             if (row.Seats.length < 6) {
               var i = 0;
@@ -1381,7 +1426,7 @@ setHotelSearchText: (value) => {
                 }
                 s++;
               }
-  
+
               row.Seats = [...seats];
               // console.log("Filled seats", seats);
             }
@@ -1391,15 +1436,15 @@ setHotelSearchText: (value) => {
         fillUpSegmentSeats: (seatData) => {
           var seatDataNew = seatData.map((seatSeg, s) => {
             return {
-              RowSeats:this.state.actions.fillUpRowSeats(seatSeg.RowSeats)
+              RowSeats: this.state.actions.fillUpRowSeats(seatSeg.RowSeats)
             };
           });
-  
+
           return seatDataNew;
         },
         getWingPos: (rowSeats) => {
           var wingPosArr = [];
-  
+
           rowSeats.forEach((row, r) => {
             var firstSeat = row.Seats[0];
             var i = 1;
@@ -1407,7 +1452,7 @@ setHotelSearchText: (value) => {
               firstSeat = row.Seats[i];
               i++;
             }
-  
+
             if (
               !firstSeat.noSeat &&
               seatTypeObj[firstSeat.SeatType].includes("Wing")
@@ -1415,14 +1460,14 @@ setHotelSearchText: (value) => {
               wingPosArr.push(firstSeat.RowNo);
             }
           });
-  
+
           return wingPosArr;
         },
         getWingPosArr: (seatData) => {
           var wingPosArr = seatData.map((seatSeg, s) => {
             return [...this.state.actions.getWingPos(seatSeg.RowSeats)];
           });
-  
+
           return wingPosArr;
         },
         filterFlights: (flightArr) => {
@@ -1436,10 +1481,10 @@ setHotelSearchText: (value) => {
             filteredArr.sort((a, b) => {
               var aFlight = this.state.actions.modifyFlightObject(a[0]);
               var bFlight = this.state.actions.modifyFlightObject(b[0]);
-  
+
               var aDur = aFlight.totalDuration;
               var bDur = bFlight.totalDuration;
-  
+
               return aDur - bDur;
             });
           }
@@ -1676,7 +1721,7 @@ setHotelSearchText: (value) => {
                 PreferredArrivalTime: outbound
               },
               {
-                Origin:destinationSelectedAirPort.iataCode,
+                Origin: destinationSelectedAirPort.iataCode,
                 Destination: originSelectedAirport.iataCode,
                 FlightCabinClass: cabinClassId,
                 PreferredDepartureTime: inbound,
@@ -1737,7 +1782,7 @@ setHotelSearchText: (value) => {
             );
           }, 840000);
         },
-      getRecommondedHotelList: async () => {
+        getRecommondedHotelList: async () => {
           console.log('reco called');
           try {
             const accCollectionRef = firestore().collection("recomondedHotels").doc("recommondedHotelCityListJson");
@@ -1754,12 +1799,12 @@ setHotelSearchText: (value) => {
             console.error("Error fetching recommended hotels:", error);
           }
         },
- getHotelImages : async (cityId) => {
+        getHotelImages: async (cityId) => {
           try {
             const cityIds = String(cityId);
             const documentRef = firestore().collection("hotelImages").doc(cityIds);
             const doc = await documentRef.get();
-            
+
             if (doc.exists) {
               console.log('called');
               const documentData = doc.data();
@@ -1776,66 +1821,67 @@ setHotelSearchText: (value) => {
             }
           } catch (error) {
             console.error("Error fetching hotel images:", error);
-          }},
-          convertTboDateFormat: (inputDate) => {
-            const date = new Date(inputDate);
-            const day = date.getDate();
-            const month = date.getMonth() + 1;
-            const year = date.getFullYear();
-            const formattedDay = day < 10 ? '0' + day : day;
-            const formattedMonth = month < 10 ? '0' + month : month;
-        
-            return formattedDay + '/' + formattedMonth + '/' + year;
-          } ,
-          convertXmlToJson: async (cityId) => {
-            var hotelStatic = await fetch(
-              "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/staticdata",
-              {
-                method: "POST",
-                // credentials: "include",
-                headers: {
-                  "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ cityId: cityId })
-              }
-            )
-              .then((res) => res.json())
-              .catch((err) => console.log(err));
-            // console.log(hotelStatic)
-            var jsonResult = convert.xml2json(hotelStatic.HotelData, {
-              compact: true,
-              spaces: 2
-            });
-            var jsonContent = JSON.parse(jsonResult);
-            var hotelObject = {};
-            console.log(jsonContent)
-            jsonContent.ArrayOfBasicPropertyInfo.BasicPropertyInfo.forEach(
-              (hotel) => {
-                var hotelCode = hotel["_attributes"]["TBOHotelCode"];
-                hotelObject[hotelCode] = {
-                  BrandCode: hotel["_attributes"]["BrandCode"],
-                  HotelCityCode: hotel["_attributes"]["HotelCityCode"],
-                  HotelName: hotel["_attributes"]["HotelName"],
-                  TBOHotelCode: hotel["_attributes"]["TBOHotelCode"],
-                  LocationCategoryCode:
-                    hotel["_attributes"]["LocationCategoryCode"],
-                  Address: hotel["Address"]
-                };
-              }
-            );
-            return hotelObject;
-          },
+          }
+        },
+        convertTboDateFormat: (inputDate) => {
+          const date = new Date(inputDate);
+          const day = date.getDate();
+          const month = date.getMonth() + 1;
+          const year = date.getFullYear();
+          const formattedDay = day < 10 ? '0' + day : day;
+          const formattedMonth = month < 10 ? '0' + month : month;
+
+          return formattedDay + '/' + formattedMonth + '/' + year;
+        },
+        convertXmlToJson: async (cityId) => {
+          var hotelStatic = await fetch(
+            "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/staticdata",
+            {
+              method: "POST",
+              // credentials: "include",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ cityId: cityId })
+            }
+          )
+            .then((res) => res.json())
+            .catch((err) => console.log(err));
+          // console.log(hotelStatic)
+          var jsonResult = convert.xml2json(hotelStatic.HotelData, {
+            compact: true,
+            spaces: 2
+          });
+          var jsonContent = JSON.parse(jsonResult);
+          var hotelObject = {};
+          console.log(jsonContent)
+          jsonContent.ArrayOfBasicPropertyInfo.BasicPropertyInfo.forEach(
+            (hotel) => {
+              var hotelCode = hotel["_attributes"]["TBOHotelCode"];
+              hotelObject[hotelCode] = {
+                BrandCode: hotel["_attributes"]["BrandCode"],
+                HotelCityCode: hotel["_attributes"]["HotelCityCode"],
+                HotelName: hotel["_attributes"]["HotelName"],
+                TBOHotelCode: hotel["_attributes"]["TBOHotelCode"],
+                LocationCategoryCode:
+                  hotel["_attributes"]["LocationCategoryCode"],
+                Address: hotel["Address"]
+              };
+            }
+          );
+          return hotelObject;
+        },
         hotelSearch: async () => {
           await this.state.actions.getRecommondedHotelList()
           this.setState({
-            hotelSearchQuery:this.state.selectedHotel ,
+            hotelSearchQuery: this.state.selectedHotel,
             hotelSessionStarted: false,
             hotelSessionEnded: false,
           });
-  
+
           let roomGuests = [];
-  
-      this.state.hotelRoomArr.forEach((room, r) => {
+
+          this.state.hotelRoomArr.forEach((room, r) => {
             roomGuests.push({
               NoOfAdults: Number(room.adults),
               NoOfChild: Number(room.child),
@@ -1843,7 +1889,7 @@ setHotelSearchText: (value) => {
             });
           });
           var request = {
-            checkInDate:this.state.actions.convertTboDateFormat(this.state.selectedHotelCheckInDate),
+            checkInDate: this.state.actions.convertTboDateFormat(this.state.selectedHotelCheckInDate),
             cityId: this.state.cityHotel,
             nights: this.state.hotelNights,
             countryCode: this.state.countryCode,
@@ -1867,42 +1913,42 @@ setHotelSearchText: (value) => {
             //this.state.actions.convertXmlToJsonHotel({ cityId: "145710", hotelId: "00193836" })
             this.state.actions.getHotelImages(request.cityId)
           ]);
-  
+
           console.log("Result", hotelStatic);
-  
+
           var hotelRes = hotelStatic[0];
           var staticdata = hotelStatic[1];
           // var size = Object.keys(staticdata).length;
           // console.log( size,"myProviderererer")
           // console.log("Hotel result", hotelRes);
-          const HotelListData=hotelRes.hotelResult?.HotelSearchResult?.HotelResults
+          const HotelListData = hotelRes.hotelResult?.HotelSearchResult?.HotelResults
           const hotelIdsInObject = this.state.recommondedHotels ? Object.keys(this.state.recommondedHotels).map(ele => { return { HotelCode: ele } }) : []
-         const idToIndex = hotelIdsInObject.reduce((acc, item, index) => {
-        acc[item.HotelCode] = index;
-        return acc;
-    }, {});
-    this.setState({idToIndex:idToIndex})
+          const idToIndex = hotelIdsInObject.reduce((acc, item, index) => {
+            acc[item.HotelCode] = index;
+            return acc;
+          }, {});
+          this.setState({ idToIndex: idToIndex })
 
-     const filteredHotels = HotelListData.filter(hotel => {
-        const staticData = staticdata[hotel.HotelCode];
-        const hotelName = hotel.HotelName ? hotel.HotelName : staticData?.HotelName;
-        return hotelName?.length > 0;
-    })
-        const finalData = this.state.actions.filterHotels(filteredHotels).sort((a, b) => {
-        const indexA = idToIndex[a.HotelCode];
-        const indexB = idToIndex[b.HotelCode];
+          const filteredHotels = HotelListData.filter(hotel => {
+            const staticData = staticdata[hotel.HotelCode];
+            const hotelName = hotel.HotelName ? hotel.HotelName : staticData?.HotelName;
+            return hotelName?.length > 0;
+          })
+          const finalData = this.state.actions.filterHotels(filteredHotels).sort((a, b) => {
+            const indexA = idToIndex[a.HotelCode];
+            const indexB = idToIndex[b.HotelCode];
 
-        if (indexA === undefined && indexB === undefined) {
-            return 0;
-        } else if (indexA === undefined) {
-            return 1;
-        } else if (indexB === undefined) {
-            return -1;
-        }
-        return indexA - indexB;
-    });
-    // console.log(HotelListData.length,"==========1=======")
-    // console.log(finalData.length,"============2============")
+            if (indexA === undefined && indexB === undefined) {
+              return 0;
+            } else if (indexA === undefined) {
+              return 1;
+            } else if (indexB === undefined) {
+              return -1;
+            }
+            return indexA - indexB;
+          });
+          // console.log(HotelListData.length,"==========1=======")
+          // console.log(finalData.length,"============2============")
           if (hotelRes?.error) {
             console.log('error');
             this.setState({
@@ -1924,8 +1970,8 @@ setHotelSearchText: (value) => {
               hotelResList1: finalData,
             });
           }
-  
-  
+
+
           var hotelSessionTimeout = setTimeout(() => {
             this.setState(
               {
@@ -1949,7 +1995,7 @@ setHotelSearchText: (value) => {
                 : Number(room.Price.PublishedPriceRoundedOff)
               : 0;
           });
-  
+
           return finalPrice
         },
 
@@ -1959,7 +2005,7 @@ setHotelSearchText: (value) => {
               hotelInfoRes: [],
               // fetchingHotelInfo: true
             });
-  
+
             var hotelInfoReq = {
               traceId:
                 this.state.hotelTraceId,
@@ -1968,9 +2014,9 @@ setHotelSearchText: (value) => {
               hotelCode: query.hotelCode,
               categoryId: query.categoryId ? query.categoryId : null
             };
-  
+
             console.log("Hotel info req", hotelInfoReq);
-  
+
             var hotelInfoRes = await fetch(
               "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/hotelInfoRes",
               {
@@ -1984,16 +2030,16 @@ setHotelSearchText: (value) => {
             )
               .then((res) => res.json())
               .catch((err) => console.log(err));
-  
+
             hotelInfoRes.hotelSearchRes = query.hotelSearchRes;
-  
+
             console.log("Hotel info res", hotelInfoRes);
-  
+
             let roomTypes = this.state.hotelRoomArr.map((room, r) => {
               return {
                 ...hotelInfoRes.roomResult?.GetHotelRoomResult
                   ?.HotelRoomsDetails[0],
-  
+
                 roomTypeIndex: 0
               };
             });
@@ -2020,7 +2066,7 @@ setHotelSearchText: (value) => {
                 hotelSearchQuery: this.state.hotelSearchQuery,
                 hotelSearchQuery: {
                   // cityHotel:this.state.hotelSearchQuery,
-                  cityDestName:this.state.selectedHotel,
+                  cityDestName: this.state.selectedHotel,
                 },
                 hotelImages: hotelImg
               }
@@ -2035,183 +2081,182 @@ setHotelSearchText: (value) => {
           }
         },
 
-handleGoBack:()=>
-{
-  this.setState({fetchingHotelInfo:false})
-},
-inclusionToStr: (inclusions) => {
-  var mealStr = "";
-
-  inclusions.forEach((inc, i) => {
-    mealStr += inc.toLowerCase().trim();
-  });
-
-  return mealStr;
-},
-checkIncludesDinner: (str) => {
-  if (str.includes("gala")) {
-    var splitStr = str.split("dinner");
-
-    for (var i = 0; i < splitStr.length - 1; i++) {
-      var galaSplit = splitStr[i].split("gala");
-      var galaSplitNxt = splitStr[i + 1].split("gala");
-
-      if (
-        !(
-          galaSplit[galaSplit.length - 1] === "" || galaSplitNxt[0] === ""
-        )
-      ) {
-        return true;
-      }
-    }
-
-    return false;
-  } else {
-    if (str.includes("dinner")) {
-      return true;
-    }
-    return false;
-  }
-},
-setMealType: (meals) => {
-  //[true,undefined,true]
-  var mealNames = {
-    0: "Breakfast",
-    1: "Lunch",
-    2: "Dinner"
-  };
-  var mealText = "";
-  meals = meals
-    .map((meal, m) => {
-      if (meal) {
-        return mealNames[m];
-      }
-      return meal;
-    })
-    .filter((meal) => meal);
-  //
-  meals.forEach((meal, m) => {
-    if (m === meals.length - 1 && meals.length > 1) {
-      mealText += ` and ${meal}`;
-    } else if (m === meals.length - 2 || meals.length === 1) {
-      mealText += meal;
-    } else {
-      mealText += `${meal}, `;
-    }
-  });
-  if (mealText === "") {
-    mealText = "No meals";
-  }
-  return mealText;
-},
-checkForTboMeals: (inclusions) => {
-  var meals = this.state.actions.inclusionToStr(inclusions);
-
-  var includedStr = "";
-  var mealsStr = meals.replace(/\s/g, "").toLowerCase();
-  var mealsArr = [false, false, false];
-
-  if (
-    mealsStr.includes("breakfast") ||
-    mealsStr.includes("halfboard") ||
-    mealsStr.includes("fullboard") ||
-    mealsStr.includes("allmeals")
-  ) {
-    mealsArr[0] = true;
-  }
-  if (
-    mealsStr.includes("lunch") ||
-    mealsStr.includes("fullboard") ||
-    mealsStr.includes("allmeals")
-  ) {
-    mealsArr[1] = true;
-  }
-  if (
-    // (mealsStr.includes("dinner") ||
-    this.state.actions.checkIncludesDinner(mealsStr) ||
-    mealsStr.includes("halfboard") ||
-    mealsStr.includes("fullboard") ||
-    mealsStr.includes("allmeals")
-  ) {
-    mealsArr[2] = true;
-  }
-
-  includedStr = this.state.actions.setMealType(mealsArr);
-
-  return includedStr;
-},
-
-validCancelDate: (date) => {
-  var cancelDate = new Date(date);
-  var currDate = new Date();
-  if (cancelDate > currDate) {
-    return true;
-  }
-  return false;
-},
-selectHotelRoomType: (room, selectedRoom, r) => {
-  var bookingHotel = { ...this.state.bookingHotel };
-
-  bookingHotel.selectedRoomType[selectedRoom] = {
-    ...room,
-    roomTypeIndex: r
-  };
-  bookingHotel.hotelFinalPrice =
-    this.state.actions.calculateHotelFinalPrice(
-      bookingHotel.selectedRoomType
-    );
-  bookingHotel.hotelTotalPrice = (this.state.actions.calculateHotelFinalPrice(
-    bookingHotel.selectedRoomType
-  ) + (this.state.actions.calculateHotelFinalPrice(
-    bookingHotel.selectedRoomType
-  ) * this.state.domesticHotel) / 100)
-
-  console.log(
-    this.state.actions.calculateHotelFinalPrice(
-      bookingHotel.selectedRoomType
-    )
-  );
-
-  this.setState({
-    bookingHotel
-  });
-},
-
-fetchFareRule: async (resultIndex, airlineName, fare) => {
-  if (!this.state.flightSessionExpired) {
-    console.log(
-      `Fare rule running for ${airlineName}(${fare.toLocaleString(
-        "en-IN"
-      )}/-)`
-    );
-    var request = {
-      traceId: this.state.flightTraceId,
-      resultIndex
-    };
-
-    var fareRuleRes = await fetch(
-      "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/flightFareRule",
-      {
-        method: "POST",
-        // credentials: "include",
-        headers: {
-          "Content-Type": "application/json"
+        handleGoBack: () => {
+          this.setState({ fetchingHotelInfo: false })
         },
-        body: JSON.stringify(request)
-      }
-    )
-      .then((res) => res.json())
-      .catch((err) => console.log(err));
-    return fareRuleRes.fareRuleResult.Response.FareRules[0].FareRuleDetail
-  } else {
-    console.log(
-      "Flight session expired, Please make a search request again"
-    );
-  }
-},
+        inclusionToStr: (inclusions) => {
+          var mealStr = "";
+
+          inclusions.forEach((inc, i) => {
+            mealStr += inc.toLowerCase().trim();
+          });
+
+          return mealStr;
+        },
+        checkIncludesDinner: (str) => {
+          if (str.includes("gala")) {
+            var splitStr = str.split("dinner");
+
+            for (var i = 0; i < splitStr.length - 1; i++) {
+              var galaSplit = splitStr[i].split("gala");
+              var galaSplitNxt = splitStr[i + 1].split("gala");
+
+              if (
+                !(
+                  galaSplit[galaSplit.length - 1] === "" || galaSplitNxt[0] === ""
+                )
+              ) {
+                return true;
+              }
+            }
+
+            return false;
+          } else {
+            if (str.includes("dinner")) {
+              return true;
+            }
+            return false;
+          }
+        },
+        setMealType: (meals) => {
+          //[true,undefined,true]
+          var mealNames = {
+            0: "Breakfast",
+            1: "Lunch",
+            2: "Dinner"
+          };
+          var mealText = "";
+          meals = meals
+            .map((meal, m) => {
+              if (meal) {
+                return mealNames[m];
+              }
+              return meal;
+            })
+            .filter((meal) => meal);
+          //
+          meals.forEach((meal, m) => {
+            if (m === meals.length - 1 && meals.length > 1) {
+              mealText += ` and ${meal}`;
+            } else if (m === meals.length - 2 || meals.length === 1) {
+              mealText += meal;
+            } else {
+              mealText += `${meal}, `;
+            }
+          });
+          if (mealText === "") {
+            mealText = "No meals";
+          }
+          return mealText;
+        },
+        checkForTboMeals: (inclusions) => {
+          var meals = this.state.actions.inclusionToStr(inclusions);
+
+          var includedStr = "";
+          var mealsStr = meals.replace(/\s/g, "").toLowerCase();
+          var mealsArr = [false, false, false];
+
+          if (
+            mealsStr.includes("breakfast") ||
+            mealsStr.includes("halfboard") ||
+            mealsStr.includes("fullboard") ||
+            mealsStr.includes("allmeals")
+          ) {
+            mealsArr[0] = true;
+          }
+          if (
+            mealsStr.includes("lunch") ||
+            mealsStr.includes("fullboard") ||
+            mealsStr.includes("allmeals")
+          ) {
+            mealsArr[1] = true;
+          }
+          if (
+            // (mealsStr.includes("dinner") ||
+            this.state.actions.checkIncludesDinner(mealsStr) ||
+            mealsStr.includes("halfboard") ||
+            mealsStr.includes("fullboard") ||
+            mealsStr.includes("allmeals")
+          ) {
+            mealsArr[2] = true;
+          }
+
+          includedStr = this.state.actions.setMealType(mealsArr);
+
+          return includedStr;
+        },
+
+        validCancelDate: (date) => {
+          var cancelDate = new Date(date);
+          var currDate = new Date();
+          if (cancelDate > currDate) {
+            return true;
+          }
+          return false;
+        },
+        selectHotelRoomType: (room, selectedRoom, r) => {
+          var bookingHotel = { ...this.state.bookingHotel };
+
+          bookingHotel.selectedRoomType[selectedRoom] = {
+            ...room,
+            roomTypeIndex: r
+          };
+          bookingHotel.hotelFinalPrice =
+            this.state.actions.calculateHotelFinalPrice(
+              bookingHotel.selectedRoomType
+            );
+          bookingHotel.hotelTotalPrice = (this.state.actions.calculateHotelFinalPrice(
+            bookingHotel.selectedRoomType
+          ) + (this.state.actions.calculateHotelFinalPrice(
+            bookingHotel.selectedRoomType
+          ) * this.state.domesticHotel) / 100)
+
+          console.log(
+            this.state.actions.calculateHotelFinalPrice(
+              bookingHotel.selectedRoomType
+            )
+          );
+
+          this.setState({
+            bookingHotel
+          });
+        },
+
+        fetchFareRule: async (resultIndex, airlineName, fare) => {
+          if (!this.state.flightSessionExpired) {
+            console.log(
+              `Fare rule running for ${airlineName}(${fare.toLocaleString(
+                "en-IN"
+              )}/-)`
+            );
+            var request = {
+              traceId: this.state.flightTraceId,
+              resultIndex
+            };
+
+            var fareRuleRes = await fetch(
+              "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/flightFareRule",
+              {
+                method: "POST",
+                // credentials: "include",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify(request)
+              }
+            )
+              .then((res) => res.json())
+              .catch((err) => console.log(err));
+            return fareRuleRes.fareRuleResult.Response.FareRules[0].FareRuleDetail
+          } else {
+            console.log(
+              "Flight session expired, Please make a search request again"
+            );
+          }
+        },
 
 
-        populateBookData: (bookingFlight, flightBookData,fareData) => {
+        populateBookData: (bookingFlight, flightBookData, fareData) => {
           bookingFlight.forEach((book, bookIndex) => {
             if (flightBookData && flightBookData[bookIndex]) {
               // if(flightBookData[bookIndex].fareRules){
@@ -2282,7 +2327,7 @@ fetchFareRule: async (resultIndex, airlineName, fare) => {
 
             var flightBookData = await Promise.all(bookReqs);
             var fareData = await Promise.all(fareReq)
-            this.state.actions.populateBookData(bookingFlight, flightBookData,fareData);
+            this.state.actions.populateBookData(bookingFlight, flightBookData, fareData);
 
             console.log("Flight booking res", flightBookData);
             this.setState({
@@ -2299,7 +2344,7 @@ fetchFareRule: async (resultIndex, airlineName, fare) => {
             );
           }
         },
-        fetchFlightBookData:  (
+        fetchFlightBookData: (
           resultIndex,
           flight,
           baggageDtls,
@@ -2309,28 +2354,28 @@ fetchFareRule: async (resultIndex, airlineName, fare) => {
             ? [...this.state.bookingFlight]
             : [];
 
-            var addedMeals = [];
-            var addedBaggage = [];
-            for (let i = 0; i < flight.Segments.length; i++) {
-              const selectedMeals = [];
-              const selectedBaggage = [];
-              for (let j = 0; j < this.state.flightTravellers; j++) {
-                const mealObj = {
-                  price: 0,
-                  mealDesc: 0,
-                };
-                const baggageObj = {
-                  price: 0,
-                  baggage: 0,
-                  text: '',
-                };
-                selectedMeals.push(mealObj);
-                selectedBaggage.push(baggageObj);
-              }
-    
-              addedMeals.push(selectedMeals);
-              addedBaggage.push(selectedBaggage);
-            }           
+          var addedMeals = [];
+          var addedBaggage = [];
+          for (let i = 0; i < flight.Segments.length; i++) {
+            const selectedMeals = [];
+            const selectedBaggage = [];
+            for (let j = 0; j < this.state.flightTravellers; j++) {
+              const mealObj = {
+                price: 0,
+                mealDesc: 0,
+              };
+              const baggageObj = {
+                price: 0,
+                baggage: 0,
+                text: '',
+              };
+              selectedMeals.push(mealObj);
+              selectedBaggage.push(baggageObj);
+            }
+
+            addedMeals.push(selectedMeals);
+            addedBaggage.push(selectedBaggage);
+          }
           bookingFlight[this.state.flightResJType] = {
             flight,
             flightNew: this.state.actions.modifyFlightObject(flight),
@@ -2401,11 +2446,11 @@ fetchFareRule: async (resultIndex, airlineName, fare) => {
 
         calculateTotalFlightFare: (bookingFlight, bookIndex) => {
           var totalFare = 0;
-  
+
           totalFare += bookingFlight[bookIndex].flight?.Fare?.OfferedFare
             ? Math.ceil(bookingFlight[bookIndex].flight?.Fare?.OfferedFare)
             : Math.ceil(bookingFlight[bookIndex].flight?.Fare?.PublishedFare);
-  
+
           bookingFlight[bookIndex].selectedBaggage.forEach((bgp, b) => {
             var x = 0;
             var x = 0;
@@ -2436,11 +2481,11 @@ fetchFareRule: async (resultIndex, airlineName, fare) => {
         //   var totalSeatCharges = 0;
         //   var totalBaggagePrice = 0;
         //   var totalMealPrice = 0;
-  
+
         //   bookingFlight.forEach((seg, s) => {
         //     totalFareSum += seg.totalFare ? Number(seg.totalFare) : 0;
         //     totalSeatCharges += seg.seatCharges ? Number(seg.seatCharges) : 0;
-  
+
         //     if (Array.isArray(seg.baggagePrice)) {
         //       seg?.baggagePrice &&
         //         seg?.baggagePrice?.forEach((price, p) => {
@@ -2479,7 +2524,7 @@ fetchFareRule: async (resultIndex, airlineName, fare) => {
             bookingFlight[s].finalPrice = finalPrice
             if (Array.isArray(seg.selectedBaggage)) {
               seg?.selectedBaggage?.forEach((baggage, p) => {
-  
+
                 var x = 0;
                 baggage.forEach((bag) => {
                   x += bag.price ? Number(bag.price) : 0;
@@ -2511,35 +2556,35 @@ fetchFareRule: async (resultIndex, airlineName, fare) => {
             users: value
           });
         },
-        getAllUsers : async () => {
+        getAllUsers: async () => {
           try {
             const accountDocRef = firestore().collection('Accounts');
             const userArray = [];
             const querySnapshot = await accountDocRef.get();
-      
+
             querySnapshot.forEach(async doc => {
               userArray.push({
                 id: doc.id,
                 data: doc.data()
               });
             });
-      
+
             const userArr = userArray.filter(user => {
               return user.data.role !== 'admin';
             });
-      
+
             this.state.actions.setUsers(userArr);
           } catch (error) {
             console.log(error);
           }
         },
-        setAdminData :async () => {
+        setAdminData: async () => {
           try {
             const accountsRef = firestore().collection('Accounts');
             const roleQuery = accountsRef.where('role', '==', 'admin');
             const querySnapshot = await roleQuery.get();
             const admin = [];
-      
+
             querySnapshot.forEach(doc => {
               const data = doc.data();
               admin.push(data);
@@ -2547,25 +2592,25 @@ fetchFareRule: async (resultIndex, airlineName, fare) => {
                 adminDetails: data
               });
             });
-      
+
             const docCollectionRef = firestore()
               .collection('Accounts')
               .doc(admin[0].userid);
-      
+
             this.setState({
               domesticFlight: Number(admin[0].domesticFlights),
               internationalFlight: Number(admin[0].internationalFlights),
               domesticHotel: Number(admin[0].domesticHotels),
               internationalHotel: Number(admin[0].internationalHotels)
             });
-      
+
             await this.state.actions.getAllUsers();
-      
+
           } catch (error) {
             console.log(error);
           }
         },
-      
+
         handleChangeFlightBook: async (
           e,
           type,
@@ -2659,7 +2704,7 @@ fetchFareRule: async (resultIndex, airlineName, fare) => {
             }
           } else if (type === "baggage") {
             if (e !== "No excess baggage") {
-              console.log(bookingFlight[bookIndex].selectedBaggage[segIndex][traveller].price,"........>>>>>>>>>")
+              console.log(bookingFlight[bookIndex].selectedBaggage[segIndex][traveller].price, "........>>>>>>>>>")
               bookingFlight[bookIndex].selectedBaggage[segIndex][traveller].price = Number(
                 e.split("at")[1].split("Rs")[1].split("/-")[0].split(" ")[1].trim()
               );
@@ -2668,7 +2713,7 @@ fetchFareRule: async (resultIndex, airlineName, fare) => {
               );
               bookingFlight[bookIndex].selectedBaggage[segIndex][traveller].text =
                 e.split("at")[1].split("Rs")[1].split("/-")[0].split(" ").slice(2).join(' ')
-  
+
             } else {
               bookingFlight[bookIndex].selectedBaggage[segIndex][traveller].price = 0;
               bookingFlight[bookIndex].selectedBaggage[segIndex][traveller].baggage = 0;
@@ -2696,78 +2741,78 @@ fetchFareRule: async (resultIndex, airlineName, fare) => {
             offset: value
           })
         },
-        
- getAllHotels :async (id, userId) => {
-  try {
-    const hotelCollectionRef = firestore()
-      .collection("Accounts")
-      .doc(userId)
-      .collection("trips")
-      .doc(id)
-      .collection("hotels");
 
-    const querySnapshot = await hotelCollectionRef.get();
-    const hotelsArray = [];
+        getAllHotels: async (id, userId) => {
+          try {
+            const hotelCollectionRef = firestore()
+              .collection("Accounts")
+              .doc(userId)
+              .collection("trips")
+              .doc(id)
+              .collection("hotels");
 
-    querySnapshot.forEach((doc) => {
-      hotelsArray.push({
-        id: doc.id,
-        data: doc.data()
-      });
-    });
+            const querySnapshot = await hotelCollectionRef.get();
+            const hotelsArray = [];
 
-    return hotelsArray;
-  } catch (error) {
-    console.log(error);
-    return []; 
-  }
-},
-objToArr: (obj) => {
-  if (Array.isArray(obj)) {
-    return obj.map((element) => this.state.actions.objToArr(element));
-  } else if (typeof obj === "object" && obj !== null) {
-    const keys = Object.keys(obj);
-    if (keys.every((key) => !isNaN(key))) {
-      return keys.map((key) => this.state.actions.objToArr(obj[key]));
-    } else {
-      const newObj = {};
-      keys.forEach((key) => {
-        newObj[key] = this.state.actions.objToArr(obj[key]);
-      });
-      return newObj;
-    }
-  }
-  return obj;
-},
-getAllFlights :async (id, userId) => {
-  try {
-    const flightCollectionRef = firestore()
-      .collection("Accounts")
-      .doc(userId)
-      .collection("trips")
-      .doc(id)
-      .collection("flights");
+            querySnapshot.forEach((doc) => {
+              hotelsArray.push({
+                id: doc.id,
+                data: doc.data()
+              });
+            });
 
-    const querySnapshot = await flightCollectionRef.get();
-    const flightsArray = [];
+            return hotelsArray;
+          } catch (error) {
+            console.log(error);
+            return [];
+          }
+        },
+        objToArr: (obj) => {
+          if (Array.isArray(obj)) {
+            return obj.map((element) => this.state.actions.objToArr(element));
+          } else if (typeof obj === "object" && obj !== null) {
+            const keys = Object.keys(obj);
+            if (keys.every((key) => !isNaN(key))) {
+              return keys.map((key) => this.state.actions.objToArr(obj[key]));
+            } else {
+              const newObj = {};
+              keys.forEach((key) => {
+                newObj[key] = this.state.actions.objToArr(obj[key]);
+              });
+              return newObj;
+            }
+          }
+          return obj;
+        },
+        getAllFlights: async (id, userId) => {
+          try {
+            const flightCollectionRef = firestore()
+              .collection("Accounts")
+              .doc(userId)
+              .collection("trips")
+              .doc(id)
+              .collection("flights");
 
-    let n = 0;
-    querySnapshot.forEach(async (doc) => {
-      var modifiedFlightObj = await this.state.actions.objToArr(doc.data()[n])
-      flightsArray.push({
-        id: doc.id,
-        data: modifiedFlightObj
-      });
-      n++;
-    });
+            const querySnapshot = await flightCollectionRef.get();
+            const flightsArray = [];
 
-    return flightsArray;
-  } catch (error) {
-    console.log(error);
-    return []; // or handle the error accordingly
-  }
-},
-        getLastDoc : async () => {
+            let n = 0;
+            querySnapshot.forEach(async (doc) => {
+              var modifiedFlightObj = await this.state.actions.objToArr(doc.data()[n])
+              flightsArray.push({
+                id: doc.id,
+                data: modifiedFlightObj
+              });
+              n++;
+            });
+
+            return flightsArray;
+          } catch (error) {
+            console.log(error);
+            return []; // or handle the error accordingly
+          }
+        },
+        getLastDoc: async () => {
           try {
             const collectionRef = firestore().collection("Accounts").doc(this.state.userId);
             const tripsCollecRef = collectionRef.collection("trips");
@@ -2789,7 +2834,7 @@ getAllFlights :async (id, userId) => {
                   resolve();
                 }));
               });
-    
+
               await Promise.all(promises);
               this.state.actions.setTrips({ userTrips: docs, tripLoading: false });
             } else {
@@ -2797,15 +2842,15 @@ getAllFlights :async (id, userId) => {
               const documentsToSkip = Math.max(0, this.state.offset - 10);
               const querySnapshot = await tripsCollecRef.orderBy("date", "desc").limit(documentsToSkip + 10).get();
               const reversedDocs = [];
-    
+
               querySnapshot.forEach((doc) => {
                 reversedDocs.unshift(doc);
               });
-    
+
               const docsToDisplay = reversedDocs.slice(0, 10);
-    
+
               const promises = [];
-    
+
               docsToDisplay.forEach((doc) => {
                 promises.push(new Promise(async (resolve) => {
                   const hotels = await actions.getAllHotels(doc.id, this.state.userId);
@@ -2819,7 +2864,7 @@ getAllFlights :async (id, userId) => {
                   resolve();
                 }));
               });
-    
+
               await Promise.all(promises);
               this.state.actions.setTrips({ userTrips: docs, tripLoading: false });
             }
@@ -2827,14 +2872,14 @@ getAllFlights :async (id, userId) => {
             console.log(error);
           }
         },
-       getRequests : async (req, userid) => {
+        getRequests: async (req, userid) => {
           const reqs = [];
-              await req.forEach(async (reqe) => {
-                var hotelCollectionRef = firestore()
-                  .collection("Accounts")
-                  .doc(userid)
-                  .collection("tripRequests")
-                  .doc(reqe)
+          await req.forEach(async (reqe) => {
+            var hotelCollectionRef = firestore()
+              .collection("Accounts")
+              .doc(userid)
+              .collection("tripRequests")
+              .doc(reqe)
             try {
               const doc = await hotelCollectionRef.get();
               const sendData = doc.data();
@@ -2843,7 +2888,7 @@ getAllFlights :async (id, userId) => {
               console.error("Error getting request:", error);
             }
           })
-        
+
           return reqs;
         },
 
@@ -2853,27 +2898,27 @@ getAllFlights :async (id, userId) => {
         //     this.setState({
         //       tripDataLoading: true
         //     });
-      
+
         //     var docCollectionRef = db
         //       .collection("Accounts")
         //       .doc(userid)
         //       .collection("trips")
         //       .doc(id);
-      
+
         //     var doc = await docCollectionRef.get();
         //     console.log(doc,"----doc");
-      
+
         //     var sendData = await doc.data();
         //     console.log(sendData,"sendData");
-      
+
         //     const [flights, hotels, requestData] = await Promise.all([
         //       this.state.actions.getAllFlights(docCollectionRef.id, userid),
         //       this.state.actions.getAllHotels(docCollectionRef.id, userid),
         //       sendData.requestId ? this.state.actions.getRequests(sendData.requestId, userid) : ''
         //     ]);
-      
+
         //     console.log(requestData,"requestData");
-      
+
         //     this.setTripData({
         //       id: doc.id,
         //       data: doc.data(),
@@ -2881,11 +2926,11 @@ getAllFlights :async (id, userId) => {
         //       flights: flights,
         //       requestData: requestData
         //     });
-      
+
         //     this.setState({
         //       tripDataLoading: false
         //     });
-      
+
         //     return sendData;
         //   } catch (error) {
         //     console.log(error);
@@ -2895,55 +2940,55 @@ getAllFlights :async (id, userId) => {
           this.setState({
             tripData: value
           });
-        },    
- getTripDocById :async (id, userid) => {
-  try {
-    this.setState({
-      tripDataLoading: true
-    });
+        },
+        getTripDocById: async (id, userid) => {
+          try {
+            this.setState({
+              tripDataLoading: true
+            });
 
-    const docCollectionRef = firestore()
-      .collection("Accounts")
-      .doc(userid)
-      .collection("trips")
-      .doc(id);
+            const docCollectionRef = firestore()
+              .collection("Accounts")
+              .doc(userid)
+              .collection("trips")
+              .doc(id);
 
-    const doc = await docCollectionRef.get();
-    console.log(doc, "----doc");
+            const doc = await docCollectionRef.get();
+            console.log(doc, "----doc");
 
-    const sendData = doc.data();
-    console.log(sendData, "sendData");
+            const sendData = doc.data();
+            console.log(sendData, "sendData");
 
-    // let requestData = [];
-    // if (sendData.requestId) {
-    //   requestData = await this.state.actions.getRequests(sendData.requestId, userid);
-    // }
+            // let requestData = [];
+            // if (sendData.requestId) {
+            //   requestData = await this.state.actions.getRequests(sendData.requestId, userid);
+            // }
 
-    console.log(requestData, "requestData");
+            console.log(requestData, "requestData");
 
-    const [flights, hotels,requestData] = await Promise.all([
-      this.state.actions.getAllFlights(docCollectionRef.id, userid),
-      this.state.actions.getAllHotels(docCollectionRef.id, userid),
-      sendData.requestId ? this.state.actions.getRequests(sendData.requestId, userid) : '',
-    ]);
+            const [flights, hotels, requestData] = await Promise.all([
+              this.state.actions.getAllFlights(docCollectionRef.id, userid),
+              this.state.actions.getAllHotels(docCollectionRef.id, userid),
+              sendData.requestId ? this.state.actions.getRequests(sendData.requestId, userid) : '',
+            ]);
 
-    this.state.actions.setTripData({
-      id: doc.id,
-      data: doc.data(),
-      hotels: hotels,
-      flights: flights,
-      requestData: requestData
-    });
+            this.state.actions.setTripData({
+              id: doc.id,
+              data: doc.data(),
+              hotels: hotels,
+              flights: flights,
+              requestData: requestData
+            });
 
-    this.setState({
-      tripDataLoading: false
-    });
+            this.setState({
+              tripDataLoading: false
+            });
 
-    return sendData;
-  } catch (error) {
-    console.error(error);
-  }
-},
+            return sendData;
+          } catch (error) {
+            console.error(error);
+          }
+        },
         arrToObj: (varr) => {
           if (Array.isArray(varr)) {
             varr.forEach((cVarr, c) => {
@@ -2976,7 +3021,7 @@ getAllFlights :async (id, userId) => {
           return obj;
         },
 
-        editTripBtn : async (name, type, data) => {
+        editTripBtn: async (name, type, data) => {
           const accountDocRef = firestore().collection("Accounts").doc(this.state.userId);
           const tripcollectionRef = accountDocRef.collection("trips");
           const newtripdocRef = await tripcollectionRef.add({
@@ -2988,21 +3033,21 @@ getAllFlights :async (id, userId) => {
           });
           const tripDocRef = firestore().collection("Accounts").doc(this.state.userId)
             .collection("trips").doc(newtripdocRef.id);
-        
+
           await tripDocRef.update({
             name: name
           });
-        
+
           await firestore().collection("Accounts").doc(this.state.userId).update({
             trips: firestore.FieldValue.arrayUnion(newtripdocRef.id)
           });
-        
+
           if (type === "hotels") {
             const hotelDocRef = tripDocRef.collection("hotels");
             const newDocRef = await hotelDocRef.add(data);
             await firestore().collection("Accounts").doc(this.state.userId)
               .collection("trips").doc(tripDocRef.id).update({
-                hotels:firestore.FieldValue.arrayUnion({
+                hotels: firestore.FieldValue.arrayUnion({
                   id: newDocRef.id,
                   status: "Not Submitted",
                   date: new Date(),
@@ -3010,23 +3055,23 @@ getAllFlights :async (id, userId) => {
                 })
               });
           }
-        
+
           if (type === "flights") {
             const hotelDocRef = tripDocRef.collection("flights");
-        
+
             const fd = data.map((flight) => {
               return this.state.actions.arrToObj([flight])
             });
-        
+
             const changedObj = data.map((flight) => {
               return this.state.actions.objToArr(flight)
             });
-        
-            console.log(changedObj,"changedObj");
+
+            console.log(changedObj, "changedObj");
             this.setState({
               bookingFlight: changedObj,
             });
-        
+
             // fd.map(async (flight) => {
             //   const flightDocRef = await hotelDocRef.add(flight);
             //   await firestore().collection("Accounts").doc(this.state.userId)
@@ -3057,12 +3102,12 @@ getAllFlights :async (id, userId) => {
             //   bookingFlight: data
             // })
           }
-        
+
           await this.state.actions.getTripDocById(newtripdocRef.id, this.state.userId)
           //await this.state.actions.getAllTrips(this.state.userAccountDetails.userid);
           return newtripdocRef.id;
         },
-        
+
         editTripById: async (id, data, type) => {
           try {
             const newState = {
@@ -3077,13 +3122,13 @@ getAllFlights :async (id, userId) => {
             };
             this.setState(newState);
             this.state.actions.setFlightBookPage(false);
-        
+
             const tripDocRef = firestore()
               .collection("Accounts")
               .doc(this.state.userId)
               .collection("trips")
               .doc(id);
-        
+
             if (type === "hotels") {
               const hotelDocRef = tripDocRef.collection("hotels");
               const newHotelDocRef = await hotelDocRef.add(data);
@@ -3096,12 +3141,12 @@ getAllFlights :async (id, userId) => {
                 }),
               });
             }
-        
+
             if (type === "flights") {
               const flightDocRef = tripDocRef.collection("flights");
-        
+
               const flightData = data.map((flight) => this.state.actions.arrToObj([flight]));
-        
+
               // Adding flights to the trip
               await Promise.all(
                 flightData.map(async (flight) => {
@@ -3122,13 +3167,13 @@ getAllFlights :async (id, userId) => {
             console.log(error);
           }
         },
-        
-        deleteTripItem : async (tripId, itemId, itemType) => {
+
+        deleteTripItem: async (tripId, itemId, itemType) => {
           try {
             const docRef = firestore().collection('Accounts').doc(this.state.userId).collection('trips').doc(tripId);
             const docSnapshot = await docRef.get();
             const docData = docSnapshot.data();
-      
+
             if (itemType === 'hotels') {
               const hotels = docData.hotels;
               const deletedHotel = hotels.filter(hotel => hotel.id === itemId);
@@ -3137,7 +3182,7 @@ getAllFlights :async (id, userId) => {
               });
               var hotelDoc = await docRef.collection("hotels").doc(itemId).delete();
             }
-      
+
             if (itemType === 'flights') {
               console.log(("firflights"))
               const flights = docData.flights;
@@ -3147,18 +3192,18 @@ getAllFlights :async (id, userId) => {
               });
               var flightDoc = await docRef.collection("flights").doc(itemId).delete();
             }
-      
+
             this.setState({
               tripData: null,
               tripDataLoading: true
             });
-      
+
             await this.state.actions.getTripDocById(tripId, this.state.userId);
           } catch (error) {
             console.error(error);
           }
         },
-        setRes: async () => { 
+        setRes: async () => {
           this.setState({
             searchingFlights: true,
             searchingHotels: false,
@@ -3180,18 +3225,18 @@ getAllFlights :async (id, userId) => {
             //     countryName: ""
             //   }
             // },
-          //   destinationSelectedAirPort: {
-          //     name: "",
-          //     iataCode: "",
-          //     address: {
-          //       cityName: "",
-          //       countryName: ""
-          //     },
-          // },
-          origin: "",
-          destination: "",
-          departure: "Departure Date",
-          returnDate: "Return Date",
+            //   destinationSelectedAirPort: {
+            //     name: "",
+            //     iataCode: "",
+            //     address: {
+            //       cityName: "",
+            //       countryName: ""
+            //     },
+            // },
+            origin: "",
+            destination: "",
+            departure: "Departure Date",
+            returnDate: "Return Date",
             adults: 1,
             children: 0,
             infants: 0,
@@ -3207,7 +3252,7 @@ getAllFlights :async (id, userId) => {
             selectedTrip: value
           });
         },
-        setSelectedTripId :async (value) => {
+        setSelectedTripId: async (value) => {
           try {
             // Reference to the trip document
             const docSnapshot = await firestore()
@@ -3240,18 +3285,18 @@ getAllFlights :async (id, userId) => {
       //   try {
       //     const docCollecRef = firestore().collection("Accounts").doc(this.state.userId).collection("trips").doc(tripId);
       //     const docSnapshot = await docCollecRef.get();
-      
+
       //     if (!docSnapshot.exists) {
       //       throw new Error("Trip document not found");
       //     }
-      
+
       //     const tripData = docSnapshot.data();
-      
+
       //     if (itemType === "hotels") {
       //       const hotels = tripData.hotels || [];
-      
+
       //       const deletedHotelIndex = hotels.findIndex(hotel => hotel.id === itemId);
-      
+
       //       if (deletedHotelIndex !== -1) {
       //         const updatedHotels = [...hotels.slice(0, deletedHotelIndex), ...hotels.slice(deletedHotelIndex + 1)];
       //         await docCollecRef.update({ hotels: updatedHotels });
@@ -3259,16 +3304,16 @@ getAllFlights :async (id, userId) => {
       //       }
       //     } else if (itemType === "flights") {
       //       const flights = tripData.flights || [];
-      
+
       //       const deletedFlightIndex = flights.findIndex(flight => flight.id === itemId);
-      
+
       //       if (deletedFlightIndex !== -1) {
       //         const updatedFlights = [...flights.slice(0, deletedFlightIndex), ...flights.slice(deletedFlightIndex + 1)];
       //         await docCollecRef.update({ flights: updatedFlights });
       //         await firestore().collection("Accounts").doc(this.state.userId).collection("trips").doc(tripId).collection("flights").doc(itemId).delete();
       //       }
       //     }
-      
+
       //     // Update state or trigger any other action as needed
       //     // For example, you can reload the trip data after deletion
       //     // this.setState({ tripData: null, tripDataLoading: true });
@@ -3277,37 +3322,34 @@ getAllFlights :async (id, userId) => {
       //     console.error("Error deleting trip item:", error);
       //   }
       // },
-      
-    
 
 
-      
+
+
+
 
     }
   }
-  componentDidMount= async ()=>
-  {
-    
-auth().onAuthStateChanged(async(user)=>
-{
-  if (user) {
-    this.setState({
-      userId: user?.uid,
-      isLoading: true,
-    });
-    await this.state.actions.setAdminData()
-    this.state.actions.fetchHotelCityList();
-    await this.state.actions.getLastDoc();
-   console.log("userLogin")
-  } else {
-    this.setState({
-        isLoading: true,
-        userId:""
-    }); 
-    console.log("userLogOut")
+  componentDidMount = async () => {
+    auth().onAuthStateChanged(async (user) => {
+      if (user) {
+        this.setState({
+          userId: user?.uid,
+          isLoading: true,
+        });
+        await this.state.actions.setAdminData()
+        // this.state.actions.fetchHotelCityList();
+        await this.state.actions.getLastDoc();
+        console.log("userLogin")
+      } else {
+        this.setState({
+          isLoading: true,
+          userId: ""
+        });
+        console.log("userLogOut")
 
-  }
-})
+      }
+    })
   }
   debounce = (cb, delay) => {
     let timer;
@@ -3345,10 +3387,10 @@ auth().onAuthStateChanged(async(user)=>
       //   {this.props.children}
       // </MyContext.Provider>
       <MyContext.Provider value={contextValue}>
-  {React.Children.map(this.props.children, child =>
-    React.cloneElement(child, { additionalProp: "ravi" })
-  )}
-</MyContext.Provider>
+        {React.Children.map(this.props.children, child =>
+          React.cloneElement(child, { additionalProp: "ravi" })
+        )}
+      </MyContext.Provider>
     );
   }
 }

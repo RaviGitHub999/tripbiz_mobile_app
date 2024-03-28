@@ -79,3 +79,30 @@ export default Splash
 // };
 
 // export default Splash;
+
+//  [
+//     {
+//       "item": {
+//         "CITYID": 145710,
+//         "COUNTRY": "India",
+//         "COUNTRYCODE": "IN",
+//         "DESTINATION": "Hyderabad",
+//         "STATEPROVINCE": "Andra Pradesh",
+//         "STATEPROVINCECODE": "AP"
+//       },
+//       "refIndex": 45324,
+//       "score": 2.220446049250313e-16
+//     },
+//     {
+//       "item": {
+//         "CITYID": 149275,
+//         "COUNTRY": "Pakistan",
+//         "COUNTRYCODE": "PK",
+//         "DESTINATION": "Hyderabad",
+//         "STATEPROVINCE": "",
+//         "STATEPROVINCECODE": ""
+//       },
+//       "refIndex": 48888,
+//       "score": 2.220446049250313e-16
+//     }
+//   ]

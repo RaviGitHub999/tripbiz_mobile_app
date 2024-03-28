@@ -1,26 +1,4439 @@
-[
+ [
     {
-      "item": {
-        "CITYID": 145710,
-        "COUNTRY": "India",
-        "COUNTRYCODE": "IN",
-        "DESTINATION": "Hyderabad",
-        "STATEPROVINCE": "Andra Pradesh",
-        "STATEPROVINCECODE": "AP"
-      },
-      "refIndex": 45324,
-      "score": 2.220446049250313e-16
+      "DESTINATION": "Hyderabad",
+      "NAME": "Rajiv Gandhi International Airport",
+      "CITYID": 145710,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "AP",
+      "STATEPROVINCE": "Andra Pradesh",
+      "COUNTRYCODE": "IN"
     },
     {
-      "item": {
-        "CITYID": 149275,
-        "COUNTRY": "Pakistan",
-        "COUNTRYCODE": "PK",
-        "DESTINATION": "Hyderabad",
-        "STATEPROVINCE": "",
-        "STATEPROVINCECODE": ""
-      },
-      "refIndex": 48888,
-      "score": 2.220446049250313e-16
+      "DESTINATION": "Mumbai",
+      "NAME": "Chhatrapathi Shivaji International Airport",
+      "CITYID": 144306,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "MH",
+      "STATEPROVINCE": "Maharashtra",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Kadapa",
+      "NAME": "Kadapa Airport",
+      "CITYID": 150397,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "AP",
+      "STATEPROVINCE": "Andra Pradesh",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Kurnool",
+      "NAME": "Kurnool Airport",
+      "CITYID": 103728,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "AP",
+      "STATEPROVINCE": "Andra Pradesh",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Rajahmundry",
+      "NAME": "Rajahmundry Airport",
+      "CITYID": 134040,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "AP",
+      "STATEPROVINCE": "Andra Pradesh",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Tirupati",
+      "NAME": "Tirupati International Airport",
+      "CITYID": 140311,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "AP",
+      "STATEPROVINCE": "Andra Pradesh",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Vijayawada",
+      "NAME": "Vijayawada International Airport",
+      "CITYID": 148500,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "AP",
+      "STATEPROVINCE": "Andra Pradesh",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Visakhapatnam",
+      "NAME": "Visakhapatnam International Airport",
+      "CITYID": 142198,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "AP",
+      "STATEPROVINCE": "Andra Pradesh",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Itanagar",
+      "NAME": "Donyi Polo Airport",
+      "CITYID": 122732,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "AP",
+      "STATEPROVINCE": "Andra Pradesh",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Dibrugarh",
+      "NAME": "Dibrugarh Airport",
+      "CITYID": 115884,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "AS",
+      "STATEPROVINCE": "Assam",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Guwahati",
+      "NAME": "Lokpriya Gopinath Bordoloi International Airport",
+      "CITYID": 121139,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "AS",
+      "STATEPROVINCE": "Assam",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Jorhat",
+      "NAME": "Jorhat Airport",
+      "CITYID": 122215,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "AS",
+      "STATEPROVINCE": "Assam",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "North Lakhimpur",
+      "NAME": "Lilabari Airport",
+      "CITYID": 150162,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "AS",
+      "STATEPROVINCE": "Assam",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Silchar",
+      "NAME": "Silchar Airport",
+      "CITYID": 150361,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "AS",
+      "STATEPROVINCE": "Assam",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Tezpur",
+      "NAME": "Tezpur Airport",
+      "CITYID": 139069,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "AS",
+      "STATEPROVINCE": "Assam",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Darbhanga",
+      "NAME": "Darbhanga",
+      "CITYID": 105998,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "BR",
+      "STATEPROVINCE": "Bihar",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Gaya",
+      "NAME": "Gaya Airport",
+      "CITYID": 119358,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "BR",
+      "STATEPROVINCE": "Bihar",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Patna",
+      "NAME": "Jay Prakash Narayan Airport",
+      "CITYID": 132429,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "BR",
+      "STATEPROVINCE": "Bihar",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Bilaspur",
+      "NAME": "Bilaspur Airport",
+      "CITYID": 111574,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "CT",
+      "STATEPROVINCE": "Chhattisgarh",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Jagdalpur",
+      "NAME": "Jagdalpur Airport",
+      "CITYID": 150469,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "CT",
+      "STATEPROVINCE": "Chhattisgarh",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Raipur",
+      "NAME": "Swami Vivekananda Airport",
+      "CITYID": 133672,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "CT",
+      "STATEPROVINCE": "Chhattisgarh",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Dabolim",
+      "NAME": "Dabolim Airport",
+      "CITYID": 116604,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "GA",
+      "STATEPROVINCE": "Goa",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Ahmedabad",
+      "NAME": "Sardar Vallabhbhai Patel International Airport",
+      "CITYID": 100263,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "GJ",
+      "STATEPROVINCE": "Gujarat",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Bhavnagar",
+      "NAME": "Bhavnagar Airport",
+      "CITYID": 111485,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "GJ",
+      "STATEPROVINCE": "Gujarat",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Bhuj",
+      "NAME": "Bhuj Airport",
+      "CITYID": 144230,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "GJ",
+      "STATEPROVINCE": "Gujarat",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Jamnagar",
+      "NAME": "Jamnagar Airport",
+      "CITYID": 122329,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "GJ",
+      "STATEPROVINCE": "Gujarat",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Junagadh",
+      "NAME": "Keshod Airport",
+      "CITYID": 105627,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "GJ",
+      "STATEPROVINCE": "Gujarat",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Kandla",
+      "NAME": "Kandla Airport",
+      "CITYID": 141469,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "GJ",
+      "STATEPROVINCE": "Gujarat",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Porbandar",
+      "NAME": "Porbandar Airport",
+      "CITYID": 133551,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "GJ",
+      "STATEPROVINCE": "Gujarat",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Rajkot",
+      "NAME": "Rajkot Airport",
+      "CITYID": 134211,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "GJ",
+      "STATEPROVINCE": "Gujarat",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Surat",
+      "NAME": "Surat International Airport",
+      "CITYID": 139526,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "GJ",
+      "STATEPROVINCE": "Gujarat",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Vadodara",
+      "NAME": "Vadodara Airport",
+      "CITYID": 141587,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "GJ",
+      "STATEPROVINCE": "Gujarat",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Hisar",
+      "NAME": "Hisar Airport",
+      "CITYID": 105850,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "HR",
+      "STATEPROVINCE": "Haryana",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Kangra",
+      "NAME": "Kangra Airport",
+      "CITYID": 122826,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "HP",
+      "STATEPROVINCE": "HIMACHAL PRADESH",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Kullu",
+      "NAME": "Kullu-Manali Airport",
+      "CITYID": 146047,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "HP",
+      "STATEPROVINCE": "HIMACHAL PRADESH",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Manali",
+      "NAME": "Kullu-Manali Airport",
+      "CITYID": 126388,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "HP",
+      "STATEPROVINCE": "HIMACHAL PRADESH",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Shimla",
+      "NAME": "Shimla Airport",
+      "CITYID": 138673,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "HP",
+      "STATEPROVINCE": "HIMACHAL PRADESH",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Deoghar",
+      "NAME": "Deoghar Airport",
+      "CITYID": 105482,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "JH",
+      "STATEPROVINCE": "Jharkhand",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Jamshedpur",
+      "NAME": "Sonari Airport",
+      "CITYID": 123422,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "JH",
+      "STATEPROVINCE": "Jharkhand",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Rachi",
+      "NAME": "Birsa Munda Airport",
+      "CITYID": 133760,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "JH",
+      "STATEPROVINCE": "Jharkhand",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Belgavi",
+      "NAME": "Belgavi Airport",
+      "CITYID": 111427,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "KA",
+      "STATEPROVINCE": "Karnataka",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Ballari",
+      "NAME": "Jindal Vijayanagar Airport",
+      "CITYID": 110483,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "KA",
+      "STATEPROVINCE": "Karnataka",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Bengaluru",
+      "NAME": "Kempegowda International Airport",
+      "CITYID": 111124,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "KA",
+      "STATEPROVINCE": "Karnataka",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Hubballi",
+      "NAME": "Hubballi Airport",
+      "CITYID": 150235,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "KA",
+      "STATEPROVINCE": "Karnataka",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Mangaluru",
+      "NAME": "Mangalore International Airport",
+      "CITYID": 126805,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "KA",
+      "STATEPROVINCE": "Karnataka",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Mysuru",
+      "NAME": "Mysore Airport",
+      "CITYID": 128698,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "KA",
+      "STATEPROVINCE": "Karnataka",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Shivamogga",
+      "NAME": "Kuvempu Airport",
+      "CITYID": 147891,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "KA",
+      "STATEPROVINCE": "Karnataka",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Kannur",
+      "NAME": "Kannur International Airport",
+      "CITYID": 122522,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "KL",
+      "STATEPROVINCE": "Kerala",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Kochi",
+      "NAME": "Cochin International Airport",
+      "CITYID": 101204,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "KL",
+      "STATEPROVINCE": "Kerala",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Kozhikode",
+      "NAME": "Calicut International Airport",
+      "CITYID": 144475,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "KL",
+      "STATEPROVINCE": "Kerala",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Thiruvananthapuram",
+      "NAME": "Trivandrum International Airport",
+      "CITYID": 148901,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "KL",
+      "STATEPROVINCE": "Kerala",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Trivandrum",
+      "NAME": "Trivandrum International Airport",
+      "CITYID": 139820,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "KL",
+      "STATEPROVINCE": "Kerala",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Bhopal",
+      "NAME": "Raja Bhoj Airport",
+      "CITYID": 111932,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "MP",
+      "STATEPROVINCE": "Madhya Pradesh",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Gwalior",
+      "NAME": "Gwalior Airport",
+      "CITYID": 120439,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "MP",
+      "STATEPROVINCE": "Madhya Pradesh",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Indore",
+      "NAME": "Devi Ahilya Bai Holkar Airport",
+      "CITYID": 121726,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "MP",
+      "STATEPROVINCE": "Madhya Pradesh",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Jabalpur",
+      "NAME": "Jabalpur Airport",
+      "CITYID": 121509,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "MP",
+      "STATEPROVINCE": "Madhya Pradesh",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Khajuraho",
+      "NAME": "Khajuraho Airport",
+      "CITYID": 122580,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "MP",
+      "STATEPROVINCE": "Madhya Pradesh",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Akola",
+      "NAME": "Akola Airport",
+      "CITYID": 100689,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "MH",
+      "STATEPROVINCE": "Maharashtra",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Aurangabad",
+      "NAME": "Aurangabad Airport",
+      "CITYID": 100349,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "MH",
+      "STATEPROVINCE": "Maharashtra",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Jalgaon",
+      "NAME": "Jalgaon Airport",
+      "CITYID": 122177,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "MH",
+      "STATEPROVINCE": "Maharashtra",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Kolhapur",
+      "NAME": "Kolhapur",
+      "CITYID": 123875,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "MH",
+      "STATEPROVINCE": "Maharashtra",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Nagpur",
+      "NAME": "Dr. Babasaheb Ambedkar International Airport",
+      "CITYID": 129723,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "MH",
+      "STATEPROVINCE": "Maharashtra",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Nanded",
+      "NAME": "Shri Guru Gobind Singh Ji Airport",
+      "CITYID": 129732,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "MH",
+      "STATEPROVINCE": "Maharashtra",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Nashik",
+      "NAME": "Nashik Airport",
+      "CITYID": 146814,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "MH",
+      "STATEPROVINCE": "Maharashtra",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Pune",
+      "NAME": "Pune Airport",
+      "CITYID": 133133,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "MH",
+      "STATEPROVINCE": "Maharashtra",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Shirdi",
+      "NAME": "Shirdi Airport",
+      "CITYID": 137316,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "MH",
+      "STATEPROVINCE": "Maharashtra",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Solapur",
+      "NAME": "Solapur Airport",
+      "CITYID": 138128,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "MH",
+      "STATEPROVINCE": "Maharashtra",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Imphal",
+      "NAME": "Imphal International Airport",
+      "CITYID": 122108,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "MN",
+      "STATEPROVINCE": "Manipur",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Shillong",
+      "NAME": "Shillong Airport",
+      "CITYID": 138670,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "ML",
+      "STATEPROVINCE": "Manipur",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Aizawl",
+      "NAME": "Lengpui Airport",
+      "CITYID": 100273,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "MZ",
+      "STATEPROVINCE": "Mizoram",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Dimapur",
+      "NAME": "Dimapur Airport",
+      "CITYID": 115896,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "NL",
+      "STATEPROVINCE": "Nagaland",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Bhubaneswar",
+      "NAME": "Biju Patnaik International Airport",
+      "CITYID": 111558,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "OR",
+      "STATEPROVINCE": "Odisha",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Rourkela",
+      "NAME": "Rourkela Airport",
+      "CITYID": 134643,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "OR",
+      "STATEPROVINCE": "Odisha",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Amritsar",
+      "NAME": "Sri Guru Ram Das Ji International Airport",
+      "CITYID": 101129,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "PB",
+      "STATEPROVINCE": "Punjab",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Jalandhar",
+      "NAME": "Adampur Airport",
+      "CITYID": 122327,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "PB",
+      "STATEPROVINCE": "Punjab",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Ludhiana",
+      "NAME": "Ludhiana Airport",
+      "CITYID": 125928,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "PB",
+      "STATEPROVINCE": "Punjab",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Pathankot",
+      "NAME": "Pathankot Airport",
+      "CITYID": 132705,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "PB",
+      "STATEPROVINCE": "Punjab",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Ajmer",
+      "NAME": "Kishangarh Airport",
+      "CITYID": 100804,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "RJ",
+      "STATEPROVINCE": "Rajasthan",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Bikaner",
+      "NAME": "Bikaner Airport",
+      "CITYID": 144247,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "RJ",
+      "STATEPROVINCE": "Rajasthan",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Jaipur",
+      "NAME": "Jaipur International Airport",
+      "CITYID": 122175,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "RJ",
+      "STATEPROVINCE": "Rajasthan",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Jaisalmer",
+      "NAME": "Jaisalmer Airport",
+      "CITYID": 122326,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "RJ",
+      "STATEPROVINCE": "Rajasthan",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Jodhpur",
+      "NAME": "Jodhpur Airport",
+      "CITYID": 145836,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "RJ",
+      "STATEPROVINCE": "Rajasthan",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Udaipur",
+      "NAME": "Maharana Pratap Airport",
+      "CITYID": 140522,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "RJ",
+      "STATEPROVINCE": "Rajasthan",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Gangtok",
+      "NAME": "Pakyong Airport",
+      "CITYID": 119221,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "SK",
+      "STATEPROVINCE": "Sikkim",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Chennai",
+      "NAME": "Chennai International Airport",
+      "CITYID": 127343,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "TN",
+      "STATEPROVINCE": "Tamil Nadu",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Coimbatore",
+      "NAME": "Coimbatore International Airport",
+      "CITYID": 144735,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "TN",
+      "STATEPROVINCE": "Tamil Nadu",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Madurai",
+      "NAME": "Madurai Airport",
+      "CITYID": 127067,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "TN",
+      "STATEPROVINCE": "Tamil Nadu",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Salem , India",
+      "NAME": "Salem Airport",
+      "CITYID": 135916,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "TN",
+      "STATEPROVINCE": "Tamil Nadu",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Thoothukkudi",
+      "NAME": "Tuticorin Airport",
+      "CITYID": 141231,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "TN",
+      "STATEPROVINCE": "Tamil Nadu",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Tiruchirappalli",
+      "NAME": "Tiruchirappalli International Airport",
+      "CITYID": 148240,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "TN",
+      "STATEPROVINCE": "Tamil Nadu",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Agartala",
+      "NAME": "Maharaja Bir Bikram Airport",
+      "CITYID": 100667,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "TR",
+      "STATEPROVINCE": "Tripura",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Agra",
+      "NAME": "Agra Airport",
+      "CITYID": 100589,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "UP",
+      "STATEPROVINCE": "Uttar Pradesh",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Bareilly",
+      "NAME": "Bareilly Airport",
+      "CITYID": 111009,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "UP",
+      "STATEPROVINCE": "Uttar Pradesh",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Ghaziabad",
+      "NAME": "Hindon Airport",
+      "CITYID": 118973,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "UP",
+      "STATEPROVINCE": "Uttar Pradesh",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Gorakhpur",
+      "NAME": "Gorakhpur Airport",
+      "CITYID": 120371,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "UP",
+      "STATEPROVINCE": "Uttar Pradesh",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Kanpur",
+      "NAME": "Kanpur Airport",
+      "CITYID": 122932,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "UP",
+      "STATEPROVINCE": "Uttar Pradesh",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Kushinagar",
+      "NAME": "Kushinagar International Airport",
+      "CITYID": 124045,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "UP",
+      "STATEPROVINCE": "Uttar Pradesh",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Lucknow",
+      "NAME": "Chaudhary Charan Singh International Airport",
+      "CITYID": 126666,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "UP",
+      "STATEPROVINCE": "Uttar Pradesh",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Allahabad",
+      "NAME": "Prayagraj Airport",
+      "CITYID": 100307,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "UP",
+      "STATEPROVINCE": "Uttar Pradesh",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Varanasi",
+      "NAME": "Lal Bahadur Shastri International Airport",
+      "CITYID": 141618,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "UP",
+      "STATEPROVINCE": "Uttar Pradesh",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Dehradun",
+      "NAME": "Dehradun Airport",
+      "CITYID": 116164,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "UK",
+      "STATEPROVINCE": "Uttarakhand",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Pantnagar",
+      "NAME": "Pantnagar Airport",
+      "CITYID": 150800,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "UK",
+      "STATEPROVINCE": "Uttarakhand",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Durgapur",
+      "NAME": "Kazi Nazrul Islam Airport",
+      "CITYID": 115958,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "WB",
+      "STATEPROVINCE": "West Bengal",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Kolkata",
+      "NAME": "Netaji Subhash Chandra Bose International Airport",
+      "CITYID": 113128,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "WB",
+      "STATEPROVINCE": "West Bengal",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Siliguri",
+      "NAME": "Bagdogra International Airport",
+      "CITYID": 147912,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "WB",
+      "STATEPROVINCE": "West Bengal",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Port Blair",
+      "NAME": "Veer Savarkar International Airport",
+      "CITYID": 133556,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "AN",
+      "STATEPROVINCE": "Andaman & Nicobar",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Chandigarh",
+      "NAME": "Shaheed Bhagat Singh International Airport",
+      "CITYID": 114107,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "CH",
+      "STATEPROVINCE": "Chandigarh",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Diu",
+      "NAME": "Diu Airport",
+      "CITYID": 115899,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "GJ",
+      "STATEPROVINCE": "Gujarat",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Delhi",
+      "NAME": "Indira Gandhi International Airport",
+      "CITYID": 130443,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "DL",
+      "STATEPROVINCE": "DELHI",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Jammu",
+      "NAME": "Jammu Airport",
+      "CITYID": 121783,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "JK",
+      "STATEPROVINCE": "Jammu and Kashmir",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Srinagar",
+      "NAME": "Sheikh ul-Alam International Airport",
+      "CITYID": 139456,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "JK",
+      "STATEPROVINCE": "Jammu and Kashmir",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Leh",
+      "NAME": "Kushok Bakula Rimpochee Airport",
+      "CITYID": 125144,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "JK",
+      "STATEPROVINCE": "Jammu and Kashmir",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Agatti Island",
+      "NAME": "Agatti Airport",
+      "CITYID": 100578,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "LD",
+      "STATEPROVINCE": "Lakshadweep",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Puducherry",
+      "NAME": "Puducherry Airport",
+      "CITYID": 132561,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "TN",
+      "STATEPROVINCE": "Tamil Nadu",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Rajkot",
+      "NAME": "Rajkot Greenfield International Airport",
+      "CITYID": 134211,
+      "COUNTRY": "India",
+      "STATEPROVINCECODE": "GJ",
+      "STATEPROVINCE": "Gujarat",
+      "COUNTRYCODE": "IN"
+    },
+    {
+      "DESTINATION": "Atlanta, Georgia",
+      "NAME": "Hartsfeild - Jackson Atlanta International Airport",
+      "CITYID": 143983,
+      "COUNTRY": "United States",
+      "STATEPROVINCECODE": "GA",
+      "STATEPROVINCE": "Georgia",
+      "COUNTRYCODE": "US"
+    },
+    {
+      "DESTINATION": "Dallas",
+      "NAME": "Dallas Fort Worth International Airport",
+      "CITYID": 116034,
+      "COUNTRY": "United States",
+      "STATEPROVINCECODE": "GA",
+      "STATEPROVINCE": "Georgia",
+      "COUNTRYCODE": "US"
+    },
+    {
+      "DESTINATION": "Denver , Colorado",
+      "NAME": "Denver International Airport",
+      "CITYID": 117340,
+      "COUNTRY": "United States",
+      "STATEPROVINCECODE": "CO",
+      "STATEPROVINCE": "Colorado",
+      "COUNTRYCODE": "US"
+    },
+    {
+      "DESTINATION": "Chicago, Illinois",
+      "NAME": "O' Hare International Airport",
+      "CITYID": 114653,
+      "COUNTRY": "United States",
+      "STATEPROVINCECODE": "IL",
+      "STATEPROVINCE": "Illinois",
+      "COUNTRYCODE": "US"
+    },
+    {
+      "DESTINATION": "Dubai",
+      "NAME": "Dubai International Airport",
+      "CITYID": 115936,
+      "COUNTRY": "United Arab Emirates",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "AE"
+    },
+    {
+      "DESTINATION": "Los Angeles, California",
+      "NAME": "Los Angeles International Airport",
+      "CITYID": 125908,
+      "COUNTRY": "United States",
+      "STATEPROVINCECODE": "CA",
+      "STATEPROVINCE": "California",
+      "COUNTRYCODE": "US"
+    },
+    {
+      "DESTINATION": "Ataturk, Istanbul",
+      "NAME": "Istanbul Airport",
+      "CITYID": 122727,
+      "COUNTRY": "Turkey",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TR"
+    },
+    {
+      "DESTINATION": "Paris, France",
+      "NAME": "Charles de Gaulle Airport",
+      "CITYID": 131408,
+      "COUNTRY": "France",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "FR"
+    },
+    {
+      "DESTINATION": "Las Vegas, Nevada",
+      "NAME": "Harry Reid International Airport",
+      "CITYID": 125099,
+      "COUNTRY": "United States",
+      "STATEPROVINCECODE": "NV",
+      "STATEPROVINCE": "Nevada",
+      "COUNTRYCODE": "US"
+    },
+    {
+      "DESTINATION": "Schiphol, Amsterdam",
+      "NAME": "Amsterdam Airport Schiphol",
+      "CITYID": 136713,
+      "COUNTRY": "Netherlands",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "NL"
+    },
+    {
+      "DESTINATION": "Miami",
+      "NAME": "Miami International Airport",
+      "CITYID": 127628,
+      "COUNTRY": "United States",
+      "STATEPROVINCECODE": "AZ",
+      "STATEPROVINCE": "Arizona",
+      "COUNTRYCODE": "US"
+    },
+    {
+      "DESTINATION": "Madrid",
+      "NAME": "Adolfo Suarez Madrid-Barajas Airport",
+      "CITYID": 126260,
+      "COUNTRY": "Spain",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ES"
+    },
+    {
+      "DESTINATION": "Ota, Tokyo",
+      "NAME": "Tokyo Heneda Airport",
+      "CITYID": 148251,
+      "COUNTRY": "Japan",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "JP"
+    },
+    {
+      "DESTINATION": "Orlando, Florida",
+      "NAME": "Orlando International Airport",
+      "CITYID": 131943,
+      "COUNTRY": "United States",
+      "STATEPROVINCECODE": "FL",
+      "STATEPROVINCE": "Florida",
+      "COUNTRYCODE": "US"
+    },
+    {
+      "DESTINATION": "Frankfurt, Hesse",
+      "NAME": "Frankfurt Airport",
+      "CITYID": 150455,
+      "COUNTRY": "Germany",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "DE"
+    },
+    {
+      "DESTINATION": "Toronto",
+      "NAME": "Toronto Pearson International Airpori",
+      "CITYID": 140333,
+      "COUNTRY": "Canada",
+      "STATEPROVINCECODE": "ON",
+      "STATEPROVINCE": "Ontario",
+      "COUNTRYCODE": "CA"
+    },
+    {
+      "DESTINATION": "Doha",
+      "NAME": "Hamad International Airport",
+      "CITYID": 116201,
+      "COUNTRY": "Qatar",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "QA"
+    },
+    {
+      "DESTINATION": "Bogota",
+      "NAME": "El Dorado International Airport",
+      "CITYID": 112438,
+      "COUNTRY": "Colombia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CO"
+    },
+    {
+      "DESTINATION": "Changi, East Region",
+      "NAME": "Singapore Changi Airport",
+      "CITYID": 138703,
+      "COUNTRY": "Singapore",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "SG"
+    },
+    {
+      "DESTINATION": "Jeddah",
+      "NAME": "King Abdulaziz International Airport",
+      "CITYID": 122187,
+      "COUNTRY": "Saudi Arabia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "SA"
+    },
+    {
+      "DESTINATION": "Jeju City",
+      "NAME": "Jeju International Airport",
+      "CITYID": 150233,
+      "COUNTRY": "South Korea",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "KR"
+    },
+    {
+      "DESTINATION": "Fiumicino, Rome Metro",
+      "NAME": "Leonardo da Vinci-Fiumicino Airport",
+      "CITYID": 118571,
+      "COUNTRY": "Italy",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "IT"
+    },
+    {
+      "DESTINATION": "Sydney",
+      "NAME": "Sydney Airport",
+      "CITYID": 140258,
+      "COUNTRY": "Australia",
+      "STATEPROVINCECODE": "NSW",
+      "STATEPROVINCE": "New South Wales",
+      "COUNTRYCODE": "AU"
+    },
+    {
+      "DESTINATION": "Bangkok",
+      "NAME": "Suvarnabhumi Airport",
+      "CITYID": 144092,
+      "COUNTRY": "Thailand",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TH"
+    },
+    {
+      "DESTINATION": "Beijing",
+      "NAME": "Beijing Capital International Airport",
+      "CITYID": 144154,
+      "COUNTRY": "China",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CN"
+    },
+    {
+      "DESTINATION": "Hong Kong",
+      "NAME": "Hong Kong International Airport",
+      "CITYID": 145656,
+      "COUNTRY": "China",
+      "STATEPROVINCECODE": "HK",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CN"
+    },
+    {
+      "DESTINATION": "Seoul",
+      "NAME": "Incheon International Airport",
+      "CITYID": 137364,
+      "COUNTRY": "South Korea",
+      "STATEPROVINCECODE": "KR",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "KR"
+    },
+    {
+      "DESTINATION": "Barcelona",
+      "NAME": "Josep Tarradellas Barcelona–El Prat Airport",
+      "CITYID": 110790,
+      "COUNTRY": "Spain",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ES"
+    },
+    {
+      "DESTINATION": "Kuala Lumpur",
+      "NAME": "Kuala Lumpur International Airport",
+      "CITYID": 123768,
+      "COUNTRY": "Malaysia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "MY"
+    },
+    {
+      "DESTINATION": "Milan",
+      "NAME": "Milan Malpensa Airport",
+      "CITYID": 127769,
+      "COUNTRY": "Italy",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "IT"
+    },
+    {
+      "DESTINATION": "Zurich",
+      "NAME": "Zurich Airport",
+      "CITYID": 142511,
+      "COUNTRY": "Switzerland",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CH"
+    },
+    {
+      "DESTINATION": "Antalya",
+      "NAME": "Antalya Airport",
+      "CITYID": 109471,
+      "COUNTRY": "Turkey",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TR"
+    },
+    {
+      "DESTINATION": "Narita , Tokyo",
+      "NAME": "Narita International Airport",
+      "CITYID": 128724,
+      "COUNTRY": "Japan",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "JP"
+    },
+    {
+      "DESTINATION": "Houston , Texas",
+      "NAME": "George Bush Intercontinental Airport",
+      "CITYID": 120751,
+      "COUNTRY": "United States",
+      "STATEPROVINCECODE": "TX",
+      "STATEPROVINCE": "Texas",
+      "COUNTRYCODE": "US"
+    },
+    {
+      "DESTINATION": "London",
+      "NAME": "London Gatwick Airport",
+      "CITYID": 126632,
+      "COUNTRY": "United Kingdom",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "GB"
+    },
+    {
+      "DESTINATION": "Cancun, Quintana Roo",
+      "NAME": "Cancun International Airport",
+      "CITYID": 113162,
+      "COUNTRY": "Mexico",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "MX"
+    },
+    {
+      "DESTINATION": "Munich",
+      "NAME": "Munich International Airport",
+      "CITYID": 146774,
+      "COUNTRY": "Germany",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "DE"
+    },
+    {
+      "DESTINATION": "San Francisco",
+      "NAME": "San Francisco International Airport",
+      "CITYID": 136014,
+      "COUNTRY": "United States",
+      "STATEPROVINCECODE": "CA",
+      "STATEPROVINCE": "California",
+      "COUNTRYCODE": "US"
+    },
+    {
+      "DESTINATION": "Moscow",
+      "NAME": "Sheremetyevo A.S. Pushkin Intetnational Airport",
+      "CITYID": 146743,
+      "COUNTRY": "Russia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "RU"
+    },
+    {
+      "DESTINATION": "Jakarta",
+      "NAME": "Soekarno-Hatta International Airport",
+      "CITYID": 122069,
+      "COUNTRY": "Indonesia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ID"
+    },
+    {
+      "DESTINATION": "Seattle, Washington",
+      "NAME": "Seattle - Tacoma International Airport",
+      "CITYID": 137938,
+      "COUNTRY": "United States",
+      "STATEPROVINCECODE": "WA",
+      "STATEPROVINCE": "Washington",
+      "COUNTRYCODE": "US"
+    },
+    {
+      "DESTINATION": "Newark , New York",
+      "NAME": "Newark Liberty International Airport",
+      "CITYID": 130428,
+      "COUNTRY": "United States",
+      "STATEPROVINCECODE": "NY",
+      "STATEPROVINCE": "New York",
+      "COUNTRYCODE": "US"
+    },
+    {
+      "DESTINATION": "Taoyuan City",
+      "NAME": "Taiwan Taoyuan International Airport",
+      "CITYID": 139021,
+      "COUNTRY": "Taiwan",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TW"
+    },
+    {
+      "DESTINATION": "Athens",
+      "NAME": "Athens International Airport",
+      "CITYID": 110000,
+      "COUNTRY": "Greece",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "GR"
+    },
+    {
+      "DESTINATION": "Geneva",
+      "NAME": "Geneva Airport",
+      "CITYID": 118434,
+      "COUNTRY": "Switzerland",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CH"
+    },
+    {
+      "DESTINATION": "Melbourne",
+      "NAME": "Melbourne Airport",
+      "CITYID": 127718,
+      "COUNTRY": "Australia",
+      "STATEPROVINCECODE": "VIC",
+      "STATEPROVINCE": "Victoria",
+      "COUNTRYCODE": "AU"
+    },
+    {
+      "DESTINATION": "Kathmandu",
+      "NAME": "Tribhuvan International Airport",
+      "CITYID": 145898,
+      "COUNTRY": "Nepal",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "NP"
+    },
+    {
+      "DESTINATION": "Ho Chi Minh City",
+      "NAME": "Tan Son Nhat International Airport",
+      "CITYID": 121921,
+      "COUNTRY": "Vietnam",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "VN"
+    },
+    {
+      "DESTINATION": "Dhaka",
+      "NAME": "Hazrat Shahjalal International Airport",
+      "CITYID": 115879,
+      "COUNTRY": "Bangladesh",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BD"
+    },
+    {
+      "DESTINATION": "Cairo",
+      "NAME": "Cairo International Airport",
+      "CITYID": 113116,
+      "COUNTRY": "Egypt",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "EG"
+    },
+    {
+      "DESTINATION": "Manila",
+      "NAME": "Ninoy Aquino International Airport",
+      "CITYID": 127116,
+      "COUNTRY": "Philippines",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "PH"
+    },
+    {
+      "DESTINATION": "Colombo",
+      "NAME": "Bandaranaike International Airport",
+      "CITYID": 144745,
+      "COUNTRY": "Sri Lanka",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "LK"
+    },
+    {
+      "DESTINATION": "Paro",
+      "NAME": "Paro International Airport",
+      "CITYID": 132694,
+      "COUNTRY": "Bhutan",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BT"
+    },
+    {
+      "DESTINATION": "Hulhule Island",
+      "NAME": "Velana International Airport",
+      "CITYID": 122641,
+      "COUNTRY": "Maldives",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "MV"
+    },
+    {
+      "DESTINATION": "Havana",
+      "NAME": "Jose Marti International Airport",
+      "CITYID": 119977,
+      "COUNTRY": "Cuba",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CU"
+    },
+    {
+      "DESTINATION": "Helsinki",
+      "NAME": "Helsinki Airport",
+      "CITYID": 120663,
+      "COUNTRY": "Finland",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "FI"
+    },
+    {
+      "DESTINATION": "Moscow",
+      "NAME": "Moscow Domodedovo Mikhai Lomonosov Airport",
+      "CITYID": 146743,
+      "COUNTRY": "Russia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "RU"
+    },
+    {
+      "DESTINATION": "Vnukovo district, Moscow",
+      "NAME": "Vnukovo International Airport",
+      "CITYID": 107581,
+      "COUNTRY": "Russia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "RU"
+    },
+    {
+      "DESTINATION": "Vancouver",
+      "NAME": "Vancouver International Airport",
+      "CITYID": 141448,
+      "COUNTRY": "Canada",
+      "STATEPROVINCECODE": "BC",
+      "STATEPROVINCE": "British Columbia",
+      "COUNTRYCODE": "CA"
+    },
+    {
+      "DESTINATION": "Calgary , Alberta",
+      "NAME": "Calgary International Airport",
+      "CITYID": 113135,
+      "COUNTRY": "Canada",
+      "STATEPROVINCECODE": "AB",
+      "STATEPROVINCE": "Alberta",
+      "COUNTRYCODE": "CA"
+    },
+    {
+      "DESTINATION": "Guangzhou",
+      "NAME": "Guangzhou Baiyun International Airport",
+      "CITYID": 112825,
+      "COUNTRY": "China",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CN"
+    },
+    {
+      "DESTINATION": "Chengdu",
+      "NAME": "Chengdu Shuangliu International Airport",
+      "CITYID": 114784,
+      "COUNTRY": "China",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CN"
+    },
+    {
+      "DESTINATION": "Bali",
+      "NAME": "I Gusti Ngurah Rai International Airport",
+      "CITYID": 110670,
+      "COUNTRY": "Indonesia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ID"
+    },
+    {
+      "DESTINATION": "Sao Paulo",
+      "NAME": "Sao Paulo-Guarulhos International Airport",
+      "CITYID": 136873,
+      "COUNTRY": "Brazil",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BR"
+    },
+    {
+      "DESTINATION": "Nuuk",
+      "NAME": "Nuuk International Airport",
+      "CITYID": 148960,
+      "COUNTRY": "Greenland",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "GL"
+    },
+    {
+      "DESTINATION": "Dammam",
+      "NAME": "King Fahd International Airport",
+      "CITYID": 116137,
+      "COUNTRY": "Saudi Arabia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "SA"
+    },
+    {
+      "DESTINATION": "Tehran",
+      "NAME": "Imam Khomeini International Airport",
+      "CITYID": 139706,
+      "COUNTRY": "Iran",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "IR"
+    },
+    {
+      "DESTINATION": "Callao",
+      "NAME": "Jorge Chavez International Airport",
+      "CITYID": 112784,
+      "COUNTRY": "Peru",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "PE"
+    },
+    {
+      "DESTINATION": "Copenhagen",
+      "NAME": "Copenhagen Airport",
+      "CITYID": 115280,
+      "COUNTRY": "Denmark",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "DK"
+    },
+    {
+      "DESTINATION": "Santiago",
+      "NAME": "Arturo Merino Benitez International Airport",
+      "CITYID": 136528,
+      "COUNTRY": "Chile",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CL"
+    },
+    {
+      "DESTINATION": "Kabul",
+      "NAME": "Kabul International Airport",
+      "CITYID": 122379,
+      "COUNTRY": "Afghanistan",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "AF"
+    },
+    {
+      "DESTINATION": "Casablanca",
+      "NAME": "Mohammed V International Airport",
+      "CITYID": 114032,
+      "COUNTRY": "Morocco",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "MA"
+    },
+    {
+      "DESTINATION": "Oslo",
+      "NAME": "Oslo Airport",
+      "CITYID": 131314,
+      "COUNTRY": "Norway",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "NO"
+    },
+    {
+      "DESTINATION": "Muscat",
+      "NAME": "Muscat International Airport",
+      "CITYID": 146788,
+      "COUNTRY": "Oman",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "OM"
+    },
+    {
+      "DESTINATION": "Vientiane",
+      "NAME": "Wattay International Airport",
+      "CITYID": 142579,
+      "COUNTRY": "Laos",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "LA"
+    },
+    {
+      "DESTINATION": "Damascus",
+      "NAME": "Damascus International Airport",
+      "CITYID": 115183,
+      "COUNTRY": "Syria",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "SY"
+    },
+    {
+      "DESTINATION": "Abu Dhabi",
+      "NAME": "Abu Dhabi International Airport",
+      "CITYID": 100765,
+      "COUNTRY": "United Arab Emirates",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "AE"
+    },
+    {
+      "DESTINATION": "Sharjah",
+      "NAME": "Sharjah International Airport",
+      "CITYID": 137741,
+      "COUNTRY": "United Arab Emirates",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "AE"
+    },
+    {
+      "DESTINATION": "Mazar-i-Sharif",
+      "NAME": "Mazar-i-Sharif International Airport",
+      "CITYID": 150377,
+      "COUNTRY": "Afghanistan",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "AF"
+    },
+    {
+      "DESTINATION": "Tirana",
+      "NAME": "Tirana International Airport",
+      "CITYID": 140445,
+      "COUNTRY": "Albania",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "AL"
+    },
+    {
+      "DESTINATION": "Buenos Aires",
+      "NAME": "Ministro Pistarini International Airport",
+      "CITYID": 112153,
+      "COUNTRY": "Argentina",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "AR"
+    },
+    {
+      "DESTINATION": "Yerevan",
+      "NAME": "Zvartnots International Airport",
+      "CITYID": 143896,
+      "COUNTRY": "Armenia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "AM"
+    },
+    {
+      "DESTINATION": "Vienna",
+      "NAME": "Vienna International Airport",
+      "CITYID": 140888,
+      "COUNTRY": "Austria",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "AT"
+    },
+    {
+      "DESTINATION": "Baku",
+      "NAME": "Heydar Aliyev International Airport",
+      "CITYID": 110755,
+      "COUNTRY": "Azerbaijan",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "AZ"
+    },
+    {
+      "DESTINATION": "Ganja",
+      "NAME": "Ganja International Airport",
+      "CITYID": 145309,
+      "COUNTRY": "Azerbaijan",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "AZ"
+    },
+    {
+      "DESTINATION": "Muharraq",
+      "NAME": "Bahrain International Airport",
+      "CITYID": 128566,
+      "COUNTRY": "Bahrain",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BH"
+    },
+    {
+      "DESTINATION": "Brussels",
+      "NAME": "Brussels Airport",
+      "CITYID": 113060,
+      "COUNTRY": "Belgium",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BE"
+    },
+    {
+      "DESTINATION": "Antwerp",
+      "NAME": "Antwerp International Airport",
+      "CITYID": 109358,
+      "COUNTRY": "Belgium",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BE"
+    },
+    {
+      "DESTINATION": "Bandar Seri Begawan",
+      "NAME": "Brunei International Airport",
+      "CITYID": 110772,
+      "COUNTRY": "Brunei Darussalam",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BN"
+    },
+    {
+      "DESTINATION": "Siem Reap",
+      "NAME": "Siem Reap International Airport",
+      "CITYID": 137759,
+      "COUNTRY": "Cambodia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "KH"
+    },
+    {
+      "DESTINATION": "Sihanoukville City",
+      "NAME": "Sihanouk International Airport",
+      "CITYID": 150278,
+      "COUNTRY": "Cambodia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "KH"
+    },
+    {
+      "DESTINATION": "Larnaca",
+      "NAME": "Larnaca International Airport",
+      "CITYID": 124539,
+      "COUNTRY": "Cyprus",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CY"
+    },
+    {
+      "DESTINATION": "Paphos",
+      "NAME": "Paphos International Airport",
+      "CITYID": 147094,
+      "COUNTRY": "Cyprus",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CY"
+    },
+    {
+      "DESTINATION": "Kutaisi",
+      "NAME": "Kutaisi International Airport",
+      "CITYID": 123786,
+      "COUNTRY": "Georgia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "GE"
+    },
+    {
+      "DESTINATION": "Batumi",
+      "NAME": "Alexander Kartveli Batumi International Airport",
+      "CITYID": 111040,
+      "COUNTRY": "Georgia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "GE"
+    },
+    {
+      "DESTINATION": "Makassar",
+      "NAME": "Sultan Hasanuddin International Airport",
+      "CITYID": 126937,
+      "COUNTRY": "Indonesia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ID"
+    },
+    {
+      "DESTINATION": "Mashhad",
+      "NAME": "Mashhad Shahid Hasheminejad International Airport",
+      "CITYID": 127021,
+      "COUNTRY": "Iran",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "IR"
+    },
+    {
+      "DESTINATION": "Basra",
+      "NAME": "Basra International Airport",
+      "CITYID": 110878,
+      "COUNTRY": "Iraq",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "IQ"
+    },
+    {
+      "DESTINATION": "Erbil",
+      "NAME": "Erbil International Airport",
+      "CITYID": 151818,
+      "COUNTRY": "Iraq",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "IQ"
+    },
+    {
+      "DESTINATION": "Osaka",
+      "NAME": "Kansai International Airport",
+      "CITYID": 130813,
+      "COUNTRY": "Japan",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "JP"
+    },
+    {
+      "DESTINATION": "Aqaba",
+      "NAME": "King Hussein International Airport",
+      "CITYID": 149864,
+      "COUNTRY": "Jordan",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "JO"
+    },
+    {
+      "DESTINATION": "Kuwait City",
+      "NAME": "Kuwait International Airport",
+      "CITYID": 123359,
+      "COUNTRY": "Kuwait",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "KW"
+    },
+    {
+      "DESTINATION": "Bishkek",
+      "NAME": "Manas International Airport",
+      "CITYID": 112191,
+      "COUNTRY": "Kyrgyzstan",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "KG"
+    },
+    {
+      "DESTINATION": "Luang Prabang",
+      "NAME": "Luang Prabang International Airport",
+      "CITYID": 126214,
+      "COUNTRY": "Laos",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "LA"
+    },
+    {
+      "DESTINATION": "Pakse",
+      "NAME": "Pakse International Airport",
+      "CITYID": 132024,
+      "COUNTRY": "Laos",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "LA"
+    },
+    {
+      "DESTINATION": "Beirut",
+      "NAME": "Beirut International Airport",
+      "CITYID": 110925,
+      "COUNTRY": "Lebanon",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "LB"
+    },
+    {
+      "DESTINATION": "Penang Island",
+      "NAME": "Penang International Airport",
+      "CITYID": 132119,
+      "COUNTRY": "Malaysia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "MY"
+    },
+    {
+      "DESTINATION": "Sarawak",
+      "NAME": "Kuching International Airport",
+      "CITYID": 14774,
+      "COUNTRY": "Malaysia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "MY"
+    },
+    {
+      "DESTINATION": "Hanimaadhoo",
+      "NAME": "Hanimaadhoo International Airport",
+      "CITYID": 119960,
+      "COUNTRY": "Maldives",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "MV"
+    },
+    {
+      "DESTINATION": "Maafaru",
+      "NAME": "Maafaru International Airport",
+      "CITYID": 126740,
+      "COUNTRY": "Maldives",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "MV"
+    },
+    {
+      "DESTINATION": "Ulaanbaatar",
+      "NAME": "Chinggis Khaan International Airport",
+      "CITYID": 141090,
+      "COUNTRY": "Mongolia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "MN"
+    },
+    {
+      "DESTINATION": "Mandalay, Tada-U",
+      "NAME": "Mandalay International Airport",
+      "CITYID": 127416,
+      "COUNTRY": "Myanmar",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "MM"
+    },
+    {
+      "DESTINATION": "Nay Pyi Taw",
+      "NAME": "Nay Pyi Taw International Airport",
+      "CITYID": 129180,
+      "COUNTRY": "Myanmar",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "MM"
+    },
+    {
+      "DESTINATION": "Pyongyang",
+      "NAME": "Pyongyang International Airport",
+      "CITYID": 151736,
+      "COUNTRY": "North Korea",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "KP"
+    },
+    {
+      "DESTINATION": "Salalah Costal Plain, Dhofar",
+      "NAME": "Salalah International Airport",
+      "CITYID": 135316,
+      "COUNTRY": "Oman",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "OM"
+    },
+    {
+      "DESTINATION": "Karachi",
+      "NAME": "Jinnah International Airport",
+      "CITYID": 122265,
+      "COUNTRY": "Pakistan",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "PK"
+    },
+    {
+      "DESTINATION": "Islamabad",
+      "NAME": "Islamabad International Airport",
+      "CITYID": 122041,
+      "COUNTRY": "Pakistan",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "PK"
+    },
+    {
+      "DESTINATION": "Lahore",
+      "NAME": "Allama Iqbal International Airport",
+      "CITYID": 125176,
+      "COUNTRY": "Pakistan",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "PK"
+    },
+    {
+      "DESTINATION": "Davao City",
+      "NAME": "Francisco Bangoy International Airport",
+      "CITYID": 115638,
+      "COUNTRY": "Philippines",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "PH"
+    },
+    {
+      "DESTINATION": "Cebu",
+      "NAME": "Mactan-Cebu International Airport",
+      "CITYID": 114570,
+      "COUNTRY": "Philippines",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "PH"
+    },
+    {
+      "DESTINATION": "Riyadh",
+      "NAME": "King Khaled International Airport",
+      "CITYID": 147536,
+      "COUNTRY": "Saudi Arabia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "SA"
+    },
+    {
+      "DESTINATION": "Daegu",
+      "NAME": "Daegu International Airport",
+      "CITYID": 116031,
+      "COUNTRY": "South Korea",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "KR"
+    },
+    {
+      "DESTINATION": "Cheongju",
+      "NAME": "Cheongju International Airport",
+      "CITYID": 113709,
+      "COUNTRY": "South Korea",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "KR"
+    },
+    {
+      "DESTINATION": "Colombo",
+      "NAME": "Colombo International Airport , Ratmalana",
+      "CITYID": 144745,
+      "COUNTRY": "Sri Lanka",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "LK"
+    },
+    {
+      "DESTINATION": "Hambantota",
+      "NAME": "Mattala Rajapaksa International Airport",
+      "CITYID": 121168,
+      "COUNTRY": "Sri Lanka",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "LK"
+    },
+    {
+      "DESTINATION": "Jaffna",
+      "NAME": "Jaffna International Airport",
+      "CITYID": 123417,
+      "COUNTRY": "Sri Lanka",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "LK"
+    },
+    {
+      "DESTINATION": "Batticaloa",
+      "NAME": "Batticaloa International Airport",
+      "CITYID": 150556,
+      "COUNTRY": "Sri Lanka",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "LK"
+    },
+    {
+      "DESTINATION": "Aleppo",
+      "NAME": "Aleppo International Airport",
+      "CITYID": 100181,
+      "COUNTRY": "Syria",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "SY"
+    },
+    {
+      "DESTINATION": "Kaohsiung",
+      "NAME": "Kaohsiung International Airport",
+      "CITYID": 122258,
+      "COUNTRY": "Taiwan",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TW"
+    },
+    {
+      "DESTINATION": "Taichung",
+      "NAME": "Taichung International Airport",
+      "CITYID": 139004,
+      "COUNTRY": "Taiwan",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TW"
+    },
+    {
+      "DESTINATION": "Dushanbe",
+      "NAME": "Dushanbe International Airport",
+      "CITYID": 149953,
+      "COUNTRY": "Tajikistan",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TJ"
+    },
+    {
+      "DESTINATION": "Khujand",
+      "NAME": "Khujand  Airport",
+      "CITYID": 149955,
+      "COUNTRY": "Tajikistan",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TJ"
+    },
+    {
+      "DESTINATION": "Kulob",
+      "NAME": "Kulob International Airport",
+      "CITYID": 149952,
+      "COUNTRY": "Tajikistan",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TJ"
+    },
+    {
+      "DESTINATION": "Ko Samui",
+      "NAME": "Samui International Airport",
+      "CITYID": 123732,
+      "COUNTRY": "Thailand",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TH"
+    },
+    {
+      "DESTINATION": "Bangkok",
+      "NAME": "Don Mueang International Airport",
+      "CITYID": 144092,
+      "COUNTRY": "Thailand",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TH"
+    },
+    {
+      "DESTINATION": "Phuket",
+      "NAME": "Phuket International Airport",
+      "CITYID": 131529,
+      "COUNTRY": "Thailand",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TH"
+    },
+    {
+      "DESTINATION": "Hat Yai",
+      "NAME": "Hat Yai International Airport",
+      "CITYID": 120873,
+      "COUNTRY": "Thailand",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TH"
+    },
+    {
+      "DESTINATION": "Chiang Mai",
+      "NAME": "Chiang Mai International Airport",
+      "CITYID": 114978,
+      "COUNTRY": "Thailand",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TH"
+    },
+    {
+      "DESTINATION": "Chiang Rai",
+      "NAME": "Mae Fah Luang - Chiang Rai International Airport",
+      "CITYID": 114979,
+      "COUNTRY": "Thailand",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TH"
+    },
+    {
+      "DESTINATION": "Dili",
+      "NAME": "Presidente Nicolau Lobato International Airport",
+      "CITYID": 116656,
+      "COUNTRY": "Timor-Leste",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TL"
+    },
+    {
+      "DESTINATION": "Oran",
+      "NAME": "Oran Ahmed Ben Bella Airport",
+      "CITYID": 130789,
+      "COUNTRY": "Algeria",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "DZ"
+    },
+    {
+      "DESTINATION": "Constantine",
+      "NAME": "Mohamed Boudiaf International Airport",
+      "CITYID": 115277,
+      "COUNTRY": "Algeria",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "DZ"
+    },
+    {
+      "DESTINATION": "Hurghada",
+      "NAME": "Hurghada International Airport",
+      "CITYID": 121580,
+      "COUNTRY": "Egypt",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "EG"
+    },
+    {
+      "DESTINATION": "Sharm El Sheikh",
+      "NAME": "Sharm El Sheikh International Airport",
+      "CITYID": 136797,
+      "COUNTRY": "Egypt",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "EG"
+    },
+    {
+      "DESTINATION": "Alexandria",
+      "NAME": "Borg El Arab International Airport",
+      "CITYID": 100103,
+      "COUNTRY": "Egypt",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "EG"
+    },
+    {
+      "DESTINATION": "Luxor",
+      "NAME": "Luxor International Airport",
+      "CITYID": 125658,
+      "COUNTRY": "Egypt",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "EG"
+    },
+    {
+      "DESTINATION": "Addis Ababa , Bole",
+      "NAME": "Addis Ababa Bole International Airport",
+      "CITYID": 105061,
+      "COUNTRY": "Ethiopia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ET"
+    },
+    {
+      "DESTINATION": "Axum, Tigray",
+      "NAME": "Axum Airport",
+      "CITYID": 149594,
+      "COUNTRY": "Ethiopia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ET"
+    },
+    {
+      "DESTINATION": "Bahir Dar ,Amhara",
+      "NAME": "Bahir Dar Airport",
+      "CITYID": 110745,
+      "COUNTRY": "Ethiopia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ET"
+    },
+    {
+      "DESTINATION": "Conakry",
+      "NAME": "Ahmed Sékou Touré International Airport",
+      "CITYID": 144754,
+      "COUNTRY": "Guinea",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "GN"
+    },
+    {
+      "DESTINATION": "Monrovia",
+      "NAME": "Roberts International Airport",
+      "CITYID": 128655,
+      "COUNTRY": "Liberia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "LR"
+    },
+    {
+      "DESTINATION": "Nador",
+      "NAME": "Nador International Airport",
+      "CITYID": 129251,
+      "COUNTRY": "Morocco",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "MA"
+    },
+    {
+      "DESTINATION": "Essaouira",
+      "NAME": "Essaouira-Mogador Airport",
+      "CITYID": 117517,
+      "COUNTRY": "Morocco",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "MA"
+    },
+    {
+      "DESTINATION": "Marrakesh",
+      "NAME": "Marrakesh Menara Airport",
+      "CITYID": 127469,
+      "COUNTRY": "Morocco",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "MA"
+    },
+    {
+      "DESTINATION": "Tambacounda",
+      "NAME": "Bakel Airport",
+      "CITYID": 149520,
+      "COUNTRY": "Senegal",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "SN"
+    },
+    {
+      "DESTINATION": "Ziguinchor",
+      "NAME": "Cap Skirring Airport",
+      "CITYID": 143847,
+      "COUNTRY": "Senegal",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "SN"
+    },
+    {
+      "DESTINATION": "Dakar",
+      "NAME": "Léopold Sédar Senghor International Airport",
+      "CITYID": 144849,
+      "COUNTRY": "Senegal",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "SN"
+    },
+    {
+      "DESTINATION": "Tunis",
+      "NAME": "Tunis–Carthage International Airport",
+      "CITYID": 100244,
+      "COUNTRY": "Tunisia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TN"
+    },
+    {
+      "DESTINATION": "Monastir",
+      "NAME": "Monastir Habib Bourguiba International Airport",
+      "CITYID": 128905,
+      "COUNTRY": "Tunisia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TN"
+    },
+    {
+      "DESTINATION": "Djerba",
+      "NAME": "Djerba–Zarzis International Airport",
+      "CITYID": 116361,
+      "COUNTRY": "Tunisia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TN"
+    },
+    {
+      "DESTINATION": "Hammamet",
+      "NAME": "Enfidha–Hammamet International Airport",
+      "CITYID": 145524,
+      "COUNTRY": "Tunisia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TN"
+    },
+    {
+      "DESTINATION": "Tozeur",
+      "NAME": "Tozeur–Nefta International Airport",
+      "CITYID": 141768,
+      "COUNTRY": "Tunisia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TN"
+    },
+    {
+      "DESTINATION": "Sfax",
+      "NAME": "Sfax–Thyna International Airport",
+      "CITYID": 136787,
+      "COUNTRY": "Tunisia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TN"
+    },
+    {
+      "DESTINATION": "Gafsa",
+      "NAME": "Gafsa – Ksar International Airport",
+      "CITYID": 118661,
+      "COUNTRY": "Tunisia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TN"
+    },
+    {
+      "DESTINATION": "Tabarka",
+      "NAME": "Tabarka–Aïn Draham International Airport",
+      "CITYID": 140266,
+      "COUNTRY": "Tunisia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TN"
+    },
+    {
+      "DESTINATION": "Chongwe District , Lusaka",
+      "NAME": "Kenneth Kaunda International Airport",
+      "CITYID": 126681,
+      "COUNTRY": "Zambia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ZM"
+    },
+    {
+      "DESTINATION": "Livingstone",
+      "NAME": "Harry Mwanga Nkumbula International Airport",
+      "CITYID": 125481,
+      "COUNTRY": "Zambia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ZM"
+    },
+    {
+      "DESTINATION": "Mfuwe",
+      "NAME": "Mfuwe Airport",
+      "CITYID": 127185,
+      "COUNTRY": "Zambia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ZM"
+    },
+    {
+      "DESTINATION": "Ndola",
+      "NAME": "Simon Mwansa Kapwepwe International Airport",
+      "CITYID": 128739,
+      "COUNTRY": "Zambia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ZM"
+    },
+    {
+      "DESTINATION": "Luanda",
+      "NAME": "Quatro de Fevereiro International Airport",
+      "CITYID": 126213,
+      "COUNTRY": "Angola",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "AO"
+    },
+    {
+      "DESTINATION": "Soyo",
+      "NAME": "Soyo Airport",
+      "CITYID": 151588,
+      "COUNTRY": "Angola",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "AO"
+    },
+    {
+      "DESTINATION": "Gaborone",
+      "NAME": "Sir Seretse Khama International Airport",
+      "CITYID": 119049,
+      "COUNTRY": "Botswana",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BW"
+    },
+    {
+      "DESTINATION": "Maun",
+      "NAME": "Maun International Airport",
+      "CITYID": 128160,
+      "COUNTRY": "Botswana",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BW"
+    },
+    {
+      "DESTINATION": "Kasane",
+      "NAME": "Kasane International Airport",
+      "CITYID": 122535,
+      "COUNTRY": "Botswana",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BW"
+    },
+    {
+      "DESTINATION": "Francistown",
+      "NAME": "Phillip Gaonwe Matante International Airport",
+      "CITYID": 145254,
+      "COUNTRY": "Botswana",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BW"
+    },
+    {
+      "DESTINATION": "Ouagadougou",
+      "NAME": "Thomas Sankara International Airport Ouagadougou",
+      "CITYID": 147041,
+      "COUNTRY": "Burkina Faso",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BF"
+    },
+    {
+      "DESTINATION": "Bobo Dioulasso",
+      "NAME": "Bobo Dioulasso Airport",
+      "CITYID": 151065,
+      "COUNTRY": "Burkina Faso",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BF"
+    },
+    {
+      "DESTINATION": "Bujumbura",
+      "NAME": "Melchior Ndadaye International Airport",
+      "CITYID": 113441,
+      "COUNTRY": "Burundi",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BI"
+    },
+    {
+      "DESTINATION": "Douala",
+      "NAME": "Douala International Airport",
+      "CITYID": 144960,
+      "COUNTRY": "Cameroon",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CM"
+    },
+    {
+      "DESTINATION": "Garoua",
+      "NAME": "Garoua International Airport",
+      "CITYID": 149662,
+      "COUNTRY": "Cameroon",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CM"
+    },
+    {
+      "DESTINATION": "Yaounde",
+      "NAME": "Yaounde Nsimalen International Airport",
+      "CITYID": 143797,
+      "COUNTRY": "Cameroon",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CM"
+    },
+    {
+      "DESTINATION": "Espargos",
+      "NAME": "Amílcar Cabral International Airport",
+      "CITYID": 117255,
+      "COUNTRY": "Cape Verde",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CV"
+    },
+    {
+      "DESTINATION": "Santiago Island",
+      "NAME": "Nelson Mandela International Airport",
+      "CITYID": 136389,
+      "COUNTRY": "Cape Verde",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CV"
+    },
+    {
+      "DESTINATION": "Bangui",
+      "NAME": "Bangui M'Poko International Airport",
+      "CITYID": 110989,
+      "COUNTRY": "Central African Republic",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CF"
+    },
+    {
+      "DESTINATION": "N'Djamena",
+      "NAME": "N'Djamena International Airport",
+      "CITYID": 146827,
+      "COUNTRY": "Chad",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TD"
+    },
+    {
+      "DESTINATION": "Moroni",
+      "NAME": "Prince Said Ibrahim International Airport",
+      "CITYID": 129631,
+      "COUNTRY": "Comoros",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "KM"
+    },
+    {
+      "DESTINATION": "Abidjan",
+      "NAME": "Félix-Houphouët-Boigny International Airport",
+      "CITYID": 100759,
+      "COUNTRY": "Ivory Coast",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CI"
+    },
+    {
+      "DESTINATION": "Kisangani",
+      "NAME": "Kisangani Bangoka International Airport",
+      "CITYID": 151777,
+      "COUNTRY": "Congo (Rep. Dem.)",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CD"
+    },
+    {
+      "DESTINATION": "Lubumbashi",
+      "NAME": "Lubumbashi International Airport",
+      "CITYID": 125639,
+      "COUNTRY": "Congo (Rep. Dem.)",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CD"
+    },
+    {
+      "DESTINATION": "Kinshasa",
+      "NAME": "N'djili Airport",
+      "CITYID": 123174,
+      "COUNTRY": "Congo (Rep. Dem.)",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CD"
+    },
+    {
+      "DESTINATION": "Asmara",
+      "NAME": "Asmara International Airport",
+      "CITYID": 110320,
+      "COUNTRY": "Eritrea",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ER"
+    },
+    {
+      "DESTINATION": "Libreville",
+      "NAME": "Léon-Mba International Airport",
+      "CITYID": 125836,
+      "COUNTRY": "Gabon",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "GA"
+    },
+    {
+      "DESTINATION": "Franceville",
+      "NAME": "M'Vengue El Hadj Omar Bongo Ondimba International Airport",
+      "CITYID": 148923,
+      "COUNTRY": "Gabon",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "GA"
+    },
+    {
+      "DESTINATION": "Banjul",
+      "NAME": "Banjul International Airport",
+      "CITYID": 110991,
+      "COUNTRY": "Gambia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "GM"
+    },
+    {
+      "DESTINATION": "Accra",
+      "NAME": "Kotoka International Airport",
+      "CITYID": 100768,
+      "COUNTRY": "Ghana",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "GH"
+    },
+    {
+      "DESTINATION": "Tamale",
+      "NAME": "Tamale International Airport",
+      "CITYID": 148946,
+      "COUNTRY": "Ghana",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "GH"
+    },
+    {
+      "DESTINATION": "Kumasi",
+      "NAME": "Kumasi International Airport",
+      "CITYID": 146049,
+      "COUNTRY": "Ghana",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "GH"
+    },
+    {
+      "DESTINATION": "Bissau",
+      "NAME": "Osvaldo Vieira International Airport",
+      "CITYID": 111318,
+      "COUNTRY": "Guinea-Bissau",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "GW"
+    },
+    {
+      "DESTINATION": "Nairobi",
+      "NAME": "Jomo Kenyatta International Airport",
+      "CITYID": 130102,
+      "COUNTRY": "Kenya",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "KE"
+    },
+    {
+      "DESTINATION": "Eldoret",
+      "NAME": "Eldoret Airport is an international airport",
+      "CITYID": 116991,
+      "COUNTRY": "Kenya",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "KE"
+    },
+    {
+      "DESTINATION": "Mombasa",
+      "NAME": "Moi International Airport",
+      "CITYID": 127149,
+      "COUNTRY": "Kenya",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "KE"
+    },
+    {
+      "DESTINATION": "Kisumu",
+      "NAME": "Kisumu International Airport",
+      "CITYID": 123583,
+      "COUNTRY": "Kenya",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "KE"
+    },
+    {
+      "DESTINATION": "Maseru",
+      "NAME": "Moshoeshoe I International Airport",
+      "CITYID": 126893,
+      "COUNTRY": "Lesotho",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "LS"
+    },
+    {
+      "DESTINATION": "Tripoli",
+      "NAME": "Mitiga International Airport",
+      "CITYID": 140649,
+      "COUNTRY": "Libya",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "LY"
+    },
+    {
+      "DESTINATION": "Sabha",
+      "NAME": "Sebha International Airport",
+      "CITYID": 135801,
+      "COUNTRY": "Libya",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "LY"
+    },
+    {
+      "DESTINATION": "Benghazi",
+      "NAME": "Benina International Airport",
+      "CITYID": 149025,
+      "COUNTRY": "Libya",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "LY"
+    },
+    {
+      "DESTINATION": "Misurata",
+      "NAME": "Misrata International Airport",
+      "CITYID": 149022,
+      "COUNTRY": "Libya",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "LY"
+    },
+    {
+      "DESTINATION": "Antananarivo",
+      "NAME": "Ivato International Airport",
+      "CITYID": 101026,
+      "COUNTRY": "Madagascar",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "MG"
+    },
+    {
+      "DESTINATION": "Nosy Be",
+      "NAME": "Fascene Airport",
+      "CITYID": 130028,
+      "COUNTRY": "Madagascar",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "MG"
+    },
+    {
+      "DESTINATION": "Sambava",
+      "NAME": "Sambava Airport",
+      "CITYID": 149077,
+      "COUNTRY": "Madagascar",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "MG"
+    },
+    {
+      "DESTINATION": "Lilongwe",
+      "NAME": "Kamuzu International Airport",
+      "CITYID": 125853,
+      "COUNTRY": "Malawi",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "MW"
+    },
+    {
+      "DESTINATION": "Bamako",
+      "NAME": "Modibo Keita International Airport",
+      "CITYID": 110683,
+      "COUNTRY": "Mali",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ML"
+    },
+    {
+      "DESTINATION": "Nouakchott",
+      "NAME": "Nouakchott–Oumtounsy International Airport",
+      "CITYID": 130034,
+      "COUNTRY": "Mauritania",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "MR"
+    },
+    {
+      "DESTINATION": "Maputo",
+      "NAME": "Maputo International Airport",
+      "CITYID": 146478,
+      "COUNTRY": "Mozambique",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "MZ"
+    },
+    {
+      "DESTINATION": "Windhoek",
+      "NAME": "Hosea Kutako International Airport",
+      "CITYID": 143746,
+      "COUNTRY": "Namibia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "NA"
+    },
+    {
+      "DESTINATION": "Walvis Bay",
+      "NAME": "Walvis Bay International Airport",
+      "CITYID": 142249,
+      "COUNTRY": "Namibia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "NA"
+    },
+    {
+      "DESTINATION": "Niamey",
+      "NAME": "Diori Hamani International Airpor",
+      "CITYID": 129453,
+      "COUNTRY": "Niger",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "NE"
+    },
+    {
+      "DESTINATION": "Enugu",
+      "NAME": "Akanu Ibiam International Airport",
+      "CITYID": 114271,
+      "COUNTRY": "Nigeria",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "NG"
+    },
+    {
+      "DESTINATION": "Abuja",
+      "NAME": "Nnamdi Azikiwe International Airport",
+      "CITYID": 100225,
+      "COUNTRY": "Nigeria",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "NG"
+    },
+    {
+      "DESTINATION": "Lagos",
+      "NAME": "Murtala Muhammed International Airport",
+      "CITYID": 125053,
+      "COUNTRY": "Nigeria",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "NG"
+    },
+    {
+      "DESTINATION": "Kigali",
+      "NAME": "Kigali International Airport",
+      "CITYID": 149507,
+      "COUNTRY": "Rwanda",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "RW"
+    },
+    {
+      "DESTINATION": "Mahe",
+      "NAME": "Seychelles International Airport",
+      "CITYID": 126767,
+      "COUNTRY": "Seychelles",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "SC"
+    },
+    {
+      "DESTINATION": "Juba",
+      "NAME": "Juba International Airport",
+      "CITYID": 145844,
+      "COUNTRY": "Sudan",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "SD"
+    },
+    {
+      "DESTINATION": "Khartoum",
+      "NAME": "Khartoum International Airport",
+      "CITYID": 124230,
+      "COUNTRY": "Sudan",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "SD"
+    },
+    {
+      "DESTINATION": "Port Sudan",
+      "NAME": "Port Sudan New International Airport",
+      "CITYID": 147297,
+      "COUNTRY": "Sudan",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "SD"
+    },
+    {
+      "DESTINATION": "Dar-es-Salaam",
+      "NAME": "Julius Nyerere International Airport",
+      "CITYID": 116626,
+      "COUNTRY": "Tanzania",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TZ"
+    },
+    {
+      "DESTINATION": "Kilimanjaro",
+      "NAME": "Kilimanjaro International Airport",
+      "CITYID": 123681,
+      "COUNTRY": "Tanzania",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TZ"
+    },
+    {
+      "DESTINATION": "Zanzibar City",
+      "NAME": "Abeid Amani Karume International Airport",
+      "CITYID": 143346,
+      "COUNTRY": "Tanzania",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TZ"
+    },
+    {
+      "DESTINATION": "Entebbe",
+      "NAME": "Entebbe International Airport",
+      "CITYID": 117239,
+      "COUNTRY": "Uganda",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "UG"
+    },
+    {
+      "DESTINATION": "Harare",
+      "NAME": "Robert Gabriel Mugabe International Airport",
+      "CITYID": 119964,
+      "COUNTRY": "Zimbabwe",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ZW"
+    },
+    {
+      "DESTINATION": "Victoria Falls",
+      "NAME": "Victoria Falls Airport",
+      "CITYID": 141497,
+      "COUNTRY": "Zimbabwe",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ZW"
+    },
+    {
+      "DESTINATION": "Bulawayo",
+      "NAME": "Joshua Mqabuko Nkomo International Airport",
+      "CITYID": 112606,
+      "COUNTRY": "Zimbabwe",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ZW"
+    },
+    {
+      "DESTINATION": "Petersburg",
+      "NAME": "Pulkovo Airport",
+      "CITYID": 134135,
+      "COUNTRY": "Russia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "RU"
+    },
+    {
+      "DESTINATION": "Ufa , Bashkortostan",
+      "NAME": "Ufa International Airport",
+      "CITYID": 148364,
+      "COUNTRY": "Russia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "RU"
+    },
+    {
+      "DESTINATION": "Krasnodar",
+      "NAME": "Krasnodar International Airport",
+      "CITYID": 124974,
+      "COUNTRY": "Russia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "RU"
+    },
+    {
+      "DESTINATION": "Klotzsche, Dresden",
+      "NAME": "Dresden Airport",
+      "CITYID": 115932,
+      "COUNTRY": "Germany",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "DE"
+    },
+    {
+      "DESTINATION": "Stuttgart , Baden-Württemberg",
+      "NAME": "Stuttgart Airport",
+      "CITYID": 138951,
+      "COUNTRY": "Germany",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "DE"
+    },
+    {
+      "DESTINATION": "Hannover",
+      "NAME": "Hannover Airport",
+      "CITYID": 120761,
+      "COUNTRY": "Germany",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "DE"
+    },
+    {
+      "DESTINATION": "Berlin",
+      "NAME": "Berlin Brandenburg Airport",
+      "CITYID": 111539,
+      "COUNTRY": "Germany",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "DE"
+    },
+    {
+      "DESTINATION": "Hamburg",
+      "NAME": "Hamburg Airport",
+      "CITYID": 120596,
+      "COUNTRY": "Germany",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "DE"
+    },
+    {
+      "DESTINATION": "Cologne",
+      "NAME": "Cologne Bonn Airport",
+      "CITYID": 144743,
+      "COUNTRY": "Germany",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "DE"
+    },
+    {
+      "DESTINATION": "Nuremberg, Bavaria",
+      "NAME": "Nuremberg Airport",
+      "CITYID": 150795,
+      "COUNTRY": "Germany",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "DE"
+    },
+    {
+      "DESTINATION": "Stansted Mountfitchet, Central London",
+      "NAME": "London Stansted Airport",
+      "CITYID": 138885,
+      "COUNTRY": "United Kingdom",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "GB"
+    },
+    {
+      "DESTINATION": "Luton, Bedfordshire",
+      "NAME": "London Luton Airport",
+      "CITYID": 126236,
+      "COUNTRY": "United Kingdom",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "GB"
+    },
+    {
+      "DESTINATION": "Ringway, Manchester",
+      "NAME": "Manchester Airport",
+      "CITYID": 126798,
+      "COUNTRY": "United Kingdom",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "GB"
+    },
+    {
+      "DESTINATION": "Edinburgh",
+      "NAME": "Edinburgh Airport",
+      "CITYID": 116967,
+      "COUNTRY": "United Kingdom",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "GB"
+    },
+    {
+      "DESTINATION": "Birmingham",
+      "NAME": "Birmingham Airport",
+      "CITYID": 112624,
+      "COUNTRY": "United Kingdom",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "GB"
+    },
+    {
+      "DESTINATION": "Belfast, Northern Ireland",
+      "NAME": "Belfast International Airport",
+      "CITYID": 110479,
+      "COUNTRY": "United Kingdom",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "GB"
+    },
+    {
+      "DESTINATION": "Nice,  Alpes-Maritimes",
+      "NAME": "Nice Côte d'Azur Airport",
+      "CITYID": 151798,
+      "COUNTRY": "France",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "FR"
+    },
+    {
+      "DESTINATION": "Marseille",
+      "NAME": "Marseille Provence Airport",
+      "CITYID": 126878,
+      "COUNTRY": "France",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "FR"
+    },
+    {
+      "DESTINATION": "Lyon",
+      "NAME": "Lyon–Saint Exupéry Airport",
+      "CITYID": 126089,
+      "COUNTRY": "France",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "FR"
+    },
+    {
+      "DESTINATION": "Toulouse",
+      "NAME": "Toulouse–Blagnac Airport",
+      "CITYID": 140797,
+      "COUNTRY": "France",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "FR"
+    },
+    {
+      "DESTINATION": "Bordeaux",
+      "NAME": "Bordeaux–Mérignac Airport",
+      "CITYID": 144318,
+      "COUNTRY": "France",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "FR"
+    },
+    {
+      "DESTINATION": "Venice",
+      "NAME": "Venice Marco Polo Airport",
+      "CITYID": 148463,
+      "COUNTRY": "Italy",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "IT"
+    },
+    {
+      "DESTINATION": "Bologna",
+      "NAME": "Bologna Guglielmo Marconi Airport",
+      "CITYID": 112298,
+      "COUNTRY": "Italy",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "IT"
+    },
+    {
+      "DESTINATION": "Naples",
+      "NAME": "Naples-Capodichino International Airport",
+      "CITYID": 128721,
+      "COUNTRY": "Italy",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "IT"
+    },
+    {
+      "DESTINATION": "Milan",
+      "NAME": "Milan Linate Airport",
+      "CITYID": 127769,
+      "COUNTRY": "Italy",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "IT"
+    },
+    {
+      "DESTINATION": "Palma, Mallorca",
+      "NAME": "Palma de Mallorca Airport",
+      "CITYID": 147078,
+      "COUNTRY": "Spain",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ES"
+    },
+    {
+      "DESTINATION": "Costa del Sol, Málaga",
+      "NAME": "Málaga–Costa del Sol Airport",
+      "CITYID": 101360,
+      "COUNTRY": "Spain",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ES"
+    },
+    {
+      "DESTINATION": "Gran Canaria",
+      "NAME": "Gran Canaria Airport",
+      "CITYID": 119848,
+      "COUNTRY": "Spain",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ES"
+    },
+    {
+      "DESTINATION": "Warsaw",
+      "NAME": "Warsaw Chopin Airport",
+      "CITYID": 148614,
+      "COUNTRY": "Poland",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "PL"
+    },
+    {
+      "DESTINATION": "Bucharest",
+      "NAME": "Bucharest Henri Coandă International Airport",
+      "CITYID": 113200,
+      "COUNTRY": "Romania",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "RO"
+    },
+    {
+      "DESTINATION": "Cluj-Napoca",
+      "NAME": "Avram Iancu Cluj International Airport",
+      "CITYID": 114321,
+      "COUNTRY": "Romania",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "RO"
+    },
+    {
+      "DESTINATION": "Eindhoven",
+      "NAME": "Eindhoven Airport",
+      "CITYID": 116977,
+      "COUNTRY": "Netherlands",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "NL"
+    },
+    {
+      "DESTINATION": "Rotterdam",
+      "NAME": "Rotterdam The Hague Airport",
+      "CITYID": 134992,
+      "COUNTRY": "Netherlands",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "NL"
+    },
+    {
+      "DESTINATION": "Beek, Limburg",
+      "NAME": "Maastricht Aachen Airport",
+      "CITYID": 110834,
+      "COUNTRY": "Netherlands",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "NL"
+    },
+    {
+      "DESTINATION": "Brussels",
+      "NAME": "Brussels South Charleroi Airport",
+      "CITYID": 113060,
+      "COUNTRY": "Belgium",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BE"
+    },
+    {
+      "DESTINATION": "Ostend",
+      "NAME": "Ostend–Bruges International Airport",
+      "CITYID": 130823,
+      "COUNTRY": "Belgium",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BE"
+    },
+    {
+      "DESTINATION": "Liege",
+      "NAME": "Liege Airport",
+      "CITYID": 126551,
+      "COUNTRY": "Belgium",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BE"
+    },
+    {
+      "DESTINATION": "Sigtuna Municipality",
+      "NAME": "Stockholm Arlanda Airport",
+      "CITYID": 137764,
+      "COUNTRY": "Sweden",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "SE"
+    },
+    {
+      "DESTINATION": "Gothenburg",
+      "NAME": "Göteborg Landvetter Airport",
+      "CITYID": 151094,
+      "COUNTRY": "Sweden",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "SE"
+    },
+    {
+      "DESTINATION": "Stockholm",
+      "NAME": "Stockholm/Bromma Airport",
+      "CITYID": 137827,
+      "COUNTRY": "Sweden",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "SE"
+    },
+    {
+      "DESTINATION": "Prague",
+      "NAME": "Václav Havel Airport Prague",
+      "CITYID": 131864,
+      "COUNTRY": "Czech Republic",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CZ"
+    },
+    {
+      "DESTINATION": "Brno",
+      "NAME": "Brno–Tuřany Airport",
+      "CITYID": 151349,
+      "COUNTRY": "Czech Republic",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CZ"
+    },
+    {
+      "DESTINATION": "Pardubice",
+      "NAME": "Pardubice Airport",
+      "CITYID": 131757,
+      "COUNTRY": "Czech Republic",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CZ"
+    },
+    {
+      "DESTINATION": "Karlovy Vary, Bohemia",
+      "NAME": "Karlovy Vary Airport",
+      "CITYID": 150603,
+      "COUNTRY": "Czech Republic",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CZ"
+    },
+    {
+      "DESTINATION": "Ostrava",
+      "NAME": "Leoš Janáček Airport Ostrava",
+      "CITYID": 130826,
+      "COUNTRY": "Czech Republic",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CZ"
+    },
+    {
+      "DESTINATION": "Crete",
+      "NAME": "Heraklion International Airport \"Nikos Kazantzakis",
+      "CITYID": 123328,
+      "COUNTRY": "Greece",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "GR"
+    },
+    {
+      "DESTINATION": "Thessaloniki",
+      "NAME": "Thessaloniki Airport \"Makedonia",
+      "CITYID": 141027,
+      "COUNTRY": "Greece",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "GR"
+    },
+    {
+      "DESTINATION": "Rhodes",
+      "NAME": "Rhodes International Airport \"Diagoras",
+      "CITYID": 147505,
+      "COUNTRY": "Greece",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "GR"
+    },
+    {
+      "DESTINATION": "Corfu",
+      "NAME": "Corfu International Airport \"Ioannis Kapodistrias",
+      "CITYID": 115559,
+      "COUNTRY": "Greece",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "GR"
+    },
+    {
+      "DESTINATION": "Lisbon",
+      "NAME": "Humberto Delgado Airport",
+      "CITYID": 146305,
+      "COUNTRY": "Portugal",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "PT"
+    },
+    {
+      "DESTINATION": "Porto",
+      "NAME": "Francisco Sá Carneiro Airport",
+      "CITYID": 131849,
+      "COUNTRY": "Portugal",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "PT"
+    },
+    {
+      "DESTINATION": "Faro",
+      "NAME": "Faro International Airport",
+      "CITYID": 118247,
+      "COUNTRY": "Portugal",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "PT"
+    },
+    {
+      "DESTINATION": "Budapest",
+      "NAME": "Budapest Ferenc Liszt International Airport",
+      "CITYID": 113068,
+      "COUNTRY": "Hungary",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "HU"
+    },
+    {
+      "DESTINATION": "Debrecen",
+      "NAME": "Debrecen International Airport",
+      "CITYID": 144885,
+      "COUNTRY": "Hungary",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "HU"
+    },
+    {
+      "DESTINATION": "Minsk",
+      "NAME": "Minsk National Airport",
+      "CITYID": 128604,
+      "COUNTRY": "Belarus",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BY"
+    },
+    {
+      "DESTINATION": "Brest",
+      "NAME": "Brest Airport",
+      "CITYID": 112726,
+      "COUNTRY": "Belarus",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BY"
+    },
+    {
+      "DESTINATION": "Gomel",
+      "NAME": "Gomel Airport",
+      "CITYID": 120361,
+      "COUNTRY": "Belarus",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BY"
+    },
+    {
+      "DESTINATION": "Grodna",
+      "NAME": "Hrodna Airport",
+      "CITYID": 149673,
+      "COUNTRY": "Belarus",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BY"
+    },
+    {
+      "DESTINATION": "Mogilev",
+      "NAME": "Mahilyow Airport",
+      "CITYID": 149743,
+      "COUNTRY": "Belarus",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BY"
+    },
+    {
+      "DESTINATION": "Salzburg",
+      "NAME": "Salzburg Airport",
+      "CITYID": 136456,
+      "COUNTRY": "Austria",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "AT"
+    },
+    {
+      "DESTINATION": "Graz",
+      "NAME": "Graz Airport",
+      "CITYID": 119858,
+      "COUNTRY": "Austria",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "AT"
+    },
+    {
+      "DESTINATION": "Innsbruck",
+      "NAME": "Innsbruck Airport",
+      "CITYID": 122691,
+      "COUNTRY": "Austria",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "AT"
+    },
+    {
+      "DESTINATION": "Linz",
+      "NAME": "Linz Airport",
+      "CITYID": 125863,
+      "COUNTRY": "Austria",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "AT"
+    },
+    {
+      "DESTINATION": "Klagenfurt",
+      "NAME": "Klagenfurt Airport",
+      "CITYID": 123707,
+      "COUNTRY": "Austria",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "AT"
+    },
+    {
+      "DESTINATION": "Basel",
+      "NAME": "EuroAirport Basel Mulhouse Freiburg",
+      "CITYID": 111155,
+      "COUNTRY": "Switzerland",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CH"
+    },
+    {
+      "DESTINATION": "Altenrhein",
+      "NAME": "St. Gallen–Altenrhein Airport",
+      "CITYID": 150945,
+      "COUNTRY": "Switzerland",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CH"
+    },
+    {
+      "DESTINATION": "Lugano",
+      "NAME": "Lugano Airport",
+      "CITYID": 126066,
+      "COUNTRY": "Switzerland",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CH"
+    },
+    {
+      "DESTINATION": "Bern",
+      "NAME": "Bern Airport",
+      "CITYID": 111912,
+      "COUNTRY": "Switzerland",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CH"
+    },
+    {
+      "DESTINATION": "Belgrade",
+      "NAME": "Belgrade Nikola Tesla Airport",
+      "CITYID": 151816,
+      "COUNTRY": "Serbia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "RS"
+    },
+    {
+      "DESTINATION": "Sofia",
+      "NAME": "Sofia International Airport",
+      "CITYID": 138465,
+      "COUNTRY": "Bulgaria",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BG"
+    },
+    {
+      "DESTINATION": "Burgas",
+      "NAME": "Burgas Airport",
+      "CITYID": 112067,
+      "COUNTRY": "Bulgaria",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BG"
+    },
+    {
+      "DESTINATION": "Varna",
+      "NAME": "Varna International Airport",
+      "CITYID": 148434,
+      "COUNTRY": "Bulgaria",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BG"
+    },
+    {
+      "DESTINATION": "Plovdiv",
+      "NAME": "Plovdiv International Airport",
+      "CITYID": 132867,
+      "COUNTRY": "Bulgaria",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BG"
+    },
+    {
+      "DESTINATION": "Billund",
+      "NAME": "Billund Airport",
+      "CITYID": 111707,
+      "COUNTRY": "Denmark",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "DK"
+    },
+    {
+      "DESTINATION": "Aarhus",
+      "NAME": "Aarhus Airport",
+      "CITYID": 100432,
+      "COUNTRY": "Denmark",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "DK"
+    },
+    {
+      "DESTINATION": "Aalborg",
+      "NAME": "Aalborg Airport",
+      "CITYID": 100007,
+      "COUNTRY": "Denmark",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "DK"
+    },
+    {
+      "DESTINATION": "Bratislava",
+      "NAME": "M. R. Štefánik Airport",
+      "CITYID": 112540,
+      "COUNTRY": "Slovakia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "SK"
+    },
+    {
+      "DESTINATION": "Oulu",
+      "NAME": "Oulu Airport",
+      "CITYID": 130728,
+      "COUNTRY": "Finland",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "FI"
+    },
+    {
+      "DESTINATION": "Rovaniemi",
+      "NAME": "Rovaniemi Airport",
+      "CITYID": 134087,
+      "COUNTRY": "Finland",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "FI"
+    },
+    {
+      "DESTINATION": "Kittila",
+      "NAME": "Kittilä International  Airport",
+      "CITYID": 145970,
+      "COUNTRY": "Finland",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "FI"
+    },
+    {
+      "DESTINATION": "Vaasa",
+      "NAME": "Vaasa Airport",
+      "CITYID": 140147,
+      "COUNTRY": "Finland",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "FI"
+    },
+    {
+      "DESTINATION": "Flesland, Bergen",
+      "NAME": "Bergen Airpor",
+      "CITYID": 111457,
+      "COUNTRY": "Norway",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "NO"
+    },
+    {
+      "DESTINATION": "Trondheim",
+      "NAME": "Trondheim Airport",
+      "CITYID": 140381,
+      "COUNTRY": "Norway",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "NO"
+    },
+    {
+      "DESTINATION": "Dublin",
+      "NAME": "Dublin Airport",
+      "CITYID": 144983,
+      "COUNTRY": "Ireland",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "IE"
+    },
+    {
+      "DESTINATION": "Cork City",
+      "NAME": "Cork Airport",
+      "CITYID": 115293,
+      "COUNTRY": "Ireland",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "IE"
+    },
+    {
+      "DESTINATION": "Shannon, County Clare",
+      "NAME": "Shannon Airport",
+      "CITYID": 137567,
+      "COUNTRY": "Ireland",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "IE"
+    },
+    {
+      "DESTINATION": "Kerry",
+      "NAME": "Kerry Airport",
+      "CITYID": 123253,
+      "COUNTRY": "Ireland",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "IE"
+    },
+    {
+      "DESTINATION": "Charlestown, County Mayo",
+      "NAME": "Ireland West Airport Knock",
+      "CITYID": 114613,
+      "COUNTRY": "Ireland",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "IE"
+    },
+    {
+      "DESTINATION": "Zagreb",
+      "NAME": "Zagreb Franjo Tuđman Airport",
+      "CITYID": 143525,
+      "COUNTRY": "Croatia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "HR"
+    },
+    {
+      "DESTINATION": "Split",
+      "NAME": "Split Airport",
+      "CITYID": 137547,
+      "COUNTRY": "Croatia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "HR"
+    },
+    {
+      "DESTINATION": "Dubrovnik",
+      "NAME": "Dubrovnik Airport",
+      "CITYID": 115939,
+      "COUNTRY": "Croatia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "HR"
+    },
+    {
+      "DESTINATION": "Zadar",
+      "NAME": "Zadar Airport",
+      "CITYID": 143657,
+      "COUNTRY": "Croatia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "HR"
+    },
+    {
+      "DESTINATION": "Sarajevo",
+      "NAME": "Sarajevo International Airport",
+      "CITYID": 137196,
+      "COUNTRY": "Bosnia and Herzegovina",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BA"
+    },
+    {
+      "DESTINATION": "Banja Luka",
+      "NAME": "Banja Luka International Airport",
+      "CITYID": 144093,
+      "COUNTRY": "Bosnia and Herzegovina",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BA"
+    },
+    {
+      "DESTINATION": "Tuzla",
+      "NAME": "Tuzla International Airport",
+      "CITYID": 140090,
+      "COUNTRY": "Bosnia and Herzegovina",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BA"
+    },
+    {
+      "DESTINATION": "Mostar",
+      "NAME": "Mostar International Airport",
+      "CITYID": 129388,
+      "COUNTRY": "Bosnia and Herzegovina",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BA"
+    },
+    {
+      "DESTINATION": "Kukes",
+      "NAME": "Kukës International Airport Zayed-North Wings",
+      "CITYID": 105539,
+      "COUNTRY": "Albania",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "AL"
+    },
+    {
+      "DESTINATION": "Vilnius",
+      "NAME": "Vilnius International Airport",
+      "CITYID": 141893,
+      "COUNTRY": "Lithuania",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "LT"
+    },
+    {
+      "DESTINATION": "Kaunas",
+      "NAME": "Kaunas International Airport",
+      "CITYID": 123639,
+      "COUNTRY": "Lithuania",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "LT"
+    },
+    {
+      "DESTINATION": "Palanga",
+      "NAME": "Palanga International Airport",
+      "CITYID": 132026,
+      "COUNTRY": "Lithuania",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "LT"
+    },
+    {
+      "DESTINATION": "Ljubljana",
+      "NAME": "Ljubljana Jože Pučnik Airport",
+      "CITYID": 124937,
+      "COUNTRY": "Slovenia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "SI"
+    },
+    {
+      "DESTINATION": "Maribor",
+      "NAME": "Maribor Edvard Rusjan Airport",
+      "CITYID": 127488,
+      "COUNTRY": "Slovenia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "SI"
+    },
+    {
+      "DESTINATION": "Ohrid",
+      "NAME": "Ohrid St. Paul the Apostle Airport",
+      "CITYID": 130961,
+      "COUNTRY": "Macedonia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "MK"
+    },
+    {
+      "DESTINATION": "Riga",
+      "NAME": "Riga International Airport",
+      "CITYID": 134771,
+      "COUNTRY": "Latvia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "LV"
+    },
+    {
+      "DESTINATION": "South Kurzeme Municipality",
+      "NAME": "Liepāja International Airport",
+      "CITYID": 125012,
+      "COUNTRY": "Latvia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "LV"
+    },
+    {
+      "DESTINATION": "Ventspils",
+      "NAME": "Ventspils International Airport",
+      "CITYID": 148467,
+      "COUNTRY": "Latvia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "LV"
+    },
+    {
+      "DESTINATION": "Tallinn",
+      "NAME": "Tallinn Airport",
+      "CITYID": 140287,
+      "COUNTRY": "Estonia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "EE"
+    },
+    {
+      "DESTINATION": "Findel",
+      "NAME": "Luxembourg Airport",
+      "CITYID": 118159,
+      "COUNTRY": "Luxembourg",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "LU"
+    },
+    {
+      "DESTINATION": "Tivat",
+      "NAME": "Tivat Airport",
+      "CITYID": 139320,
+      "COUNTRY": "Montenegro",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ME"
+    },
+    {
+      "DESTINATION": "Malta",
+      "NAME": "Malta International Airport",
+      "CITYID": 126792,
+      "COUNTRY": "Malta",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "MT"
+    },
+    {
+      "DESTINATION": "London, United Kingdom",
+      "NAME": "All airports",
+      "CITYID": 126632,
+      "COUNTRY": "United Kingdom",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "GB"
+    },
+    {
+      "DESTINATION": "Paris,France",
+      "NAME": "All airports",
+      "CITYID": 131408,
+      "COUNTRY": "France",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "FR"
+    },
+    {
+      "DESTINATION": "Dubai",
+      "NAME": "Dubai Airport",
+      "CITYID": 115936,
+      "COUNTRY": "United Arab Emirates",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "AE"
+    },
+    {
+      "DESTINATION": "New York",
+      "NAME": "All airports",
+      "CITYID": 130452,
+      "COUNTRY": "United States",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "US"
+    },
+    {
+      "DESTINATION": "Singapore",
+      "NAME": "Seletar Airport",
+      "CITYID": 138703,
+      "COUNTRY": "Singapore",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "SG"
+    },
+    {
+      "DESTINATION": "Bangkok",
+      "NAME": "Don Mueang International Airport",
+      "CITYID": 144092,
+      "COUNTRY": "Thailand",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TH"
+    },
+    {
+      "DESTINATION": "Istanbul",
+      "NAME": "Sabiha Gokcen International Airport",
+      "CITYID": 122727,
+      "COUNTRY": "Turkey",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TR"
+    },
+    {
+      "DESTINATION": "Amsterdam",
+      "NAME": "Amsterdam Central Station",
+      "CITYID": 109558,
+      "COUNTRY": "Netherlands",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "NL"
+    },
+    {
+      "DESTINATION": "Tokyo",
+      "NAME": "All airports",
+      "CITYID": 148251,
+      "COUNTRY": "Japan",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "JP"
+    },
+    {
+      "DESTINATION": "Seoul",
+      "NAME": "All airports",
+      "CITYID": 137364,
+      "COUNTRY": "South Korea",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "KR"
+    },
+    {
+      "DESTINATION": "Rome",
+      "NAME": "All airports",
+      "CITYID": 134622,
+      "COUNTRY": "Italy",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "IT"
+    },
+    {
+      "DESTINATION": "Kuala Lumpur",
+      "NAME": "Sultan Abdul Aziz Shah Airport",
+      "CITYID": 123768,
+      "COUNTRY": "Malaysia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "MY"
+    },
+    {
+      "DESTINATION": "Las Vegas",
+      "NAME": "Las Vegas Municipal Airport",
+      "CITYID": 125099,
+      "COUNTRY": "United States",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "US"
+    },
+    {
+      "DESTINATION": "Macau",
+      "NAME": "Macau International Airport",
+      "CITYID": 151142,
+      "COUNTRY": "Macau",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "MO"
+    },
+    {
+      "DESTINATION": "Milan",
+      "NAME": "All airports",
+      "CITYID": 127769,
+      "COUNTRY": "Italy",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "IT"
+    },
+    {
+      "DESTINATION": "Sao Paulo",
+      "NAME": "All airports",
+      "CITYID": 13683,
+      "COUNTRY": "Brazil",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BR"
+    },
+    {
+      "DESTINATION": "Toronto",
+      "NAME": "All airports",
+      "CITYID": 140333,
+      "COUNTRY": "Canada",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "CA"
+    },
+    {
+      "DESTINATION": "Chicago",
+      "NAME": "All airports",
+      "CITYID": 114653,
+      "COUNTRY": "United States",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "US"
+    },
+    {
+      "DESTINATION": "Rio De Janerio",
+      "NAME": "All airports",
+      "CITYID": 134921,
+      "COUNTRY": "Brazil",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "BR"
+    },
+    {
+      "DESTINATION": "Jakarta",
+      "NAME": "All airports",
+      "CITYID": 122069,
+      "COUNTRY": "Indonesia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ID"
+    },
+    {
+      "DESTINATION": "Jakarta",
+      "NAME": "Halim Perdanakusuma International Airport",
+      "CITYID": 122069,
+      "COUNTRY": "Indonesia",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ID"
+    },
+    {
+      "DESTINATION": "Florence",
+      "NAME": "Florence Airport, Peretola",
+      "CITYID": 118582,
+      "COUNTRY": "Italy",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "IT"
+    },
+    {
+      "DESTINATION": "Hanoi",
+      "NAME": "Noi Bai International Airport",
+      "CITYID": 145535,
+      "COUNTRY": "Vietnam",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "VN"
+    },
+    {
+      "DESTINATION": "Cape Town",
+      "NAME": "Cape Town International Airport",
+      "CITYID": 144527,
+      "COUNTRY": "South Africa",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ZA"
+    },
+    {
+      "DESTINATION": "Johannesburg",
+      "NAME": "O. R. Tambo International Airport",
+      "CITYID": 145838,
+      "COUNTRY": "South Africa",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ZA"
+    },
+    {
+      "DESTINATION": "Auckland",
+      "NAME": "Auckland Airport",
+      "CITYID": 109654,
+      "COUNTRY": "New Zealand",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "NZ"
+    },
+    {
+      "DESTINATION": "Christchurch",
+      "NAME": "Christchurch Airport",
+      "CITYID": 144687,
+      "COUNTRY": "New Zealand",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "NZ"
+    },
+    {
+      "DESTINATION": "Queenstown",
+      "NAME": "Queenstown International Airport",
+      "CITYID": 133654,
+      "COUNTRY": "New Zealand",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "NZ"
+    },
+    {
+      "DESTINATION": "Wellington",
+      "NAME": "Wellington International Airport",
+      "CITYID": 142120,
+      "COUNTRY": "New Zealand",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "NZ"
+    },
+    {
+      "DESTINATION": "Krabi",
+      "NAME": "Krabi International Airport",
+      "CITYID": 124015,
+      "COUNTRY": "Thailand",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "TH"
+    },
+    {
+      "DESTINATION": "Washington",
+      "NAME": "Washington Dulles International Airport",
+      "CITYID": 144989,
+      "COUNTRY": "United States",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "US"
+    },
+    {
+      "DESTINATION": "Baltimore, Washington",
+      "NAME": "Baltimore/Washington International Thurgood Marshall Airport",
+      "CITYID": 111115,
+      "COUNTRY": "United States",
+      "STATEPROVINCECODE": "MD",
+      "STATEPROVINCE": "Maryland",
+      "COUNTRYCODE": "US"
+    },
+    {
+      "DESTINATION": "Boston",
+      "NAME": "General Edward Lawrence Logan International Airport",
+      "CITYID": 112246,
+      "COUNTRY": "United States",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "US"
+    },
+    {
+      "DESTINATION": "Bucharest",
+      "NAME": "All airports",
+      "CITYID": 113200,
+      "COUNTRY": "Romania",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "RO"
+    },
+    {
+      "DESTINATION": "Durban",
+      "NAME": "King Shaka International Airport",
+      "CITYID": 115957,
+      "COUNTRY": "South Africa",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ZA"
+    },
+    {
+      "DESTINATION": "Durban",
+      "NAME": "Virginia Airport",
+      "CITYID": 115957,
+      "COUNTRY": "South Africa",
+      "STATEPROVINCECODE": "",
+      "STATEPROVINCE": "",
+      "COUNTRYCODE": "ZA"
     }
   ]

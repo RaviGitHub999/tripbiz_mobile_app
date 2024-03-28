@@ -37,7 +37,7 @@ const FlightBooking = ({ navigation: { navigate } }) => {
     var [seatOpen, setSeatOpen] = useState(true);
     var [activeTab, setActiveTab] = useState('tab1');
     const [isExpanded, setIsExpanded] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+    // const [isLoading, setIsLoading] = useState(false);
     const { actions, selectedTripId, selectedTrip, flightBookDataLoading, bookingFlight, domesticFlight, internationalFlight, isInternationalRound, userTripStatus, } = useContext(MyContext)
     var { totalFareSum, totalSeatCharges, totalBaggagePrice, totalMealPrice, finalPrice } =
         actions.getTotalFares(bookingFlight);
@@ -126,15 +126,15 @@ const FlightBooking = ({ navigation: { navigate } }) => {
         setDefaultInput(e)
     }
     const handleAddToTrip = async () => {
-        setIsLoading(true);
+        // setIsLoading(true);
         let newtripid = await actions.editTripBtn(defaultInput, "flights", bookingFlight);
-        setIsLoading(false);
+        // setIsLoading(false);
         setSubmitIsOpen(false);
         navigate("TripDetails", { id: newtripid });
         await actions.getLastDoc();
     };
     return (
-        isLoading ? <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><ProgressBar /></View> :
+        // isLoading ? <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><ProgressBar /></View> :
             <View style={{ flex: 1 }}>
                 <TouchableOpacity style={styles.backBtnContainer} onPress={() => {
                     actions.setFlightBookPage(false);

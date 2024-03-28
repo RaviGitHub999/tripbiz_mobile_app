@@ -28,9 +28,11 @@ export const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: responsiveWidth(5.5),
         justifyContent: 'center',
+        overflow:'hidden'
     },
     active: {
-        backgroundColor:colors.primaryLite
+        backgroundColor:colors.primaryLite,
+        
     },
     section: {
         marginTop:responsiveHeight(3),

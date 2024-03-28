@@ -11,9 +11,13 @@ import HotelDropDown from '../common/hotelDropDown/HotelDropDown'
 import HotelSearchInput from '../common/HotelSearchInput/HotelSearchInput'
 const HotelSearch = ({navigation:{navigate}}) => {
   // const [cityHotelResBox, setCityHotelResBox] = useState(true);
-
-  const { actions,checkInTime,checkOutTime, cityHotelResBox,cityHotelRes,cityHotelQuery,selectedHotel,selectedCheckInDate,selectedCheckOutDate,calenderOpen,hotelNights,hotelRooms,hotelRoomArr,selectedHotelCheckInDate,selectedHotelCheckOutDate} = useContext(MyContext)
+  const [cityHotelQuery, setCityHotelQuery] = useState("");
+  const [cityHotelResBox, setCityHotelResBox] = useState(false);
+  // const { actions,checkInTime,checkOutTime, cityHotelResBox,cityHotelRes,cityHotelQuery,selectedHotel,selectedCheckInDate,selectedCheckOutDate,calenderOpen,hotelNights,hotelRooms,hotelRoomArr,selectedHotelCheckInDate,selectedHotelCheckOutDate} = useContext(MyContext)
+  const{actions,selectedHotel}=useContext(MyContext)
   const handleChangeCityHotelQuery = (e) => {
+    setCityHotelQuery(e)
+    setCityHotelResBox(true)
     actions.handleChangeCityHotel(e);
   }
   const handleSelectedHotel = (item) => {
@@ -31,11 +35,13 @@ const HotelSearch = ({navigation:{navigate}}) => {
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.mainContainer}>
+        {/* selectedHotel */}
           <HotelSearchInput placeHolder={selectedHotel} value={cityHotelQuery} handleChange={handleChangeCityHotelQuery} />
-          {cityHotelRes.length === 0 ? <View>
+          {/* {cityHotelRes.length === 0 ? <View>
             <Text>No DataFound!!!</Text>
           </View> :
-      cityHotelResBox?     <FlatList data={cityHotelRes} renderItem={({ item: { item: { item } } }) => {
+      cityHotelResBox?<FlatList data={cityHotelRes} renderItem={({ item:{item}}) => {
+        // console.log(item,"item")
         return (
           <TouchableOpacity style={{ marginVertical: 5 }} onPress={() =>{ handleSelectedHotel(item), actions.handleToggleHotelSearchInput()}}>
             <Text>{`${item.DESTINATION},${item?.STATEPROVINCE
@@ -104,7 +110,7 @@ const HotelSearch = ({navigation:{navigate}}) => {
             onChange={actions.handleCheckOutCalender}
             minimumDate={selectedHotelCheckInDate}
             is24Hour={true}
-          />}
+          />} */}
         </View>
       </ScrollView>
     </TouchableWithoutFeedback>
