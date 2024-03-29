@@ -25,5 +25,11 @@ export const styles=StyleSheet.create({
         fontSize:responsiveHeight(1.8),
         fontFamily:fonts.primary,
         color:colors.primary
+    },
+    hotelCityListCard:
+    {
+        borderWidth:1,
+        borderRadius:responsiveHeight(1.5),
+        backgroundColor:colors.white,overflow:'hidden'
     }
 })

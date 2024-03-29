@@ -544,39 +544,38 @@ export default class MyProvider extends Component {
             { signal: abortAirportController.signal }
           );
         },
-        // fetchHotelCityList: async() => {
-        //   console.log(("calling.............."))
-        //   try {
-        //     const accountDocRef = firestore().collection("hotelAutoComplete");
-        //     const hotelLists = [];
+        fetchHotelCityList: async() => {
+          console.log(("calling.............."))
+          try {
+            const accountDocRef = firestore().collection("hotelAutoComplete");
+            const hotelLists = [];
 
-        //     const querySnapshot = await accountDocRef.get();
+            const querySnapshot = await accountDocRef.get();
            
-        //     querySnapshot.forEach(async (doc) => {
-        //       doc.data().hotelList.forEach((hotel) => {
-        //         hotelLists.push(hotel);
-        //       });
-        //     });
-        //     console.log(hotelLists,"hotelLists")
-        //     var fuse = new Fuse(hotelLists, {
-        //       keys: [
-        //         "CITYID",
-        //         "DESTINATION",
-        //         "STATEPROVINCE",
-        //         "STATEPROVINCECODE",
-        //         "COUNTRY",
-        //         "COUNTRYCODE"
-        //       ],
-        //       includeScore: true,
-        //       threshold: 0.2
-        //     });
-        //     this.setState({
-        //       hotelListData: fuse
-        //     })
-        //   } catch (error) {
-        //     console.error("Error fetching hotel city list:", error);
-        //   }
-        // },
+            querySnapshot.forEach(async (doc) => {
+              doc.data().hotelList.forEach((hotel) => {
+                hotelLists.push(hotel);
+              });
+            });
+          const fuse = new Fuse(hotelLists, {
+              keys: [
+                "CITYID",
+                "DESTINATION",
+                "STATEPROVINCE",
+                "STATEPROVINCECODE",
+                "COUNTRY",
+                "COUNTRYCODE"
+              ],
+              includeScore: true,
+              threshold: 0.2
+            });
+            this.setState({
+              hotelListData: fuse
+            })
+          } catch (error) {
+            console.error("Error fetching hotel city list:", error);
+          }
+        },
 
         // changeCityKeyword :  (query) => {
         //   // console.log(query,"=======>")
@@ -586,27 +585,27 @@ export default class MyProvider extends Component {
         //     cityHotelRes:results
         //   });
         // },
-        fetchHotelCityList:async(keyword)=>
-        {
+        // fetchHotelCityList:async(keyword)=>
+        // {
 
-          if(controller)
-          {
-            controller.abort()
-          }
-          controller=new AbortController()
-          const { signal } = controller;
-          const querySnapshot  =await firestore().collection("hotelAutoComplete").where("DESTINATION","==",'Parbhani').get(signal)
-          const hotels = querySnapshot.docs.map(doc => doc.data());
-          console.log(hotels,"lll")
-          return hotels
-        },
+        //   if(controller)
+        //   {
+        //     controller.abort()
+        //   }
+        //   controller=new AbortController()
+        //   const { signal } = controller;
+        //   const querySnapshot  =await firestore().collection("hotelAutoComplete").where("DESTINATION","==",'Parbhani').get(signal)
+        //   const hotels = querySnapshot.docs.map(doc => doc.data());
+        //   console.log(hotels,"lll")
+        //   return hotels
+        // },
         changeCityKeyword: this.debounce(async (keyword) => {
           if (keyword !== "") {
             try {
               var results1 = hotelFuse.search(keyword)
               if (results1.length > 0) 
               {
-                console.log("1")
+                console.log(results1,"results1")
                   this.setState({
                     cityHotelRes:results1,
                     hotelCityLoading:false
@@ -614,21 +613,27 @@ export default class MyProvider extends Component {
 
               }
               else{
-                console.log("2")
-                // const results2=this.state.hotelListData.search(keyword)
-                const results2=this.state.actions.fetchHotelCityList(keyword)
-                // this.setState({
-                //   cityHotelRes:results2,
-                //   hotelCityLoading:false
-                // });
+               if(this.state.hotelListData.length>0)
+               {
+                const results2=this.state.hotelListData.search(keyword)
                 console.log(results2,"results2")
+                {
+                  this.setState({
+                    cityHotelRes: results2,
+                    hotelCityLoading:false
+                  });
+                }
+               }
               }
             } catch (err) {
               console.log(err);
             }
           }
           else {
-
+            this.setState({
+              hotelCityLoading:false,
+              cityHotelRes:[]
+            })
           }
 
         }, 500),
@@ -655,89 +660,58 @@ export default class MyProvider extends Component {
             cityHotelItem: item
           })
         },
-        handleOpenCheckinCalender: () => {
-          this.setState(prevState => ({
-            calenderOpen: {
-              ...prevState.calenderOpen,
-              checkInCalender: true
-            }
-          }));
-        },
-        handleOpenCheckoutCalender: () => {
-          this.setState(prevState => ({
-            calenderOpen: {
-              ...prevState.calenderOpen,
-              checkOutCalender: true
-            }
-          }));
-        },
-        handleCheckInCalender: (event, selectedDate) => {
-          if (event.type === 'set') {
-            this.setState(prevState => ({
-              calenderOpen: {
-                ...prevState.calenderOpen,
-                checkInCalender: false
-              }
-            }))
-            if (selectedDate) {
-              const formattedDate = selectedDate.toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-              });
-              this.setState({
-                selectedHotelCheckInDate: selectedDate,
-                selectedCheckInDate: formattedDate,
-                checkInTime: selectedDate
-              })
-            }
-            if (this.state.checkOutTime) {
-              const nights = Number(this.state.actions.diffNights(selectedDate, this.state.selectedHotelCheckOutDate))
-              this.setState({ hotelNights: nights })
-            }
-          }
-          else {
-            this.setState(prevState => ({
-              calenderOpen: {
-                ...prevState.calenderOpen,
-                checkInCalender: false
-              }
-            }))
-          }
-        },
+        // handleOpenCheckinCalender: () => {
+        //   this.setState(prevState => ({
+        //     calenderOpen: {
+        //       ...prevState.calenderOpen,
+        //       checkInCalender: true
+        //     }
+        //   }));
+        // },
+        // handleOpenCheckoutCalender: () => {
+        //   this.setState(prevState => ({
+        //     calenderOpen: {
+        //       ...prevState.calenderOpen,
+        //       checkOutCalender: true
+        //     }
+        //   }));
+        // },
+     
+        
 
-        handleCheckOutCalender: (event, selectedDate) => {
-          if (event.type === 'set') {
-            this.setState(prevState => ({
-              calenderOpen: {
-                ...prevState.calenderOpen,
-                checkOutCalender: false
-              }
-            }))
-            if (selectedDate) {
-              const formattedDate = selectedDate.toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-              });
-              this.setState({
-                selectedHotelCheckOutDate: selectedDate,
-                selectedCheckOutDate: formattedDate,
-                checkOutTime: selectedDate
-              })
-            }
-            if (this.state.checkInTime) {
-              const nights = Number(this.state.actions.diffNights(selectedDate, this.state.selectedHotelCheckInDate))
-              this.setState({ hotelNights: nights })
-            }
-          }
-          else {
-            this.setState(prevState => ({
-              calenderOpen: {
-                ...prevState.calenderOpen,
-                checkOutCalender: false
-              }
-            }))
-          }
-        },
+        // handleCheckOutCalender: (event, selectedDate) => {
+        //   if (event.type === 'set') {
+        //     this.setState(prevState => ({
+        //       calenderOpen: {
+        //         ...prevState.calenderOpen,
+        //         checkOutCalender: false
+        //       }
+        //     }))
+        //     if (selectedDate) {
+        //       const formattedDate = selectedDate.toLocaleDateString('en-US', {
+        //         month: 'short',
+        //         day: 'numeric',
+        //       });
+        //       this.setState({
+        //         selectedHotelCheckOutDate: selectedDate,
+        //         selectedCheckOutDate: formattedDate,
+        //         checkOutTime: selectedDate
+        //       })
+        //     }
+        //     if (this.state.checkInTime) {
+        //       const nights = Number(this.state.actions.diffNights(selectedDate, this.state.selectedHotelCheckInDate))
+        //       this.setState({ hotelNights: nights })
+        //     }
+        //   }
+        //   else {
+        //     this.setState(prevState => ({
+        //       calenderOpen: {
+        //         ...prevState.calenderOpen,
+        //         checkOutCalender: false
+        //       }
+        //     }))
+        //   }
+        // },
         handleHotelRooms: (rooms) => {
           var roomsArr = [...this.state.hotelRoomArr];
           if (rooms > roomsArr.length) {
@@ -3338,7 +3312,7 @@ export default class MyProvider extends Component {
           isLoading: true,
         });
         await this.state.actions.setAdminData()
-        // this.state.actions.fetchHotelCityList();
+        this.state.actions.fetchHotelCityList();
         await this.state.actions.getLastDoc();
         console.log("userLogin")
       } else {

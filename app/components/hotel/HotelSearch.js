@@ -9,54 +9,174 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import MyContext from '../../context/Context'
 import HotelDropDown from '../common/hotelDropDown/HotelDropDown'
 import HotelSearchInput from '../common/HotelSearchInput/HotelSearchInput'
-const HotelSearch = ({navigation:{navigate}}) => {
-  // const [cityHotelResBox, setCityHotelResBox] = useState(true);
+import { colors } from '../../config/theme'
+const Item = React.memo(({ cityHotel, handleSelect }) => {
+  const { item } = cityHotel
+  return (
+    <TouchableOpacity style={{
+      paddingHorizontal: responsiveWidth(2.5),
+      marginTop: responsiveHeight(1.5)
+    }} onPress={() => handleSelect(item)}>
+      <Text>{`${item.DESTINATION},${item?.STATEPROVINCE
+        ? item?.STATEPROVINCE
+        : item?.COUNTRY
+        }`}</Text>
+    </TouchableOpacity>
+  )
+})
+const HotelSearch = ({ navigation: { navigate } }) => {
   const [cityHotelQuery, setCityHotelQuery] = useState("");
   const [cityHotelResBox, setCityHotelResBox] = useState(false);
+  const [cityHotel, setCityHotel] = useState("");
+  const [countryCode, setCountryCode] = useState("IN");
+  const [cityHotelItem, setCityHotelItem] = useState({});
+  const [cityHotelDisplay, setCityHotelDisplay] = useState("Destination");
+  const [checkInDate, setCheckInDate] = useState("Check-In date");
+  const [checkOutDate, setCheckOutDate] = useState("Check-Out date");
+  const [calenderOpen, setCalenderOpen] = useState({
+    checkInCalender: false,
+    checkOutCalender: false
+  })
+  const [selectedHotelCheckInDate, setSelectedHotelCheckInDate] = useState(new Date)
+  const [selectedHotelCheckOutDate, setSelectedHotelCheckOutDate] = useState(new Date)
+  // selectedHotelCheckInDate: new Date,
+  // selectedHotelCheckOutDate: new Date,
   // const { actions,checkInTime,checkOutTime, cityHotelResBox,cityHotelRes,cityHotelQuery,selectedHotel,selectedCheckInDate,selectedCheckOutDate,calenderOpen,hotelNights,hotelRooms,hotelRoomArr,selectedHotelCheckInDate,selectedHotelCheckOutDate} = useContext(MyContext)
-  const{actions,selectedHotel}=useContext(MyContext)
+  const { actions, hotelCityLoading, cityHotelRes } = useContext(MyContext)
   const handleChangeCityHotelQuery = (e) => {
     setCityHotelQuery(e)
-    setCityHotelResBox(true)
+    const query = e.trim();
+    const loading = query !== "" ? true : false;
+    setCityHotelResBox(loading)
     actions.handleChangeCityHotel(e);
   }
-  const handleSelectedHotel = (item) => {
-    actions.handleToggleHotelSearchInput();
-      actions.selectedHotel(item)
-  }
-  const handleHotelSearch = () => {
-    if(checkInTime&&checkOutTime)
-    {
 
-      navigate("HotelResList")
+  const handleSelectedHotel = useCallback((item) => {
+    // actions.handleToggleHotelSearchInput();
+    // actions.selectedHotel(item)
+    setCityHotel(item.CITYID);
+    setCountryCode(item.COUNTRYCODE);
+    setCityHotelItem(item);
+    setCityHotelResBox(false)
+    setCityHotelDisplay(`${item.DESTINATION}, ${item.STATEPROVINCE
+      ? item.STATEPROVINCE
+      : item.COUNTRY
+      }`)
+
+  }, [])
+
+  const handlerenderData = ({ item }) => {
+    return <Item cityHotel={item} handleSelect={handleSelectedHotel} />
+  }
+
+  const handleKeyextractor = (item, index) => `${item.refIndex}-${index}`
+
+  const handleOpenCheckinCalender = () => {
+    setCalenderOpen({ checkInCalender: true })
+  }
+  const handleOpenCheckoutCalender = () => {
+    setCalenderOpen({ checkOutCalender: true })
+  }
+  const handleCheckInCalender = (event, selectedDate) => {
+    if (event.type === 'set') {
+      setCalenderOpen({
+        checkInCalender: false
+      })
+      if (selectedDate) {
+        const formattedDate = selectedDate.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+        });
+        setCheckInDate(formattedDate)
+        setSelectedHotelCheckInDate(selectedDate)
+        // this.setState({
+        //   selectedHotelCheckInDate: selectedDate,
+        //   selectedCheckInDate: formattedDate,
+        //   checkInTime: selectedDate
+        // })
+      }
+      // if (this.state.checkOutTime) {
+      //   const nights = Number(this.state.actions.diffNights(selectedDate, this.state.selectedHotelCheckOutDate))
+      //   this.setState({ hotelNights: nights })
+      // }
+    }
+    else {
+      setCalenderOpen({
+          checkInCalender: false
+      })
     }
   }
+
+  const handleCheckOutCalender= (event, selectedDate) => {
+    if (event.type === 'set') {
+      setCalenderOpen({
+        checkOutCalender: false
+      })
+      if (selectedDate) {
+        const formattedDate = selectedDate.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+        });
+        setCheckOutDate(formattedDate)
+        setSelectedHotelCheckOutDate(selectedDate)
+        // this.setState({
+        //   selectedHotelCheckOutDate: selectedDate,
+        //   selectedCheckOutDate: formattedDate,
+        //   checkOutTime: selectedDate
+        // })
+      }
+      // if (this.state.checkInTime) {
+      //   const nights = Number(this.state.actions.diffNights(selectedDate, this.state.selectedHotelCheckInDate))
+      //   this.setState({ hotelNights: nights })
+      // }
+    }
+    else {
+      setCalenderOpen({
+        checkOutCalender: false
+      })
+    }
+  }
+
+
+
+  // const handleHotelSearch = () => {
+  //   if (checkInTime && checkOutTime) {
+
+  //     navigate("HotelResList")
+  //   }
+  // }
+  
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.mainContainer}>
-        {/* selectedHotel */}
-          <HotelSearchInput placeHolder={selectedHotel} value={cityHotelQuery} handleChange={handleChangeCityHotelQuery} />
-          {/* {cityHotelRes.length === 0 ? <View>
-            <Text>No DataFound!!!</Text>
-          </View> :
-      cityHotelResBox?<FlatList data={cityHotelRes} renderItem={({ item:{item}}) => {
-        // console.log(item,"item")
-        return (
-          <TouchableOpacity style={{ marginVertical: 5 }} onPress={() =>{ handleSelectedHotel(item), actions.handleToggleHotelSearchInput()}}>
-            <Text>{`${item.DESTINATION},${item?.STATEPROVINCE
-              ? item?.STATEPROVINCE
-              : item?.COUNTRY
-              }`}</Text>
-          </TouchableOpacity>
-        )
-      }} style={{ borderWidth: 1, paddingHorizontal: responsiveWidth(5), borderRadius: responsiveHeight(1) }} />:null
-          }
+          {/* selectedHotel */}
+          <HotelSearchInput placeHolder={cityHotelDisplay} value={cityHotelQuery} handleChange={handleChangeCityHotelQuery} />
+          {cityHotelResBox ?
+            <>
+              {
+                hotelCityLoading ? (
+                  <Text>Loading......</Text>
+                ) :
+                  cityHotelRes.length === 0 ? <View>
+                    <Text>No DataFound!!!</Text>
+                  </View> :
+                    <View style={[styles.hotelCityListCard, { height: cityHotelRes.length < 3 ? responsiveHeight(8) : responsiveHeight(30), }]}>
+                      <FlatList data={cityHotelRes} renderItem={handlerenderData}
+                        scrollEnabled={cityHotelRes.length > 3}
+                        keyExtractor={handleKeyextractor}
+                      />
+                    </View>
+              }
+            </> : null}
+
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-            <SearchInputs btn={true} dropDown={false} placeholder={selectedCheckInDate} customStyles={{ width: responsiveWidth(42) }} customFontStyles={{ fontSize: responsiveHeight(2.3) }} handleDatePicker={actions.handleOpenCheckinCalender} />
-            <SearchInputs btn={true} dropDown={false} placeholder={selectedCheckOutDate} customStyles={{ width: responsiveWidth(42) }} customFontStyles={{ fontSize: responsiveHeight(2.3) }} handleDatePicker={actions.handleOpenCheckoutCalender} />
+            {/* actions.handleOpenCheckinCalender */}
+            {/* actions.handleOpenCheckoutCalender */}
+            <SearchInputs btn={true} dropDown={false} placeholder={checkInDate} customStyles={{ width: responsiveWidth(42) }} customFontStyles={{ fontSize: responsiveHeight(2.3) }} handleDatePicker={handleOpenCheckinCalender} />
+            <SearchInputs btn={true} dropDown={false} placeholder={checkOutDate} customStyles={{ width: responsiveWidth(42) }} customFontStyles={{ fontSize: responsiveHeight(2.3) }} handleDatePicker={handleOpenCheckoutCalender} />
           </View>
-          <View style={styles.aligningItemsInRow}>
+          {/* <View style={styles.aligningItemsInRow}>
             <HotelDropDown value={hotelNights} customStyles={{ width: responsiveWidth(42) }} placeHolder={"Nights"} disable={true} />
             <HotelDropDown length={4} starting={1} value={hotelRooms} handleChangeValue={actions.handleHotelRooms} customStyles={{ width: responsiveWidth(42) }} placeHolder="Rooms" />
           </View>
@@ -93,13 +213,13 @@ const HotelSearch = ({navigation:{navigate}}) => {
                 </View>
               )
             })
-          }
-          <CustomButton title='Search Hotels' handleSubmit={handleHotelSearch} />
+          } */}
+          {/* <CustomButton title='Search Hotels' handleSubmit={handleHotelSearch} /> */}
           {calenderOpen.checkInCalender && <DateTimePicker
             value={selectedHotelCheckInDate}
             mode="date"
             display="default"
-            onChange={actions.handleCheckInCalender}
+            onChange={handleCheckInCalender}
             minimumDate={new Date()}
             is24Hour={true}
           />}
@@ -107,10 +227,10 @@ const HotelSearch = ({navigation:{navigate}}) => {
             value={selectedHotelCheckOutDate}
             mode="date"
             display="default"
-            onChange={actions.handleCheckOutCalender}
+            onChange={handleCheckOutCalender}
             minimumDate={selectedHotelCheckInDate}
             is24Hour={true}
-          />} */}
+          />} 
         </View>
       </ScrollView>
     </TouchableWithoutFeedback>
