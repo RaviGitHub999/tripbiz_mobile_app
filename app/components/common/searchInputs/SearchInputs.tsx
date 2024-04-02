@@ -113,15 +113,15 @@ const SearchInputs: React.FC<IProps> = ({ btn, dropDown,selected, placeholder,cu
         :
         (
           btnOrTextInput?<View style={[styles.textInputContainer, active && { borderColor: colors.primary, borderWidth: responsiveHeight(0.3) }]}>
-          <TextInput style={styles.textInputFont} placeholder={placeholder} onFocus={() => handleFocus("input")} onBlur={handleBlur} onChangeText={(e)=>handleChangeText&&handleChangeText(e,stateName)} value={Value} autoFocus={true}/>
+          <TextInput style={styles.textInputFont} placeholder={placeholder} onFocus={() => handleFocus("input")} onBlur={handleBlur} onChangeText={(e)=>handleChangeText&&handleChangeText(e,stateName)} value={Value} autoFocus={true} placeholderTextColor="#969696"/>
         </View>:<TouchableWithoutFeedback  onPress={()=>setBtnOrTextInput(true)} style={styles.btnorTextInput}>
             
               {!selected?<Text style={styles.textInputFont}>{placeholder}</Text>:
               <View style={styles.selectedAirportContainer}>
-                <Text>{selectedObj?.address.cityName}</Text>
+                <Text style={{color:"#505050"}}>{selectedObj?.address.cityName}</Text>
                 <View style={{flexDirection:"row"}}>
-                <Text>{selectedObj?.iataCode}, </Text>
-                <Text>{selectedObj?.name}</Text>
+                <Text style={{color:'#969696'}}>{selectedObj?.iataCode}, </Text>
+                <Text style={{color:'#969696'}}>{selectedObj?.name}</Text>
                 </View>
                 </View>}
             

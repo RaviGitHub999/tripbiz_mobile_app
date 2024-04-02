@@ -47,7 +47,8 @@ backgroundColor:colors.primary
         marginTop:responsiveHeight(1.5)
     },
     airportName:{
-        fontSize:responsiveFontSize(1.6)
+        fontSize:responsiveFontSize(1.6),
+        color:'#969696',
     },
     searchFlightsBtnConatainer:{
         marginBottom:responsiveHeight(5)

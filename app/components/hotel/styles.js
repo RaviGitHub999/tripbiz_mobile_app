@@ -19,7 +19,8 @@ export const styles=StyleSheet.create({
         paddingVertical:responsiveHeight(1.5),
         borderRadius:responsiveHeight(2),
         borderColor:colors.gray,
-        rowGap:responsiveHeight(1)
+        marginBottom:responsiveHeight(1),
+        rowGap:responsiveHeight(1.5)
     },
     roomTitle:{
         fontSize:responsiveHeight(1.8),
@@ -28,8 +29,10 @@ export const styles=StyleSheet.create({
     },
     hotelCityListCard:
     {
-        borderWidth:1,
-        borderRadius:responsiveHeight(1.5),
-        backgroundColor:colors.white,overflow:'hidden'
+        // borderWidth:1,
+        // borderRadius:responsiveHeight(1.5),
+        // backgroundColor:colors.white,
+        // overflow:'hidden',
+        maxHeight:responsiveHeight(30),
     }
 })

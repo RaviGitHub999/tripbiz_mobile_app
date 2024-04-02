@@ -43,7 +43,7 @@ const DropDown: React.FC<IProps> = ({ length,starting, particularState,customSty
        let comp=starting===1?number+1:number
        return(
         <TouchableOpacity key={number} style={[requiredState(particularState) === comp&& { backgroundColor: "#86c9e8" }, { paddingHorizontal: responsiveWidth(2.5) }]} onPress={() => handlePress(particularState, starting===1?number+1:number)}>
-        <Text>{starting===1?number+1:number}</Text>
+        <Text style={requiredState(particularState) === comp?{color:colors.white}:{color:"#505050"}}>{starting===1?number+1:number}</Text>
     </TouchableOpacity>
        )
        })
@@ -59,10 +59,10 @@ const DropDown: React.FC<IProps> = ({ length,starting, particularState,customSty
         <View >
             <TouchableOpacity style={[styles.mainContainer,customStyles&&{...customStyles}]} onPress={handleDropDownIcon}>
                 <View>
-                   {!dropDownIcon?<Text>{placeHolder}</Text>:null}
+                   {!dropDownIcon?<Text style={{color:"#969696"}}>{placeHolder}</Text>:null}
                 </View>
                 <View style={styles.dropDownInActiveConatiner}>
-                    <Text>{requiredState(particularState)}</Text>
+                    <Text style={{color:"#505050"}}>{requiredState(particularState)}</Text>
                     {dropDownIcon&& <IconSwitcher componentName='AntDesign' iconName='down' iconsize={2} />}
                 </View>
             </TouchableOpacity>

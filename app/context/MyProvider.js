@@ -273,6 +273,13 @@ export default class MyProvider extends Component {
       hotelCityLoading:false,
       hotelListData:[],
       actions: {
+        rishi:()=>
+        {
+         const data= fetch('https://jsonplaceholder.typicode.com/todos/1')
+          .then(response => response.json())
+          .then(json => console.log(json))
+          console.log(data)
+        },
         setTrips: async (value) => {
           this.setState({
             userTripStatus: value
@@ -287,8 +294,14 @@ export default class MyProvider extends Component {
         handleDirectFlight: () => {
           this.setState({ directflight: !this.state.directflight })
         },
-        handleHotelBackButton: () => {
-          this.setState({ searchingHotels: true })
+        backToHotelSearchPage: () => {
+          this.setState({ 
+            searchingHotels: true ,
+            hotelResList: [],
+            hotelSearchResult: {},
+            hotelTokenId: "",
+            hotelSessionStarted: false,
+            hotelSessionEnded: false})
         },
         handleToggleHotelSearchInput: () => {
           this.setState({ cityHotelResBox: false })
@@ -777,44 +790,7 @@ export default class MyProvider extends Component {
           });
         },
 
-        filterHotels: (hotelResList) => {
-          // console.log(this.state.byDuration);
-          var filteredArr = hotelResList;
-
-          if (this.state.hotelRating) {
-            //console.log(this.state.hotelRating);
-            filteredArr = filteredArr.filter(
-              (hotel) => hotel.StarRating === this.state.hotelRating
-            );
-          }
-          if (this.state.hotelPriceStart && this.state.hotelPriceEnd) {
-            //console.log(this.state.hotelPriceStart);
-            filteredArr = filteredArr.filter((hotel) => {
-              return (
-                hotel.Price.OfferedPriceRoundedOff >=
-                this.state.hotelPriceStart &&
-                hotel.Price.OfferedPriceRoundedOff < this.state.hotelPriceEnd
-              );
-            });
-          }
-          if (this.state.hotelSearchText) {
-            filteredArr = filteredArr.filter((hotel) => {
-              const staticData = this.state.hotelStaticData[hotel.HotelCode];
-              if (hotel.HotelName) {
-                return hotel.HotelName.toLowerCase().includes(
-                  this.state.hotelSearchText.toLowerCase()
-                );
-              }
-              else {
-                return staticData?.HotelName.toLowerCase().includes(
-                  this.state.hotelSearchText.toLowerCase()
-                );
-              }
-
-            });
-          }
-          return filteredArr;
-        },
+        
 
 
 
@@ -1845,36 +1821,184 @@ export default class MyProvider extends Component {
           );
           return hotelObject;
         },
-        hotelSearch: async () => {
+
+        // hotelSearch: async () => {
+        //   await this.state.actions.getRecommondedHotelList()
+        //   this.setState({
+        //     hotelSearchQuery: this.state.selectedHotel,
+        //     hotelSessionStarted: false,
+        //     hotelSessionEnded: false,
+        //   });
+
+        //   let roomGuests = [];
+
+        //   this.state.hotelRoomArr.forEach((room, r) => {
+        //     roomGuests.push({
+        //       NoOfAdults: Number(room.adults),
+        //       NoOfChild: Number(room.child),
+        //       ChildAge: room.childAge.map((child, c) => Number(child.age))
+        //     });
+        //   });
+        //   var request = {
+        //     checkInDate: this.state.actions.convertTboDateFormat(this.state.selectedHotelCheckInDate),
+        //     cityId: this.state.cityHotel,
+        //     nights: this.state.hotelNights,
+        //     countryCode: this.state.countryCode,
+        //     noOfRooms: this.state.hotelRooms,
+        //     roomGuests: [...roomGuests]
+        //   };
+        //   var hotelStatic = await Promise.all([
+        //     fetch(
+        //       "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/hotelSearchRes",
+        //       {
+        //         method: "POST",
+        //         headers: {
+        //           "Content-Type": "application/json"
+        //         },
+        //         body: JSON.stringify(request)
+        //       }
+        //     )
+        //       .then((res) => res.json())
+        //       .catch((err) => console.log(err)),
+        //     this.state.actions.convertXmlToJson(request.cityId),
+        //     //this.state.actions.convertXmlToJsonHotel({ cityId: "145710", hotelId: "00193836" })
+        //     this.state.actions.getHotelImages(request.cityId)
+        //   ]);
+
+        //   console.log("Result", hotelStatic);
+
+        //   var hotelRes = hotelStatic[0];
+        //   var staticdata = hotelStatic[1];
+        //   // var size = Object.keys(staticdata).length;
+        //   // console.log( size,"myProviderererer")
+        //   // console.log("Hotel result", hotelRes);
+        //   const HotelListData = hotelRes.hotelResult?.HotelSearchResult?.HotelResults
+        //   const hotelIdsInObject = this.state.recommondedHotels ? Object.keys(this.state.recommondedHotels).map(ele => { return { HotelCode: ele } }) : []
+        //   const idToIndex = hotelIdsInObject.reduce((acc, item, index) => {
+        //     acc[item.HotelCode] = index;
+        //     return acc;
+        //   }, {});
+        //   this.setState({ idToIndex: idToIndex })
+
+        //   const filteredHotels = HotelListData.filter(hotel => {
+        //     const staticData = staticdata[hotel.HotelCode];
+        //     const hotelName = hotel.HotelName ? hotel.HotelName : staticData?.HotelName;
+        //     return hotelName?.length > 0;
+        //   })
+        //   const finalData = this.state.actions.filterHotels(filteredHotels).sort((a, b) => {
+        //     const indexA = idToIndex[a.HotelCode];
+        //     const indexB = idToIndex[b.HotelCode];
+
+        //     if (indexA === undefined && indexB === undefined) {
+        //       return 0;
+        //     } else if (indexA === undefined) {
+        //       return 1;
+        //     } else if (indexB === undefined) {
+        //       return -1;
+        //     }
+        //     return indexA - indexB;
+        //   });
+        //   // console.log(HotelListData.length,"==========1=======")
+        //   // console.log(finalData.length,"============2============")
+        //   if (hotelRes?.error) {
+        //     console.log('error');
+        //     this.setState({
+        //       hotelResList: [],
+        //       hotelErrorMessage: hotelRes?.error,
+        //       searchingHotels: false,
+        //       hotelSessionStarted: true,
+        //       hotelResList1: [],
+        //     })
+        //   }
+        //   else {
+        //     this.setState({
+        //       hotelResList: hotelRes.hotelResult?.HotelSearchResult?.HotelResults,
+        //       hotelTraceId: hotelRes.hotelResult?.HotelSearchResult?.TraceId,
+        //       hotelStaticData: staticdata,
+        //       hotelTokenId: hotelRes.tokenId,
+        //       searchingHotels: false,
+        //       hotelSessionStarted: true,
+        //       hotelResList1: finalData,
+        //     });
+        //   }
+
+
+        //   var hotelSessionTimeout = setTimeout(() => {
+        //     this.setState(
+        //       {
+        //         hotelSessionStarted: false,
+        //         hotelSessionExpired: true
+        //       },
+        //       () => {
+        //         console.log("Session expired");
+        //       }
+        //     );
+        //   }, 840000);
+        //   clearTimeout(hotelSessionTimeout);
+        // },
+
+        hotelSearch: async (query) => {
+          //Fields needed:  city or hotel name, check-in, nights, check-out, nationality, rooms, adults, children, star-rating
           await this.state.actions.getRecommondedHotelList()
           this.setState({
-            hotelSearchQuery: this.state.selectedHotel,
+            hotelResList: [],
+            hotelSearchQuery: query,
+            searchingHotels: true,
+            cityHotel: query.cityHotel,
             hotelSessionStarted: false,
             hotelSessionEnded: false,
+            hotelSearchName: query.cityDestName,
+            hotelSearchCheckIn: query.selectedHotelCheckInDate,
+            hotelSearchCheckOut: query.selectedHotelCheckOutDate,
+            hotelSearchAdults: query.hotelRoomArr.reduce(
+              (acc, room, r) => acc + Number(room.adults),
+              0
+            ),
+            hotelSearchChild: query.hotelRoomArr.reduce(
+              (acc, room, r) => acc + Number(room.child),
+              0
+            ),
+            hotelSearchNights: Number(query.hotelNights),
+            hotelRoomArr: query.hotelRoomArr,
+            hotelRooms: Number(query.hotelRooms)
           });
-
+  
           let roomGuests = [];
-
-          this.state.hotelRoomArr.forEach((room, r) => {
+  
+          query.hotelRoomArr.forEach((room, r) => {
             roomGuests.push({
               NoOfAdults: Number(room.adults),
               NoOfChild: Number(room.child),
               ChildAge: room.childAge.map((child, c) => Number(child.age))
             });
           });
+  
           var request = {
-            checkInDate: this.state.actions.convertTboDateFormat(this.state.selectedHotelCheckInDate),
-            cityId: this.state.cityHotel,
-            nights: this.state.hotelNights,
-            countryCode: this.state.countryCode,
-            noOfRooms: this.state.hotelRooms,
+            checkInDate: this.state.actions.convertTboDateFormat(
+              query.selectedHotelCheckInDate
+            ),
+            cityId: query.cityHotel,
+            nights: query.hotelNights,
+            countryCode: query.countryCode,
+            noOfRooms: query.hotelRooms,
             roomGuests: [...roomGuests]
           };
+  
+          // console.log("Hotel req", request);
+          // const cityId = String(query.cityHotel);
+          // var accCollectionRef = db
+          //   .collection("hotelImages")
+          //   .doc(cityId);
+          // await accCollectionRef.set({
+          //   hotelImageList: []
+          // })
+  
           var hotelStatic = await Promise.all([
             fetch(
               "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/hotelSearchRes",
               {
                 method: "POST",
+                // credentials: "include",
                 headers: {
                   "Content-Type": "application/json"
                 },
@@ -1887,50 +2011,34 @@ export default class MyProvider extends Component {
             //this.state.actions.convertXmlToJsonHotel({ cityId: "145710", hotelId: "00193836" })
             this.state.actions.getHotelImages(request.cityId)
           ]);
-
+  
           console.log("Result", hotelStatic);
-
+  
           var hotelRes = hotelStatic[0];
           var staticdata = hotelStatic[1];
-          // var size = Object.keys(staticdata).length;
-          // console.log( size,"myProviderererer")
-          // console.log("Hotel result", hotelRes);
-          const HotelListData = hotelRes.hotelResult?.HotelSearchResult?.HotelResults
-          const hotelIdsInObject = this.state.recommondedHotels ? Object.keys(this.state.recommondedHotels).map(ele => { return { HotelCode: ele } }) : []
-          const idToIndex = hotelIdsInObject.reduce((acc, item, index) => {
-            acc[item.HotelCode] = index;
-            return acc;
-          }, {});
-          this.setState({ idToIndex: idToIndex })
-
-          const filteredHotels = HotelListData.filter(hotel => {
-            const staticData = staticdata[hotel.HotelCode];
-            const hotelName = hotel.HotelName ? hotel.HotelName : staticData?.HotelName;
-            return hotelName?.length > 0;
-          })
-          const finalData = this.state.actions.filterHotels(filteredHotels).sort((a, b) => {
-            const indexA = idToIndex[a.HotelCode];
-            const indexB = idToIndex[b.HotelCode];
-
-            if (indexA === undefined && indexB === undefined) {
-              return 0;
-            } else if (indexA === undefined) {
-              return 1;
-            } else if (indexB === undefined) {
-              return -1;
-            }
-            return indexA - indexB;
-          });
-          // console.log(HotelListData.length,"==========1=======")
-          // console.log(finalData.length,"============2============")
+  
+          // var hotelRes = await fetch(
+          //   "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/hotelSearchRes",
+          //   {
+          //     method: "POST",
+          //     // credentials: "include",
+          //     headers: {
+          //       "Content-Type": "application/json"
+          //     },
+          //     body: JSON.stringify(request)
+          //   }
+          // )
+          //   .then((res) => res.json())
+          //   .catch((err) => console.log(err));
+  
+          console.log("Hotel result", hotelRes);
           if (hotelRes?.error) {
             console.log('error');
             this.setState({
               hotelResList: [],
               hotelErrorMessage: hotelRes?.error,
               searchingHotels: false,
-              hotelSessionStarted: true,
-              hotelResList1: [],
+              hotelSessionStarted: true
             })
           }
           else {
@@ -1940,12 +2048,11 @@ export default class MyProvider extends Component {
               hotelStaticData: staticdata,
               hotelTokenId: hotelRes.tokenId,
               searchingHotels: false,
-              hotelSessionStarted: true,
-              hotelResList1: finalData,
+              hotelSessionStarted: true
             });
           }
-
-
+  
+  
           var hotelSessionTimeout = setTimeout(() => {
             this.setState(
               {
@@ -1959,7 +2066,49 @@ export default class MyProvider extends Component {
           }, 840000);
           clearTimeout(hotelSessionTimeout);
         },
+        setHotelErrorMessage: () => {
+          this.setState({
+            hotelErrorMessage: null
+          })
+        },
+        filterHotels: (hotelResList) => {
+          // console.log(this.state.byDuration);
+          var filteredArr = hotelResList;
 
+          if (this.state.hotelRating) {
+            //console.log(this.state.hotelRating);
+            filteredArr = filteredArr.filter(
+              (hotel) => hotel.StarRating === this.state.hotelRating
+            );
+          }
+          if (this.state.hotelPriceStart && this.state.hotelPriceEnd) {
+            //console.log(this.state.hotelPriceStart);
+            filteredArr = filteredArr.filter((hotel) => {
+              return (
+                hotel.Price.OfferedPriceRoundedOff >=
+                this.state.hotelPriceStart &&
+                hotel.Price.OfferedPriceRoundedOff < this.state.hotelPriceEnd
+              );
+            });
+          }
+          if (this.state.hotelSearchText) {
+            filteredArr = filteredArr.filter((hotel) => {
+              const staticData =this.state.hotelStaticData[hotel.HotelCode];
+              if (hotel.HotelName) {
+                return hotel.HotelName.toLowerCase().includes(
+                  this.state.hotelSearchText.toLowerCase()
+                );
+              }
+              else {
+                return staticData?.HotelName.toLowerCase().includes(
+                  this.state.hotelSearchText.toLowerCase()
+                );
+              }
+
+            });
+          }
+          return filteredArr;
+        },
         calculateHotelFinalPrice: (selectedRoomType) => {
           let finalPrice = 0;
           selectedRoomType.forEach((room, r) => {
@@ -1977,9 +2126,9 @@ export default class MyProvider extends Component {
           if (!this.state.hotelSessionExpired) {
             this.setState({
               hotelInfoRes: [],
-              // fetchingHotelInfo: true
+              fetchingHotelInfo: true
             });
-
+  
             var hotelInfoReq = {
               traceId:
                 this.state.hotelTraceId,
@@ -1988,9 +2137,9 @@ export default class MyProvider extends Component {
               hotelCode: query.hotelCode,
               categoryId: query.categoryId ? query.categoryId : null
             };
-
+  
             console.log("Hotel info req", hotelInfoReq);
-
+  
             var hotelInfoRes = await fetch(
               "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/hotelInfoRes",
               {
@@ -2004,23 +2153,23 @@ export default class MyProvider extends Component {
             )
               .then((res) => res.json())
               .catch((err) => console.log(err));
-
+  
             hotelInfoRes.hotelSearchRes = query.hotelSearchRes;
-
+  
             console.log("Hotel info res", hotelInfoRes);
-
+  
             let roomTypes = this.state.hotelRoomArr.map((room, r) => {
               return {
                 ...hotelInfoRes.roomResult?.GetHotelRoomResult
                   ?.HotelRoomsDetails[0],
-
+  
                 roomTypeIndex: 0
               };
             });
             var hotelImg = this.state.hotelImageList ? this.state.hotelImageList[query.hotelSearchRes.HotelCode] ? this.state.hotelImageList[query.hotelSearchRes.HotelCode].HotelPicture : hotelInfoRes?.hotelInfo?.HotelInfoResult?.HotelDetails?.Images[0] : hotelInfoRes?.hotelInfo?.HotelInfoResult?.HotelDetails?.Images[0]
             this.setState({
               hotelInfoRes,
-              fetchingHotelInfo: true,
+              fetchingHotelInfo: false,
               bookingHotel: {
                 ...hotelInfoRes,
                 hotelCode: query.hotelSearchRes.HotelCode,
@@ -2038,16 +2187,13 @@ export default class MyProvider extends Component {
                   ...roomTypes
                 ]) * this.state.domesticHotel) / 100),
                 hotelSearchQuery: this.state.hotelSearchQuery,
-                hotelSearchQuery: {
-                  // cityHotel:this.state.hotelSearchQuery,
-                  cityDestName: this.state.selectedHotel,
-                },
                 hotelImages: hotelImg
               }
             });
           } else {
             this.setState({
-              hotelSessionExpired: true
+              hotelSessionExpired: true,
+              hotelSessionExpiredPopup: true
             });
             console.log(
               "Hotel session has expired please make a search request again!!"
@@ -3305,25 +3451,28 @@ export default class MyProvider extends Component {
     }
   }
   componentDidMount = async () => {
-    auth().onAuthStateChanged(async (user) => {
-      if (user) {
-        this.setState({
-          userId: user?.uid,
-          isLoading: true,
-        });
-        await this.state.actions.setAdminData()
-        this.state.actions.fetchHotelCityList();
-        await this.state.actions.getLastDoc();
-        console.log("userLogin")
-      } else {
-        this.setState({
-          isLoading: true,
-          userId: ""
-        });
-        console.log("userLogOut")
+    // auth().onAuthStateChanged(async (user) => {
+    //   if (user) {
+    //     this.setState({
+    //       userId: user?.uid,
+    //       isLoading: true,
+    //     });
+    //     await this.state.actions.setAdminData()
+    //     this.state.actions.fetchHotelCityList();
+    //     await this.state.actions.getLastDoc();
+    //     console.log("userLogin")
+    //   } else {
+    //     this.setState({
+    //       isLoading: true,
+    //       userId: ""
+    //     });
+    //     console.log("userLogOut")
 
-      }
-    })
+    //   }
+    // })
+    await this.state.actions.setAdminData()
+    this.state.actions.fetchHotelCityList();
+    await this.state.actions.getLastDoc();
   }
   debounce = (cb, delay) => {
     let timer;
