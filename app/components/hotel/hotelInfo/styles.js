@@ -388,6 +388,19 @@ newtriptitle:{
     fontFamily: fonts.primary,
     color: colors.primary,
     // textAlign: 'center'
+},
+yesBtn:{
+  borderRadius:responsiveHeight(1),
+  paddingHorizontal:responsiveHeight(1),
+  alignItems:'center',
+  justifyContent:'center',
+  backgroundColor:colors.primary,
+  paddingVertical:responsiveHeight(0.5)
+},
+yesBtnText:{
+  fontSize:responsiveHeight(1.6),
+  fontFamily:fonts.textFont,
+  color:colors.white
 }
   },
   

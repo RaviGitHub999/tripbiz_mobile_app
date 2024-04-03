@@ -205,6 +205,18 @@ const HotelSearch = ({ navigation: { navigate } }) => {
         hotelRooms,
         hotelRoomArr
       });
+actions.handleBookinghotelquery(
+  {
+    cityHotel,
+    cityDestName: `${cityHotelItem.DESTINATION}, ${cityHotelItem.STATEPROVINCE}`,
+    countryCode,
+    checkInDate:selectedHotelCheckInDate,
+    checkOutDate:selectedHotelCheckOutDate,
+    hotelNights,
+    hotelRooms,
+    hotelRoomArr
+  }
+)
     }
   }
   

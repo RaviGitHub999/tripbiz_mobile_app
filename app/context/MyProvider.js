@@ -272,14 +272,18 @@ export default class MyProvider extends Component {
       flatListRef: React.createRef(null),
       hotelCityLoading:false,
       hotelListData:[],
+      bookinghotelquery:{},
       actions: {
-        rishi:()=>
-        {
-         const data= fetch('https://jsonplaceholder.typicode.com/todos/1')
-          .then(response => response.json())
-          .then(json => console.log(json))
-          console.log(data)
-        },
+       handleBookinghotelquery:(query)=>
+       {
+this.setState({bookinghotelquery:query})
+       },
+       backToHotelResPage: () => {
+        this.setState({
+          hotelInfoRes: false,
+          bookingHotel: {}
+        });
+      },
         setTrips: async (value) => {
           this.setState({
             userTripStatus: value
@@ -2186,7 +2190,7 @@ export default class MyProvider extends Component {
                 ]) + (this.state.actions.calculateHotelFinalPrice([
                   ...roomTypes
                 ]) * this.state.domesticHotel) / 100),
-                hotelSearchQuery: this.state.hotelSearchQuery,
+                hotelSearchQuery: this.state.bookinghotelquery,
                 hotelImages: hotelImg
               }
             });
@@ -3451,28 +3455,29 @@ export default class MyProvider extends Component {
     }
   }
   componentDidMount = async () => {
-    // auth().onAuthStateChanged(async (user) => {
-    //   if (user) {
-    //     this.setState({
-    //       userId: user?.uid,
-    //       isLoading: true,
-    //     });
-    //     await this.state.actions.setAdminData()
-    //     this.state.actions.fetchHotelCityList();
-    //     await this.state.actions.getLastDoc();
-    //     console.log("userLogin")
-    //   } else {
-    //     this.setState({
-    //       isLoading: true,
-    //       userId: ""
-    //     });
-    //     console.log("userLogOut")
+    auth().onAuthStateChanged(async (user) => {
+      if (user) {
+        this.setState({
+          userId: user?.uid,
+          isLoading: true,
+        });
+        await this.state.actions.setAdminData()
+        this.state.actions.fetchHotelCityList();
+        await this.state.actions.getLastDoc();
+        await actions.handleFlightsLogos();
+        console.log("userLogin")
+      } else {
+        this.setState({
+          isLoading: true,
+          userId: ""
+        });
+        console.log("userLogOut")
 
-    //   }
-    // })
-    await this.state.actions.setAdminData()
-    this.state.actions.fetchHotelCityList();
-    await this.state.actions.getLastDoc();
+      }
+    })
+    // await this.state.actions.setAdminData()
+    // this.state.actions.fetchHotelCityList();
+    // await this.state.actions.getLastDoc();
   }
   debounce = (cb, delay) => {
     let timer;

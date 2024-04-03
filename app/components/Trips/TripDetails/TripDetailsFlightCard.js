@@ -1,5 +1,5 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity, Modal } from 'react-native'
-import React, { useCallback, useContext, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { FlatList } from 'react-native-gesture-handler'
 import MyContext from '../../../context/Context'
 import IconSwitcher from '../../common/icons/IconSwitcher'
@@ -33,6 +33,10 @@ const TripDetailsFlightCard = ({
     const [openFlightPrice, setOpenFlightPrice] = useState(false)
     const [openFareRules, setOpenFareRules] = useState(false)
     const { actions, flightsLogosData, flightResList, bookingFlight, flightResJType, domesticFlight } = useContext(MyContext)
+    // useEffect(()=>
+    // {
+    //     actions.handleFlightsLogos()
+    // },[])
     var fareData = tripsPage ? actions.getTotalFares([flightBooking]) : '';
     var flightArr = flightGrp.map((flight, f) => {
         return { ...actions.modifyFlightObject(flight) };
@@ -60,6 +64,7 @@ const TripDetailsFlightCard = ({
                 flightCode += `${code}, `;
             }
         });
+       
         return (
             <View style={styles.card}>
 

@@ -62,6 +62,7 @@ export const styles = StyleSheet.create({
     },
     hotelImgContainer: {
         width: "35%",
+        // borderWidth:1
     },
     hotelImg: {
         height: responsiveHeight(13),

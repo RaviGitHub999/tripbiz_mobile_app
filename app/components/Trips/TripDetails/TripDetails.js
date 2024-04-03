@@ -1,5 +1,5 @@
-  import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, BackHandler, Image, ScrollView,TouchableOpacity } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import { View, Text, BackHandler, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import MyContext from '../../../context/Context';
 import { styles } from './styles';
@@ -25,7 +25,19 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
   const [openDelete, setOpenDelete] = useState(false)
   const [deleteId, setDeleteId] = useState(false)
   const [deleteType, setDeleteType] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const { actions, tripData, userId, tripDataLoading, userAccountDetails } = useContext(MyContext)
+  const handleOnError=()=>
+  {
+    setImageError(true)
+  }
+
+  const handleOnLoading=()=>
+  {
+    console.log("loading")
+    setImageError(false)
+  }
+  
   const onRefresh = () => {
     setRefreshing(true);
 
@@ -54,12 +66,12 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
   //     return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
   //   }, []) 
   // );
-const handleDelete = async () => {
+  const handleDelete = async () => {
     await actions.deleteTripItem(id, deleteId, deleteType);
     setOpenDelete(false)
     // setSelectedTab("approval")
     //await getTripData()
-}
+  }
   const handlePopUps = (arg) => {
     if (arg === "hotelPrice") {
       setPopUp({ ...popup, hotelPrice: !popup.hotelPrice })
@@ -123,11 +135,12 @@ const handleDelete = async () => {
     actions.setSelectedTripId(id);
     await actions.setRes();
     actions.switchComponent("flights")
-    navigate("CustomerBottomNavigation") 
+    navigate("CustomerBottomNavigation")
   }
   const handleHotels = async () => {
-    // actions.setSelectedTripId(id);
-    // await actions.setRes();
+    actions.setSelectedTripId(id);
+    await actions.setRes();
+    actions.switchComponent("hotel")
     navigate('CustomerBottomNavigation')
   }
 
@@ -206,13 +219,14 @@ const handleDelete = async () => {
           {
             tripData ?
               <View>
-                {/* <View>
+                <View>
                   {
                     tripData?.hotels ?
                       <>
                         <Text style={styles.hotelCardTitle}>Hotels</Text>
                         {
                           tripData?.hotels?.sort((a, b) => {
+                            console.log(a?.data?.hotelSearchQuery?.checkInDate, "checkInDate")
                             var atime = a?.data?.hotelSearchQuery?.checkInDate;
                             var btime = b?.data?.hotelSearchQuery?.checkInDate;
                             return atime - btime
@@ -259,7 +273,14 @@ const handleDelete = async () => {
 
                                   <View style={styles.hotelDetailsContainer}>
                                     <View style={styles.hotelImgContainer}>
-                                      <Image style={styles.hotelImg} src={img} alt='hotel' />
+                                      {/* <Image style={styles.hotelImg} src={img} alt='hotel' /> */}
+                                      <Image
+                                        style={styles.hotelImg}
+                                        source={{ uri: img }}   
+                                        onError={handleOnError}
+                                        onLoad={handleOnLoading} // Reset error state when image loads successfully
+                                      />
+                                      {imageError && <Text style={styles.errorText}>Image failed to load</Text>}
                                     </View>
                                     <View style={{ width: "65%", paddingLeft: responsiveHeight(1), gap: responsiveHeight(1) }}>
                                       <View style={styles.bookedHotelDatesContainer}>
@@ -378,7 +399,7 @@ const handleDelete = async () => {
                       </>
                       : null
                   }
-                </View> */}
+                </View>
                 {/* flight */}
                 <View>
                   {tripData?.flights ?
@@ -493,7 +514,7 @@ const handleDelete = async () => {
         <View style={styles.popUpHotelPriceDescriptionMainContaioner}>
           <View style={styles.popUpHotelPriceDescriptionContaioner}>
             <Text style={styles.popUproomPriceTitle}>Room price:</Text>
-            <Text style={[styles.popUproomPriceTitle, { color: colors.secondary }]}>&#8377; 4,113</Text>
+            <Text style={[styles.popUproomPriceTitle, { color: colors.secondary }]}>&#8377; {`${hotelFinalPrice.toLocaleString("en-IN")} `}</Text>
           </View>
           <View style={styles.popUpHotelPriceDescriptionContaioner}>
             <Text style={styles.popUproomserviceChargesTitle}>Service Charges</Text>
@@ -514,8 +535,8 @@ const handleDelete = async () => {
             <Text style={styles.hotelDeleteBtnTitle}>Delete</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.hotelDeleteBtn} onPress={() => {
-                            setOpenDelete(false)
-                        }}>
+            setOpenDelete(false)
+          }}>
             <Text style={styles.hotelDeleteBtnTitle}>Go Back</Text>
           </TouchableOpacity>
         </View>
@@ -524,4 +545,4 @@ const handleDelete = async () => {
   );
 };
 
-export default TripDetails;
+export default React.memo(TripDetails);
