@@ -78,7 +78,7 @@ const FlightsSearch: React.FC<IProps> = ({ navigation: { navigate } }) => {
     }
   }
   const MemoizedAirportItem = React.memo((item: any) => (
-    <TouchableOpacity style={styles.renderItemsContainer} onPress={() => actions.handleOriginSelectedAirPort(item)}>
+    <TouchableOpacity style={styles.renderItemsContainer} onPress={() => {actions.handleOriginSelectedAirPort(item)}}>
       <View>
         <Text style={{color:"#505050"}}>{`${item.address.cityName},${item.address.countryName}`}</Text>
         <Text style={styles.airportName}>{item.name}</Text>

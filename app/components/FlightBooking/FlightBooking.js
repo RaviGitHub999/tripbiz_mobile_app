@@ -1,5 +1,5 @@
-import { TextInput,Modal, Text, View, FlatList, ScrollView, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard, LayoutAnimation } from 'react-native'
-import React, {useContext,useState } from 'react'
+import { TextInput, Modal, Text, View, FlatList, ScrollView, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard, LayoutAnimation } from 'react-native'
+import React, { useContext, useEffect, useState } from 'react'
 import IconSwitcher from '../common/icons/IconSwitcher'
 import MyContext from '../../context/Context'
 import ProgressBar from '../common/progressBar/ProgressBar'
@@ -10,6 +10,7 @@ import Select from '../common/select/Select'
 import { responsiveHeight, responsiveWidth } from '../../utils/responsiveScale'
 import { WebView } from 'react-native-webview';
 import PopUp from '../common/popup/PopUp'
+
 const seatsSelect = (seatsSeg, pax, seatCode) => {
     if (!seatsSeg) {
         seatsSeg = [];
@@ -47,6 +48,10 @@ const FlightBooking = ({ navigation: { navigate } }) => {
     const formattedDate = `${date.toLocaleString('default', { month: 'long' })} ${date.getDate()}`;
     const combinedString = `${myStr}_${formattedDate}`;
     var [defaultInput, setDefaultInput] = useState(combinedString);
+
+    useEffect(() => {
+        actions.getLastDoc()
+    }, [])
 
 
     if (flightBookDataLoading) {
@@ -135,6 +140,10 @@ const FlightBooking = ({ navigation: { navigate } }) => {
     };
     return (
         // isLoading ? <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><ProgressBar /></View> :
+
+        flightBookDataLoading ? <View style={styles.mainContainer}>
+            <ProgressBar />
+        </View> :
             <View style={{ flex: 1 }}>
                 <TouchableOpacity style={styles.backBtnContainer} onPress={() => {
                     actions.setFlightBookPage(false);
@@ -296,6 +305,59 @@ const FlightBooking = ({ navigation: { navigate } }) => {
 
                         </View>
                     </View>
+
+
+                    {
+                        bookingFlight[bookIndex].seatData &&
+                            bookingFlight[bookIndex].seatData[segIndex] &&
+                            actions.validSeatMap(bookingFlight[bookIndex].seatData[segIndex]) ?
+                            <View style={styles.seatSelectionBtnContainer}>
+                                {bookingFlight[bookIndex].seats &&
+                                    bookingFlight[bookIndex].seats[segIndex] &&
+                                    bookingFlight[bookIndex].seats[segIndex].length > 0 ?
+                                    (
+                                        <View style={{ flexDirection: 'row', columnGap: responsiveHeight(1) }}>
+                                            {
+                                                bookingFlight[bookIndex].flightNew.segments[
+                                                    segIndex
+                                                ].segRoutes.map((route, r) => {
+                                                    return (
+                                                        <View style={{ backgroundColor: colors.white, paddingVertical: responsiveHeight(1), paddingHorizontal: responsiveWidth(2), borderRadius: responsiveHeight(2), rowGap: responsiveHeight(0.8) }}>
+                                                            <View style={{ flexDirection: "row", alignItems: 'center', columnGap: responsiveWidth(1) }}>
+                                                                <Text style={{ fontSize: responsiveHeight(1.8), fontFamily: fonts.textFont, color: colors.black }}>{`${route.originCode}`}</Text>
+                                                                <IconSwitcher componentName='AntDesign' iconName='arrowright' color='black' iconsize={2} />
+                                                                <Text style={{ fontSize: responsiveHeight(1.8), fontFamily: fonts.textFont, color: colors.black }}>{`${route.destCode}`}</Text>
+                                                            </View>
+                                                            <View style={{ flexDirection: 'row' }}>
+                                                                {bookingFlight[bookIndex].seats &&
+                                                                    bookingFlight[bookIndex].seats[segIndex] &&
+                                                                    bookingFlight[bookIndex].seats[segIndex][r] &&
+                                                                    Object.keys(
+                                                                        bookingFlight[bookIndex].seats[segIndex][r]
+                                                                    ).map((seatCode, c) => {
+                                                                        if (
+                                                                            c ===
+                                                                            Object.keys(
+                                                                                bookingFlight[bookIndex].seats[segIndex][r]
+                                                                            ).length -
+                                                                            1
+                                                                        ) {
+                                                                            return <Text style={styles.seatCode}>{seatCode}</Text>;
+                                                                        }
+                                                                        return <Text style={styles.seatCode}>{`${seatCode}, `}</Text>;
+                                                                    })}
+                                                            </View>
+                                                        </View>)
+                                                })}
+                                        </View>
+                                    ) : null}
+                                <TouchableOpacity style={styles.seatSelectionBtn} onPress={handleSeatSelectionPopUp}>
+                                    <Text style={styles.seatSelectionBtnTitle}>Select seats</Text>
+                                </TouchableOpacity>
+                            </View> : null
+                    }
+
+
                     {/* Cancellation and date change */}
                     {bookingFlight[bookIndex].flight.MiniFareRules &&
                         bookingFlight[bookIndex].flight.MiniFareRules[segIndex] ? <View style={styles.cancellationAndDateChangeMainContainer}>
@@ -378,55 +440,6 @@ const FlightBooking = ({ navigation: { navigate } }) => {
                         <Text style={styles.imp}>*Important  <Text style={styles.note}>The airline fee is indicative. We do not guarantee the accuracy of this information. All fees mentioned are per passenger. Date change charges are applicable only on selecting the same airline on a new date. The difference in fares between the old and the new booking will also be payable by the user. If you require further information, please refer the Airline website for detailed fare rales for different fare types.</Text></Text>
                     </View>
 
-                    {
-                        bookingFlight[bookIndex].seatData &&
-                            bookingFlight[bookIndex].seatData[segIndex] &&
-                            actions.validSeatMap(bookingFlight[bookIndex].seatData[segIndex]) ?
-                            <View style={styles.seatSelectionBtnContainer}>
-                                {bookingFlight[bookIndex].seats &&
-                                    bookingFlight[bookIndex].seats[segIndex] &&
-                                    bookingFlight[bookIndex].seats[segIndex].length > 0 ?
-                                    (
-                                        <View style={{ flexDirection: 'row', columnGap: responsiveHeight(1) }}>
-                                            {
-                                                bookingFlight[bookIndex].flightNew.segments[
-                                                    segIndex
-                                                ].segRoutes.map((route, r) => {
-                                                    return (
-                                                        <View style={{ backgroundColor: colors.white, paddingVertical: responsiveHeight(1), paddingHorizontal: responsiveWidth(2), borderRadius: responsiveHeight(2), rowGap: responsiveHeight(0.8) }}>
-                                                            <View style={{ flexDirection: "row", alignItems: 'center', columnGap: responsiveWidth(1) }}>
-                                                                <Text style={{ fontSize: responsiveHeight(1.8), fontFamily: fonts.textFont, color: colors.black }}>{`${route.originCode}`}</Text>
-                                                                <IconSwitcher componentName='AntDesign' iconName='arrowright' color='black' iconsize={2} />
-                                                                <Text style={{ fontSize: responsiveHeight(1.8), fontFamily: fonts.textFont, color: colors.black }}>{`${route.destCode}`}</Text>
-                                                            </View>
-                                                            <View style={{ flexDirection: 'row' }}>
-                                                                {bookingFlight[bookIndex].seats &&
-                                                                    bookingFlight[bookIndex].seats[segIndex] &&
-                                                                    bookingFlight[bookIndex].seats[segIndex][r] &&
-                                                                    Object.keys(
-                                                                        bookingFlight[bookIndex].seats[segIndex][r]
-                                                                    ).map((seatCode, c) => {
-                                                                        if (
-                                                                            c ===
-                                                                            Object.keys(
-                                                                                bookingFlight[bookIndex].seats[segIndex][r]
-                                                                            ).length -
-                                                                            1
-                                                                        ) {
-                                                                            return <Text style={styles.seatCode}>{seatCode}</Text>;
-                                                                        }
-                                                                        return <Text style={styles.seatCode}>{`${seatCode}, `}</Text>;
-                                                                    })}
-                                                            </View>
-                                                        </View>)
-                                                })}
-                                        </View>
-                                    ) : null}
-                                <TouchableOpacity style={styles.seatSelectionBtn} onPress={handleSeatSelectionPopUp}>
-                                    <Text style={styles.seatSelectionBtnTitle}>Select seats</Text>
-                                </TouchableOpacity>
-                            </View> : null
-                    }
 
                 </ScrollView>
                 <View style={styles.totalFareContainer}>
@@ -484,10 +497,10 @@ const FlightBooking = ({ navigation: { navigate } }) => {
                                 {
                                     isInternationalRound ? <View style={styles.totalFareFlightEachChargeDetails}>
                                         <Text style={styles.ExcessBagChargesTitle}>Service Charges</Text>
-                                        <Text style={styles.ExcessBagCharges}>{`+ ₹ ${Math.ceil((totalFareSum * domesticFlight) / 100)}`}</Text>
+                                        <Text style={styles.ExcessBagCharges}>{`+ ₹ ${Math.ceil((totalFareSum * internationalFlight) / 100)}`}</Text>
                                     </View> : <View style={styles.totalFareFlightEachChargeDetails}>
                                         <Text style={styles.ExcessBagChargesTitle}>Service Charges</Text>
-                                        <Text style={styles.ExcessBagCharges}>{`+ ₹ ${Math.ceil((totalFareSum * internationalFlight) / 100)}`}</Text>
+                                        <Text style={styles.ExcessBagCharges}>{`+ ₹ ${Math.ceil((totalFareSum * domesticFlight) / 100)}`}</Text>
                                     </View>
                                 }
                             </View>

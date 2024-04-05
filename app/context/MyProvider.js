@@ -253,7 +253,7 @@ export default class MyProvider extends Component {
       hotelPriceEnd: null,
       hotelSearchText: null,
       hotelInfoRes: false,
-      fetchingHotelInfo: false,
+      fetchingHotelInfo: true,
       idToIndex: {},
       userTripStatus: {
         userTrips: [],
@@ -632,14 +632,18 @@ this.setState({bookinghotelquery:query})
               else{
                if(this.state.hotelListData.length>0)
                {
-                const results2=this.state.hotelListData.search(keyword)
-                console.log(results2,"results2")
-                {
-                  this.setState({
-                    cityHotelRes: results2,
-                    hotelCityLoading:false
-                  });
-                }
+                // const results2=this.state.hotelListData.search(keyword)
+                // console.log(results2,"results2")
+                // {
+                //   this.setState({
+                //     cityHotelRes: results2,
+                //     hotelCityLoading:false
+                //   });
+                // }
+                this.setState({
+                  cityHotelRes:[],
+                  hotelCityLoading:false
+                });
                }
               }
             } catch (err) {
@@ -1186,7 +1190,8 @@ this.setState({bookinghotelquery:query})
             flightResult: {},
             flightResList: [],
             searchingFlights: true,
-            flightBookPage: false
+            flightBookPage: false,
+            flightSessionExpired:false
           });
         },
         setAirlineName: (value) => {
@@ -1744,8 +1749,9 @@ this.setState({bookinghotelquery:query})
             const recommondedHotelsData = data1.data().hotelCityList;
             const hotelObj = {};
             recommondedHotelsData.forEach((hotel) => {
-              hotelObj[hotel.HotelCode] = hotel;
+              hotelObj[hotel["Hotel Code"]] = hotel;
             });
+            console.log(recommondedHotelsData,"recommondedHotelsData")
             this.setState({
               recommondedHotels: hotelObj
             });
@@ -1808,7 +1814,7 @@ this.setState({bookinghotelquery:query})
           });
           var jsonContent = JSON.parse(jsonResult);
           var hotelObject = {};
-          console.log(jsonContent)
+          // console.log(jsonContent)
           jsonContent.ArrayOfBasicPropertyInfo.BasicPropertyInfo.forEach(
             (hotel) => {
               var hotelCode = hotel["_attributes"]["TBOHotelCode"];
@@ -1947,7 +1953,7 @@ this.setState({bookinghotelquery:query})
           this.setState({
             hotelResList: [],
             hotelSearchQuery: query,
-            searchingHotels: true,
+            // searchingHotels: true,
             cityHotel: query.cityHotel,
             hotelSessionStarted: false,
             hotelSessionEnded: false,
@@ -2016,7 +2022,7 @@ this.setState({bookinghotelquery:query})
             this.state.actions.getHotelImages(request.cityId)
           ]);
   
-          console.log("Result", hotelStatic);
+          // console.log("Result", hotelStatic);
   
           var hotelRes = hotelStatic[0];
           var staticdata = hotelStatic[1];
@@ -2035,7 +2041,7 @@ this.setState({bookinghotelquery:query})
           //   .then((res) => res.json())
           //   .catch((err) => console.log(err));
   
-          console.log("Hotel result", hotelRes);
+          // console.log("Hotel result", hotelRes);
           if (hotelRes?.error) {
             console.log('error');
             this.setState({
@@ -2712,14 +2718,14 @@ this.setState({bookinghotelquery:query})
             querySnapshot.forEach(doc => {
               const data = doc.data();
               admin.push(data);
-              this.setState({
-                adminDetails: data
-              });
+              // this.setState({
+              //   adminDetails: data
+              // });
             });
 
-            const docCollectionRef = firestore()
-              .collection('Accounts')
-              .doc(admin[0].userid);
+            // const docCollectionRef = firestore()
+            //   .collection('Accounts')
+            //   .doc(admin[0].userid);
 
             this.setState({
               domesticFlight: Number(admin[0].domesticFlights),
@@ -3461,10 +3467,10 @@ this.setState({bookinghotelquery:query})
           userId: user?.uid,
           isLoading: true,
         });
-        await this.state.actions.setAdminData()
-        this.state.actions.fetchHotelCityList();
-        await this.state.actions.getLastDoc();
-        await actions.handleFlightsLogos();
+       this.state.actions.setAdminData()
+      //   this.state.actions.fetchHotelCityList();
+      //  this.state.actions.getLastDoc();
+      //  this.state.actions.handleFlightsLogos();
         console.log("userLogin")
       } else {
         this.setState({
@@ -3511,14 +3517,10 @@ this.setState({bookinghotelquery:query})
     };
 
     return (
-      // <MyContext.Provider value={contextValue}>
-      //   {this.props.children}
-      // </MyContext.Provider>
       <MyContext.Provider value={contextValue}>
-        {React.Children.map(this.props.children, child =>
-          React.cloneElement(child, { additionalProp: "ravi" })
-        )}
+        {this.props.children}
       </MyContext.Provider>
+      
     );
   }
 }

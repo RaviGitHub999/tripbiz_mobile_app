@@ -32,7 +32,7 @@ const TripDetailsFlightCard = ({
     const [deleteType, setDeleteType] = useState(false)
     const [openFlightPrice, setOpenFlightPrice] = useState(false)
     const [openFareRules, setOpenFareRules] = useState(false)
-    const { actions, flightsLogosData, flightResList, bookingFlight, flightResJType, domesticFlight } = useContext(MyContext)
+    const { actions,adults,children,infants, flightsLogosData, flightResList, bookingFlight, flightResJType, domesticFlight } = useContext(MyContext)
     // useEffect(()=>
     // {
     //     actions.handleFlightsLogos()
@@ -152,9 +152,12 @@ const TripDetailsFlightCard = ({
 
                 <View style={styles.flightBookingTravellerDetailsContainer}>
                     <Text style={styles.flightBookingTravellerDetailsTitle}>{flightBooking.flightNew.fareType}</Text>
-                    <Text style={styles.flightBookingTravellerDetailsTitle}>{`${flightBooking.travellers
-                        } ${flightBooking.travellers > 1 ? "travellers" : "traveller"
-                        }`}</Text>
+                    <Text style={styles.flightBookingTravellerDetailsTitle}>
+                    {`${adults} ${adults > 1 ? "Adults" : "Adults"
+                  } ${children > 0 ? `, ${children} ${children > 1 ? "children" : "child"
+                    }` : ''}   ${infants > 0 ? `, ${infants} ${infants > 1 ? "infants" : "infant"
+                      }` : ''}`}
+                        </Text>
                     <Text style={styles.flightBookingTravellerDetailsTitle}>{flightArr[0].segments[0].cabinClass}</Text>
                 </View>
 

@@ -145,8 +145,8 @@ const FlightCard = ({
         </View>
         <View style={styles.flightsTimingContainer}>
           <View style={styles.originContainer}>
-            <Text style={styles.originTitle}>{item.originAirportCode}</Text>
-            <Text style={styles.flightTimings}>{item.depTime}</Text>
+            <Text style={styles.originTitle}>{item.depTime}</Text>
+            <Text style={styles.flightTimings}>{item.originAirportCode}</Text>
           </View>
           <View style={styles.directionContainer}>
             <TouchableOpacity style={styles.stopsBtn} onPress={() => handleStops(item)}>
@@ -171,8 +171,8 @@ const FlightCard = ({
             <Text style={styles.flighttotalTime}>{item.duration}</Text>
           </View>
           <View style={styles.destinationContainer}>
-            <Text style={styles.destinationTitle}> {item.destAirportCode}</Text>
-            <Text style={styles.flightTimings}> {item.arrTime}</Text>
+            <Text style={styles.destinationTitle}>{item.arrTime} </Text>
+            <Text style={styles.flightTimings}>{item.destAirportCode}</Text>
           </View>
           <View>
           {/* {
@@ -325,9 +325,12 @@ const FlightCard = ({
                 {bookingFlight[index].flightNew.fareType}
               </Text>
             </View>
-            <Text style={styles.bookingFlightText}>{`${bookingFlight[index].travellers
-              } ${bookingFlight[index].travellers > 1 ? 'travellers' : 'traveller'
-              }`}</Text>
+            <Text style={styles.bookingFlightText}>
+            {`${bookingFlight[index].adults} ${bookingFlight[index].adults > 1 ? "Adults" : "Adults"
+                  } ${bookingFlight[index].child > 0 ? `, ${bookingFlight[index].child} ${bookingFlight[index].child > 1 ? "children" : "child"
+                    }` : ''}   ${bookingFlight[index].infant > 0 ? `, ${bookingFlight[index].infant} ${bookingFlight[index].infant > 1 ? "infants" : "infant"
+                      }` : ''}`}
+              </Text>
             <Text style={styles.bookingFlightText}>
               {flightArr[0].segments[0].cabinClass}
             </Text>

@@ -17,7 +17,7 @@ const Item = React.memo(({ cityHotel, handleSelect }) => {
       paddingHorizontal: responsiveWidth(2.5),
       margin: responsiveHeight(0.8)
     }} onPress={() => handleSelect(item)}>
-      <Text>{`${item.DESTINATION},${item?.STATEPROVINCE
+      <Text style={{fontSize:responsiveHeight(2),color:"black"}}>{`${item.DESTINATION},${item?.STATEPROVINCE
         ? item?.STATEPROVINCE
         : item?.COUNTRY
         }`}</Text>
