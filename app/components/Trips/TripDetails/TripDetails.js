@@ -173,6 +173,11 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
   //     </View>
   //   );
   // }
+  const handleBack=()=>
+  {
+    navigate("MyTrips")
+    actions.setRes()
+  }
   return (
    tripDataLoading?<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
          <ProgressBar />
@@ -183,7 +188,7 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
    >
      {/* {backNavigation} */}
      <View style={styles.backNavigationContainer}>
-       <TouchableOpacity onPress={() => goBack()}>
+       <TouchableOpacity onPress={handleBack}>
          <IconSwitcher componentName='AntDesign' iconName='arrowleft' color={colors.black} iconsize={3} />
        </TouchableOpacity>
      </View>
@@ -384,7 +389,7 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
                                </View>
                                <View style={styles.addedHotelTimeAndDateContainer}>
                                  <View style={styles.addedHotelTitleContainer}>
-                                   <Text style={styles.bookingStatusTitles}>{`Added Date: `}<Text style={styles.addedHotelTimeAndDate}>{`${hotelTimeStamp.toLocaleString()}`}</Text></Text>
+                                   <Text style={styles.bookingStatusTitles}>{`Added Date: `}<Text style={styles.addedHotelTimeAndDate}>{hotelTimeStamp.toString().slice(4, 24)}</Text></Text>
                                  </View>
                                  <>
                                    <TouchableOpacity onPress={() => {

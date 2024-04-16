@@ -318,5 +318,31 @@ export const styles = StyleSheet.create({
 fontSize:responsiveHeight(1.8),
 color:colors.primary,
 fontFamily:fonts.textFont
+    },
+    baggageTitle:
+    {
+fontFamily:fonts.primary,
+color:colors.primary,
+fontSize:responsiveHeight(2)
+    },
+    BaggageDetails:
+    {
+flexDirection:'row',
+alignItems:'center',
+gap:responsiveHeight(1)
+    },
+    BaggageDetailsMainContainer:
+    {
+marginVertical:responsiveHeight(1),
+gap:responsiveHeight(0.8)
+    },
+    baggageTitles:
+    {
+        fontFamily:fonts.textInput,
+        color:colors.primary,
+        fontSize:responsiveHeight(2)
+    },
+    baggageTitlesHighlight:{
+        color:colors.highlight,
     }
 })

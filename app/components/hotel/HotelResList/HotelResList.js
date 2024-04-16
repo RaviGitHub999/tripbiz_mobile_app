@@ -160,7 +160,7 @@
 //                 const hotelName = hotel.HotelName ? hotel.HotelName : staticData?.HotelName;
 //                 return hotelName?.length > 0;
 //             })
-            
+
 //             const finalData = filteredHotels.sort((a, b) => {
 //                 const indexA = idToIndex[a.HotelCode];
 //                 const indexB = idToIndex[b.HotelCode];
@@ -499,7 +499,7 @@
 //                         ListEmptyComponent={()=> <Text>Data Not Found</Text>}
 //                     />
 //                 </View>
-            
+
 
 //             </View>
 //     )
@@ -608,7 +608,7 @@ const priceData =
         },
     ]
 
-const HotelResList = ({ navigation: { navigate, goBack ,push} }) => {
+const HotelResList = ({ navigation: { navigate, goBack, push } }) => {
 
     console.log("component.................")
     const [openFilters, setOpenFilters] = useState(false)
@@ -617,7 +617,7 @@ const HotelResList = ({ navigation: { navigate, goBack ,push} }) => {
     const [price, setPrice] = useState(null);
     const [rating, setRating] = useState(null);
     var [count, setCount] = useState(0);
-const {
+    const {
         searchingHotels,
         hotelResList,
         actions,
@@ -639,23 +639,21 @@ const {
         cityHotel,
         hotelSessionExpiredPopup,
         setidToIndex,
-        
-
     } = useContext(MyContext);
-    // actions.setHotelPriceStart(2500);
     const [fetchedData, setFetchedData] = useState([])
     const [renderedData, setRenderedData] = useState();
     const [loading, setLoading] = useState(false);
     const [applyingfilters, setApplyingFilters] = useState(false)
     const [searchTerm, setSearchTerm] = useState('');
-    const [hotelPriceStart,setHotelPriceStart]=useState()
-    const [hotelPriceEnd,setHotelPriceEnd]=useState()
+    const [hotelPriceStart, setHotelPriceStart] = useState()
+    const [hotelPriceEnd, setHotelPriceEnd] = useState()
+    const [searchData, setSearchData] = useState([])
     useEffect(() => {
         // const sorted = [...hotelResList].sort((a, b) => a.Price.OfferedPriceRoundedOff ?a.Price.OfferedPriceRoundedOff - b.Price.OfferedPriceRoundedOff:a.Price.PublishedPriceRoundedOff-b.Price.PublishedPriceRoundedOff);
         setFetchedData([...hotelResList]);
+        setSearchData([...hotelResList])
         setRenderedData(hotelResList.slice(0, 20));
-        return ()=>
-        {
+        return () => {
             setFetchedData([])
             setRenderedData([])
         }
@@ -668,59 +666,60 @@ const {
         setSearchTerm(text);
         if (text) {
             filteredArr = hotelResList.filter((hotel) => {
-              const staticData =hotelStaticData[hotel.HotelCode];
-              if (hotel.HotelName) {
-                return hotel.HotelName.toLowerCase().includes(
-                    text.toLowerCase()
-                );
-              }
-              else {
-                return staticData?.HotelName.toLowerCase().includes(
-                text.toLowerCase()
-                );
-              }
+                const staticData = hotelStaticData[hotel.HotelCode];
+                if (hotel.HotelName) {
+                    return hotel.HotelName.toLowerCase().includes(
+                        text.toLowerCase()
+                    );
+                }
+                else {
+                    return staticData?.HotelName.toLowerCase().includes(
+                        text.toLowerCase()
+                    );
+                }
 
             });
             setFetchedData(filteredArr)
-            
-          }
-          else if(text===""){
-            setFetchedData(hotelResList);
-          }
-        
-      };
+            setSearchData(filteredArr)
 
-
-      const filterHotels=()=>
-      {
-        var filteredArr = hotelResList;
-
-        if (rating) {
-          //console.log(this.state.hotelRating);
-          filteredArr = filteredArr.filter(
-            (hotel) => hotel.StarRating === rating
-          );
         }
-        if (price!==null) {
+        else if (text === "") {
+            setFetchedData(hotelResList);
+            setSearchData(hotelResList)
+        }
+
+    };
+
+
+    const filterHotels = () => {
+        var filteredArr = searchData;
+
+        if (rating !== null) {
+            //console.log(this.state.hotelRating);
+            filteredArr = filteredArr.filter(
+                (hotel) => hotel.StarRating === rating
+            );
+        }
+        if (price !== null) {
             //console.log(this.state.hotelPriceStart);
             filteredArr = filteredArr.filter((hotel) => {
-              return (
-                hotel.Price.OfferedPriceRoundedOff >=
-                hotelPriceStart &&
-                hotel.Price.OfferedPriceRoundedOff < hotelPriceEnd
-              );
+                return (
+                    hotel.Price.OfferedPriceRoundedOff >=
+                    hotelPriceStart &&
+                    hotel.Price.OfferedPriceRoundedOff < hotelPriceEnd
+                );
             });
-          }
-          setFetchedData(filteredArr)
-          setOpenFilters(false)
-          setCount(0);
+        }
+        setFetchedData(filteredArr)
+        setOpenFilters(false)
+        setCount(0);
         if (rating) {
             setCount(prev => prev + 1);
         }
         if (price) {
             setCount(prev => prev + 1);
         }
-      }
+    }
     // const [idToIndex, setidToIndex] = useState()
     // useEffect(() => {
     //     console.log("useEffect")
@@ -769,7 +768,6 @@ const {
         }, 1000);
     };
     const handleEndReached = () => {
-        console.log("handleEndReached")
         if (renderedData.length < fetchedData.length) { // Check if there are more items to render
             loadMoreData();
         }
@@ -781,8 +779,8 @@ const {
     //     const imageExtensions = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg"];
     //     return imageExtensions.some((ext) => uri.endsWith(ext));
     // };
-    const renderItem = ({ item, index }) => {
-        return <HotelRenderItem item={item} handleBooking={handleBooking} idToIndex={setidToIndex}/>
+    const renderItem = ({ item }) => {
+        return <HotelRenderItem item={item} handleBooking={handleBooking} idToIndex={setidToIndex} />
     }
     const renderFooter =
         () => {
@@ -793,57 +791,53 @@ const {
                 </View>
             );
         };
-        const renderHeader =  
-            
-              <View style={{ gap: responsiveHeight(1) }}>
-                {count > 0 ? (
-                  <TouchableOpacity style={styles.clearFilterContainer} onPress={()=>removeFilters()}>
+    const renderHeader =
+
+        <View style={{ gap: responsiveHeight(1) }}>
+            {count > 0 ? (
+                <TouchableOpacity style={styles.clearFilterContainer} onPress={() => removeFilters()}>
                     <Text style={styles.clearFilterTitle}>Clear Filters</Text>
-                  </TouchableOpacity>
-                ) : null}
-                <TextInput
-                  placeholder='Search for your favourite hotel'
-                  style={{
+                </TouchableOpacity>
+            ) : null}
+            <TextInput
+                placeholder='Search for your favourite hotel'
+                style={{
                     borderWidth: 1,
                     paddingHorizontal: responsiveWidth(5),
                     borderRadius: responsiveHeight(2),
                     fontSize: responsiveHeight(2.1)
-                  }}
-                  value={searchTerm}
-                  onChangeText={handleSearch}
-                />
-                <Text style={styles.totalHotels}>
-                  {`Hotel search results (${fetchedData.length})`}
-                </Text>
-              </View>
-        
+                }}
+                value={searchTerm}
+                onChangeText={handleSearch}
+            />
+            <Text style={styles.totalHotels}>
+                {`Hotel search results (${fetchedData.length})`}
+            </Text>
+        </View>
+
 
 
 
     const handleOpenFilters = useCallback(() => {
-        console.log("handleOpenFilters")
         setOpenFilters(!openFilters)
     }, [openFilters])
 
     const handleItemClick = useCallback((index, price) => {
-       console.log("handleItemClick")
         setSelectedItemIndex(index === selectedItemIndex ? null : index);
         setPrice(prevSelectedPrice => prevSelectedPrice === price ? null : price);
-        setPriceState(price) 
+        setPriceState(price)
     }, [selectedItemIndex]);
 
     const handleHotelPrices = () => {
-        console.log("handleHotelPrices")
         return priceData.map((ele, index) => {
             return (
-                <TouchableOpacity style={index === selectedItemIndex ? styles.selectedItem : null} onPress={() => handleItemClick(index, ele.priceDetails)} key={index}>
+                <TouchableOpacity style={[styles.row, index === selectedItemIndex ? styles.selectedItem : null]} onPress={() => handleItemClick(index, ele.priceDetails)} key={index}>
                     <Text style={styles.priceTitle}>{`${ele.price} (${handlehotelsLengthBasedOnPrice(ele.startingPrice, ele.EndingPrice)})`}</Text>
                 </TouchableOpacity>
             )
         })
     }
     const handlehotelsLengthBasedOnPrice = useCallback((starting, ending) => {
-        console.log("handlehotelsLengthBasedOnPrice")
         return Array.isArray(hotelResList) ? hotelResList.filter((hotel) => {
             if (starting === ending) {
                 return hotel.Price.OfferedPriceRoundedOff >= starting;
@@ -854,31 +848,25 @@ const {
     }, [hotelResList]);
 
     const handleStarItemClick = useCallback((index, ratings) => {
-        console.log("handleStarItemClick")
         setRating(prevSelectedTime => prevSelectedTime === ratings ? null : ratings);
         setSelectedStarsItemIndex(index === selectedStarsItemIndex ? null : index);
     }, [selectedStarsItemIndex]);
 
     const generatePattern = () => {
-        console.log("generatePattern")
         return data.map((row, index) => (
             <TouchableOpacity key={index} style={[styles.row, index === selectedStarsItemIndex ? styles.selectedItem : null]} onPress={() => handleStarItemClick(index, row.length)}>
                 {[...Array(row.length).keys()].map((key) => (
-                    <IconSwitcher key={`${index}_${key}`} componentName='AntDesign' iconName='star' iconsize={2.5} color='#ffd700' />
+                    <IconSwitcher key={`${index + 1}_${key}`} componentName='AntDesign' iconName='star' iconsize={2.5} color='#ffd700' />
                 ))}
             </TouchableOpacity>
         ));
     };
 
-    const setRatingState = (rating) => {
-        console.log("setRatingState")
-        actions.setHotelRating(rating);
-    };
+    // const setRatingState = (rating) => {
+    //     console.log("setRatingState")
+    //     actions.setHotelRating(rating);
+    // };
     const setPriceState = (price) => {
-        // setIsPriceSelected((prevSelectedPrice) =>
-        //   prevSelectedPrice === price ? null : price
-        // );
-        console.log("setPriceState")
         if (price === "price1and5k") {
             setHotelPriceStart(1);
             setHotelPriceEnd(1500);
@@ -913,16 +901,15 @@ const {
         }
     };
 
-  const handleBooking = useCallback((hotel) => {
-    push("HotelInfo", { item: hotel });
+    const handleBooking = useCallback((hotel) => {
+        push("HotelInfo", { item: hotel });
 
-}, []);
+    }, []);
 
-        const handleKeyExtractor=(item, ind) => ind.toString()
+    const handleKeyExtractor = (item, ind) => ind.toString()
 
     const removeFilters = () => {
-        console.log("removeFilters")
-        // setApplyingFilters(false)
+        setSearchTerm("")
         setCount(0)
         setRating(null);
         setPrice(null);
@@ -938,105 +925,89 @@ const {
     };
 
 
-    const applyFilters = useMemo(() => {
-        console.log("applyFilters")
-        return () => {
-            setOpenFilters(false);
-            setApplyingFilters(!applyingfilters);
-            
-            setRatingState(rating);
-            setPriceState(price);
-            if (rating) {
-                setCount(prev => prev + 1);
-            }
-            if (price) {
-                setCount(prev => prev + 1);
-            }
-        };
-    }, [rating, price]);
+    // const applyFilters = useMemo(() => {
+    //     console.log("applyFilters")
+    //     return () => {
+    //         setOpenFilters(false);
+    //         setApplyingFilters(!applyingfilters);
+
+    //         setRatingState(rating);
+    //         setPriceState(price);
+    //         if (rating) {
+    //             setCount(prev => prev + 1);
+    //         }
+    //         if (price) {
+    //             setCount(prev => prev + 1);
+    //         }
+    //     };
+    // }, [rating, price]);
 
     const handleEditButton = () => {
-        console.log("handleEditButton")
         goBack()
         actions.setHotelErrorMessage()
         actions.backToHotelSearchPage()
         removeFilters()
         actions.setHotelSearchText('')
     }
-
+    if (searchingHotels) {
+        return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <ProgressBar />
+        </View>
+    }
     return (
-        !fetchingHotelInfo ?
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <ProgressBar />
-            </View>
-            :
-            <View style={{ flex: 1 }}>
-                <View style={styles.headerMainContainer}>
-                    <View style={styles.titleContainer}>
-                        <Text style={styles.title}>{`${hotelSearchName}`}</Text>
-                        <TouchableOpacity style={styles.editButtonContainer} onPress={handleEditButton}>
-                            <IconSwitcher componentName='MaterialIcons' iconName='edit' color={colors.white} iconsize={2.2} />
-                        </TouchableOpacity>
-                    </View>
-                  {hotelSearchCheckIn&&<Text style={styles.subTitle}>{`${hotelSearchCheckIn?.toString()
-                        .slice(4, 10)} - ${hotelSearchCheckOut?.toString()
-                            .slice(4, 10)} | ${hotelRooms} ${hotelRooms > 1 ? "Rooms" : "Room"
-                        } | ${hotelSearchAdults} ${hotelSearchAdults > 1 ? "Adults" : "Adult"
-                        }${hotelSearchChild
-                            ? ` | ${hotelSearchChild} ${hotelSearchChild > 1 ? "Children" : "Child"
-                            } `
-                            : ""
-                        }| ${hotelSearchNights} ${hotelSearchNights > 1 ? "nights" : "night"
-                        }`}</Text>}
-                </View>
-
-                <FilterHeader handlefiltersToggleActions={handleOpenFilters} value={openFilters} customStyle={{ rowGap: responsiveHeight(1), paddingHorizontal: responsiveWidth(4) }} filtersCount={count}>
-                    <Text style={styles.ratingTitle}>Rating</Text>
-                    <View style={styles.container}>
-                        {openFilters&&generatePattern()}
-                    </View>
-                    <Text style={styles.ratingTitle}>Price</Text>
-                    <View style={styles.container}>
-                        {openFilters&&handleHotelPrices()}
-                    </View>
-                    {/* onPress={applyFilters} */}
-                    <TouchableOpacity style={styles.applyFiltersBtn}   onPress={filterHotels}>
-                        <Text style={styles.applyFiltersBtnText} >Appy</Text>
+        <View style={{ flex: 1 }}>
+            <View style={styles.headerMainContainer}>
+                <View style={styles.titleContainer}>
+                    <Text style={styles.title}>{`${hotelSearchName}`}</Text>
+                    <TouchableOpacity style={styles.editButtonContainer} onPress={handleEditButton}>
+                        <IconSwitcher componentName='MaterialIcons' iconName='edit' color={colors.white} iconsize={2.2} />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.filterClosingIcon} onPress={handleOpenFilters}>
-                        <IconSwitcher componentName='Ionicons' iconName='chevron-up' color={colors.black} iconsize={3.5} />
-                    </TouchableOpacity>
-                </FilterHeader>
-
-{/* <TextInput placeholder='Search for your favourite hotel' style={{ borderWidth: 1, paddingHorizontal: responsiveWidth(5), borderRadius: responsiveHeight(2), fontSize: responsiveHeight(2.1) }} value={searchTerm} onChangeText={(e)=>setSearchTerm(e)}/> */}
-
-               <View style={styles.roomDetailsMainContainer}>
-                    <FlatList
-                        data={renderedData}
-                        renderItem={renderItem}
-                        keyExtractor={handleKeyExtractor}
-                         onEndReached={handleEndReached}
-                         onEndReachedThreshold={0.1}
-                        ListFooterComponent={renderFooter}
-                        showsVerticalScrollIndicator={false}
-                        ListHeaderComponent={renderHeader}
-                        ListEmptyComponent={()=><Text>"No Data Found"</Text>}
-                        // ListHeaderComponent={
-                        //     <View>
-                        //       <TextInput
-                        //         placeholder="Search..."
-                        //         value={searchTerm}
-                        //         onChangeText={text => setSearchTerm(text)}
-                        //       />
-                        //     </View>
-                        //   }
-                        
-                        // style={{ marginBottom: responsiveHeight(15) }}
-                        ListHeaderComponentStyle={{ paddingVertical: 10 }}
-                    />
                 </View>
-
+                {hotelSearchCheckIn && <Text style={styles.subTitle}>{`${hotelSearchCheckIn?.toString()
+                    .slice(4, 10)} - ${hotelSearchCheckOut?.toString()
+                        .slice(4, 10)} | ${hotelRooms} ${hotelRooms > 1 ? "Rooms" : "Room"
+                    } | ${hotelSearchAdults} ${hotelSearchAdults > 1 ? "Adults" : "Adult"
+                    }${hotelSearchChild
+                        ? ` | ${hotelSearchChild} ${hotelSearchChild > 1 ? "Children" : "Child"
+                        } `
+                        : ""
+                    }| ${hotelSearchNights} ${hotelSearchNights > 1 ? "nights" : "night"
+                    }`}</Text>}
             </View>
+
+            <FilterHeader handlefiltersToggleActions={handleOpenFilters} value={openFilters} customStyle={{ rowGap: responsiveHeight(1), paddingHorizontal: responsiveWidth(4) }} filtersCount={count}>
+                <Text style={styles.ratingTitle}>Rating</Text>
+                <View style={styles.container}>
+                    {openFilters && generatePattern()}
+                </View>
+                <Text style={styles.ratingTitle}>Price</Text>
+                <View style={styles.container}>
+                    {openFilters && handleHotelPrices()}
+                </View>
+                {/* onPress={applyFilters} */}
+                <TouchableOpacity style={styles.applyFiltersBtn} onPress={filterHotels}>
+                    <Text style={styles.applyFiltersBtnText} >Appy</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.filterClosingIcon} onPress={handleOpenFilters}>
+                    <IconSwitcher componentName='Ionicons' iconName='chevron-up' color={colors.black} iconsize={3.5} />
+                </TouchableOpacity>
+            </FilterHeader>
+
+            <View style={styles.roomDetailsMainContainer}>
+                {!openFilters && <FlatList
+                    data={renderedData}
+                    renderItem={renderItem}
+                    keyExtractor={handleKeyExtractor}
+                    onEndReached={handleEndReached}
+                    onEndReachedThreshold={0.1}
+                    ListFooterComponent={renderFooter}
+                    showsVerticalScrollIndicator={false}
+                    ListHeaderComponent={renderHeader}
+                    ListEmptyComponent={() => <Text>"No Data Found"</Text>}
+                    ListHeaderComponentStyle={{ paddingVertical: 10 }}
+                />}
+            </View>
+        </View>
     )
 }
 

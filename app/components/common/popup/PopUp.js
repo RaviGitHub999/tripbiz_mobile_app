@@ -61,9 +61,9 @@ const styles = StyleSheet.create(
         popUpSubContainer:{
             backgroundColor: 'white',
              width: '100%', 
-            padding:responsiveHeight(3),
+            padding:responsiveHeight(1.5),
             borderRadius:responsiveHeight(1.5),
-            gap:responsiveHeight(1.5)
+            // gap:responsiveHeight(1.5)
         },
         contentMainBox:{
             // borderWidth:1,

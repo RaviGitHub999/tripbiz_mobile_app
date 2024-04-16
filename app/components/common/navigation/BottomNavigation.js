@@ -5,8 +5,8 @@ import HomeScreen from '../../home/HomeScreen';
 import IconSwitcher from '../icons/IconSwitcher';
 import { colors, fonts } from '../../../config/theme';
 import { responsiveFontSize, responsiveHeight } from '../../../utils/responsiveScale';
-import MyTrips from '../../Trips/myTrips/MyTrips';
 import Wallet from '../../wallet/Wallet';
+import MyTrips from '../../Trips/MyTrips/MyTrips';
 const Demo1 = () => <></>
 const Tab = createBottomTabNavigator();
 const BottomNavigation = () => {

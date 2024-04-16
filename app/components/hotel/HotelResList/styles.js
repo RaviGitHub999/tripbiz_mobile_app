@@ -160,7 +160,9 @@ hotelCard: {
   },
   row: {
     flexDirection: 'row',
-    columnGap:responsiveWidth(2)
+    columnGap:responsiveWidth(2),
+    width:'100%',
+    padding:responsiveHeight(0.3),
   },
   ratingTitle:{
     fontSize:responsiveHeight(2.3),

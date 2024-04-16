@@ -16,9 +16,9 @@ const HotelInfo = ({ route: { params }, navigation: { goBack ,navigate} }) => {
     const [cancelFilter, setCancelFilter] = useState(false);
     const [heightAnim] = useState(new Animated.Value(responsiveHeight(10)));
     const { ResultIndex, HotelCode, SupplierHotelCodes, } = params.item
-    const { actions,selectedTripId,selectedTrip, hotelSessionExpired,fetchingHotelInfo, hotelInfoRes, bookingHotel, hotelStaticData, selectedHotelCheckInDate, selectedHotelCheckOutDate, hotelNights, hotelRoomArr, hotelSearchChild, domesticHotel, userTripStatus } = useContext(MyContext)
-    const hotelCheckIn = new Date(selectedHotelCheckInDate)
-    const hotelCheckOut = new Date(selectedHotelCheckOutDate)
+    const { actions,selectedTripId,selectedTrip, hotelSessionExpired,fetchingHotelInfo, hotelInfoRes, bookingHotel, hotelStaticData, hotelSearchCheckOut, hotelSearchCheckIn, hotelSearchNights, hotelRoomArr, hotelSearchChild, domesticHotel, userTripStatus } = useContext(MyContext)
+    const hotelCheckIn = new Date(hotelSearchCheckIn)
+    const hotelCheckOut = new Date(hotelSearchCheckOut)
     const increasedHeight = bookingHotel?.selectedRoomType?.length >= 3 ? responsiveHeight(35) : responsiveHeight(30);
     const initialHeight = responsiveHeight(10);
     const [isExpanded, setIsExpanded] = useState(false);
@@ -109,7 +109,7 @@ const HotelInfo = ({ route: { params }, navigation: { goBack ,navigate} }) => {
     const generatePattern = (itemCount) => {
         return Array.from({ length: itemCount }, (_, index) => index).map((ele, ind) => {
             return (
-                <View key={ind}>
+                <View key={`${ind+1}_`}>
                     <IconSwitcher componentName='AntDesign' iconName='star' iconsize={2} color='#ffd700' />
                 </View>
             )
@@ -436,7 +436,7 @@ fetchingHotelInfo?<View style={{flex:1,alignItems:'center',justifyContent:'cente
                         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: responsiveHeight(10) }}>
                             <View style={styles.hotelDetailsContainer}>
                                 <View style={styles.backIconContainer}>
-                                    <TouchableOpacity onPress={() => {navigate("MyTrips"), actions.handleGoBack() }}>
+                                    <TouchableOpacity onPress={() => {goBack(), actions.handleGoBack() }}>
                                         <IconSwitcher componentName='AntDesign' iconName='arrowleft' color="black" iconsize={3} />
                                     </TouchableOpacity>
                                 </View>
@@ -491,7 +491,7 @@ fetchingHotelInfo?<View style={{flex:1,alignItems:'center',justifyContent:'cente
                                     : null
                                 }
                                 <View style={styles.checkInAndCheckOutDatesContainer}>
-                                    <Text style={styles.checkInAndCheckOutDates}>{`${hotelCheckIn.toLocaleString('en-us', { month: 'long' })} ${hotelCheckIn.getDate()}, ${hotelCheckIn.getFullYear()} - ${hotelCheckOut.toLocaleString('en-us', { month: 'long' })} ${hotelCheckOut.getDate()}, ${hotelCheckOut.getFullYear()} , ${hotelNights} Nights`}</Text>
+                                    <Text style={styles.checkInAndCheckOutDates}>{`${hotelCheckIn.toLocaleString('en-us', { month: 'long' })} ${hotelCheckIn.getDate()}, ${hotelCheckIn.getFullYear()} - ${hotelCheckOut.toLocaleString('en-us', { month: 'long' })} ${hotelCheckOut.getDate()}, ${hotelCheckOut.getFullYear()} , ${hotelSearchNights} Nights`}</Text>
                                 </View>
                                 <View>
                                     <Text style={styles.PersonsDetails}>{`Adults-${hotelRoomArr[0].adults} , Children-${hotelSearchChild}`}</Text>
@@ -612,6 +612,7 @@ fetchingHotelInfo?<View style={{flex:1,alignItems:'center',justifyContent:'cente
                                              () => {
                                                  navigate("TripDetails", { id: selectedTripId })
                                                  actions.editTripById(selectedTripId, bookingHotel, "hotels");
+                                                 actions.handleSelectedTripId()
                                              }
                                          } style={styles.yesBtn}>
                                              <Text style={styles.yesBtnText}>yes</Text>
@@ -752,102 +753,9 @@ fetchingHotelInfo?<View style={{flex:1,alignItems:'center',justifyContent:'cente
                 </View>
             </Modal>
             </View>
-            
-           
-
-        /* </View> */
-//         <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
-// {           fetchingHotelInfo ?<ProgressBar/>:<Text>bvhgg</Text>}
-
-//         </View>
 
     )
 }
 
 export default React.memo(HotelInfo)
 
-// import { View, Text } from 'react-native'
-// import React, { useContext, useEffect } from 'react'
-// import MyContext from '../../../context/Context'
-
-// const HotelInfo = ({ route: { params }, navigation: { goBack ,navigate} }) => {
-//     const { ResultIndex, HotelCode, SupplierHotelCodes, } = params.item
-//     const {actions,hotelTokenId,fetchingHotelInfo,hotelTraceId,hotelImageList,hotelRoomArr}=useContext(MyContext)
-//     // useEffect(() => {
-//     //     const fetchHotelInfo = async () => {
-//     //         try {
-//     //             var hotelInfoReq = {
-//     //                 traceId: hotelTraceId,
-//     //                 tokenId: hotelTokenId,
-//     //                 resultIndex: ResultIndex,
-//     //                 hotelCode: HotelCode,
-//     //                 categoryId: SupplierHotelCodes && SupplierHotelCodes.length > 0
-//     //                     ? SupplierHotelCodes[0].CategoryId
-//     //                     : null,
-//     //             };
-    
-//     //             const response = await fetch(
-//     //                 "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/hotelInfoRes",
-//     //                 {
-//     //                     method: "POST",
-//     //                     headers: {
-//     //                         "Content-Type": "application/json"
-//     //                     },
-//     //                     body: JSON.stringify(hotelInfoReq)
-//     //                 }
-//     //             );
-    
-//     //             if (!response.ok) {
-//     //                 throw new Error('Network response was not ok');
-//     //             }
-    
-//     //             var hotelInfoRes = await response.json();
-   
-//     //         } catch (error) {
-//     //             console.error('Error fetching hotel info:', error);
-//     //         }
-//     //         hotelInfoRes.hotelSearchRes =params.item;
-//     //         let roomTypes = hotelRoomArr.map((room, r) => {
-//     //             return {
-//     //               ...hotelInfoRes.roomResult?.GetHotelRoomResult
-//     //                 ?.HotelRoomsDetails[0],
-    
-//     //               roomTypeIndex: 0
-//     //             };
-//     //           });
-//     //           var hotelImg = hotelImageList ? hotelImageList[HotelCode] ? hotelImageList[HotelCode].HotelPicture : hotelInfoRes?.hotelInfo?.HotelInfoResult?.HotelDetails?.Images[0] : hotelInfoRes?.hotelInfo?.HotelInfoResult?.HotelDetails?.Images[0]
-//     //     };
-    
-//     //     fetchHotelInfo();
-    
-//     // }, []); // Make sure to include any dependencies if necessary
-    
-//     useEffect(() => {
-//         const fetchData = async () => {
-//             try {
-//                 await actions.fetchHotelInfo({
-//                     resultIndex: ResultIndex,
-//                     hotelCode: HotelCode,
-//                     categoryId: SupplierHotelCodes && SupplierHotelCodes.length > 0
-//                         ? SupplierHotelCodes[0].CategoryId
-//                         : "",
-//                     hotelSearchRes: params.item
-//                 });
-//             } catch (error) {
-//                 console.error('Error fetching hotel info:', error);
-//             }
-//         };
-//         if (!fetchingHotelInfo) {
-//             fetchData();
-//         }
-       
-//     }, []);
-    
-//   return (
-//     <View>
-//       <Text>HotelInfo</Text>
-//     </View>
-//   )
-// }
-
-// export default React.memo(HotelInfo)

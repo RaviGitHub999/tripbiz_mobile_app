@@ -518,6 +518,7 @@ const FlightBooking = ({ navigation: { navigate } }) => {
                                             () => {
                                                 navigate("TripDetails", { id: selectedTripId })
                                                 actions.editTripById(selectedTripId, bookingFlight, "flights");
+                                                actions.handleSelectedTripId()
                                             }
                                         } style={styles.yesBtn}>
                                             <Text style={styles.yesBtnText}>yes</Text>

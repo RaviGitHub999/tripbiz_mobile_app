@@ -32,7 +32,7 @@ const TripDetailsFlightCard = ({
     const [deleteType, setDeleteType] = useState(false)
     const [openFlightPrice, setOpenFlightPrice] = useState(false)
     const [openFareRules, setOpenFareRules] = useState(false)
-    const { actions,adults,children,infants, flightsLogosData, flightResList, bookingFlight, flightResJType, domesticFlight } = useContext(MyContext)
+    const { actions, adults, children, infants, flightsLogosData, flightResList, bookingFlight, flightResJType, domesticFlight } = useContext(MyContext)
     // useEffect(()=>
     // {
     //     actions.handleFlightsLogos()
@@ -64,13 +64,13 @@ const TripDetailsFlightCard = ({
                 flightCode += `${code}, `;
             }
         });
-       
+        var id = flightBooking?.seats[0].length > 0 ? Object.keys(flightBooking?.seats[0][0]) : ''
         return (
-            <View style={styles.card}>
+            <View >
 
                 <View style={{ rowGap: responsiveHeight(1.2) }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', width: "70%", flexWrap: "wrap"}}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', width: "70%", flexWrap: "wrap" }}>
                             <View style={styles.flightLogoContainer}>
                                 {flightSymbol(airlinename) ? (
                                     <Image
@@ -93,7 +93,7 @@ const TripDetailsFlightCard = ({
                                 <Text style={styles.flightNumbers}> ({flightCode})</Text>
                             </View>
                         </View>
-                        <View style={{ backgroundColor: colors.highlight, padding: responsiveHeight(1), borderTopLeftRadius: responsiveHeight(2), borderBottomLeftRadius: responsiveHeight(2), marginRight: responsiveHeight(-1.5) ,width:"25%"}}>
+                        <View style={{ backgroundColor: colors.highlight, padding: responsiveHeight(1), borderTopLeftRadius: responsiveHeight(2), borderBottomLeftRadius: responsiveHeight(2), marginRight: responsiveHeight(-1.5), width: "25%" }}>
                             <Text style={{ fontSize: responsiveHeight(1.8), fontFamily: fonts.primary, color: colors.primary }}>{item.depTimeDate.toString().slice(4, 10)}</Text>
                         </View>
                     </View>
@@ -149,93 +149,6 @@ const TripDetailsFlightCard = ({
                         </View>
                     </View>
                 </View>
-
-                <View style={styles.flightBookingTravellerDetailsContainer}>
-                    <Text style={styles.flightBookingTravellerDetailsTitle}>{flightBooking.flightNew.fareType}</Text>
-                    <Text style={styles.flightBookingTravellerDetailsTitle}>
-                    {`${adults} ${adults > 1 ? "Adults" : "Adults"
-                  } ${children > 0 ? `, ${children} ${children > 1 ? "children" : "child"
-                    }` : ''}   ${infants > 0 ? `, ${infants} ${infants > 1 ? "infants" : "infant"
-                      }` : ''}`}
-                        </Text>
-                    <Text style={styles.flightBookingTravellerDetailsTitle}>{flightArr[0].segments[0].cabinClass}</Text>
-                </View>
-
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: responsiveHeight(3), alignItems: 'center' }}>
-                    <TouchableOpacity onPress={handletripsBaggageinfo}>
-                        <IconSwitcher componentName='MaterialIcons' iconName='luggage' color={colors.primary} iconsize={3} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={handletripsCancellationinfo}>
-                        <IconSwitcher componentName='FontAwesome6' iconName='calendar-xmark' color={colors.primary} iconsize={2.5} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={handletripsMealsinfo}>
-                        <IconSwitcher componentName='MaterialCommunityIcons' iconName='silverware-fork-knife' color={colors.primary} iconsize={2.5} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={handleFareRulesInfo}>
-                        <IconSwitcher componentName='Entypo' iconName='info-with-circle' color={colors.primary} iconsize={2.3} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={handletripsSeatinfo}>
-                        <IconSwitcher componentName='FontAwesome5' iconName='chair' color={colors.primary} iconsize={2.5} />
-                    </TouchableOpacity>
-                </View>
-
-                <View style={styles.flightPriceMainContainer}>
-                    {
-                        flightStatus ?
-                            <>
-                                {
-                                    flightStatus?.status ?
-                                        <View style={styles.bookingStatusTitlesMainContainer}>
-                                            <Text style={styles.bookingStatusTitles}>{`Booking Status : `}</Text>
-                                            <View style={[styles.bookingStatusTextContainer, { backgroundColor: reqColor[0] ? reqColor[0]?.color : "#808080" }]}>
-                                                <Text style={styles.bookingStatusText}>{flightStatus.status}</Text>
-                                            </View>
-                                        </View> : null
-                                }
-                            </> :
-
-                            <View style={styles.bookingStatusTitlesMainContainer}>
-                                <Text style={styles.bookingStatusTitles}>{`Booking Status : `}</Text>
-                                <View style={[styles.bookingStatusTextContainer, { backgroundColor: reqColor[0] ? reqColor[0]?.color : "#808080" }]}>
-                                    <Text style={styles.bookingStatusText}>Not Submitted</Text>
-                                </View>
-                            </View>
-                    }
-
-                    <View style={styles.bookingStatusTitlesMainContainer}>
-                        <Text style={styles.bookingStatusTitles}>{`Approval Status : `}</Text>
-                        <View style={[styles.bookingStatusTextContainer, { backgroundColor: reqColor[0] ? reqColor[0]?.color : "#808080" }]}>
-                            <Text style={styles.bookingStatusText}>{flightReq[0]?.requestStatus}</Text>
-                        </View>
-                    </View>
-
-                    <View style={styles.hotelTotalPriceContainer}>
-                        <Text style={styles.hotelTotalPrice}>{`Total Price : ₹ ${Math.ceil(flightBooking?.finalPrice)?.toLocaleString("en-IN")}`}</Text>
-                        <TouchableOpacity onPress={() => {
-                            setOpenFlightPrice((prev) => !prev)
-                        }}>
-                            <IconSwitcher componentName='Entypo' iconName='info-with-circle' color={colors.black} iconsize={1.8} />
-                        </TouchableOpacity>
-                    </View>
-                    {/* <Text>{`Approval Status : `}<Text>{flightReq[0]?.requestStatus}</Text></Text>
-                    <Text>{`Total Price : ₹ ${Math.ceil(flightBooking?.finalPrice)?.toLocaleString("en-IN")}`}</Text> */}
-                </View>
-
-                <View style={styles.addedFlightTimeAndDateContainer}>
-                    <View style={styles.addedFlightTitleContainer}>
-                        <Text style={styles.bookingStatusTitles}>{`Added Date: `}<Text style={styles.addedHotelTimeAndDate}>{`${timeStamp.toLocaleString()}`}</Text></Text>
-                    </View>
-                    <>
-                        <TouchableOpacity onPress={() => {
-                            setOpenDelete(true)
-                            setDeleteType("flights")
-                            setDeleteId(flightId)
-                        }}>
-                            <IconSwitcher componentName='MaterialIcons' iconName='delete' color={colors.red} iconsize={2.5} />
-                        </TouchableOpacity>
-                    </>
-                </View>
-
             </View>
 
         );
@@ -281,14 +194,102 @@ const TripDetailsFlightCard = ({
     return (
 
         <View style={{ flex: 1 }}>
-            <FlatList
-                data={flightArr[0].segments}
-                renderItem={handleRenderingFlightCard}
-                keyExtractor={item => item.resultIndex}
-                initialNumToRender={5}
-                maxToRenderPerBatch={5}
-                windowSize={5}
-            />
+            <View style={styles.card}>
+                <FlatList
+                    data={flightArr[0].segments}
+                    renderItem={handleRenderingFlightCard}
+                    keyExtractor={item => item.resultIndex}
+                    initialNumToRender={5}
+                    maxToRenderPerBatch={5}
+                    windowSize={5}
+                />
+                <View style={styles.flightBookingTravellerDetailsContainer}>
+                    <Text style={styles.flightBookingTravellerDetailsTitle}>{flightBooking.flightNew.fareType}</Text>
+                    <Text style={styles.flightBookingTravellerDetailsTitle}>
+                        {`${adults} ${adults > 1 ? "Adults" : "Adults"
+                            } ${children > 0 ? `, ${children} ${children > 1 ? "children" : "child"
+                                }` : ''}   ${infants > 0 ? `, ${infants} ${infants > 1 ? "infants" : "infant"
+                                    }` : ''}`}
+                    </Text>
+                    <Text style={styles.flightBookingTravellerDetailsTitle}>{flightArr[0].segments[0].cabinClass}</Text>
+                </View>
+
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: responsiveHeight(3), alignItems: 'center' }}>
+                    <TouchableOpacity onPress={handletripsBaggageinfo}>
+                        <IconSwitcher componentName='MaterialIcons' iconName='luggage' color={colors.primary} iconsize={3} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handletripsCancellationinfo}>
+                        <IconSwitcher componentName='FontAwesome6' iconName='calendar-xmark' color={colors.primary} iconsize={2.5} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handletripsMealsinfo}>
+                        <IconSwitcher componentName='MaterialCommunityIcons' iconName='silverware-fork-knife' color={colors.primary} iconsize={2.5} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleFareRulesInfo}>
+                        <IconSwitcher componentName='Entypo' iconName='info-with-circle' color={colors.primary} iconsize={2.3} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handletripsSeatinfo}>
+                        <IconSwitcher componentName='FontAwesome5' iconName='chair' color={colors.primary} iconsize={2.5} />
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.flightPriceMainContainer}>
+                    {
+                        flightStatus ?
+                            <>
+                                {
+                                    flightStatus?.status ?
+                                        <View style={styles.bookingStatusTitlesMainContainer}>
+                                            <Text style={styles.bookingStatusTitles}>{`Booking Status : `}</Text>
+                                            <View style={[styles.bookingStatusTextContainer, { backgroundColor: reqColor[0] ? reqColor[0]?.color : "#808080" }]}>
+                                                <Text style={styles.bookingStatusText}>{flightStatus.status}</Text>
+                                            </View>
+                                        </View> : null
+                                }
+                            </> :
+
+                            <View style={styles.bookingStatusTitlesMainContainer}>
+                                <Text style={styles.bookingStatusTitles}>{`Booking Status : `}</Text>
+                                <View style={[styles.bookingStatusTextContainer, { backgroundColor: reqColor[0] ? reqColor[0]?.color : "#808080" }]}>
+                                    <Text style={styles.bookingStatusText}>Not Submitted</Text>
+                                </View>
+                            </View>
+                    }
+
+                    <View style={styles.bookingStatusTitlesMainContainer}>
+                        <Text style={styles.bookingStatusTitles}>{`Approval Status : `}</Text>
+                        <View style={[styles.bookingStatusTextContainer, { backgroundColor: reqColor[0] ? reqColor[0]?.color : "#808080" }]}>
+                            <Text style={styles.bookingStatusText}>{flightReq[0]?.requestStatus}</Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.hotelTotalPriceContainer}>
+                        <Text style={styles.hotelTotalPrice}>{`Total Price : ₹ ${Math.ceil(flightBooking?.finalPrice)?.toLocaleString("en-IN")}`}</Text>
+                        <TouchableOpacity onPress={() => {
+                            setOpenFlightPrice((prev) => !prev)
+                        }}>
+                            <IconSwitcher componentName='Entypo' iconName='info-with-circle' color={colors.black} iconsize={1.8} />
+                        </TouchableOpacity>
+                    </View>
+
+                </View>
+
+                        <View style={styles.addedFlightTimeAndDateContainer}>
+                    <View style={styles.addedFlightTitleContainer}>
+                        <Text style={styles.bookingStatusTitles}>{`Added Date: `}<Text style={styles.addedHotelTimeAndDate}>{timeStamp.toString().slice(4, 24)}</Text></Text>
+                    </View>
+                    <>
+                        <TouchableOpacity onPress={() => {
+                            setOpenDelete(true)
+                            setDeleteType("flights")
+                            setDeleteId(flightId)
+                        }}>
+                            <IconSwitcher componentName='MaterialIcons' iconName='delete' color={colors.red} iconsize={2.5} />
+                        </TouchableOpacity>
+                    </>
+                </View>
+
+            </View>
+
+
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -340,8 +341,26 @@ const TripDetailsFlightCard = ({
                     </View>
                 </View>
             </Modal>
+            
             <PopUp value={tripsBaggage} handlePopUpClose={handletripsBaggageinfoClose}>
-                <Text>No extra baggage</Text>
+               {
+                tripsPage?(
+                    <>
+                    <Text style={styles.baggageTitle}>Baggage details</Text>
+                    <View style={styles.BaggageDetailsMainContainer}>
+                        {flightBooking?.baggageDtls?.cabinBaggage ?<View style={styles.BaggageDetails}> 
+                            <IconSwitcher componentName='AntDesign' iconName='arrowright' color={colors.primary} iconsize={2.5}/>
+                            <Text style={styles.baggageTitles}>Cabin baggage: <Text style={styles.baggageTitlesHighlight}>{flightBooking?.baggageDtls?.cabinBaggage}</Text></Text>
+                        </View>:null}
+                        {flightBooking?.baggageDtls?.baggage ?<View style={styles.BaggageDetails}>
+                        <IconSwitcher componentName='AntDesign' iconName='arrowright' color={colors.primary} iconsize={2.5}/>
+                            <Text style={styles.baggageTitles}>Check-in baggage: <Text style={styles.baggageTitlesHighlight}> {flightBooking?.baggageDtls?.baggage}</Text></Text>
+                        </View>:null}
+                    </View>
+                    </>
+                    
+                ):null
+               }
             </PopUp>
 
             <PopUp value={tripsCancellation} handlePopUpClose={handletripsCancellationinfoClose}>
@@ -433,12 +452,45 @@ const TripDetailsFlightCard = ({
             </PopUp>
 
             <PopUp value={tripsMeals} handlePopUpClose={handletripsMealsinfoClose}>
-                <Text>No meal selected</Text>
-
+              
+{
+ Array.isArray(flightBooking?.selectedMeals) ?
+ (
+ <>
+ {
+    flightBooking.selectedMeals.map((meal)=>
+    {
+        return(
+            <>
+            <Text style={[styles.baggageTitle,{textAlign:'center'}]}>Selected Meals</Text>
+            {
+                meal.map((meal,s)=>
+                {
+                    var type = s + 1 <= flightBooking.adults ? 'Adult' : (s + 1 <= (flightBooking.adults + flightBooking.child) ? "Child" : "Infant")
+                    var indexe = s + 1 <= flightBooking.adults ? s : (s + 1 <= (flightBooking.adults + flightBooking.child) ? s - flightBooking.adults : "Infant") 
+                    return(
+                     <Text style={styles.baggageTitles}>
+                        {type}-{indexe + 1}:{meal.mealDesc} -&gt;<Text style={{color:colors.secondary}}> &#8377;{meal.price}</Text>
+                     </Text>   
+                    )
+                })
+            }
+            </>
+        )
+    })
+ }
+ </>
+ )
+ :null
+}
             </PopUp>
 
             <PopUp value={tripsSeat} handlePopUpClose={handletripsSeatinfoClose}>
+    {/* {
+        id.length>0?(
 
+        )
+    } */}
             </PopUp>
 
             <PopUp value={openDelete} handlePopUpClose={() => {

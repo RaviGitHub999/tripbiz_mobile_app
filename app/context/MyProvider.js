@@ -1768,7 +1768,6 @@ this.setState({bookinghotelquery:query})
             recommondedHotelsData.forEach((hotel) => {
               hotelObj[hotel["Hotel Code"]] = hotel;
             });
-            console.log(recommondedHotelsData,"recommondedHotelsData")
             this.setState({
               recommondedHotels: hotelObj
             });
@@ -1970,7 +1969,7 @@ this.setState({bookinghotelquery:query})
           this.setState({
             hotelResList: [],
             hotelSearchQuery: query,
-            // searchingHotels: true,
+            searchingHotels: true,
             cityHotel: query.cityHotel,
             hotelSessionStarted: false,
             hotelSessionEnded: false,
@@ -2071,7 +2070,9 @@ this.setState({setidToIndex:idToIndex})
                 } else if (indexB === undefined) {
                     return -1;
                 }
-                return indexB - indexA;
+                const priceA = a.Price.OfferedPriceRoundedOff; 
+                const priceB = b.Price.OfferedPriceRoundedOff;
+                return priceA - priceB;
             });
           
             if (hotelRes?.error) {
@@ -3423,8 +3424,8 @@ this.setState({setidToIndex:idToIndex})
         setRes: async () => {
           this.setState({
             searchingFlights: true,
-            searchingHotels: false,
-            fetchingHotelInfo: false,
+            searchingHotels: true,
+            fetchingHotelInfo: true,
             hotelInfoRes: false,
             flightResList: [],
             hotelResList: [],
@@ -3497,48 +3498,13 @@ this.setState({setidToIndex:idToIndex})
           }
         },
 
+        handleSelectedTripId:()=>
+        {
+          this.setState({selectedTripId:null})
+        }
+
       },
-      // deleteTripItem : async (tripId, itemId, itemType) => {
-      //   try {
-      //     const docCollecRef = firestore().collection("Accounts").doc(this.state.userId).collection("trips").doc(tripId);
-      //     const docSnapshot = await docCollecRef.get();
-
-      //     if (!docSnapshot.exists) {
-      //       throw new Error("Trip document not found");
-      //     }
-
-      //     const tripData = docSnapshot.data();
-
-      //     if (itemType === "hotels") {
-      //       const hotels = tripData.hotels || [];
-
-      //       const deletedHotelIndex = hotels.findIndex(hotel => hotel.id === itemId);
-
-      //       if (deletedHotelIndex !== -1) {
-      //         const updatedHotels = [...hotels.slice(0, deletedHotelIndex), ...hotels.slice(deletedHotelIndex + 1)];
-      //         await docCollecRef.update({ hotels: updatedHotels });
-      //         await firestore().collection("Accounts").doc(this.state.userId).collection("trips").doc(tripId).collection("hotels").doc(itemId).delete();
-      //       }
-      //     } else if (itemType === "flights") {
-      //       const flights = tripData.flights || [];
-
-      //       const deletedFlightIndex = flights.findIndex(flight => flight.id === itemId);
-
-      //       if (deletedFlightIndex !== -1) {
-      //         const updatedFlights = [...flights.slice(0, deletedFlightIndex), ...flights.slice(deletedFlightIndex + 1)];
-      //         await docCollecRef.update({ flights: updatedFlights });
-      //         await firestore().collection("Accounts").doc(this.state.userId).collection("trips").doc(tripId).collection("flights").doc(itemId).delete();
-      //       }
-      //     }
-
-      //     // Update state or trigger any other action as needed
-      //     // For example, you can reload the trip data after deletion
-      //     // this.setState({ tripData: null, tripDataLoading: true });
-      //     // await this.state.actions.getTripDocById(tripId, userId);
-      //   } catch (error) {
-      //     console.error("Error deleting trip item:", error);
-      //   }
-      // },
+      
 
 
 
