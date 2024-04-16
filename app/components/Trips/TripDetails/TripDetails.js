@@ -12,7 +12,6 @@ import { responsiveHeight } from '../../../utils/responsiveScale';
 import TripDetailsFlightCard from './TripDetailsFlightCard';
 import PopUp from '../../common/popup/PopUp';
 import { RefreshControl } from 'react-native';
-import FastImage from 'react-native-fast-image';
 const TripDetails = ({ navigation: { navigate, goBack } }) => {
   const [mounted, setMounted] = useState(true)
   const [airlinelogos, setAirlinelogos] = useState([]);
@@ -35,7 +34,7 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
       await getTripData();
       await getData()
       setRefreshing(false);
-    }, 2000); // Simulating some async task with setTimeout
+    }, 2000);
   };
   //   const handleBackButtonPress = () => {
   //     actions.setFlightBookPage(false);
@@ -119,13 +118,13 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
   }
 
   const handleFlights = async () => {
-    navigate("CustomerBottomNavigation")
+    navigate("Home")
     actions.setSelectedTripId(id);
     await actions.setRes();
     actions.switchComponent("flights")
   }
   const handleHotels = async () => {
-    navigate('CustomerBottomNavigation')
+    navigate('Home')
     actions.setSelectedTripId(id);
     await actions.setRes();
     actions.switchComponent("hotel")
@@ -270,7 +269,7 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
                                      onError={() => setImageError(true)}
                                      // onLoad={()=>setImageError(false)}
                                    /> */}
-                                   {/* <Image
+                                   <Image
   style={styles.hotelImg}
   source={{ uri: imageError ? "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg" : img }}   
   onError={() => {
@@ -278,8 +277,8 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
     setImageError(true);
   }}
   onLoad={() => console.log("Image loaded successfully")}
-/> */}
-<FastImage
+/>
+{/* <FastImage
   style={styles.hotelImg}
   source={{
     uri: imageError
@@ -291,7 +290,7 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
     setImageError(true);
   }}
   onLoad={() => console.log("Image loaded successfully")}
-/>
+/> */}
 
                                  </View>
                                  <View style={{ width: "65%", paddingLeft: responsiveHeight(1), gap: responsiveHeight(1) }}>

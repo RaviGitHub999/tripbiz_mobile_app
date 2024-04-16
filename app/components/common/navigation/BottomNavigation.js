@@ -5,6 +5,8 @@ import HomeScreen from '../../home/HomeScreen';
 import IconSwitcher from '../icons/IconSwitcher';
 import { colors, fonts } from '../../../config/theme';
 import { responsiveFontSize, responsiveHeight } from '../../../utils/responsiveScale';
+import MyTrips from '../../Trips/myTrips/MyTrips';
+import Wallet from '../../wallet/Wallet';
 const Demo1 = () => <></>
 const Tab = createBottomTabNavigator();
 const BottomNavigation = () => {
@@ -25,7 +27,7 @@ const BottomNavigation = () => {
   
  
   }}
-
+initialRouteName='Home'
   >
     <Tab.Screen
       name="Home"
@@ -38,22 +40,22 @@ const BottomNavigation = () => {
       }}
     />
     <Tab.Screen
-      name="Search"
-      component={Demo1}
+      name="MyTrips"
+      component={MyTrips}
       options={{
-        tabBarLabel: 'Search',
+        tabBarLabel: 'MyTrips',
         tabBarIcon: ({ color, size }) => (
-          <IconSwitcher componentName='AntDesign' iconName='search1' color={color} iconsize={3.2}/>
+          <IconSwitcher componentName='MaterialCommunityIcons' iconName='wallet-travel' color={color} iconsize={3.2}/>
         ),
       }}
     />
     <Tab.Screen
-      name="Settings"
-      component={Demo1}
+      name="Wallet"
+      component={Wallet}
       options={{
-        tabBarLabel: 'Settings',
+        tabBarLabel: 'Wallet',
         tabBarIcon: ({ color, size }) => (
-          <IconSwitcher componentName='AntDesign' iconName='setting' color={color} iconsize={3.2}/> 
+          <IconSwitcher componentName='Entypo' iconName='wallet' color={color} iconsize={3.2}/> 
         ),
       }}
     />

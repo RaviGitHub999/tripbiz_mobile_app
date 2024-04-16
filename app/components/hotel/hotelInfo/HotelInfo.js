@@ -84,7 +84,7 @@ const HotelInfo = ({ route: { params }, navigation: { goBack ,navigate} }) => {
 
     const images = hotelInfoRes?.hotelInfo?.HotelInfoResult?.HotelDetails?.Images ? [...hotelInfoRes?.hotelInfo?.HotelInfoResult?.HotelDetails?.Images] : []
     useEffect(() => {
-        actions.getLastDoc()
+        // actions.getLastDoc()
         actions.fetchHotelInfo(
             {
                 resultIndex: ResultIndex,
@@ -123,7 +123,9 @@ const HotelInfo = ({ route: { params }, navigation: { goBack ,navigate} }) => {
     const renderItem = ({ item: room, index }) => {
         //   console.log("9")
         return (
-            <TouchableOpacity style={styles.card} onPress={() => { actions.selectHotelRoomType(room, selectedRoom, index) }}>
+            <TouchableOpacity style={bookingHotel.selectedRoomType[selectedRoom] &&
+                ((bookingHotel.selectedRoomType[selectedRoom].RoomTypeCode === room?.RoomTypeCode) && (bookingHotel.selectedRoomType[selectedRoom].LastCancellationDate === room?.LastCancellationDate) && (bookingHotel.selectedRoomType[selectedRoom].Price.OfferedPriceRoundedOff === room?.Price.OfferedPriceRoundedOff))
+                ? [{...styles.card},{backgroundColor:colors.highlightTranslucent}]:styles.card} onPress={() => { actions.selectHotelRoomType(room, selectedRoom, index) }}>
                 <View style={styles.cardMainSubContainer}>
                     <View style={styles.cardSubContainer1}>
                         <Text style={styles.roomType}>{room.RoomTypeName}</Text>
@@ -434,7 +436,7 @@ fetchingHotelInfo?<View style={{flex:1,alignItems:'center',justifyContent:'cente
                         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: responsiveHeight(10) }}>
                             <View style={styles.hotelDetailsContainer}>
                                 <View style={styles.backIconContainer}>
-                                    <TouchableOpacity onPress={() => { goBack(), actions.handleGoBack() }}>
+                                    <TouchableOpacity onPress={() => {navigate("MyTrips"), actions.handleGoBack() }}>
                                         <IconSwitcher componentName='AntDesign' iconName='arrowleft' color="black" iconsize={3} />
                                     </TouchableOpacity>
                                 </View>
@@ -496,7 +498,7 @@ fetchingHotelInfo?<View style={{flex:1,alignItems:'center',justifyContent:'cente
                                 </View>
                                 <View style={{ rowGap: responsiveHeight(1) }}>
                                     <Text style={styles.roomDetailsTitle}>Room Details</Text>
-                                    {/* <View style={styles.roomsMappedContainer}>
+                                    <View style={styles.roomsMappedContainer}>
                                         {
                                             bookingHotel.selectedRoomType &&
                                             bookingHotel.selectedRoomType.map((room, r) => {
@@ -507,7 +509,7 @@ fetchingHotelInfo?<View style={{flex:1,alignItems:'center',justifyContent:'cente
                                                 )
                                             })
                                         }
-                                    </View> */}
+                                    </View>
                                     <View style={styles.roomDetailsMainContainer}>
                                         {/* BreakfastAndRefundableButtons */}
                                         <View style={styles.breakfastAndRefundableButtonsContainer}>

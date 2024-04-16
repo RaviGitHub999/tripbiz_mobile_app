@@ -322,3 +322,72 @@ actions.handleBookinghotelquery(
 }
 
 export default React.memo(HotelSearch)
+
+// import React, { useState, useMemo } from 'react';
+// import { View, Text, Button, FlatList, TextInput } from 'react-native';
+
+// const initialData = [
+//   { id: 1, name: 'John', age: 25 },
+//   { id: 2, name: 'Alice', age: 30 },
+//   { id: 3, name: 'Bob', age: 28 },
+//   { id: 4, name: 'Emma', age: 35 },
+//   // Add more data as needed
+// ];
+
+// const App = () => {
+//   const [data] = useState(initialData);
+//   const [filter, setFilter] = useState(null);
+//   const [searchQuery, setSearchQuery] = useState('');
+
+//   const filteredData = useMemo(() => {
+//     let filtered = data;
+//     if (filter === 'name') {
+//       filtered = filtered.filter(item => item.name.startsWith(searchQuery));
+//     }
+//     if (filter === 'age') {
+//       filtered = filtered.filter(item => item.age.toString().startsWith(searchQuery));
+//     }
+//     return filtered;
+//   }, [data, filter, searchQuery]);
+
+//   const filterByName = () => {
+//     setFilter('name');
+//   };
+
+//   const filterByAge = () => {
+//     setFilter('age');
+//   };
+
+//   const clearFilter = () => {
+//     setFilter(null);
+//     setSearchQuery('');
+//   };
+
+//   return (
+//     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+//       <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+//         <Button title="Filter by Name" onPress={filterByName} />
+//         <Button title="Filter by Age" onPress={filterByAge} />
+//         <Button title="Clear Filter" onPress={clearFilter} />
+//       </View>
+//       <TextInput
+//         style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingHorizontal: 10 }}
+//         placeholder="Search..."
+//         onChangeText={text => setSearchQuery(text)}
+//         value={searchQuery}
+//       />
+//       <FlatList
+//         data={filteredData}
+//         renderItem={({ item }) => (
+//           <View style={{ marginBottom: 10 }}>
+//             <Text>Name: {item.name}</Text>
+//             <Text>Age: {item.age}</Text>
+//           </View>
+//         )}
+//         keyExtractor={item => item.id.toString()}
+//       />
+//     </View>
+//   );
+// };
+
+// export default App;

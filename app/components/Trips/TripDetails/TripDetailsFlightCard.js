@@ -69,8 +69,8 @@ const TripDetailsFlightCard = ({
             <View style={styles.card}>
 
                 <View style={{ rowGap: responsiveHeight(1.2) }}>
-                    <View style={bookingFlight ? { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' } : styles.logoHeader}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', width: "80%", flexWrap: "wrap" }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', width: "70%", flexWrap: "wrap"}}>
                             <View style={styles.flightLogoContainer}>
                                 {flightSymbol(airlinename) ? (
                                     <Image
@@ -93,7 +93,7 @@ const TripDetailsFlightCard = ({
                                 <Text style={styles.flightNumbers}> ({flightCode})</Text>
                             </View>
                         </View>
-                        <View style={{ backgroundColor: colors.highlight, padding: responsiveHeight(1), borderTopLeftRadius: responsiveHeight(2), borderBottomLeftRadius: responsiveHeight(2), marginRight: responsiveHeight(-1.5) }}>
+                        <View style={{ backgroundColor: colors.highlight, padding: responsiveHeight(1), borderTopLeftRadius: responsiveHeight(2), borderBottomLeftRadius: responsiveHeight(2), marginRight: responsiveHeight(-1.5) ,width:"25%"}}>
                             <Text style={{ fontSize: responsiveHeight(1.8), fontFamily: fonts.primary, color: colors.primary }}>{item.depTimeDate.toString().slice(4, 10)}</Text>
                         </View>
                     </View>

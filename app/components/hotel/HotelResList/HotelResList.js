@@ -614,10 +614,9 @@ const HotelResList = ({ navigation: { navigate, goBack ,push} }) => {
     const [openFilters, setOpenFilters] = useState(false)
     const [selectedItemIndex, setSelectedItemIndex] = useState();
     const [selectedStarsItemIndex, setSelectedStarsItemIndex] = useState();
-    const [price, setPrice] = useState();
-    const [rating, setRating] = useState();
+    const [price, setPrice] = useState(null);
+    const [rating, setRating] = useState(null);
     var [count, setCount] = useState(0);
-    const [error, setError] = useState(false);
 const {
         searchingHotels,
         hotelResList,
@@ -638,74 +637,152 @@ const {
         hotelImageList,
         hotelErrorMessage,
         cityHotel,
-        hotelSessionExpiredPopup
+        hotelSessionExpiredPopup,
+        setidToIndex,
+        
+
     } = useContext(MyContext);
-    const [data1, setData] = useState([])
-    const [renderedData, setRenderedData] = useState(data1.slice(0, 20));
+    // actions.setHotelPriceStart(2500);
+    const [fetchedData, setFetchedData] = useState([])
+    const [renderedData, setRenderedData] = useState();
     const [loading, setLoading] = useState(false);
     const [applyingfilters, setApplyingFilters] = useState(false)
-    const [filterhotelsdata, setFiltersHotelsData] = useState([])
-    const [idToIndex, setidToIndex] = useState()
+    const [searchTerm, setSearchTerm] = useState('');
+    const [hotelPriceStart,setHotelPriceStart]=useState()
+    const [hotelPriceEnd,setHotelPriceEnd]=useState()
     useEffect(() => {
-        console.log("useEffect")
-        if (hotelResList.length > 0) {
-            const hotelIdsInObject = recommondedHotels ? Object.keys(recommondedHotels).map(ele => { return { HotelCode: ele } }) : []
-            const idToIndex = hotelIdsInObject.reduce((acc, item, index) => {
-                acc[item.HotelCode] = index;
-                return acc;
-            }, {});
-
-            setidToIndex(idToIndex)
-            const filteredHotels = hotelResList.filter(hotel => {
-                const staticData = hotelStaticData[hotel.HotelCode];
-                const hotelName = hotel.HotelName ? hotel.HotelName : staticData?.HotelName;
-                return hotelName?.length > 0;
-            })
-            setFiltersHotelsData(filteredHotels)
-            const finalData = actions.filterHotels(filteredHotels).sort((a, b) => {
-                const indexA = idToIndex[a.HotelCode];
-                const indexB = idToIndex[b.HotelCode];
-
-                if (indexA === undefined && indexB === undefined) {
-                    return 0;
-                } else if (indexA === undefined) {
-                    return 1;
-                } else if (indexB === undefined) {
-                    return -1;
-                }
-                return indexA - indexB;
-            });
-            // console.log(finalData)
-
-            setData(finalData)
-            setRenderedData(finalData.slice(0, 20))
+        // const sorted = [...hotelResList].sort((a, b) => a.Price.OfferedPriceRoundedOff ?a.Price.OfferedPriceRoundedOff - b.Price.OfferedPriceRoundedOff:a.Price.PublishedPriceRoundedOff-b.Price.PublishedPriceRoundedOff);
+        setFetchedData([...hotelResList]);
+        setRenderedData(hotelResList.slice(0, 20));
+        return ()=>
+        {
+            setFetchedData([])
+            setRenderedData([])
         }
-    }, [hotelResList, applyingfilters])
+    }, [hotelResList])
+    useEffect(() => {
+        setRenderedData(fetchedData.slice(0, 20));
+        // return setRenderedData([])
+    }, [fetchedData]);
+    const handleSearch = (text) => {
+        setSearchTerm(text);
+        if (text) {
+            filteredArr = hotelResList.filter((hotel) => {
+              const staticData =hotelStaticData[hotel.HotelCode];
+              if (hotel.HotelName) {
+                return hotel.HotelName.toLowerCase().includes(
+                    text.toLowerCase()
+                );
+              }
+              else {
+                return staticData?.HotelName.toLowerCase().includes(
+                text.toLowerCase()
+                );
+              }
+
+            });
+            setFetchedData(filteredArr)
+            
+          }
+          else if(text===""){
+            setFetchedData(hotelResList);
+          }
+        
+      };
+
+
+      const filterHotels=()=>
+      {
+        var filteredArr = hotelResList;
+
+        if (rating) {
+          //console.log(this.state.hotelRating);
+          filteredArr = filteredArr.filter(
+            (hotel) => hotel.StarRating === rating
+          );
+        }
+        if (price!==null) {
+            //console.log(this.state.hotelPriceStart);
+            filteredArr = filteredArr.filter((hotel) => {
+              return (
+                hotel.Price.OfferedPriceRoundedOff >=
+                hotelPriceStart &&
+                hotel.Price.OfferedPriceRoundedOff < hotelPriceEnd
+              );
+            });
+          }
+          setFetchedData(filteredArr)
+          setOpenFilters(false)
+          setCount(0);
+        if (rating) {
+            setCount(prev => prev + 1);
+        }
+        if (price) {
+            setCount(prev => prev + 1);
+        }
+      }
+    // const [idToIndex, setidToIndex] = useState()
+    // useEffect(() => {
+    //     console.log("useEffect")
+    //     if (hotelResList.length > 0) {
+    //         const hotelIdsInObject = recommondedHotels ? Object.keys(recommondedHotels).map(ele => { return { HotelCode: ele } }) : []
+    //         const idToIndex = hotelIdsInObject.reduce((acc, item, index) => {
+    //             acc[item.HotelCode] = index;
+    //             return acc;
+    //         }, {});
+
+    //         setidToIndex(idToIndex)
+    //         const filteredHotels = hotelResList.filter(hotel => {
+    //             const staticData = hotelStaticData[hotel.HotelCode];
+    //             const hotelName = hotel.HotelName ? hotel.HotelName : staticData?.HotelName;
+    //             return hotelName?.length > 0;
+    //         })
+    //         setFiltersHotelsData(filteredHotels)
+    //         const finalData = actions.filterHotels(filteredHotels).sort((a, b) => {
+    //             const indexA = idToIndex[a.HotelCode];
+    //             const indexB = idToIndex[b.HotelCode];
+
+    //             if (indexA === undefined && indexB === undefined) {
+    //                 return 0;
+    //             } else if (indexA === undefined) {
+    //                 return 1;
+    //             } else if (indexB === undefined) {
+    //                 return -1;
+    //             }
+    //             return indexA - indexB;
+    //         });
+    //         // console.log(finalData)
+
+    //         setData(finalData)
+    //         setRenderedData(finalData.slice(0, 20))
+    //     }
+    // }, [hotelResList, applyingfilters])
 
     const loadMoreData = () => {
-        if (renderedData.length !== data1.length) {
+        if (renderedData.length !== fetchedData.length) {
             setLoading(true);
         }
         setTimeout(() => {
-            const endIndex = Math.min(renderedData.length + 20, data1.length); // Calculate the end index for new data
-            setRenderedData(prevData => [...prevData, ...data1.slice(prevData.length, endIndex)]); // Append new data to renderedData
+            const endIndex = Math.min(renderedData.length + 20, fetchedData.length); // Calculate the end index for new data
+            setRenderedData(prevData => [...prevData, ...fetchedData.slice(prevData.length, endIndex)]); // Append new data to renderedData
             setLoading(false);
         }, 1000);
     };
     const handleEndReached = () => {
         console.log("handleEndReached")
-        if (renderedData.length < data1.length) { // Check if there are more items to render
+        if (renderedData.length < fetchedData.length) { // Check if there are more items to render
             loadMoreData();
         }
     };
 
-    const isImageUri = (uri) => {
-        console.log("isImageUri")
-        const imageExtensions = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg"];
-        return imageExtensions.some((ext) => uri.endsWith(ext));
-    };
+
+    // const isImageUri = (uri) => {
+    //     console.log("isImageUri")
+    //     const imageExtensions = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg"];
+    //     return imageExtensions.some((ext) => uri.endsWith(ext));
+    // };
     const renderItem = ({ item, index }) => {
-        return <HotelRenderItem item={item} handleBooking={handleBooking} idToIndex={idToIndex}/>
+        return <HotelRenderItem item={item} handleBooking={handleBooking} idToIndex={setidToIndex}/>
     }
     const renderFooter =
         () => {
@@ -716,30 +793,30 @@ const {
                 </View>
             );
         };
-    const renderHeader = useMemo(() => {
-        return (
-
-            <View style={{ gap: responsiveHeight(1) }}>
-
-                {count > 0 ? <TouchableOpacity style={styles.clearFilterContainer} onPress={() => removeFilters()}>
+        const renderHeader =  
+            
+              <View style={{ gap: responsiveHeight(1) }}>
+                {count > 0 ? (
+                  <TouchableOpacity style={styles.clearFilterContainer} onPress={()=>removeFilters()}>
                     <Text style={styles.clearFilterTitle}>Clear Filters</Text>
-                </TouchableOpacity> : null}
-
-
-                <TextInput placeholder='Search for your favourite hotel' style={{ borderWidth: 1, paddingHorizontal: responsiveWidth(5), borderRadius: responsiveHeight(2), fontSize: responsiveHeight(2.1) }} value={hotelSearchText} onChangeText={(e) => {
-                    actions.setHotelSearchText(e);
-                    setApplyingFilters(!applyingfilters)
-                    setError(false)
-                }} />
-                <Text style={styles.totalHotels}>{`Hotel search results (${actions.filterHotels(filterhotelsdata).filter((hotel) => {
-                    var staticData = hotelStaticData[hotel.HotelCode];
-                    var hotelName = hotel.HotelName ? hotel.HotelName : staticData?.HotelName;
-                    return hotelName?.length > 0;
-                }).length
-                    })`}</Text>
-            </View>
-        )
-    }, [filterhotelsdata, applyingfilters])
+                  </TouchableOpacity>
+                ) : null}
+                <TextInput
+                  placeholder='Search for your favourite hotel'
+                  style={{
+                    borderWidth: 1,
+                    paddingHorizontal: responsiveWidth(5),
+                    borderRadius: responsiveHeight(2),
+                    fontSize: responsiveHeight(2.1)
+                  }}
+                  value={searchTerm}
+                  onChangeText={handleSearch}
+                />
+                <Text style={styles.totalHotels}>
+                  {`Hotel search results (${fetchedData.length})`}
+                </Text>
+              </View>
+        
 
 
 
@@ -752,6 +829,7 @@ const {
        console.log("handleItemClick")
         setSelectedItemIndex(index === selectedItemIndex ? null : index);
         setPrice(prevSelectedPrice => prevSelectedPrice === price ? null : price);
+        setPriceState(price) 
     }, [selectedItemIndex]);
 
     const handleHotelPrices = () => {
@@ -766,14 +844,14 @@ const {
     }
     const handlehotelsLengthBasedOnPrice = useCallback((starting, ending) => {
         console.log("handlehotelsLengthBasedOnPrice")
-        return Array.isArray(filterhotelsdata) ? filterhotelsdata.filter((hotel) => {
+        return Array.isArray(hotelResList) ? hotelResList.filter((hotel) => {
             if (starting === ending) {
                 return hotel.Price.OfferedPriceRoundedOff >= starting;
             } else {
                 return hotel.Price.OfferedPriceRoundedOff >= starting && hotel.Price.OfferedPriceRoundedOff < ending;
             }
         }).length : null;
-    }, [filterhotelsdata]);
+    }, [hotelResList]);
 
     const handleStarItemClick = useCallback((index, ratings) => {
         console.log("handleStarItemClick")
@@ -802,36 +880,36 @@ const {
         // );
         console.log("setPriceState")
         if (price === "price1and5k") {
-            actions.setHotelPriceStart(1);
-            actions.setHotelPriceEnd(1500);
+            setHotelPriceStart(1);
+            setHotelPriceEnd(1500);
         }
         if (price === "price2and5k") {
-            actions.setHotelPriceStart(1500);
-            actions.setHotelPriceEnd(2500);
+            setHotelPriceStart(1500);
+            setHotelPriceEnd(2500);
         }
         if (price === "price4k") {
-            actions.setHotelPriceStart(2500);
-            actions.setHotelPriceEnd(4000);
+            setHotelPriceStart(2500);
+            setHotelPriceEnd(4000);
         }
         if (price === "price6k") {
-            actions.setHotelPriceStart(4000);
-            actions.setHotelPriceEnd(6000);
+            setHotelPriceStart(4000);
+            setHotelPriceEnd(6000);
         }
         if (price === "price8k") {
-            actions.setHotelPriceStart(6000);
-            actions.setHotelPriceEnd(8000);
+            setHotelPriceStart(6000);
+            setHotelPriceEnd(8000);
         }
         if (price === "price10k") {
-            actions.setHotelPriceStart(8000);
-            actions.setHotelPriceEnd(10000);
+            setHotelPriceStart(8000);
+            setHotelPriceEnd(10000);
         }
         if (price === "pricegt10k") {
-            actions.setHotelPriceStart(10000);
-            actions.setHotelPriceEnd(1000000);
+            setHotelPriceStart(10000);
+            setHotelPriceEnd(1000000);
         }
         if (price === null) {
-            actions.setHotelPriceStart(null);
-            actions.setHotelPriceEnd(null);
+            setHotelPriceStart(null);
+            setHotelPriceEnd(null);
         }
     };
 
@@ -844,18 +922,19 @@ const {
 
     const removeFilters = () => {
         console.log("removeFilters")
-        setApplyingFilters(false)
+        // setApplyingFilters(false)
         setCount(0)
         setRating(null);
         setPrice(null);
-        setRatingState(null);
-        setPriceState(null);
+        setFetchedData(hotelResList)
+        // setRatingState(null);
+        // setPriceState(null);
         setSelectedItemIndex(null)
         setSelectedStarsItemIndex(null)
-        actions.setHotelPriceStart(null);
-        actions.setHotelPriceEnd(null);
-        actions.setHotelRating(null);
-        actions.setHotelSearchText(null);
+        // actions.setHotelPriceStart(null);
+        // actions.setHotelPriceEnd(null);
+        // actions.setHotelRating(null);
+        // actions.setHotelSearchText(null);
     };
 
 
@@ -864,7 +943,7 @@ const {
         return () => {
             setOpenFilters(false);
             setApplyingFilters(!applyingfilters);
-            setCount(0);
+            
             setRatingState(rating);
             setPriceState(price);
             if (rating) {
@@ -886,7 +965,7 @@ const {
     }
 
     return (
-        searchingHotels ?
+        !fetchingHotelInfo ?
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <ProgressBar />
             </View>
@@ -899,10 +978,8 @@ const {
                             <IconSwitcher componentName='MaterialIcons' iconName='edit' color={colors.white} iconsize={2.2} />
                         </TouchableOpacity>
                     </View>
-                    <Text style={styles.subTitle}>{`${hotelSearchCheckIn
-                        .toString()
-                        .slice(4, 10)} - ${hotelSearchCheckOut
-                            .toString()
+                  {hotelSearchCheckIn&&<Text style={styles.subTitle}>{`${hotelSearchCheckIn?.toString()
+                        .slice(4, 10)} - ${hotelSearchCheckOut?.toString()
                             .slice(4, 10)} | ${hotelRooms} ${hotelRooms > 1 ? "Rooms" : "Room"
                         } | ${hotelSearchAdults} ${hotelSearchAdults > 1 ? "Adults" : "Adult"
                         }${hotelSearchChild
@@ -910,10 +987,10 @@ const {
                             } `
                             : ""
                         }| ${hotelSearchNights} ${hotelSearchNights > 1 ? "nights" : "night"
-                        }`}</Text>
+                        }`}</Text>}
                 </View>
 
-                {<FilterHeader handlefiltersToggleActions={handleOpenFilters} value={openFilters} customStyle={{ rowGap: responsiveHeight(1), paddingHorizontal: responsiveWidth(4) }} filtersCount={count}>
+                <FilterHeader handlefiltersToggleActions={handleOpenFilters} value={openFilters} customStyle={{ rowGap: responsiveHeight(1), paddingHorizontal: responsiveWidth(4) }} filtersCount={count}>
                     <Text style={styles.ratingTitle}>Rating</Text>
                     <View style={styles.container}>
                         {openFilters&&generatePattern()}
@@ -922,30 +999,42 @@ const {
                     <View style={styles.container}>
                         {openFilters&&handleHotelPrices()}
                     </View>
-                    <TouchableOpacity style={styles.applyFiltersBtn} onPress={applyFilters} >
+                    {/* onPress={applyFilters} */}
+                    <TouchableOpacity style={styles.applyFiltersBtn}   onPress={filterHotels}>
                         <Text style={styles.applyFiltersBtnText} >Appy</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.filterClosingIcon} onPress={handleOpenFilters}>
                         <IconSwitcher componentName='Ionicons' iconName='chevron-up' color={colors.black} iconsize={3.5} />
                     </TouchableOpacity>
-                </FilterHeader>}
+                </FilterHeader>
 
+{/* <TextInput placeholder='Search for your favourite hotel' style={{ borderWidth: 1, paddingHorizontal: responsiveWidth(5), borderRadius: responsiveHeight(2), fontSize: responsiveHeight(2.1) }} value={searchTerm} onChangeText={(e)=>setSearchTerm(e)}/> */}
 
-
-                {hotelResList &&<View style={styles.roomDetailsMainContainer}>
+               <View style={styles.roomDetailsMainContainer}>
                     <FlatList
                         data={renderedData}
                         renderItem={renderItem}
                         keyExtractor={handleKeyExtractor}
-                        onEndReached={handleEndReached}
-                        onEndReachedThreshold={0.1}
+                         onEndReached={handleEndReached}
+                         onEndReachedThreshold={0.1}
                         ListFooterComponent={renderFooter}
                         showsVerticalScrollIndicator={false}
                         ListHeaderComponent={renderHeader}
-                        style={{ marginBottom: responsiveHeight(15) }}
+                        ListEmptyComponent={()=><Text>"No Data Found"</Text>}
+                        // ListHeaderComponent={
+                        //     <View>
+                        //       <TextInput
+                        //         placeholder="Search..."
+                        //         value={searchTerm}
+                        //         onChangeText={text => setSearchTerm(text)}
+                        //       />
+                        //     </View>
+                        //   }
+                        
+                        // style={{ marginBottom: responsiveHeight(15) }}
                         ListHeaderComponentStyle={{ paddingVertical: 10 }}
                     />
-                </View>}
+                </View>
 
             </View>
     )

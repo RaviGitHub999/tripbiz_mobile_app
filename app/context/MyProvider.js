@@ -273,6 +273,15 @@ export default class MyProvider extends Component {
       hotelCityLoading:false,
       hotelListData:[],
       bookinghotelquery:{},
+      setidToIndex:null,
+      filteredData:null,
+      trip: {
+        flights: [],
+        hotels: [],
+        date: new Date(),
+        name: newTripCompleteString,
+        status: ""
+      },
       actions: {
        handleBookinghotelquery:(query)=>
        {
@@ -289,6 +298,14 @@ this.setState({bookinghotelquery:query})
             userTripStatus: value
           });
         },
+
+        setTrip: (value) => {
+          this.setState({
+            trip: value
+          });
+        },
+
+
         switchComponent: (component) => {
           this.setState({ activeComponent: component })
           const selectedIndex = components.findIndex((item) => item.categoryName === component);
@@ -2027,42 +2044,57 @@ this.setState({bookinghotelquery:query})
           var hotelRes = hotelStatic[0];
           var staticdata = hotelStatic[1];
   
-          // var hotelRes = await fetch(
-          //   "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/hotelSearchRes",
-          //   {
-          //     method: "POST",
-          //     // credentials: "include",
-          //     headers: {
-          //       "Content-Type": "application/json"
-          //     },
-          //     body: JSON.stringify(request)
-          //   }
-          // )
-          //   .then((res) => res.json())
-          //   .catch((err) => console.log(err));
-  
-          // console.log("Hotel result", hotelRes);
-          if (hotelRes?.error) {
-            console.log('error');
-            this.setState({
-              hotelResList: [],
-              hotelErrorMessage: hotelRes?.error,
-              searchingHotels: false,
-              hotelSessionStarted: true
+
+          const recomended=hotelRes.hotelResult?.HotelSearchResult?.HotelResults
+          if (recomended) {
+            const hotelIdsInObject = this.state.recommondedHotels ? Object.keys(this.state.recommondedHotels).map(ele => { return { HotelCode: ele } }) : []
+            const idToIndex = hotelIdsInObject.reduce((acc, item, index) => {
+                acc[item.HotelCode] = index;
+                return acc;
+            }, {});
+this.setState({setidToIndex:idToIndex})
+            // setidToIndex(idToIndex)
+            const filteredHotels = recomended.filter(hotel => {
+                const hotelstaticData = staticdata[hotel.HotelCode];
+                const hotelName = hotel.HotelName ? hotel.HotelName : hotelstaticData?.HotelName;
+                return hotelName?.length > 0;
             })
-          }
-          else {
-            this.setState({
-              hotelResList: hotelRes.hotelResult?.HotelSearchResult?.HotelResults,
-              hotelTraceId: hotelRes.hotelResult?.HotelSearchResult?.TraceId,
-              hotelStaticData: staticdata,
-              hotelTokenId: hotelRes.tokenId,
-              searchingHotels: false,
-              hotelSessionStarted: true
+            // setFiltersHotelsData(filteredHotels)
+           let finalData = filteredHotels.sort((a, b) => {
+                const indexA = idToIndex[a.HotelCode];
+                const indexB = idToIndex[b.HotelCode];
+
+                if (indexA === undefined && indexB === undefined) {
+                    return 0;
+                } else if (indexA === undefined) {
+                    return 1;
+                } else if (indexB === undefined) {
+                    return -1;
+                }
+                return indexB - indexA;
             });
-          }
-  
-  
+          
+            if (hotelRes?.error) {
+              console.log('error');
+              this.setState({
+                hotelResList: [],
+                hotelErrorMessage: hotelRes?.error,
+                searchingHotels: false,
+                hotelSessionStarted: true
+              })
+            }
+            else {
+              this.setState({
+                // hotelResList: hotelRes.hotelResult?.HotelSearchResult?.HotelResults,
+                hotelResList:finalData,
+                hotelTraceId: hotelRes.hotelResult?.HotelSearchResult?.TraceId,
+                hotelStaticData: staticdata,
+                hotelTokenId: hotelRes.tokenId,
+                searchingHotels: false,
+                hotelSessionStarted: true
+              });
+            }
+        }
           var hotelSessionTimeout = setTimeout(() => {
             this.setState(
               {
@@ -2341,12 +2373,6 @@ this.setState({bookinghotelquery:query})
             bookingHotel.selectedRoomType
           ) * this.state.domesticHotel) / 100)
 
-          console.log(
-            this.state.actions.calculateHotelFinalPrice(
-              bookingHotel.selectedRoomType
-            )
-          );
-
           this.setState({
             bookingHotel
           });
@@ -2385,7 +2411,23 @@ this.setState({bookinghotelquery:query})
           }
         },
 
-
+        createTrip : async () => {
+          try {
+            const accountDocRef = firestore().collection("Accounts").doc(this.state.userId);
+            const tripcollectionRef = accountDocRef.collection("trips");
+            const tripdocRef = await tripcollectionRef.add(this.state.trip);
+            await firestore()
+              .collection("Accounts")
+              .doc(this.state.userId)
+              .update({
+                trips: firestore.FieldValue.arrayUnion(tripdocRef.id)
+              });
+            this.state.actions.setSelectedTripId(tripdocRef.id);
+            return tripdocRef.id;
+          } catch (error) {
+            console.log(error);
+          }
+        },
         populateBookData: (bookingFlight, flightBookData, fareData) => {
           bookingFlight.forEach((book, bookIndex) => {
             if (flightBookData && flightBookData[bookIndex]) {
@@ -2866,11 +2908,6 @@ this.setState({bookinghotelquery:query})
             bookingFlight: [...value]
           });
         },
-        setOffset: async (value) => {
-          this.setState({
-            offset: value
-          })
-        },
 
         getAllHotels: async (id, userId) => {
           try {
@@ -2942,6 +2979,16 @@ this.setState({bookinghotelquery:query})
             return []; // or handle the error accordingly
           }
         },
+        setUserAccountDetails: (value) => {
+          this.setState({
+            userAccountDetails: value
+          });
+        },
+        setOffset: async (value) => {
+          this.setState({
+            offset: value
+          })
+        },
         getLastDoc: async () => {
           try {
             const collectionRef = firestore().collection("Accounts").doc(this.state.userId);
@@ -2983,8 +3030,8 @@ this.setState({bookinghotelquery:query})
 
               docsToDisplay.forEach((doc) => {
                 promises.push(new Promise(async (resolve) => {
-                  const hotels = await actions.getAllHotels(doc.id, this.state.userId);
-                  const flights = await actions.getAllFlights(doc.id, this.state.userId);
+                  const hotels = await this.state.actions.getAllHotels(doc.id, this.state.userId);
+                  const flights = await this.state.actions.getAllFlights(doc.id, this.state.userId);
                   docs.push({
                     id: doc.id,
                     data: doc.data(),
@@ -3000,6 +3047,46 @@ this.setState({bookinghotelquery:query})
             }
           } catch (error) {
             console.log(error);
+          }
+        },
+         getUserById : async (id) => {
+          try {
+            const userCollectionRef = firestore().collection("Accounts").doc(id);
+            const doc = await userCollectionRef.get();
+            const userData = doc.data();
+            let manager = {};
+        
+            if (userData.role !== "admin") {
+              if (userData.manager && Object.keys(userData.manager).length > 0) {
+                const managerCollectionRef = firestore().collection("Accounts").doc(userData.manager.userId);
+                const managerDoc = await managerCollectionRef.get();
+                const managerData = managerDoc.data();
+                manager = { name: managerData?.firstName, email: managerData?.email, userId: userData.manager.userId };
+              }
+            }
+        
+            this.state.actions.setUserAccountDetails({ ...userData, manager });
+            this.setState({
+              userLoginStatus: {
+                loggedIn: true,
+                isLoading: false,
+                status: "loggedIn",
+                role: userData.role
+              },
+              notifications: userData?.notifications,
+              teamMembers: userData?.teamMembers,
+              noOfPages: Math.ceil(userData?.trips?.length / 10) - 1
+            })
+            if (userData.role === "admin") {
+              this.setState({
+                role: "admin"
+              });
+              this.state.actions.getAllUserTrips();
+            }
+        
+            return userData.role;
+          } catch (error) {
+            console.log("Error", error);
           }
         },
         getRequests: async (req, userid) => {
@@ -3468,8 +3555,8 @@ this.setState({bookinghotelquery:query})
           isLoading: true,
         });
        this.state.actions.setAdminData()
-      //   this.state.actions.fetchHotelCityList();
-      //  this.state.actions.getLastDoc();
+       this.state.actions.getUserById(this.state.userId);
+       this.state.actions.getLastDoc();
       //  this.state.actions.handleFlightsLogos();
         console.log("userLogin")
       } else {

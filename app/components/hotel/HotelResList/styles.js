@@ -212,7 +212,7 @@ fontFamily:fonts.primary,color:colors.primary
     color:colors.primary
   },
   roomDetailsMainContainer:{
-// borderWidth:1,
 paddingHorizontal:responsiveWidth(3),
+flex:1
   }
 })

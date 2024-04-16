@@ -49,9 +49,9 @@ const FlightBooking = ({ navigation: { navigate } }) => {
     const combinedString = `${myStr}_${formattedDate}`;
     var [defaultInput, setDefaultInput] = useState(combinedString);
 
-    useEffect(() => {
-        actions.getLastDoc()
-    }, [])
+    // useEffect(() => {
+    //     actions.getLastDoc()
+    // }, [])
 
 
     if (flightBookDataLoading) {
