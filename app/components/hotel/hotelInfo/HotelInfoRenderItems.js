@@ -5,14 +5,14 @@ import { styles } from './styles'
 import IconSwitcher from '../../common/icons/IconSwitcher'
 import MyContext from '../../../context/Context'
 import { colors } from '../../../config/theme'
-const HotelInfoRenderItems = ({room,index,selectedRoom,handleSelectedHotel}) => {
+const HotelInfoRenderItems = ({room,index,selectedRoom,}) => {
     const{actions,bookingHotel}=useContext(MyContext)
     console.log("kk")
 
       return (
-            <TouchableOpacity style={bookingHotel.selectedRoomType[0] &&
-                ((bookingHotel.selectedRoomType[0].RoomTypeCode === room?.RoomTypeCode) && (bookingHotel.selectedRoomType[0].LastCancellationDate === room?.LastCancellationDate) && (bookingHotel.selectedRoomType[0].Price.OfferedPriceRoundedOff === room?.Price.OfferedPriceRoundedOff))
-                ? [{...styles.card},{backgroundColor:colors.highlightTranslucent}]:styles.card} >
+            <TouchableOpacity style={bookingHotel.selectedRoomType[selectedRoom] &&
+                ((bookingHotel.selectedRoomType[selectedRoom].RoomTypeCode === room?.RoomTypeCode) && (bookingHotel.selectedRoomType[selectedRoom].LastCancellationDate === room?.LastCancellationDate) && (bookingHotel.selectedRoomType[selectedRoom].Price.OfferedPriceRoundedOff === room?.Price.OfferedPriceRoundedOff))
+                ? [{...styles.card},{backgroundColor:colors.highlightTranslucent}]:styles.card} onPress={() => { actions.selectHotelRoomType(room, selectedRoom, index) }}>
                 <View style={styles.cardMainSubContainer}>
                     <View style={styles.cardSubContainer1}>
                         <Text style={styles.roomType}>{room.RoomTypeName}</Text>

@@ -2404,7 +2404,7 @@ this.setState({setidToIndex:idToIndex})
             )
               .then((res) => res.json())
               .catch((err) => console.log(err));
-            return fareRuleRes.fareRuleResult.Response.FareRules[0].FareRuleDetail
+            return fareRuleRes?.fareRuleResult?.Response?.FareRules[0]?.FareRuleDetail
           } else {
             console.log(
               "Flight session expired, Please make a search request again"
@@ -3192,7 +3192,7 @@ this.setState({setidToIndex:idToIndex})
 
             this.state.actions.setTripData({
               id: doc.id,
-              data: doc.data(),
+              data: sendData,
               hotels: hotels,
               flights: flights,
               requestData: requestData

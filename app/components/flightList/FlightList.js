@@ -521,10 +521,15 @@ const FlightList = ({ index, props }) => {
               </TouchableOpacity> :
               <View>
                 <ScrollView nestedScrollEnabled style={styles.upArrowIconmainContainer}>
-                  <View style={styles.filtersIconContainer}>
+                 <View style={{flexDirection:'row',alignItems:'center'}}>
+                 <View style={styles.filtersIconContainer}>
                     <IconSwitcher componentName='FontAwesome5' iconName='filter' color={colors.black} iconsize={3} />
                     <Text style={styles.filterHeader}>{"Filters"}</Text>
                   </View>
+                  <TouchableOpacity onPress={applyFilters} style={styles.applyFiltersBtn}>
+                    <Text style={styles.applyFiltersBtnText}>Apply</Text>
+                  </TouchableOpacity>
+                 </View>
                   <View style={styles.filtersmainContainer}>
                     <View>
                       <Text style={styles.filterTitles}>{"Airline"}</Text>
@@ -636,9 +641,7 @@ const FlightList = ({ index, props }) => {
                       }} horizontal />
                     </View>
                   </View>
-                  <TouchableOpacity onPress={applyFilters} style={styles.applyFiltersBtn}>
-                    <Text style={styles.applyFiltersBtnText}>Apply</Text>
-                  </TouchableOpacity>
+
                   <TouchableOpacity style={styles.upArrowIcon} onPress={() => setShowFilters(false)}>
                     <IconSwitcher componentName='Ionicons' iconName='chevron-up' color={colors.black} iconsize={3.5} />
                   </TouchableOpacity>
@@ -765,9 +768,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     columnGap: responsiveHeight(1),
     alignItems: 'center',
-    paddingLeft: responsiveWidth(2),
-    paddingVertical: responsiveHeight(1.5),
-    // borderWidth:1
+    // paddingLeft: responsiveWidth(2),
+    // paddingVertical: responsiveHeight(1.5),
+    borderWidth:1
   },
   filterHeader: {
     fontSize: responsiveHeight(2.5),

@@ -41,17 +41,17 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
   //     actions.setBookingFlight([]);
   //     actions.setFlightResJType(0)
   // };
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     const onBackPress = () => {
-  //       // handleBackButtonPress();
-  //       navigation.goBack();
-  //       return true;
-  //     };
-  //     BackHandler.addEventListener('hardwareBackPress', onBackPress);
-  //     return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-  //   }, []) 
-  // );
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigate("MyTrips")
+        actions.setRes()
+        return true;
+      };
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, []) 
+  );
   const handleDelete = async () => {
     await actions.deleteTripItem(id, deleteId, deleteType);
     setOpenDelete(false)
@@ -106,10 +106,9 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
 
   const handlehotelPriceinfo = (hotel) => {
     handlePopUps("hotelPrice")
-    setHotelFinalPrice(hotel.data.hotelPrice)
+    setHotelFinalPrice(hotel.data.hotelFinalPrice)
     setHotelTotalPrice(hotel.data.hotelTotalPrice)
-    setSelectedRoom(hotel.data.selectedRoomType)
-  }
+    setSelectedRoom(hotel.data.selectedRoomType)  }
   const handlehotelPriceinfoClose = () => {
     handlePopUps("hotelPrice")
     setHotelFinalPrice(0)

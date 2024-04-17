@@ -297,7 +297,7 @@ export const styles = StyleSheet.create({
         fontSize: responsiveHeight(2.5),
         fontFamily: fonts.primary,
         color: colors.primary
-    }, 
+    },
     totalFare: {
         fontSize: responsiveHeight(2.5),
         fontFamily: fonts.primary,
@@ -310,39 +310,51 @@ export const styles = StyleSheet.create({
     },
     notfoundFareRuleContainer:
     {
-        alignItems:'center',
-        justifyContent:'center'
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     notfoundFareRuleTitle:
     {
-fontSize:responsiveHeight(1.8),
-color:colors.primary,
-fontFamily:fonts.textFont
+        fontSize: responsiveHeight(1.8),
+        color: colors.primary,
+        fontFamily: fonts.textFont
     },
     baggageTitle:
     {
-fontFamily:fonts.primary,
-color:colors.primary,
-fontSize:responsiveHeight(2)
+        fontFamily: fonts.primary,
+        color: colors.primary,
+        fontSize: responsiveHeight(2)
     },
     BaggageDetails:
     {
-flexDirection:'row',
-alignItems:'center',
-gap:responsiveHeight(1)
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: responsiveHeight(1)
     },
     BaggageDetailsMainContainer:
     {
-marginVertical:responsiveHeight(1),
-gap:responsiveHeight(0.8)
+        marginVertical: responsiveHeight(1),
+        gap: responsiveHeight(0.8)
     },
     baggageTitles:
     {
-        fontFamily:fonts.textInput,
-        color:colors.primary,
-        fontSize:responsiveHeight(2)
+        fontFamily: fonts.textInput,
+        color: colors.primary,
+        fontSize: responsiveHeight(2)
     },
-    baggageTitlesHighlight:{
-        color:colors.highlight,
+    baggageTitlesHighlight: {
+        color: colors.highlight,
+    },
+    selectedSeatContainer:
+    {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: "center",
+        justifyContent: 'center'
+    },
+    selectedSeatData: {
+        fontSize: responsiveHeight(2),
+        fontFamily: fonts.textInput,
+        color: colors.primary
     }
 })

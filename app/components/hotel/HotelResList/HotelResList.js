@@ -112,6 +112,7 @@ const HotelResList = ({ navigation: { navigate, goBack, push } }) => {
     const [hotelPriceStart, setHotelPriceStart] = useState()
     const [hotelPriceEnd, setHotelPriceEnd] = useState()
     const [searchData, setSearchData] = useState([])
+    let ra=hotelResList
     useEffect(() => {
         setFetchedData([...hotelResList]);
         setSearchData([...hotelResList])
@@ -127,7 +128,7 @@ const HotelResList = ({ navigation: { navigate, goBack, push } }) => {
     const handleSearch = (text) => {
         setSearchTerm(text);
         if (text) {
-            filteredArr = fetchedData.filter((hotel) => {
+            filteredArr = searchData.filter((hotel) => {
                 const staticData = hotelStaticData[hotel.HotelCode];
                 if (hotel.HotelName) {
                     return hotel.HotelName.toLowerCase().includes(
@@ -142,8 +143,8 @@ const HotelResList = ({ navigation: { navigate, goBack, push } }) => {
 
             });
             setFetchedData(filteredArr)
-            setSearchData(filteredArr)
-
+            // setSearchData(filteredArr)
+   ra=filteredArr
         }
         else if (text === "") {
             setFetchedData(hotelResList);
@@ -160,7 +161,7 @@ const HotelResList = ({ navigation: { navigate, goBack, push } }) => {
 
 
     const filterHotels = () => {
-        var filteredArr = searchData;
+        var filteredArr = ra;
 
         if (rating !== null) {
             filteredArr = filteredArr.filter(

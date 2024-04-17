@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native'
+import { View, Text, BackHandler } from 'react-native'
 import React, { useContext, useEffect } from 'react'
 import MyContext from '../../context/Context';
 import { styles } from './styles';
@@ -8,6 +8,7 @@ import { colors } from '../../config/theme';
 import FlightList from '../flightList/FlightList';
 import FlightBooking from '../FlightBooking/FlightBooking';
 import ProgressBar from '../common/progressBar/ProgressBar';
+import { useFocusEffect } from '@react-navigation/native';
 
 const FlightsSearchRes = (props) => {
     const {
@@ -27,10 +28,24 @@ const FlightsSearchRes = (props) => {
         actions,
         journeyWay
     } = useContext(MyContext);
+
+    useFocusEffect(
+        React.useCallback(() => {
+          const onBackPress = () => {
+            props.navigation.goBack(), 
+            actions.editFlightSearch()
+            return true;
+          };
+          BackHandler.addEventListener('hardwareBackPress', onBackPress);
+          return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+        }, []) 
+      );
+
     const travellers = adults + children + infants;
     if (bookingFlight && bookingFlight.length > 0) {
         var { totalFareSum } = actions.getTotalFares(bookingFlight);
     }
+
     const renderHeader = () => (
         <View style={styles.headerContainer}>
             <View style={styles.header}>

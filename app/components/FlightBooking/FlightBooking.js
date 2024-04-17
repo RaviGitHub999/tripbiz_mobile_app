@@ -1,4 +1,4 @@
-import { TextInput, Modal, Text, View, FlatList, ScrollView, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard, LayoutAnimation } from 'react-native'
+import { TextInput, Modal, Text, View, FlatList, ScrollView, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard, LayoutAnimation, BackHandler } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import IconSwitcher from '../common/icons/IconSwitcher'
 import MyContext from '../../context/Context'
@@ -49,9 +49,20 @@ const FlightBooking = ({ navigation: { navigate } }) => {
     const combinedString = `${myStr}_${formattedDate}`;
     var [defaultInput, setDefaultInput] = useState(combinedString);
 
-    // useEffect(() => {
-    //     actions.getLastDoc()
-    // }, [])
+    useEffect(() => {
+        const backAction = () => {
+            actions.setFlightBookPage(false);
+            actions.setBookingFlight([]);
+          return true; 
+        };
+    
+        const backHandler = BackHandler.addEventListener(
+          'hardwareBackPress',
+          backAction
+        );
+    
+        return () => backHandler.remove();
+      }, []);
 
 
     if (flightBookDataLoading) {

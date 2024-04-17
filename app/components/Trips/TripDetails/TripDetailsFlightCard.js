@@ -37,6 +37,7 @@ const TripDetailsFlightCard = ({
     // {
     //     actions.handleFlightsLogos()
     // },[])
+    var id = flightBooking?.seats[0].length > 0 ? Object.keys(flightBooking?.seats[0][0]) : ''
     var fareData = tripsPage ? actions.getTotalFares([flightBooking]) : '';
     var flightArr = flightGrp.map((flight, f) => {
         return { ...actions.modifyFlightObject(flight) };
@@ -64,7 +65,7 @@ const TripDetailsFlightCard = ({
                 flightCode += `${code}, `;
             }
         });
-        var id = flightBooking?.seats[0].length > 0 ? Object.keys(flightBooking?.seats[0][0]) : ''
+
         return (
             <View >
 
@@ -272,7 +273,7 @@ const TripDetailsFlightCard = ({
 
                 </View>
 
-                        <View style={styles.addedFlightTimeAndDateContainer}>
+                <View style={styles.addedFlightTimeAndDateContainer}>
                     <View style={styles.addedFlightTitleContainer}>
                         <Text style={styles.bookingStatusTitles}>{`Added Date: `}<Text style={styles.addedHotelTimeAndDate}>{timeStamp.toString().slice(4, 24)}</Text></Text>
                     </View>
@@ -341,26 +342,26 @@ const TripDetailsFlightCard = ({
                     </View>
                 </View>
             </Modal>
-            
+
             <PopUp value={tripsBaggage} handlePopUpClose={handletripsBaggageinfoClose}>
-               {
-                tripsPage?(
-                    <>
-                    <Text style={styles.baggageTitle}>Baggage details</Text>
-                    <View style={styles.BaggageDetailsMainContainer}>
-                        {flightBooking?.baggageDtls?.cabinBaggage ?<View style={styles.BaggageDetails}> 
-                            <IconSwitcher componentName='AntDesign' iconName='arrowright' color={colors.primary} iconsize={2.5}/>
-                            <Text style={styles.baggageTitles}>Cabin baggage: <Text style={styles.baggageTitlesHighlight}>{flightBooking?.baggageDtls?.cabinBaggage}</Text></Text>
-                        </View>:null}
-                        {flightBooking?.baggageDtls?.baggage ?<View style={styles.BaggageDetails}>
-                        <IconSwitcher componentName='AntDesign' iconName='arrowright' color={colors.primary} iconsize={2.5}/>
-                            <Text style={styles.baggageTitles}>Check-in baggage: <Text style={styles.baggageTitlesHighlight}> {flightBooking?.baggageDtls?.baggage}</Text></Text>
-                        </View>:null}
-                    </View>
-                    </>
-                    
-                ):null
-               }
+                {
+                    tripsPage ? (
+                        <>
+                            <Text style={styles.baggageTitle}>Baggage details</Text>
+                            <View style={styles.BaggageDetailsMainContainer}>
+                                {flightBooking?.baggageDtls?.cabinBaggage ? <View style={styles.BaggageDetails}>
+                                    <IconSwitcher componentName='AntDesign' iconName='arrowright' color={colors.primary} iconsize={2.5} />
+                                    <Text style={styles.baggageTitles}>Cabin baggage: <Text style={styles.baggageTitlesHighlight}>{flightBooking?.baggageDtls?.cabinBaggage}</Text></Text>
+                                </View> : null}
+                                {flightBooking?.baggageDtls?.baggage ? <View style={styles.BaggageDetails}>
+                                    <IconSwitcher componentName='AntDesign' iconName='arrowright' color={colors.primary} iconsize={2.5} />
+                                    <Text style={styles.baggageTitles}>Check-in baggage: <Text style={styles.baggageTitlesHighlight}> {flightBooking?.baggageDtls?.baggage}</Text></Text>
+                                </View> : null}
+                            </View>
+                        </>
+
+                    ) : null
+                }
             </PopUp>
 
             <PopUp value={tripsCancellation} handlePopUpClose={handletripsCancellationinfoClose}>
@@ -452,45 +453,56 @@ const TripDetailsFlightCard = ({
             </PopUp>
 
             <PopUp value={tripsMeals} handlePopUpClose={handletripsMealsinfoClose}>
-              
-{
- Array.isArray(flightBooking?.selectedMeals) ?
- (
- <>
- {
-    flightBooking.selectedMeals.map((meal)=>
-    {
-        return(
-            <>
-            <Text style={[styles.baggageTitle,{textAlign:'center'}]}>Selected Meals</Text>
-            {
-                meal.map((meal,s)=>
+
                 {
-                    var type = s + 1 <= flightBooking.adults ? 'Adult' : (s + 1 <= (flightBooking.adults + flightBooking.child) ? "Child" : "Infant")
-                    var indexe = s + 1 <= flightBooking.adults ? s : (s + 1 <= (flightBooking.adults + flightBooking.child) ? s - flightBooking.adults : "Infant") 
-                    return(
-                     <Text style={styles.baggageTitles}>
-                        {type}-{indexe + 1}:{meal.mealDesc} -&gt;<Text style={{color:colors.secondary}}> &#8377;{meal.price}</Text>
-                     </Text>   
-                    )
-                })
-            }
-            </>
-        )
-    })
- }
- </>
- )
- :null
-}
+                    Array.isArray(flightBooking?.selectedMeals) ?
+                        (
+                            <>
+                                {
+                                    flightBooking.selectedMeals.map((meal) => {
+                                        return (
+                                            <>
+                                                <Text style={[styles.baggageTitle, { textAlign: 'center' }]}>Selected Meals</Text>
+                                                {
+                                                    meal.map((meal, s) => {
+                                                        var type = s + 1 <= flightBooking.adults ? 'Adult' : (s + 1 <= (flightBooking.adults + flightBooking.child) ? "Child" : "Infant")
+                                                        var indexe = s + 1 <= flightBooking.adults ? s : (s + 1 <= (flightBooking.adults + flightBooking.child) ? s - flightBooking.adults : "Infant")
+                                                        return (
+                                                            <Text style={styles.baggageTitles}>
+                                                                {type}-{indexe + 1}:{meal.mealDesc} -&gt;<Text style={{ color: colors.secondary }}> &#8377;{meal.price}</Text>
+                                                            </Text>
+                                                        )
+                                                    })
+                                                }
+                                            </>
+                                        )
+                                    })
+                                }
+                            </>
+                        )
+                        : null
+                }
             </PopUp>
 
             <PopUp value={tripsSeat} handlePopUpClose={handletripsSeatinfoClose}>
-    {/* {
-        id.length>0?(
 
-        )
-    } */}
+                {
+                    id.length > 0 ? (
+                        <View style={styles.selectedSeatContainer}>
+                            <Text style={styles.selectedSeatData}>Selected Seats:</Text>
+                            {
+                                id.map((ids, index) => {
+                                    return (
+                                        <>
+                                            <Text style={styles.selectedSeatData}>Passenger-{index + 1}:&nbsp;{flightBooking ? flightBooking?.seats[0].length > 0 ? flightBooking?.seats[0][0][ids]?.Code : '' : ''}&nbsp;
+                                                {index !== id.length - 1 ? ',' : ''}</Text>
+                                        </>
+                                    )
+                                })
+                            }
+                        </View>
+                    ) : null
+                }
             </PopUp>
 
             <PopUp value={openDelete} handlePopUpClose={() => {

@@ -412,7 +412,7 @@ fetchingHotelInfo?<View style={{flex:1,alignItems:'center',justifyContent:'cente
                                         <View style={styles.dashedLine} />
                                         <View style={styles.hotelPriceContainer}>
                                             <Text style={styles.hotelPriceText}>Service Charges</Text>
-                                            <Text style={styles.hotelPriceTP}>{` + ${(bookingHotel?.hotelFinalPrice * domesticHotel) / 100}`}</Text>
+                                            <Text style={styles.hotelPriceTP}>{` + ${Math.round((bookingHotel?.hotelFinalPrice * domesticHotel) / 100)}`}</Text>
                                         </View>
                                         <View style={styles.solidLine} />
                                     </ScrollView>
