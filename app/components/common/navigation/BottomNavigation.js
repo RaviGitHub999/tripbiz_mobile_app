@@ -6,7 +6,7 @@ import IconSwitcher from '../icons/IconSwitcher';
 import { colors, fonts } from '../../../config/theme';
 import { responsiveFontSize, responsiveHeight } from '../../../utils/responsiveScale';
 import Wallet from '../../wallet/Wallet';
-import MyTrips from '../../Trips/MyTrips/MyTrips';
+import MyTrips from '../../Trips/myTrips/MyTrips';
 const Demo1 = () => <></>
 const Tab = createBottomTabNavigator();
 const BottomNavigation = () => {

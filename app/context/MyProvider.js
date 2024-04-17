@@ -248,10 +248,10 @@ export default class MyProvider extends Component {
       searchingHotels: true,
       cityHotelResBox: false,
       filterActions: false,
-      hotelRating: null,
-      hotelPriceStart: null,
-      hotelPriceEnd: null,
-      hotelSearchText: null,
+      // hotelRating: null,
+      // hotelPriceStart: null,
+      // hotelPriceEnd: null,
+      // hotelSearchText: null,
       hotelInfoRes: false,
       fetchingHotelInfo: true,
       idToIndex: {},
@@ -794,26 +794,26 @@ this.setState({bookinghotelquery:query})
           })
         },
 
-        setHotelRating: (value) => {
-          this.setState({
-            hotelRating: value
-          });
-        },
-        setHotelPriceStart: (value) => {
-          this.setState({
-            hotelPriceStart: value
-          });
-        },
-        setHotelPriceEnd: (value) => {
-          this.setState({
-            hotelPriceEnd: value
-          });
-        },
-        setHotelSearchText: (value) => {
-          this.setState({
-            hotelSearchText: value
-          });
-        },
+        // setHotelRating: (value) => {
+        //   this.setState({
+        //     hotelRating: value
+        //   });
+        // },
+        // setHotelPriceStart: (value) => {
+        //   this.setState({
+        //     hotelPriceStart: value
+        //   });
+        // },
+        // setHotelPriceEnd: (value) => {
+        //   this.setState({
+        //     hotelPriceEnd: value
+        //   });
+        // },
+        // setHotelSearchText: (value) => {
+        //   this.setState({
+        //     hotelSearchText: value
+        //   });
+        // },
 
         
 
@@ -2243,7 +2243,7 @@ this.setState({setidToIndex:idToIndex})
             );
           }
         },
-
+        
         handleGoBack: () => {
           this.setState({ fetchingHotelInfo: false })
         },

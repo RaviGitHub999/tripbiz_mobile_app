@@ -5,14 +5,14 @@ import IconSwitcher from '../../common/icons/IconSwitcher';
 import { styles } from './styles';
 import { responsiveHeight } from '../../../utils/responsiveScale';
 
-const HotelRenderItem = ({ item: hotel, handleBooking, idToIndex }) => {
+const HotelRenderItem = ({ item: hotel, handleBooking }) => {
     const [imageError, setImageError] = useState(false);
-    const { hotelStaticData, hotelImageList } = useContext(MyContext)
+    const { hotelStaticData, hotelImageList ,setidToIndex} = useContext(MyContext)
     const staticData = hotelStaticData[hotel.HotelCode];
     const img = hotelImageList?.hasOwnProperty(hotel.HotelCode) ? hotelImageList[hotel.HotelCode] : {};
     const hotelPic = img?.HotelPicture ? img?.HotelPicture : "https://i.travelapi.com/hotels/35000000/34870000/34867700/34867648/89943464_z.jpg";
     const hotelImg = hotel.HotelPicture === "https://images.cdnpath.com/Images/HotelNA.jpg" ? hotelPic : hotel?.HotelPicture;
-    const ind = idToIndex[hotel.HotelCode];
+    const ind = setidToIndex[hotel.HotelCode];
     var starRating = hotel.StarRating;
     var starRatingFull = Math.floor(starRating);
     const stars = useMemo(() => {
