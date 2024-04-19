@@ -1458,8 +1458,8 @@ this.setState({bookinghotelquery:query})
               var aFlight = this.state.actions.modifyFlightObject(a[0]);
               var bFlight = this.state.actions.modifyFlightObject(b[0]);
 
-              var aDur = aFlight.totalDuration;
-              var bDur = bFlight.totalDuration;
+              var aDur = aFlight.totalDur;
+              var bDur = bFlight.totalDur;
 
               return aDur - bDur;
             });
@@ -1830,7 +1830,7 @@ this.setState({bookinghotelquery:query})
           });
           var jsonContent = JSON.parse(jsonResult);
           var hotelObject = {};
-          // console.log(jsonContent)
+          Array.isArray(jsonContent?.ArrayOfBasicPropertyInfo?.BasicPropertyInfo) ?
           jsonContent.ArrayOfBasicPropertyInfo.BasicPropertyInfo.forEach(
             (hotel) => {
               var hotelCode = hotel["_attributes"]["TBOHotelCode"];
@@ -1844,7 +1844,7 @@ this.setState({bookinghotelquery:query})
                 Address: hotel["Address"]
               };
             }
-          );
+          ):null
           return hotelObject;
         },
 
@@ -2042,60 +2042,60 @@ this.setState({bookinghotelquery:query})
   
           var hotelRes = hotelStatic[0];
           var staticdata = hotelStatic[1];
-  
-
-          const recomended=hotelRes.hotelResult?.HotelSearchResult?.HotelResults
-          if (recomended) {
-            const hotelIdsInObject = this.state.recommondedHotels ? Object.keys(this.state.recommondedHotels).map(ele => { return { HotelCode: ele } }) : []
-            const idToIndex = hotelIdsInObject.reduce((acc, item, index) => {
-                acc[item.HotelCode] = index;
-                return acc;
-            }, {});
-this.setState({setidToIndex:idToIndex})
-            // setidToIndex(idToIndex)
-            const filteredHotels = recomended.filter(hotel => {
-                const hotelstaticData = staticdata[hotel.HotelCode];
-                const hotelName = hotel.HotelName ? hotel.HotelName : hotelstaticData?.HotelName;
-                return hotelName?.length > 0;
+          if (hotelRes?.error) {
+            console.log('error');
+            this.setState({
+              hotelResList: [],
+              hotelErrorMessage: hotelRes?.error,
+              searchingHotels: false,
+              hotelSessionStarted: true
             })
-            // setFiltersHotelsData(filteredHotels)
-           let finalData = filteredHotels.sort((a, b) => {
-                const indexA = idToIndex[a.HotelCode];
-                const indexB = idToIndex[b.HotelCode];
+          }  
 
-                if (indexA === undefined && indexB === undefined) {
-                    return 0;
-                } else if (indexA === undefined) {
-                    return 1;
-                } else if (indexB === undefined) {
-                    return -1;
-                }
-                const priceA = a.Price.OfferedPriceRoundedOff; 
-                const priceB = b.Price.OfferedPriceRoundedOff;
-                return priceA - priceB;
-            });
-          
-            if (hotelRes?.error) {
-              console.log('error');
-              this.setState({
-                hotelResList: [],
-                hotelErrorMessage: hotelRes?.error,
-                searchingHotels: false,
-                hotelSessionStarted: true
-              })
-            }
-            else {
-              this.setState({
-                // hotelResList: hotelRes.hotelResult?.HotelSearchResult?.HotelResults,
-                hotelResList:finalData,
-                hotelTraceId: hotelRes.hotelResult?.HotelSearchResult?.TraceId,
-                hotelStaticData: staticdata,
-                hotelTokenId: hotelRes.tokenId,
-                searchingHotels: false,
-                hotelSessionStarted: true
-              });
-            }
+  const recomended=hotelRes.hotelResult?.HotelSearchResult?.HotelResults
+  if (recomended) {
+    const hotelIdsInObject = this.state.recommondedHotels ? Object.keys(this.state.recommondedHotels).map(ele => { return { HotelCode: ele } }) : []
+    const idToIndex = hotelIdsInObject.reduce((acc, item, index) => {
+        acc[item.HotelCode] = index;
+        return acc;
+    }, {});
+this.setState({setidToIndex:idToIndex})
+    // setidToIndex(idToIndex)
+    const filteredHotels = recomended.filter(hotel => {
+        const hotelstaticData = staticdata[hotel.HotelCode];
+        const hotelName = hotel.HotelName ? hotel.HotelName : hotelstaticData?.HotelName;
+        return hotelName?.length > 0;
+    })
+    // setFiltersHotelsData(filteredHotels)
+   let finalData = filteredHotels.sort((a, b) => {
+        const indexA = idToIndex[a.HotelCode];
+        const indexB = idToIndex[b.HotelCode];
+
+        if (indexA === undefined && indexB === undefined) {
+            return 0;
+        } else if (indexA === undefined) {
+            return 1;
+        } else if (indexB === undefined) {
+            return -1;
         }
+        const priceA = a.Price.OfferedPriceRoundedOff; 
+        const priceB = b.Price.OfferedPriceRoundedOff;
+        return priceA - priceB;
+    });
+
+    
+    
+      this.setState({
+        // hotelResList: hotelRes.hotelResult?.HotelSearchResult?.HotelResults,
+        hotelResList:finalData,
+        hotelTraceId: hotelRes.hotelResult?.HotelSearchResult?.TraceId,
+        hotelStaticData: staticdata,
+        hotelTokenId: hotelRes.tokenId,
+        searchingHotels: false,
+        hotelSessionStarted: true
+      });
+    
+  }
           var hotelSessionTimeout = setTimeout(() => {
             this.setState(
               {
@@ -3388,6 +3388,9 @@ this.setState({setidToIndex:idToIndex})
 
         deleteTripItem: async (tripId, itemId, itemType) => {
           try {
+            this.setState({
+              tripDataLoading: true
+            });
             const docRef = firestore().collection('Accounts').doc(this.state.userId).collection('trips').doc(tripId);
             const docSnapshot = await docRef.get();
             const docData = docSnapshot.data();
@@ -3413,7 +3416,7 @@ this.setState({setidToIndex:idToIndex})
 
             this.setState({
               tripData: null,
-              tripDataLoading: true
+              tripDataLoading: false
             });
 
             await this.state.actions.getTripDocById(tripId, this.state.userId);

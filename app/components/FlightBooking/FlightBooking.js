@@ -38,7 +38,7 @@ const FlightBooking = ({ navigation: { navigate } }) => {
     var [seatOpen, setSeatOpen] = useState(true);
     var [activeTab, setActiveTab] = useState('tab1');
     const [isExpanded, setIsExpanded] = useState(false);
-    // const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const { actions, selectedTripId, selectedTrip, flightBookDataLoading, bookingFlight, domesticFlight, internationalFlight, isInternationalRound, userTripStatus, } = useContext(MyContext)
     var { totalFareSum, totalSeatCharges, totalBaggagePrice, totalMealPrice, finalPrice } =
         actions.getTotalFares(bookingFlight);
@@ -53,25 +53,26 @@ const FlightBooking = ({ navigation: { navigate } }) => {
         const backAction = () => {
             actions.setFlightBookPage(false);
             actions.setBookingFlight([]);
-          return true; 
+            actions.setFlightResJType(0);
+            return true;
         };
-    
+
         const backHandler = BackHandler.addEventListener(
-          'hardwareBackPress',
-          backAction
+            'hardwareBackPress',
+            backAction
         );
-    
+
         return () => backHandler.remove();
-      }, []);
+    }, []);
 
 
-    if (flightBookDataLoading) {
-        return (
-            <View style={styles.mainContainer}>
-                <ProgressBar />
-            </View>
-        );
-    }
+    // if (flightBookDataLoading||isLoading) {
+    //     return (
+    //         <View style={styles.mainContainer}>
+    //             <ProgressBar />
+    //         </View>
+    //     );
+    // }
     const toggleHeight = () => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setIsExpanded(!isExpanded);
@@ -120,19 +121,25 @@ const FlightBooking = ({ navigation: { navigate } }) => {
         const date = new Date(timestampInMilliseconds);
         return date;
     };
-    var addtoTrip = async (id) => {
+    var addtoTrip = async(id) => {
+        setIsLoading(true)
+        setSubmitIsOpen(false)
         await actions.editTripById(id, [...bookingFlight], "flights");
-        await actions.getLastDoc();
+        setIsLoading(false)
+        
     }
     const renderItem = ({ item }) => {
         const date = getTime(item?.data?.date?.seconds);
         const dateStr = date.toString().slice(4, 10);
 
         return (
-            <TouchableOpacity style={styles.tripCard} onPress={() => {
-                addtoTrip(item.id)
-                navigate("TripDetails", { id: item.id });
-            }}>
+            <TouchableOpacity style={styles.tripCard} onPress={
+                () => {
+
+                    addtoTrip(item.id)
+                    navigate("TripDetails", { id: item.id });
+                }
+            }>
                 <Text style={styles.tripTitle}>{item.data.name}</Text>
                 <Text style={styles.tripDate}>{dateStr}</Text>
             </TouchableOpacity>
@@ -142,13 +149,16 @@ const FlightBooking = ({ navigation: { navigate } }) => {
         setDefaultInput(e)
     }
     const handleAddToTrip = async () => {
-        // setIsLoading(true);
-        let newtripid = await actions.editTripBtn(defaultInput, "flights", bookingFlight);
-        // setIsLoading(false);
+        setIsLoading(true);
         setSubmitIsOpen(false);
+        let newtripid = await actions.editTripBtn(defaultInput, "flights", bookingFlight);
+        setIsLoading(false);
         navigate("TripDetails", { id: newtripid });
         await actions.getLastDoc();
     };
+    if (isLoading) {
+        return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><ProgressBar /></View>
+    }
     return (
         // isLoading ? <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><ProgressBar /></View> :
 
@@ -159,6 +169,7 @@ const FlightBooking = ({ navigation: { navigate } }) => {
                 <TouchableOpacity style={styles.backBtnContainer} onPress={() => {
                     actions.setFlightBookPage(false);
                     actions.setBookingFlight([]);
+                    actions.setFlightResJType(0);
                 }}>
                     <IconSwitcher componentName='AntDesign' iconName='arrowleft' color='black' iconsize={3} />
                 </TouchableOpacity>

@@ -5,7 +5,7 @@ import { colors, fonts } from "../../../config/theme";
 export const styles=StyleSheet.create({
     container:
     {
-    backgroundColor:colors.white
+    backgroundColor:colors.white,
     },
 mainContainer:{
     paddingHorizontal:responsiveWidth(2),
@@ -13,12 +13,12 @@ mainContainer:{
     flexDirection:'row',
     justifyContent:'space-between',
     alignItems:"center",
- 
+
 },
 filterTitleContainer:{
     flexDirection:'row',
     alignItems:'center',
-    columnGap:responsiveWidth(1)
+    columnGap:responsiveWidth(1),
 },
 filterTitle:{
     fontSize:responsiveHeight(2.5),
@@ -27,7 +27,8 @@ filterTitle:{
 },
 childrenContainer:
 {
-paddingHorizontal:responsiveWidth(2)
+paddingHorizontal:responsiveWidth(2),
+paddingBottom:responsiveHeight(15)
 },
 filtersCountContainer:{
     position: 'absolute', 
@@ -40,5 +41,20 @@ filtersCountContainer:{
      justifyContent: 'center',
       borderRadius: responsiveHeight(2),
        backgroundColor: colors.highlight
-}
+},
+applyFiltersBtnText: {
+    fontSize: responsiveHeight(2),
+    fontFamily: fonts.primary,
+    color: colors.white
+  },
+  applyFiltersBtn: {
+    alignSelf: "flex-end",
+    borderWidth: 1,
+    paddingHorizontal: responsiveHeight(2),
+    paddingVertical: responsiveHeight(0.6),
+    borderRadius: responsiveHeight(1.2),
+    backgroundColor: colors.black,
+    alignItems:'center',
+    justifyContent:'center'
+  },
 })

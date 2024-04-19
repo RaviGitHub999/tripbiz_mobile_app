@@ -6,6 +6,7 @@ import IconSwitcher from '../common/icons/IconSwitcher'
 import { responsiveHeight, responsiveWidth } from '../../utils/responsiveScale'
 import { colors, fonts } from '../../config/theme'
 import CustomRadioButton from '../common/customRadioButton/CustomRadioButton'
+import FilterHeader from '../common/filterHeader/FilterHeader'
 const sunImg = [
   {
     title: "Before 6 AM",
@@ -503,9 +504,10 @@ const FlightList = ({ index, props }) => {
     actions.setFlightResJType(value)
     removeFilters()
   }, [])
+  
   return (
     <View style={{ flex: 1 }}>
-      {
+      {/* {
         flightResList.length > 0 ? <View>
           {
             !showFilters ?
@@ -519,21 +521,16 @@ const FlightList = ({ index, props }) => {
                 </View>
                 <IconSwitcher componentName='Ionicons' iconName='chevron-down' color={colors.black} iconsize={3.5} />
               </TouchableOpacity> :
-              <View>
-                <ScrollView nestedScrollEnabled style={styles.upArrowIconmainContainer}>
-                 <View style={{flexDirection:'row',alignItems:'center'}}>
-                 <View style={styles.filtersIconContainer}>
-                    <IconSwitcher componentName='FontAwesome5' iconName='filter' color={colors.black} iconsize={3} />
-                    <Text style={styles.filterHeader}>{"Filters"}</Text>
-                  </View>
-                  <TouchableOpacity onPress={applyFilters} style={styles.applyFiltersBtn}>
-                    <Text style={styles.applyFiltersBtnText}>Apply</Text>
-                  </TouchableOpacity>
-                 </View>
+             
+          }
+        </View> : null
+      } */}    
+{
+  flightResList.length > 0 ?
+  <FilterHeader value={showFilters} handlefiltersToggleActions={handlePress} handlefilters={applyFilters} filtersCount={count}>
                   <View style={styles.filtersmainContainer}>
                     <View>
                       <Text style={styles.filterTitles}>{"Airline"}</Text>
-                      {/* <FlatList data={airlines} renderItem={handleFlightsNames} style={styles.flightNamesRenderContainer} nestedScrollEnabled contentContainerStyle={styles.flightNamesContentContainer} /> */}
                       <View style={styles.flightNamesContentContainer}>
                         {airlines.map((item) => {
                           return (
@@ -645,20 +642,19 @@ const FlightList = ({ index, props }) => {
                   <TouchableOpacity style={styles.upArrowIcon} onPress={() => setShowFilters(false)}>
                     <IconSwitcher componentName='Ionicons' iconName='chevron-up' color={colors.black} iconsize={3.5} />
                   </TouchableOpacity>
-                </ScrollView>
-              </View>
-          }
-        </View> : null
-      }
+                {/* </ScrollView> */}
 
-      {
+  </FilterHeader>
+  :null
+}
+
+{
         count > 0 ? (
           <TouchableOpacity onPress={() => removeFilters()} style={styles.clearFiltersBtn}>
             <Text style={styles.clearFiltersBtnTitle}>Clear Filters</Text>
           </TouchableOpacity>
         ) : null
-      }
-
+      } 
       {
         flightResList.length > 1 && !internationalFlights ?
           <View style={styles.flightResultsNavMainContainer}>
@@ -768,8 +764,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     columnGap: responsiveHeight(1),
     alignItems: 'center',
-    // paddingLeft: responsiveWidth(2),
-    // paddingVertical: responsiveHeight(1.5),
+    paddingLeft: responsiveWidth(2),
+    paddingVertical: responsiveHeight(1.5),
     borderWidth:1
   },
   filterHeader: {
@@ -783,7 +779,8 @@ const styles = StyleSheet.create({
   },
   upArrowIcon: {
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    marginTop:responsiveHeight(1)
   },
   // filterHeader: {
   //     fontSize: responsiveHeight(2.8),
@@ -798,7 +795,7 @@ const styles = StyleSheet.create({
   filtersmainContainer: {
     // marginTop: responsiveHeight(2),
     rowGap: responsiveHeight(2),
-    paddingHorizontal: responsiveWidth(3)
+    // paddingHorizontal: responsiveWidth(3)
   },
   filterTitles: {
     fontSize: responsiveHeight(2.3),

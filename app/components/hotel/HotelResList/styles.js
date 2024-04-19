@@ -175,7 +175,8 @@ hotelCard: {
     fontFamily:fonts.textFont
   },
   filterClosingIcon:{
-    alignSelf:'center'
+    alignSelf:'center',
+    // marginTop:responsiveHeight(5)
   },
   selectedItem:{
     borderWidth:1,
@@ -188,21 +189,7 @@ hotelCard: {
 fontSize:responsiveHeight(2),
 fontFamily:fonts.primary,color:colors.primary
   },
-  applyFiltersBtnText: {
-    fontSize: responsiveHeight(2),
-    fontFamily: fonts.primary,
-    color: colors.white
-  },
-  applyFiltersBtn: {
-    alignSelf: "flex-end",
-    borderWidth: 1,
-    paddingHorizontal: responsiveHeight(2),
-    paddingVertical: responsiveHeight(0.6),
-    borderRadius: responsiveHeight(1.2),
-    backgroundColor: colors.black,
-    alignItems:'center',
-    justifyContent:'center'
-  },
+  
   clearFilterContainer:{
     alignSelf:"flex-end",
     borderBottomWidth:1,
@@ -216,5 +203,16 @@ fontFamily:fonts.primary,color:colors.primary
   roomDetailsMainContainer:{
 paddingHorizontal:responsiveWidth(3),
 flex:1
+  },
+  hotelErrorMessageCon:
+  {
+    flex:1,
+    alignItems:'center',
+    justifyContent:'center'
+  },
+  errorMessage:{
+    fontSize:responsiveHeight(2.5),
+    fontFamily:fonts.primary,
+    color:colors.primary
   }
 })

@@ -18,7 +18,7 @@ const PopUp = (props) => {
                     <View style={styles.popUpMainContainer}>
                         <View style={styles.popUpSubContainer}>
                            <TouchableOpacity onPress={handlePopUpClose} style={{ alignItems: 'flex-end' }}>
-                                <IconSwitcher componentName='Entypo' iconName='cross' iconsize={3} color='black' />
+                                <IconSwitcher componentName='MaterialCommunityIcons' iconName='close' iconsize={2.5} color='black' />
                             </TouchableOpacity>
                             <View style={styles.contentMainBox}>
                                 <View style={customStyles?customStyles:styles.contentSubBox}>

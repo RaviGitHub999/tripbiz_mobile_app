@@ -232,9 +232,10 @@ color:colors.white,
       flexDirection:'row',
       justifyContent:"space-between",
       alignItems:'center',
-      position:'absolute',
-      bottom:responsiveHeight(1),
-      width:'100%'
+      // position:'absolute',
+      // bottom:responsiveHeight(1),
+      // width:'100%',
+      // marginTop:responsiveHeight(1)
     },
     totalPriceText:{
       fontSize:responsiveHeight(2.4),

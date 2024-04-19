@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     items: {
         borderWidth: 1,
         rowGap: responsiveHeight(1),
-        height: responsiveHeight(12)
+        height: responsiveHeight(18)
     },
     item: {
         paddingVertical: responsiveHeight(1),

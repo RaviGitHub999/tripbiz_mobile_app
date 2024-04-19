@@ -58,7 +58,7 @@ export const styles = StyleSheet.create({
         backgroundColor: colors.white,
         borderRadius: responsiveHeight(1.5),
         marginHorizontal: responsiveWidth(1),
-        marginBottom:responsiveHeight(1.5)
+        marginBottom: responsiveHeight(1.5)
     },
     hotelImgContainer: {
         width: "35%",
@@ -90,13 +90,13 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         gap: responsiveHeight(1),
-        alignItems:'center'
+        alignItems: 'center'
 
     },
     familyDetailsTitle:
     {
-fontSize:responsiveHeight(2),
-fontFamily:fonts.textFont
+        fontSize: responsiveHeight(2),
+        fontFamily: fonts.textFont
     },
     hotelDetailsContainer: {
         flexDirection: 'row'
@@ -297,7 +297,10 @@ fontFamily:fonts.textFont
         fontFamily: fonts.textFont,
         color: colors.secondary
     },
-    PopHotelRoomFeatures:
+    HotelRoomFeaturesMainCon: {
+        gap: responsiveHeight(1),
+    },
+    PopUpHotelRoomFeatures:
     {
         backgroundColor: colors.whiteSmoke,
         paddingHorizontal: responsiveWidth(2),
@@ -337,16 +340,16 @@ fontFamily:fonts.textFont
     {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginTop:responsiveHeight(1.8),
-        paddingHorizontal:responsiveWidth(6)
+        marginTop: responsiveHeight(1.8),
+        paddingHorizontal: responsiveWidth(6)
     },
     hotelDeleteBtn:
     {
-borderWidth:1,
-paddingHorizontal:responsiveWidth(3),
-paddingVertical:responsiveHeight(0.8),
-borderRadius:responsiveHeight(1),
-backgroundColor:colors.primary
+        borderWidth: 1,
+        paddingHorizontal: responsiveWidth(3),
+        paddingVertical: responsiveHeight(0.8),
+        borderRadius: responsiveHeight(1),
+        backgroundColor: colors.primary
     },
     hotelDeleteBtnTitle:
     {

@@ -13,9 +13,15 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from '../../utils/responsiveScale';
+import {
+  BarIndicator,
+} from 'react-native-indicators';
 import { colors, fonts } from '../../config/theme';
 import IconSwitcher from '../common/icons/IconSwitcher';
 import MyContext from '../../context/Context';
+import PopUp from '../common/popup/PopUp';
+import HotelResList from '../hotel/HotelResList/HotelResList';
+import WebView from 'react-native-webview';
 const ruleType = {
   Cancellation: "Cancellation",
   Reissue: "Date change"
@@ -42,6 +48,7 @@ const FlightCard = ({
   var [cancellation, setCancellation] = useState(false);
   var [cancelDtls, setCancelDtls] = useState([]);
   var [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false)
   var flightArr = flightGrp.map((flight, f) => {
     return { ...actions.modifyFlightObject(flight) };
   });
@@ -80,9 +87,15 @@ const FlightCard = ({
     setStopDtls([]);
     setShowStopDtls(false);
   }
-  const handleCancellation = (flight) => {
+  const handleCancellation = async () => {
     setCancellation(true);
-    setCancelDtls(flightArr[0].fareRules);
+    if (flightArr[0].fareRules.length === 0) {
+      var details = await actions.fetchFareRule(flightArr[0].resultIndex, flightArr[0].segments[0].airlineName, 600)
+      setCancelDtls(details)
+    }
+    else {
+      setCancelDtls(flightArr[0].fareRules);
+    }
   }
   const handleCancellationClose = () => {
     setCancellation(false);
@@ -175,7 +188,7 @@ const FlightCard = ({
             <Text style={styles.flightTimings}>{item.destAirportCode}</Text>
           </View>
           <View>
-          {/* {
+            {/* {
               <View>
                 <Text>{`+ ${item.arrAfterDays}`}</Text>
                 <Text>{`${item.arrAfterDays > 1 ? "Days" : "Day"}`}</Text>
@@ -299,6 +312,11 @@ const FlightCard = ({
               <TouchableOpacity
                 style={styles.bookingButton}
                 onPress={() => {
+                  if(flightResJType === 1 && !bookingFlight)
+                  {
+                    setOpen(true);
+                  }
+                 else{
                   actions.fetchFlightBookData(
                     flightArr[0].resultIndex,
                     flightGrp[0],
@@ -308,6 +326,7 @@ const FlightCard = ({
                     },
                     index,
                   );
+                 }
                   removeFilters();
                 }}>
                 <Text style={styles.bookingButtonText}>
@@ -326,22 +345,22 @@ const FlightCard = ({
               </Text>
             </View>
             <Text style={styles.bookingFlightText}>
-            {`${bookingFlight[index].adults} ${bookingFlight[index].adults > 1 ? "Adults" : "Adults"
-                  } ${bookingFlight[index].child > 0 ? `, ${bookingFlight[index].child} ${bookingFlight[index].child > 1 ? "children" : "child"
-                    }` : ''}   ${bookingFlight[index].infant > 0 ? `, ${bookingFlight[index].infant} ${bookingFlight[index].infant > 1 ? "infants" : "infant"
-                      }` : ''}`}
-              </Text>
+              {`${bookingFlight[index].adults} ${bookingFlight[index].adults > 1 ? "Adults" : "Adults"
+                } ${bookingFlight[index].child > 0 ? `, ${bookingFlight[index].child} ${bookingFlight[index].child > 1 ? "children" : "child"
+                  }` : ''}   ${bookingFlight[index].infant > 0 ? `, ${bookingFlight[index].infant} ${bookingFlight[index].infant > 1 ? "infants" : "infant"
+                    }` : ''}`}
+            </Text>
             <Text style={styles.bookingFlightText}>
               {flightArr[0].segments[0].cabinClass}
             </Text>
           </View>
         </View>
       )}
-{ flightArr.length > 1?<TouchableOpacity style={styles.viewAllPrice} onPress={toggle}>
+      {flightArr.length > 1 ? <TouchableOpacity style={styles.viewAllPrice} onPress={toggle}>
         <Text style={styles.viewAllPriceTitle}>View Prices</Text>
         <IconSwitcher componentName='Feather' iconName={isOpen ? "chevron-up" : 'chevron-down'} iconsize={2.5} color={colors.black} />
-      </TouchableOpacity>:null}
-     {isOpen&& <View>
+      </TouchableOpacity> : null}
+      {isOpen && <View>
         {
           flightArr.map((flight, f) => {
             if (f > 0) {
@@ -381,25 +400,25 @@ const FlightCard = ({
                         style={styles.farePrice}>{`₹ ${flight.fare.toLocaleString("en-IN")}`}</Text>
                     </View>
                     {!bookingPage ? (
-              <TouchableOpacity
-                style={styles.bookingButton}
-                onPress={() => {
-                  actions.fetchFlightBookData(
-                    flight.resultIndex,
-                    flightGrp[f],
-                    {
-                      baggage: flight.segments[0].baggage,
-                      cabinBaggage: flight.segments[0].cabinBaggage
-                    },
-                    index
-                  );
-                  removeFilters();
-                }}>
-                <Text style={styles.bookingButtonText}>
-                  {flightResList.length > 1 ? 'Select' : 'Book'}
-                </Text>
-              </TouchableOpacity>
-            ) : null}
+                      <TouchableOpacity
+                        style={styles.bookingButton}
+                        onPress={() => {
+                          actions.fetchFlightBookData(
+                            flight.resultIndex,
+                            flightGrp[f],
+                            {
+                              baggage: flight.segments[0].baggage,
+                              cabinBaggage: flight.segments[0].cabinBaggage
+                            },
+                            index
+                          );
+                          removeFilters();
+                        }}>
+                        <Text style={styles.bookingButtonText}>
+                          {flightResList.length > 1 ? 'Select' : 'Book'}
+                        </Text>
+                      </TouchableOpacity>
+                    ) : null}
                   </View>
                 </View>
               )
@@ -486,70 +505,82 @@ const FlightCard = ({
         </View>
       </Modal>
       {/* {CancellationPopUp} */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={cancellation}
-      >
-        <View style={{ flex: 1 }}>
-          <View style={{ height: "100%", width: "100%", backgroundColor: colors.black, position: "absolute", opacity: 0.5, }}></View>
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginHorizontal: 10 }}>
-            <View style={{ backgroundColor: 'white', width: '100%', paddingVertical: 10, paddingHorizontal: 15, borderRadius: 10 }}>
-              <TouchableOpacity style={{ alignItems: 'flex-end' }} onPress={handleCancellationClose}>
-                <IconSwitcher componentName='Entypo' iconName='cross' iconsize={3} color='black' />
-              </TouchableOpacity>
-              <View style={{ rowGap: responsiveHeight(1) }}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <Text>Journey points</Text>
-                  <Text>Type</Text>
-                  <Text>Range</Text>
-                  <Text>Charge</Text>
-                </View>
-                <View style={{ borderTopWidth: 1 }}></View>
-                <View>
+      <PopUp value={cancellation} handlePopUpClose={handleCancellationClose} customStyles={{ width: "100%" }}>
+{
+  cancelDtls.length===0?
+  <View style={styles.BarIndicatorContainer}>
+    <BarIndicator color={colors.highlight} />
+  </View> 
+  :(
+    <>
+    {
+      Array.isArray(cancelDtls)?
+      <>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Text style={styles.cancelTableTitleCell}>Journey points</Text>
+          <Text style={styles.cancelTableTitleCell}>Type</Text>
+          <Text style={styles.cancelTableTitleCell}>Range</Text>
+          <Text style={styles.cancelTableTitleCell}>Charge</Text>
+        </View>
+        <View style={styles.solidLine} />
+        <View>
+          {
+            cancelDtls.map((ruleBlock, ru) => {
+              return (
+                <View key={ru}>
                   {
-                    cancelDtls.map((ruleBlock, ru) => {
+                    ruleBlock.map((rule, r) => {
                       return (
-                        <View key={ru}>
-                          {
-                            ruleBlock.map((rule, r) => {
-                              return (
-                                <View style={{ flexDirection: 'row' }} key={r}>
-                                  <View style={{ width: "25%", alignItems: 'center', justifyContent: 'center' }}>
-                                    <Text >{rule.JourneyPoints}</Text>
-                                  </View>
-                                  <View style={{ width: "25%", alignItems: 'center', justifyContent: 'center' }}>
-                                    <Text>{ruleType[rule.Type]}</Text>
-                                  </View>
-                                  <View style={{ width: "25%", alignItems: 'center', justifyContent: 'center' }}>
-                                    <Text>{rule.To === null ||
-                                      rule.From === null ||
-                                      rule.Unit === null
-                                      ? "-"
-                                      : rule.To === ""
-                                        ? `Upto ${rule.From} ${rule.Unit} from departure`
-                                        : rule.From === "0"
-                                          ? `After ${rule.To} ${rule.Unit} from departure`
-                                          : `Between ${rule.To} & ${rule.From} ${rule.Unit} from departure`}</Text>
-                                  </View>
-                                  <View style={{ width: "25%", alignItems: 'center', justifyContent: 'center' }}>
-                                    <Text>{rule.Details}</Text>
-                                  </View>
-                                </View>
-                              )
-                            })
-                          }
+                        <View style={{ flexDirection: 'row' }} key={r}>
+                          <View style={styles.cancelTableCell}>
+                            <Text style={styles.cancelTableRowTitle}>{rule.JourneyPoints}</Text>
+                          </View>
+                          <View style={styles.cancelTableCell}>
+                            <Text  style={styles.cancelTableRowTitle}>{ruleType[rule.Type]}</Text>
+                          </View>
+                          <View style={styles.cancelTableCell}>
+                            <Text  style={styles.cancelTableRowTitle}>{rule.To === null ||
+                              rule.From === null ||
+                              rule.Unit === null
+                              ? "-"
+                              : rule.To === ""
+                                ? `Upto ${rule.From} ${rule.Unit} from departure`
+                                : rule.From === "0"
+                                  ? `After ${rule.To} ${rule.Unit} from departure`
+                                  : `Between ${rule.To} & ${rule.From} ${rule.Unit} from departure`}</Text>
+                          </View>
+                          <View style={styles.cancelTableCell}>
+                            <Text  style={styles.cancelTableRowTitle}>{rule.Details}</Text>
+                          </View>
                         </View>
                       )
                     })
                   }
-
                 </View>
-              </View>
-            </View>
-          </View>
+              )
+            })
+          }
+
         </View>
-      </Modal>
+<View style={styles.horizentalLine}/>
+      </>:
+                    <View style={{ height: responsiveHeight(40) }}>
+                    <WebView
+                        source={{ html:cancelDtls }}
+                        nestedScrollEnabled />
+                </View>
+             
+    }
+    </>
+  )
+}
+      </PopUp>
+      <PopUp value={open} handlePopUpClose={() => {
+          setOpen(false);
+          actions.setFlightResJType(0);
+        }}>
+        <Text style={styles.popUpNotification}>Please select onward flight first</Text>
+      </PopUp>
     </View>
   );
 };
@@ -635,7 +666,7 @@ const styles = StyleSheet.create({
   horizentalLine: {
     borderBottomWidth: responsiveWidth(0.3),
     borderStyle: 'dashed',
-    marginTop: '15%',
+    marginVertical: '4%',
     color: colors.black,
   },
   eachFlighttotalTime: {
@@ -779,15 +810,20 @@ const styles = StyleSheet.create({
     width: '25%',
     textAlign: 'center',
     textAlignVertical: 'center',
-    fontFamily: fonts.primary,
-    fontSize: responsiveHeight(2),
+    fontFamily: fonts.textFont,
+    fontSize: responsiveHeight(1.8),
     color: colors.black,
   },
   cancelTableCell: {
     width: '25%',
-    textAlign: 'center',
-    textAlignVertical: 'center',
-    fontFamily: fonts.textFont,
+    color: colors.black,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal:responsiveHeight(1)
+  },
+  cancelTableRowTitle:
+  {
+    fontFamily: fonts.textInput,
     fontSize: responsiveHeight(1.5),
     color: colors.black,
   },
@@ -811,7 +847,7 @@ const styles = StyleSheet.create({
   solidLine: {
     borderTopWidth: 1,
     borderColor: colors.black,
-    marginVertical: responsiveHeight(2),
+    marginVertical: responsiveHeight(1),
     marginHorizontal: responsiveWidth(1.5),
   },
   dashedLine: {
@@ -857,16 +893,25 @@ const styles = StyleSheet.create({
     fontFamily: fonts.textFont,
     color: colors.primary
   },
-  viewPriceCard:{
-    marginBottom:responsiveHeight(2),
-    padding:responsiveHeight(1.8),
-    borderRadius:responsiveHeight(2),
-    backgroundColor:'#f5f5f5',
-    gap:responsiveHeight(0.5)
+  viewPriceCard: {
+    marginBottom: responsiveHeight(2),
+    padding: responsiveHeight(1.8),
+    borderRadius: responsiveHeight(2),
+    backgroundColor: '#f5f5f5',
+    gap: responsiveHeight(0.5)
   },
-  fareType:{
-    fontSize:responsiveHeight(1.5),
-    color:"#108bbc",
-    fontFamily:fonts.primary
+  fareType: {
+    fontSize: responsiveHeight(1.5),
+    color: "#108bbc",
+    fontFamily: fonts.primary
+  },
+  BarIndicatorContainer:
+  {
+height:responsiveHeight(5)
+  },
+  popUpNotification:{
+    fontSize: responsiveHeight(1.8),
+    color: "#fb4143",
+    fontFamily: fonts.primary
   }
 });

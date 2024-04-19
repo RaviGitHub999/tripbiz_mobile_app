@@ -1,5 +1,5 @@
 
-import { View, Text, Image, FlatList, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from 'react-native'
+import { View, Text, Image, FlatList, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator, BackHandler } from 'react-native'
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import MyContext from '../../../context/Context'
 import { styles } from './styles'
@@ -9,6 +9,7 @@ import { colors } from '../../../config/theme'
 import { responsiveHeight, responsiveWidth } from '../../../utils/responsiveScale'
 import FilterHeader from '../../common/filterHeader/FilterHeader'
 import HotelRenderItem from './HotelRenderItem'
+let inputText=""
 const data = [
     {
         length: 1
@@ -86,24 +87,15 @@ const HotelResList = ({ navigation: { navigate, goBack, push } }) => {
         searchingHotels,
         hotelResList,
         actions,
-        fetchingHotelInfo,
-        hotelInfoRes,
         hotelSearchName,
         hotelSearchCheckIn,
         hotelSearchCheckOut,
         hotelSearchAdults,
         hotelSearchChild,
         hotelSearchNights,
-        hotelSearchText,
-        hotelRating,
         hotelStaticData,
         hotelRooms,
-        recommondedHotels,
-        hotelImageList,
         hotelErrorMessage,
-        cityHotel,
-        hotelSessionExpiredPopup,
-        setidToIndex,
     } = useContext(MyContext);
     const [fetchedData, setFetchedData] = useState([])
     const [renderedData, setRenderedData] = useState();
@@ -111,11 +103,8 @@ const HotelResList = ({ navigation: { navigate, goBack, push } }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [hotelPriceStart, setHotelPriceStart] = useState()
     const [hotelPriceEnd, setHotelPriceEnd] = useState()
-    const [searchData, setSearchData] = useState([])
-    let ra=hotelResList
     useEffect(() => {
         setFetchedData([...hotelResList]);
-        setSearchData([...hotelResList])
         setRenderedData(hotelResList.slice(0, 20));
         return () => {
             setFetchedData([])
@@ -125,50 +114,29 @@ const HotelResList = ({ navigation: { navigate, goBack, push } }) => {
     useEffect(() => {
         setRenderedData(fetchedData.slice(0, 20));
     }, [fetchedData]);
-    const handleSearch = (text) => {
-        setSearchTerm(text);
-        if (text) {
-            filteredArr = searchData.filter((hotel) => {
-                const staticData = hotelStaticData[hotel.HotelCode];
-                if (hotel.HotelName) {
-                    return hotel.HotelName.toLowerCase().includes(
-                        text.toLowerCase()
-                    );
-                }
-                else {
-                    return staticData?.HotelName.toLowerCase().includes(
-                        text.toLowerCase()
-                    );
-                }
+    useEffect(() => {
+        const backAction = () => {
+          goBack()
+          actions.backToHotelSearchPage()
+          return true; 
+        };
+    
+        const backHandler = BackHandler.addEventListener(
+          'hardwareBackPress',
+          backAction
+        );
+    
+        return () => backHandler.remove();
+      }, []);
+    const filterHotels= () => {
+        var filteredArr = hotelResList;
 
-            });
-            setFetchedData(filteredArr)
-            // setSearchData(filteredArr)
-   ra=filteredArr
-        }
-        else if (text === "") {
-            setFetchedData(hotelResList);
-            setSearchData(hotelResList)
-            setCount(0)
-            setRating(null);
-            setPrice(null);
-            setSelectedItemIndex(null)
-            setSelectedStarsItemIndex(null)
-
-        }
-
-    };
-
-
-    const filterHotels = () => {
-        var filteredArr = ra;
-
-        if (rating !== null) {
+           if (rating !== null) {
             filteredArr = filteredArr.filter(
                 (hotel) => hotel.StarRating === rating
             );
         }
-        if (price !== null) {
+           if (price !== null) {
             filteredArr = filteredArr.filter((hotel) => {
                 return (
                     hotel.Price.OfferedPriceRoundedOff >=
@@ -177,28 +145,51 @@ const HotelResList = ({ navigation: { navigate, goBack, push } }) => {
                 );
             });
         }
+        if (inputText!=="") {
+          filteredArr = filteredArr.filter((hotel) => {
+            const staticData = hotelStaticData[hotel.HotelCode];
+            if (hotel.HotelName) {
+              return hotel.HotelName.toLowerCase().includes(
+                inputText.toLowerCase()
+              );
+            }
+            else {
+              return staticData?.HotelName.toLowerCase().includes(
+                inputText.toLowerCase()
+              );
+            }
+
+          });
+        }
         setFetchedData(filteredArr)
-        setOpenFilters(false)
-        setCount(0);
+            setOpenFilters(false)
+              setCount(0);
         if (rating) {
             setCount(prev => prev + 1);
         }
         if (price) {
             setCount(prev => prev + 1);
         }
-    }
+      }
+
+
+      const handleSearch = (text) => {
+        setSearchTerm(text);
+        inputText=text
+        filterHotels()
+    };
     const loadMoreData = () => {
         if (renderedData.length !== fetchedData.length) {
             setLoading(true);
         }
         setTimeout(() => {
-            const endIndex = Math.min(renderedData.length + 20, fetchedData.length); // Calculate the end index for new data
-            setRenderedData(prevData => [...prevData, ...fetchedData.slice(prevData.length, endIndex)]); // Append new data to renderedData
+            const endIndex = Math.min(renderedData.length + 20, fetchedData.length); 
+            setRenderedData(prevData => [...prevData, ...fetchedData.slice(prevData.length, endIndex)]);  
             setLoading(false);
         }, 1000);
     };
     const handleEndReached = () => {
-        if (renderedData.length < fetchedData.length) { // Check if there are more items to render
+        if (renderedData.length < fetchedData.length) {
             loadMoreData();
         }
     };
@@ -324,6 +315,7 @@ const HotelResList = ({ navigation: { navigate, goBack, push } }) => {
 
     const removeFilters = () => {
         setSearchTerm("")
+        inputText=""
         setCount(0)
         setRating(null);
         setPrice(null);
@@ -364,7 +356,7 @@ const HotelResList = ({ navigation: { navigate, goBack, push } }) => {
                     }`}</Text>}
             </View>
 
-            <FilterHeader handlefiltersToggleActions={handleOpenFilters} value={openFilters} customStyle={{ rowGap: responsiveHeight(1), paddingHorizontal: responsiveWidth(4) }} filtersCount={count}>
+            <FilterHeader handlefiltersToggleActions={handleOpenFilters} value={openFilters} customStyle={{ rowGap: responsiveHeight(1), paddingHorizontal: responsiveWidth(4) }} filtersCount={count} handlefilters={filterHotels}>
                 <Text style={styles.ratingTitle}>Rating</Text>
                 <View style={styles.container}>
                     {openFilters && generatePattern()}
@@ -373,15 +365,15 @@ const HotelResList = ({ navigation: { navigate, goBack, push } }) => {
                 <View style={styles.container}>
                     {openFilters && handleHotelPrices()}
                 </View>
-                <TouchableOpacity style={styles.applyFiltersBtn} onPress={filterHotels}>
+                {/* <TouchableOpacity style={styles.applyFiltersBtn} onPress={filterHotels}>
                     <Text style={styles.applyFiltersBtnText} >Appy</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <TouchableOpacity style={styles.filterClosingIcon} onPress={handleOpenFilters}>
                     <IconSwitcher componentName='Ionicons' iconName='chevron-up' color={colors.black} iconsize={3.5} />
                 </TouchableOpacity>
             </FilterHeader>
 
-            <View style={styles.roomDetailsMainContainer}>
+          { hotelResList.length > 0 ? <View style={styles.roomDetailsMainContainer}>
                 {!openFilters && <FlatList
                     data={renderedData}
                     renderItem={renderItem}
@@ -394,7 +386,11 @@ const HotelResList = ({ navigation: { navigate, goBack, push } }) => {
                     ListEmptyComponent={() => <Text>"No Data Found"</Text>}
                     ListHeaderComponentStyle={{ paddingVertical: 10 }}
                 />}
+            </View>:
+            <View style={styles.hotelErrorMessageCon}>
+                <Text style={styles.errorMessage}>{hotelErrorMessage?.ErrorMessage}</Text>
             </View>
+            }
         </View>
     )
 }
