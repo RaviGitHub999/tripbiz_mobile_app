@@ -17,24 +17,24 @@ const App = () => {
   )
 }
 
-export default React.memo(App)
+export default App
+
 // import { View, Text } from 'react-native'
 // import React, { useState } from 'react'
-// import PopUp from './app/components/common/popup/PopUp'
+// import TripDetailsFlightCard from './app/components/Trips/TripDetails/TripDetailsFlightCard'
+// import TripDetailsInput from './app/components/Trips/TripDetails/TripDetailsInput'
 
 // const App = () => {
-//   const [open,setOpen]=useState({can:false})
-//    const handleCancelPopUp=(arg: string)=>
+//   const [text,setText]=useState("")
+//   const _chageText=(e)=>
 //     {
-//       if(arg==="can")
-//       {
-//         console.log("cli")
-// setOpen({...open,can:!open.can})
-//       }
-
+// setText(e)
 //     }
 //   return (
-//     <PopUp value={open.can} handleCancelPopUp={()=>handleCancelPopUp("can")}/>
+//     <View style={{flex:1,margin:10}}>
+//     <TripDetailsInput placeholderName="Ravi" stateValue={text} handleonChange={(e)=>_chageText(e)}/>
+//   <Text>{text}</Text>
+//     </View>
 //   )
 // }
 

@@ -5,8 +5,6 @@ import { colors, fonts } from "../../../config/theme";
 export const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-        // borderWidth: 3,
-        // borderColor: "green",
         paddingTop: responsiveHeight(1.5),
         paddingHorizontal: responsiveWidth(2),
         backgroundColor: colors.white
@@ -15,8 +13,6 @@ export const styles = StyleSheet.create({
         width: "8%",
     },
     subContainer: {
-        // borderWidth: 2,
-        // borderColor: "red",
         paddingHorizontal: responsiveWidth(2.5),
     },
     hotelCardTitle:
@@ -46,8 +42,6 @@ export const styles = StyleSheet.create({
         color: colors.highlight
     },
     hotelCard: {
-        // borderWidth: 2,
-        // borderColor: "gold",
         paddingVertical: responsiveHeight(2.5),
         paddingHorizontal: responsiveWidth(3),
         shadowColor: colors.black,
@@ -62,7 +56,6 @@ export const styles = StyleSheet.create({
     },
     hotelImgContainer: {
         width: "35%",
-        // borderWidth:1
     },
     hotelImg: {
         height: responsiveHeight(13),
@@ -103,7 +96,6 @@ export const styles = StyleSheet.create({
     },
     hotelRoomFeatures:
     {
-        // borderWidth: 1,
         backgroundColor: colors.whiteSmoke,
         paddingHorizontal: responsiveWidth(2),
         paddingVertical: responsiveHeight(0.8),
@@ -201,7 +193,6 @@ export const styles = StyleSheet.create({
         fontSize: responsiveHeight(2.1),
         fontFamily: fonts.primary,
         color: colors.primary,
-        // marginBottom: responsiveHeight(1.3)
     },
     totalPriceContainer: {
         flexDirection: 'row',
@@ -211,7 +202,6 @@ export const styles = StyleSheet.create({
         paddingVertical: responsiveHeight(2),
         height: responsiveHeight(9),
         elevation: responsiveHeight(0.09),
-        // backgroundColor: colors.white,
     },
     totalPriceTitle:
     {
@@ -260,7 +250,6 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         alignItems: 'center',
-        //  marginTop:responsiveHeight(1.2)
     },
     bookingStatusTitles:
     {
@@ -274,7 +263,6 @@ export const styles = StyleSheet.create({
         borderRadius: responsiveHeight(1),
         paddingVertical: responsiveHeight(0.3),
         justifyContent: 'center'
-
     },
     bookingStatusText: {
         color: colors.white,
@@ -356,6 +344,86 @@ export const styles = StyleSheet.create({
         fontSize: responsiveHeight(2),
         fontFamily: fonts.textInput,
         color: colors.white
+    },
+    tripDetailsTravellerTabs: {
+        flexDirection: 'row',
+        borderRadius: responsiveHeight(2),
+        overflow: 'hidden',
+        backgroundColor: colors.highlightLite
+    },
+    tripDetailsTravellerEachTab:
+    {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        // backgroundColor:colors.primaryLite,
+        paddingVertical: responsiveHeight(1),
+        paddingHorizontal: responsiveWidth(1)
+    },
+    tripDetailsTravellerSelectedEachTab:
+    {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: colors.primaryLite,
+        paddingVertical: responsiveHeight(1),
+        paddingHorizontal: responsiveWidth(1)
+    },
+    tabTitles:
+    {
+        fontSize: responsiveHeight(1.8),
+        fontFamily: fonts.primary,
+        color: colors.primary
+    },
+    tabTitlesSelected:
+    {
+        fontSize: responsiveHeight(1.8),
+        fontFamily: fonts.primary,
+        color: colors.white
+    },
+    travelDetailsFlightCard:
+    {
+        // borderWidth:1,
+        // borderColor:'red',
+        padding:responsiveHeight(1),
+        flexDirection:'row',
+        alignItems:'center',
+        justifyContent:'center',
+        // gap:responsiveHeight(.3),
+        height:responsiveHeight(7),
+        // backgroundColor:'gray'
+    },
+    tripRouteCon:{
+        flexDirection:'row',
+        alignItems:"center",
+        columnGap:responsiveHeight(.5)
+    },
+    tripDetailsTitleContainer:
+    {
+        flexDirection:'row',
+        flexWrap:'wrap',
+        marginTop:responsiveHeight(1),
+        alignItems:'center',
+        justifyContent:'center'
+    },
+    tripDetailsTitle:{
+        fontSize:responsiveHeight(1.5),
+        fontFamily:fonts.textFont,
+        color:colors.primary
+    },
+    btn:
+    {
+        alignSelf:'center',
+        paddingHorizontal:responsiveHeight(2),
+        paddingVertical:responsiveHeight(0.5),
+        borderRadius:responsiveHeight(1),
+        backgroundColor:colors.primary
+    },
+    btnTitle:
+    {
+        fontSize:responsiveHeight(1.8),
+        color:colors.white,
+        fontFamily:fonts.textInput
     }
 
 })
