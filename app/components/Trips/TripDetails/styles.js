@@ -349,7 +349,7 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         borderRadius: responsiveHeight(2),
         overflow: 'hidden',
-        backgroundColor: colors.highlightLite
+        backgroundColor: colors.highlightLite,
     },
     tripDetailsTravellerEachTab:
     {
@@ -424,6 +424,37 @@ export const styles = StyleSheet.create({
         fontSize:responsiveHeight(1.8),
         color:colors.white,
         fontFamily:fonts.textInput
-    }
+    },
+    title:{
+        fontSize:responsiveHeight(1.5),
+        fontFamily:fonts.primary,
+        color:colors.primary
+    },
+    subTitle:
+    {
+        fontSize:responsiveHeight(1.5),
+        fontFamily:fonts.textFont,
+        color:colors.lightGray,
+        
+    },
+    card:{ 
+        backgroundColor: 'white',
+        borderRadius: responsiveHeight(1.5),
+        marginHorizontal: responsiveWidth(1),
+        marginTop: responsiveHeight(1),
+        marginBottom: responsiveHeight(1),
+        padding: responsiveHeight(1.5),
+        // Shadow properties for iOS
+        shadowColor: colors.black,
+        shadowOffset: { width: responsiveWidth(-0.2), height: responsiveHeight(-5) },
+        shadowOpacity: responsiveHeight(0.3),
+        shadowRadius: responsiveHeight(3),
+        elevation: responsiveHeight(0.4),
+    },
+    flightTimings: {
+        fontSize: responsiveHeight(1.5),
+        fontFamily: fonts.textFont,
+        color: colors.black,
+    },
 
 })

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { View, Modal, TouchableOpacity, StyleSheet, Dimensions, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, Modal, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
 import { colors } from '../../../config/theme';
 import IconSwitcher from '../icons/IconSwitcher';
 import { responsiveHeight, responsiveWidth } from '../../../utils/responsiveScale';
@@ -8,17 +8,17 @@ import { responsiveHeight, responsiveWidth } from '../../../utils/responsiveScal
 const PopUp = (props) => {
     const { value, handlePopUpClose, customStyles } = props;
 
-    const dismissKeyboard = () => {
-        Keyboard.dismiss();
-    };
-
     return (
         value ?
             <Modal
                 animationType="slide"
                 transparent={true}
-                visible={value}>
-                <TouchableWithoutFeedback onPress={dismissKeyboard}>
+                visible={value}
+                onRequestClose={()=>
+                {
+                    handlePopUpClose()
+                }}
+                >
                     <View style={styles.modelMainContainer}>
                         <View style={styles.blurBackground}></View>
                         <View style={styles.popUpMainContainer}>
@@ -36,7 +36,6 @@ const PopUp = (props) => {
                             </View>
                         </View>
                     </View>
-                </TouchableWithoutFeedback>
             </Modal>
             : null
     );

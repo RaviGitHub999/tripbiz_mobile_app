@@ -2,7 +2,7 @@ import { View, Text, KeyboardAvoidingView } from 'react-native'
 import React, { useContext } from 'react'
 import MyContext from '../../../context/Context'
 import TripDetailsInput from './TripDetailsInput'
-
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 const InputField = ({ flight, userDetails, s, travIndex, tripData, travellerDetails, handleInputChange, isEdit, travellerType, isInternational }) => {
   const { userAccountDetails } = useContext(MyContext)
   return (
