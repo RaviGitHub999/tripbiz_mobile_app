@@ -3110,50 +3110,233 @@ this.setState({setidToIndex:idToIndex})
           return reqs;
         },
 
+        makeTripPayment : async (tripName, price) => {
+          try {
+            const accCollectionRef = firestore().collection("Accounts").doc(this.state.userId);
+            const accSnapShot = await accCollectionRef.get();
+        
+            if (!accSnapShot.exists) {
+              throw new Error("User document does not exist");
+            }
+            const userData = accSnapShot.data();
+            const finalBalance = Number(userData.balance) - Number(price);
+            const data = {
+              Date: firestore.Timestamp.now(),
+              type: "Debit",
+              amount: price,
+              application: tripName,
+              balance: finalBalance,
+            };
+            await accCollectionRef.update({
+              balance: finalBalance,
+              transactions: firestore.FieldValue.arrayUnion(data)
+            });
+            console.log("Payment successful");
+          } catch (error) {
+            console.error("Error making trip payment:", error);
+          }
+        },
 
-        // getTripDocById:async(id, userid)=> {
-        //   try {
-        //     this.setState({
-        //       tripDataLoading: true
-        //     });
-
-        //     var docCollectionRef = db
-        //       .collection("Accounts")
-        //       .doc(userid)
-        //       .collection("trips")
-        //       .doc(id);
-
-        //     var doc = await docCollectionRef.get();
-        //     console.log(doc,"----doc");
-
-        //     var sendData = await doc.data();
-        //     console.log(sendData,"sendData");
-
-        //     const [flights, hotels, requestData] = await Promise.all([
-        //       this.state.actions.getAllFlights(docCollectionRef.id, userid),
-        //       this.state.actions.getAllHotels(docCollectionRef.id, userid),
-        //       sendData.requestId ? this.state.actions.getRequests(sendData.requestId, userid) : ''
-        //     ]);
-
-        //     console.log(requestData,"requestData");
-
-        //     this.setTripData({
-        //       id: doc.id,
-        //       data: doc.data(),
-        //       hotels: hotels,
-        //       flights: flights,
-        //       requestData: requestData
-        //     });
-
-        //     this.setState({
-        //       tripDataLoading: false
-        //     });
-
-        //     return sendData;
-        //   } catch (error) {
-        //     console.log(error);
-        //   }
-        // },
+        sendBookingSubmitEmail: async (userData) => {
+          try {
+            const response = await fetch("https://tripbizzapi-lxyskuwaba-uc.a.run.app/sendBookingSubmitEmail", {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(userData),
+            });
+            if (!response.ok) {
+              console.log(response);
+            }
+            var data = await response.json()
+            console.log(data);
+          } catch (error) {
+            console.log(error);
+          }
+        },
+ addTripsToAdmin : async (tripId, data, userDetails, submittedHotels, submittedFlights,  adminDetails, userId, actions) => {
+          try {
+            // Reference to the admin's document in the 'Accounts' collection
+            const docCollectionRef = firestore().collection("Accounts").doc(adminDetails.userid);
+            const tripCollectionRef = docCollectionRef.collection("trips");
+            
+            // Get trip document data by tripId and userId
+            const data1 = await actions.getTripDocById(tripId, userId);
+        
+            const hotelArray = submittedHotels?.map((hotel) => {
+              return { status: "Not Submitted", id: hotel };
+            });
+        
+            const flightArray = submittedFlights?.map((flight) => {
+              return { status: "Not Submitted", id: flight };
+            });
+        
+            // const cabArray = submittedCabs?.map((cab) => {
+            //   return { status: "Not Submitted", id: cab };
+            // });
+        
+            // Add new trip document to admin's trips collection
+            const newTripDocRef = await tripCollectionRef.add({
+              userDetails: userDetails,
+              tripId: tripId,
+              tripName: data1?.name,
+              hotels: hotelArray,
+              flights: flightArray,
+              // cabs: cabArray,
+              status: "Not Submitted",
+              submittedDate: firestore.Timestamp.now(),
+              travellerDetails: userDetails
+            });
+        
+            // Update admin's document with new trip ID
+            await docCollectionRef.update({
+              trips: firestore.FieldValue.arrayUnion(newTripDocRef.id),
+            });
+        
+            // Update trip status for user's trip
+            const accountCollectionRef = firestore().collection("Accounts").doc(userId);
+            const tripCollectionRef1 = accountCollectionRef.collection("trips").doc(tripId);
+            await tripCollectionRef1.update({
+              status: "Submitted",
+              travellerDetails: userDetails
+            });
+        
+            // Update trip status for flights, hotels, and cabs
+            if (flightArray) {
+              flightArray.forEach((flight) => {
+                actions.editTripStatus(userId, tripId, newTripDocRef.id, "Paid and Submitted", flight.id, "flight");
+              });
+            }
+        
+            if (hotelArray) {
+              hotelArray.forEach((hotel) => {
+                actions.editTripStatus(userId, tripId, newTripDocRef.id, "Paid and Submitted", hotel.id, "add");
+              });
+            }
+        
+            // if (cabArray) {
+            //   cabArray.forEach((cab) => {
+            //     actions.editTripStatus(userId, tripId, newTripDocRef.id, "Paid and Submitted", cab.id, "cabs");
+            //   });
+            // }
+        
+            console.log("Trip added to admin successfully");
+          } catch (error) {
+            console.error("Error adding trip to admin:", error);
+          }
+        },
+        editTripStatus : async (userId, tripId, adminTripId, status, hotelId, type, adminDetails, actions) => {
+          try {
+            if (type === "add") {
+              const accountCollectionRef = firestore().collection("Accounts").doc(userId);
+              const tripCollectionRef = accountCollectionRef.collection("trips").doc(tripId);
+              const userHotelDetails = await tripCollectionRef.get();
+              const userHotelArray = userHotelDetails.data().hotels;
+              const userCurrHotel = userHotelArray.find((hotel) => hotel.id === hotelId);
+              await tripCollectionRef.update({
+                hotels: firestore.FieldValue.arrayRemove(userCurrHotel),
+                hotels: firestore.FieldValue.arrayUnion({ ...userCurrHotel, status: status })
+              });
+              
+              const adminCollectionRef = firestore().collection("Accounts").doc(adminDetails.userid);
+              const admintripCollectionRef = adminCollectionRef.collection("trips").doc(adminTripId);
+              const adminHotelDetails = await admintripCollectionRef.get();
+              const adminHotelArray = adminHotelDetails.data().hotels;
+              const admincurrHotel = adminHotelArray.find((hotel) => hotel.id === hotelId);
+              await admintripCollectionRef.update({
+                hotels: firestore.FieldValue.arrayRemove(admincurrHotel),
+                hotels: firestore.FieldValue.arrayUnion({ ...userCurrHotel, status: status, bookedAt: firestore.Timestamp.now() })
+              });
+            }
+        
+            // Similar logic for other types "flight" and "cabs"
+            // Ensure to replace db.collection() with firestore().collection()
+        
+          } catch (error) {
+            console.log(error);
+          }
+        },
+         editAdminTrips :async (tripid, data, travellerDetails, submittedHotels, submittedFlights, requestIds, tripName, adminDetails, userId, actions) => {
+          try {
+            const accountDocRef = firestore().collection("Accounts").doc(adminDetails.userid);
+            const tripCollectionRef = accountDocRef.collection("trips");
+            const tripQuery = tripCollectionRef.where("tripId", "==", tripid);
+            const querySnapshot = await tripQuery.get();
+        
+            const hotelArray = submittedHotels?.map((hotel) => {
+              return { status: "Not Submitted", id: hotel };
+            });
+        
+            // Update trip request status for each request
+            await Promise.all(requestIds.map(async (req) => {
+              const userDocRef = firestore().collection("Accounts").doc(userId);
+              const tripReqcollectionRef = userDocRef.collection("tripRequests");
+              const tripReqDoc = tripReqcollectionRef.doc(req);
+              await tripReqDoc.update({
+                tripStatus: "Submitted"
+              });
+            }));
+        
+            const flightArray = submittedFlights?.map((flight) => {
+              return { status: "Not Submitted", id: flight };
+            });
+        
+            // Send booking submit email
+            await actions.sendBookingSubmitEmail({
+              id: userId,
+              name: adminDetails.firstName + adminDetails.lastName,
+              email: adminDetails.email,
+              tripName: tripName
+            });
+        
+            // const cabArray = submittedCabs?.map((cab) => {
+            //   return { status: "Not Submitted", id: cab };
+            // });
+        
+            if (!querySnapshot.empty) {
+              const docRef = querySnapshot.docs[0].ref;
+              await docRef.update({
+                hotels: hotelArray,
+                flights: flightArray,
+                travellerDetails: travellerDetails,
+                cabs: cabArray
+              });
+            } else {
+              await actions.addTripsToAdmin(tripid, data, travellerDetails, submittedHotels, submittedFlights,);
+              return;
+            }
+        
+            const accountCollectionRef = firestore().collection("Accounts").doc(userId);
+            const tripCollectionRef1 = accountCollectionRef.collection("trips").doc(tripid);
+            await tripCollectionRef1.update({
+              status: "Submitted",
+              travellerDetails: travellerDetails
+            });
+        
+            if (!querySnapshot.empty) {
+              if (flightArray) {
+                flightArray.forEach((flight) => {
+                  actions.editTripStatus(userId, tripid, querySnapshot.docs[0].id, "Paid and Submitted", flight.id, "flight");
+                });
+              }
+              if (hotelArray) {
+                hotelArray.forEach((hotel) => {
+                  actions.editTripStatus(userId, tripid, querySnapshot.docs[0].id, "Paid and Submitted", hotel.id, "add");
+                });
+              }
+              // if (cabArray) {
+              //   cabArray.forEach((cab) => {
+              //     actions.editTripStatus(userId, tripid, querySnapshot.docs[0].id, "Paid and Submitted", cab.id, "cabs");
+              //   });
+              // }
+            }
+        
+            console.log("Admin trip edited successfully");
+          } catch (error) {
+            console.error("Error editing admin trip:", error);
+          }
+        },
         setTripData: (value) => {
           this.setState({
             tripData: value

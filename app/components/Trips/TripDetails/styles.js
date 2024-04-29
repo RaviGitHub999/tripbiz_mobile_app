@@ -350,6 +350,7 @@ export const styles = StyleSheet.create({
         borderRadius: responsiveHeight(2),
         overflow: 'hidden',
         backgroundColor: colors.highlightLite,
+        width:"100%"
     },
     tripDetailsTravellerEachTab:
     {
@@ -456,5 +457,31 @@ export const styles = StyleSheet.create({
         fontFamily: fonts.textFont,
         color: colors.black,
     },
+    paymentMainConatainer:{
+        flex:1,
+        alignItems:'center',
+        marginTop:responsiveHeight(4)
+    },
+    paymentTitleContainer:{
+        alignItems:'center',
+        gap:responsiveHeight(.5)
+    },
+    paymentCheckBoxContainer:{
+        flexDirection:'row',
+        gap:responsiveHeight(2),
+        alignItems:'center'
+    },
+    notSubmitedContainer:{
+        paddingHorizontal:responsiveHeight(1),
+        paddingVertical:responsiveHeight(.5),
+        borderRadius:responsiveHeight(1),
+        backgroundColor:"#808080"
+    },
+    notSubmitedTitle:
+    {
+        fontSize: responsiveHeight(1.5),
+        fontFamily: fonts.textFont,
+        color: colors.white,
+    }
 
 })

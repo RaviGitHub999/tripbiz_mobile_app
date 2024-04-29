@@ -48,7 +48,8 @@ const styles = StyleSheet.create({
         flex: 1
     },
     modelMainContainer: {
-        height: Dimensions.get("screen").height,
+        // height: Dimensions.get("screen").height,
+        flex:1,
         justifyContent: 'center'
     },
     blurBackground: {
