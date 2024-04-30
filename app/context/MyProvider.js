@@ -2761,9 +2761,9 @@ this.setState({setidToIndex:idToIndex})
             querySnapshot.forEach(doc => {
               const data = doc.data();
               admin.push(data);
-              // this.setState({
-              //   adminDetails: data
-              // });
+              this.setState({
+                adminDetails: data
+              });
             });
 
             // const docCollectionRef = firestore()
@@ -3155,14 +3155,135 @@ this.setState({setidToIndex:idToIndex})
             console.log(error);
           }
         },
- addTripsToAdmin : async (tripId, data, userDetails, submittedHotels, submittedFlights,  adminDetails, userId, actions) => {
+        getTripDoc:async(id, userid)=> {
           try {
+            const db = firestore();
+            const docCollectionRef = db.collection("Accounts").doc(userid).collection("trips").doc(id);
+            const doc = await docCollectionRef.get();
+            const sendData = doc.data();
+        
+            const [flights, hotels, requestData, cabs, expenses] = await Promise.all([
+              this.state.actions.getAllFlights(doc.id, userid),
+              this.state.actions.getAllHotels(doc.id, userid),
+              sendData?.requestId ? this.state.actions.getRequests(sendData?.requestId, userid) : '',
+              // this.state.actions.getAllCabs(doc.id, userid),
+              // this.state.actions.getAllExpenses(doc.id, userid)
+            ]);
+        
+            this.state.actions.setTripData({
+              id: doc.id,
+              data: sendData,
+              hotels: hotels,
+              flights: flights,
+              // cabs: cabs,
+              // expenses: expenses,
+              requestData: requestData
+            });
+        
+            return sendData;
+          } catch (error) {
+            console.error(error);
+          }
+        },
+        editTripStatus: async (userId, tripId, adminTripId, status, hotelId, type)=> {
+          try {
+            const db = firestore();
+        
+            if (type === "add") {
+              const accountCollectionRef = db.collection("Accounts").doc(userId);
+              const tripCollectionRef = accountCollectionRef.collection("trips").doc(tripId);
+              const userHotelDetails = await tripCollectionRef.get();
+              const userHotelArray = userHotelDetails.data().hotels;
+              const userCurrHotel = userHotelArray.filter(hotel => hotel.id === hotelId);
+        
+              await tripCollectionRef.update({
+                hotels: firestore.FieldValue.arrayRemove(userCurrHotel[0])
+              });
+        
+              await tripCollectionRef.update({
+                hotels: firestore.FieldValue.arrayUnion({ ...userCurrHotel[0], status: status })
+              });
+        
+              const adminCollectionRef = db.collection("Accounts").doc(this.state.adminDetails.userid);
+              const admintripCollectionRef = adminCollectionRef.collection("trips").doc(adminTripId);
+              const adminHotelDetails = await admintripCollectionRef.get();
+              const adminHotelArray = adminHotelDetails.data().hotels;
+              const admincurrHotel = adminHotelArray.filter(hotel => hotel.id === hotelId);
+        
+              await admintripCollectionRef.update({
+                hotels: firestore.FieldValue.arrayRemove(admincurrHotel[0])
+              });
+        
+              if (status === "Booked" || status === "Booked,Payment Pending") {
+                await admintripCollectionRef.update({
+                  hotels: firestore.FieldValue.arrayUnion({ ...userCurrHotel[0], status: status, bookedAt: firestore.FieldValue.serverTimestamp() })
+                });
+              } else {
+                await admintripCollectionRef.update({
+                  hotels: firestore.FieldValue.arrayUnion({ ...userCurrHotel[0], status: status })
+                });
+              }
+            }
+        
+            if (type === "flight") {
+              var accountCollectionRef = db.collection("Accounts").doc(userId);
+              var tripCollectionRef = accountCollectionRef
+                .collection("trips")
+                .doc(tripId);
+              var userHotelDetails = await tripCollectionRef.get();
+              var userFlightArray = userHotelDetails.data().flights;
+              var userCurrFlight = userFlightArray.filter(flight => flight.id === hotelId);
+              
+              await tripCollectionRef.update({
+                flights: firestore.FieldValue.arrayRemove(userCurrFlight[0])
+              });
+              
+              await tripCollectionRef.update({
+                flights: firestore.FieldValue.arrayUnion({ ...userCurrFlight[0], status: status })
+              });
+              var adminCollectionRef = db
+                .collection("Accounts")
+                .doc(this.state.adminDetails.userid);
+              var admintripCollectionRef = adminCollectionRef
+                .collection("trips")
+                .doc(adminTripId);
+              var adminFlightDetails = await admintripCollectionRef.get();
+              var adminFlightArray = adminFlightDetails.data().flights;
+              var flightArray = Object.values(adminFlightArray)
+              var admincurrFlight = flightArray.filter((flight) => {
+                return flight.id === hotelId;
+              });
+              await admintripCollectionRef.update({
+                flights: firestore.FieldValue.arrayRemove(admincurrFlight[0])
+              });
+              
+              if (status === "Booked" || status === "Booked,Payment Pending") {
+                await admintripCollectionRef.update({
+                  flights: firestore.FieldValue.arrayUnion({ ...userCurrFlight[0], status: status, bookedAt: firestore.FieldValue.serverTimestamp() })
+                });
+              }
+              else {
+                await admintripCollectionRef.update({
+                  flights: firestore.FieldValue.arrayUnion({ ...userCurrFlight[0], status: status })
+                });
+              }
+  
+            }
+        
+            await this.state.actions.getTripDoc(tripId, this.state.userId);
+          } catch (error) {
+            console.error(error);
+          }
+        },
+ addTripsToAdmin : async (tripId, data, userDetails, submittedHotels, submittedFlights) => {
+          try {
+            
             // Reference to the admin's document in the 'Accounts' collection
-            const docCollectionRef = firestore().collection("Accounts").doc(adminDetails.userid);
+            const docCollectionRef = firestore().collection("Accounts").doc(this.state.adminDetails.userid);
             const tripCollectionRef = docCollectionRef.collection("trips");
             
             // Get trip document data by tripId and userId
-            const data1 = await actions.getTripDocById(tripId, userId);
+            const data1 = await this.state.actions.getTripDocById(tripId, this.state.userAccountDetails.userid);
         
             const hotelArray = submittedHotels?.map((hotel) => {
               return { status: "Not Submitted", id: hotel };
@@ -3178,7 +3299,7 @@ this.setState({setidToIndex:idToIndex})
         
             // Add new trip document to admin's trips collection
             const newTripDocRef = await tripCollectionRef.add({
-              userDetails: userDetails,
+              userDetails: this.state.userAccountDetails,
               tripId: tripId,
               tripName: data1?.name,
               hotels: hotelArray,
@@ -3195,7 +3316,7 @@ this.setState({setidToIndex:idToIndex})
             });
         
             // Update trip status for user's trip
-            const accountCollectionRef = firestore().collection("Accounts").doc(userId);
+            const accountCollectionRef = firestore().collection("Accounts").doc(this.state.userId);
             const tripCollectionRef1 = accountCollectionRef.collection("trips").doc(tripId);
             await tripCollectionRef1.update({
               status: "Submitted",
@@ -3204,14 +3325,14 @@ this.setState({setidToIndex:idToIndex})
         
             // Update trip status for flights, hotels, and cabs
             if (flightArray) {
-              flightArray.forEach((flight) => {
-                actions.editTripStatus(userId, tripId, newTripDocRef.id, "Paid and Submitted", flight.id, "flight");
+              flightArray.map((flight) => {
+                return this.state.actions.editTripStatus(this.state.userId, tripId, newTripDocRef.id, "Paid and Submitted", flight.id, "flight");
               });
             }
         
             if (hotelArray) {
-              hotelArray.forEach((hotel) => {
-                actions.editTripStatus(userId, tripId, newTripDocRef.id, "Paid and Submitted", hotel.id, "add");
+              hotelArray.map((hotel) => {
+                return this.state.actions.editTripStatus(this.state.userId, tripId, newTripDocRef.id, "Paid and Submitted", hotel.id, "add");
               });
             }
         
@@ -3226,7 +3347,7 @@ this.setState({setidToIndex:idToIndex})
             console.error("Error adding trip to admin:", error);
           }
         },
-        editTripStatus : async (userId, tripId, adminTripId, status, hotelId, type, adminDetails, actions) => {
+        editTripStatus : async (userId, tripId, adminTripId, status, hotelId, type,) => {
           try {
             if (type === "add") {
               const accountCollectionRef = firestore().collection("Accounts").doc(userId);
@@ -3239,7 +3360,7 @@ this.setState({setidToIndex:idToIndex})
                 hotels: firestore.FieldValue.arrayUnion({ ...userCurrHotel, status: status })
               });
               
-              const adminCollectionRef = firestore().collection("Accounts").doc(adminDetails.userid);
+              const adminCollectionRef = firestore().collection("Accounts").doc(this.state.adminDetails.userid);
               const admintripCollectionRef = adminCollectionRef.collection("trips").doc(adminTripId);
               const adminHotelDetails = await admintripCollectionRef.get();
               const adminHotelArray = adminHotelDetails.data().hotels;
@@ -3257,9 +3378,9 @@ this.setState({setidToIndex:idToIndex})
             console.log(error);
           }
         },
-         editAdminTrips :async (tripid, data, travellerDetails, submittedHotels, submittedFlights, requestIds, tripName, adminDetails, userId, actions) => {
+         editAdminTrips :async (tripid, data, travellerDetails, submittedHotels, submittedFlights, requestIds, tripName,) => {
           try {
-            const accountDocRef = firestore().collection("Accounts").doc(adminDetails.userid);
+            const accountDocRef = firestore().collection("Accounts").doc(this.state.adminDetails.userid);
             const tripCollectionRef = accountDocRef.collection("trips");
             const tripQuery = tripCollectionRef.where("tripId", "==", tripid);
             const querySnapshot = await tripQuery.get();
@@ -3270,7 +3391,7 @@ this.setState({setidToIndex:idToIndex})
         
             // Update trip request status for each request
             await Promise.all(requestIds.map(async (req) => {
-              const userDocRef = firestore().collection("Accounts").doc(userId);
+              const userDocRef = firestore().collection("Accounts").doc(this.state.userId);
               const tripReqcollectionRef = userDocRef.collection("tripRequests");
               const tripReqDoc = tripReqcollectionRef.doc(req);
               await tripReqDoc.update({
@@ -3283,11 +3404,11 @@ this.setState({setidToIndex:idToIndex})
             });
         
             // Send booking submit email
-            await actions.sendBookingSubmitEmail({
-              id: userId,
-              name: adminDetails.firstName + adminDetails.lastName,
-              email: adminDetails.email,
-              tripName: tripName
+            await this.state.actions.sendBookingSubmitEmail({
+              id: this.state.userId,
+          name: this.state.userAccountDetails.firstName + this.state.userAccountDetails.lastName,
+          email: this.state.userAccountDetails.email,
+          tripName: tripName
             });
         
             // const cabArray = submittedCabs?.map((cab) => {
@@ -3300,14 +3421,14 @@ this.setState({setidToIndex:idToIndex})
                 hotels: hotelArray,
                 flights: flightArray,
                 travellerDetails: travellerDetails,
-                cabs: cabArray
+                // cabs: cabArray
               });
             } else {
-              await actions.addTripsToAdmin(tripid, data, travellerDetails, submittedHotels, submittedFlights,);
+              await this.state.actions.addTripsToAdmin(tripid, data, travellerDetails, submittedHotels, submittedFlights);
               return;
             }
         
-            const accountCollectionRef = firestore().collection("Accounts").doc(userId);
+            const accountCollectionRef = firestore().collection("Accounts").doc(this.state.userId);
             const tripCollectionRef1 = accountCollectionRef.collection("trips").doc(tripid);
             await tripCollectionRef1.update({
               status: "Submitted",
@@ -3316,13 +3437,13 @@ this.setState({setidToIndex:idToIndex})
         
             if (!querySnapshot.empty) {
               if (flightArray) {
-                flightArray.forEach((flight) => {
-                  actions.editTripStatus(userId, tripid, querySnapshot.docs[0].id, "Paid and Submitted", flight.id, "flight");
+                flightArray.map((flight) => {
+                 return this.state.actions.editTripStatus(this.state.userId, tripid, querySnapshot.docs[0].id, "Paid and Submitted", flight.id, "flight");
                 });
               }
               if (hotelArray) {
-                hotelArray.forEach((hotel) => {
-                  actions.editTripStatus(userId, tripid, querySnapshot.docs[0].id, "Paid and Submitted", hotel.id, "add");
+                hotelArray.map((hotel) => {
+                  return this.state.actions.editTripStatus(this.state.userId, tripid, querySnapshot.docs[0].id, "Paid and Submitted", hotel.id, "add");
                 });
               }
               // if (cabArray) {
@@ -3565,7 +3686,7 @@ this.setState({setidToIndex:idToIndex})
             }
             await this.state.actions.getTripDocById(id, this.state.userId);
           } catch (error) {
-            console.log(error);
+            console.log(error,"klkjjjj");
           }
         },
 
@@ -3706,9 +3827,9 @@ this.setState({setidToIndex:idToIndex})
           userId: user?.uid,
           isLoading: true,
         });
-       this.state.actions.setAdminData()
-       this.state.actions.getUserById(this.state.userId);
-       this.state.actions.getLastDoc();
+        await this.state.actions.setAdminData()
+        await this.state.actions.getUserById(this.state.userId);
+        await this.state.actions.getLastDoc();
       //  this.state.actions.handleFlightsLogos();
         console.log("userLogin")
       } else {

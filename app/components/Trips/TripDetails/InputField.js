@@ -3,12 +3,15 @@ import React, { useContext } from 'react'
 import MyContext from '../../../context/Context'
 import TripDetailsInput from './TripDetailsInput'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { styles } from './styles'
+import { responsiveHeight } from '../../../utils/responsiveScale'
+import SearchInputs from '../../common/searchInputs/SearchInputs'
 const InputField = ({ flight, userDetails, s, travIndex, tripData, travellerDetails, handleInputChange, isEdit, travellerType, isInternational }) => {
   const { userAccountDetails } = useContext(MyContext)
   return (
 
-      <View style={{ gap: 10 }}>
-        <Text>{travellerType} {travIndex + 1}</Text>
+      <View style={{ gap: 10 ,marginBottom:responsiveHeight(2)}}>
+        <Text style={[styles.subTitle,{marginTop:responsiveHeight(1)}]}>{travellerType} {travIndex + 1}</Text>
         <TripDetailsInput placeholderName={'First name'} stateValue={(tripData?.data?.travellerDetails && tripData?.data?.travellerDetails[flight.id]) ? tripData?.data?.travellerDetails[flight.id][s].firstName : (
           userDetails[s]?.firstName ?
             userDetails[s].firstName :
@@ -67,11 +70,11 @@ const InputField = ({ flight, userDetails, s, travIndex, tripData, travellerDeta
         }
         {
           s === 0 && travellerType === "Adult" ?
-          <View>
-            <Text>Company Details</Text>
-            <Text>Company Name:{`${userAccountDetails?.companyName}`}</Text>
-            <Text>Company GST No:{`${userAccountDetails?.GSTNo}`}</Text>
-            <Text>Company PAN No:{`${userAccountDetails?.PANNo}`}</Text>
+          <View style={{alignItems:'center'}}>
+            <Text style={styles.title}>Company Details</Text>
+            <Text style={styles.subTitle}>Company Name:{`${userAccountDetails?.companyName}`}</Text>
+            <Text style={styles.subTitle}>Company GST No:{`${userAccountDetails?.GSTNo}`}</Text>
+            <Text style={styles.subTitle}>Company PAN No:{`${userAccountDetails?.PANNo}`}</Text>
           </View>
           :null
         }

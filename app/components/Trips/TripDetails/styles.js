@@ -482,6 +482,34 @@ export const styles = StyleSheet.create({
         fontSize: responsiveHeight(1.5),
         fontFamily: fonts.textFont,
         color: colors.white,
+    },
+    approvalRequestDataContainer:{
+        borderBottomWidth:1,
+        padding:responsiveHeight(1)
+    },
+    activeApprovalRequestDataContainer:{
+        borderBottomWidth:1,
+        padding:responsiveHeight(1),
+        backgroundColor:"#a6acaf"
+    },
+    approvalRequestDataTitle:{
+        fontSize:responsiveHeight(1.5),
+        fontFamily:fonts.textFont,
+        color:colors.primary
+    },
+    activeApprovalRequestDataTitle:{
+        fontSize:responsiveHeight(1.5),
+        fontFamily:fonts.textFont,
+        color:colors.white
+    },
+    reqTitle:{
+        fontSize:responsiveHeight(1.2),
+        fontFamily:fonts.textFont,
+        color:colors.primary, 
+    },
+    activeReqTitle:{
+        fontSize:responsiveHeight(1.2),
+        fontFamily:fonts.textFont,
+        color:colors.white, 
     }
-
 })
