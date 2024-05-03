@@ -350,7 +350,7 @@ export const styles = StyleSheet.create({
         borderRadius: responsiveHeight(2),
         overflow: 'hidden',
         backgroundColor: colors.highlightLite,
-        width:"100%"
+        width: "100%"
     },
     tripDetailsTravellerEachTab:
     {
@@ -386,59 +386,59 @@ export const styles = StyleSheet.create({
     {
         // borderWidth:1,
         // borderColor:'red',
-        padding:responsiveHeight(1),
-        flexDirection:'row',
-        alignItems:'center',
-        justifyContent:'center',
+        padding: responsiveHeight(1),
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
         // gap:responsiveHeight(.3),
-        height:responsiveHeight(7),
+        height: responsiveHeight(7),
         // backgroundColor:'gray'
     },
-    tripRouteCon:{
-        flexDirection:'row',
-        alignItems:"center",
-        columnGap:responsiveHeight(.5)
+    tripRouteCon: {
+        flexDirection: 'row',
+        alignItems: "center",
+        columnGap: responsiveHeight(.5)
     },
     tripDetailsTitleContainer:
     {
-        flexDirection:'row',
-        flexWrap:'wrap',
-        marginTop:responsiveHeight(1),
-        alignItems:'center',
-        justifyContent:'center'
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        marginTop: responsiveHeight(1),
+        alignItems: 'center',
+        justifyContent: 'center'
     },
-    tripDetailsTitle:{
-        fontSize:responsiveHeight(1.5),
-        fontFamily:fonts.textFont,
-        color:colors.primary
+    tripDetailsTitle: {
+        fontSize: responsiveHeight(1.5),
+        fontFamily: fonts.textFont,
+        color: colors.primary
     },
     btn:
     {
-        alignSelf:'center',
-        paddingHorizontal:responsiveHeight(2),
-        paddingVertical:responsiveHeight(0.5),
-        borderRadius:responsiveHeight(1),
-        backgroundColor:colors.primary
+        alignSelf: 'center',
+        paddingHorizontal: responsiveHeight(2),
+        paddingVertical: responsiveHeight(0.5),
+        borderRadius: responsiveHeight(1),
+        backgroundColor: colors.primary
     },
     btnTitle:
     {
-        fontSize:responsiveHeight(1.8),
-        color:colors.white,
-        fontFamily:fonts.textInput
+        fontSize: responsiveHeight(1.8),
+        color: colors.white,
+        fontFamily: fonts.textInput
     },
-    title:{
-        fontSize:responsiveHeight(1.5),
-        fontFamily:fonts.primary,
-        color:colors.primary
+    title: {
+        fontSize: responsiveHeight(1.5),
+        fontFamily: fonts.primary,
+        color: colors.primary
     },
     subTitle:
     {
-        fontSize:responsiveHeight(1.5),
-        fontFamily:fonts.textFont,
-        color:colors.lightGray,
-        
+        fontSize: responsiveHeight(1.5),
+        fontFamily: fonts.textFont,
+        color: colors.lightGray,
+
     },
-    card:{ 
+    card: {
         backgroundColor: 'white',
         borderRadius: responsiveHeight(1.5),
         marginHorizontal: responsiveWidth(1),
@@ -457,25 +457,25 @@ export const styles = StyleSheet.create({
         fontFamily: fonts.textFont,
         color: colors.black,
     },
-    paymentMainConatainer:{
-        flex:1,
-        alignItems:'center',
-        marginTop:responsiveHeight(4)
+    paymentMainConatainer: {
+        flex: 1,
+        alignItems: 'center',
+        marginTop: responsiveHeight(4)
     },
-    paymentTitleContainer:{
-        alignItems:'center',
-        gap:responsiveHeight(.5)
+    paymentTitleContainer: {
+        alignItems: 'center',
+        gap: responsiveHeight(.5)
     },
-    paymentCheckBoxContainer:{
-        flexDirection:'row',
-        gap:responsiveHeight(2),
-        alignItems:'center'
+    paymentCheckBoxContainer: {
+        flexDirection: 'row',
+        gap: responsiveHeight(2),
+        alignItems: 'center'
     },
-    notSubmitedContainer:{
-        paddingHorizontal:responsiveHeight(1),
-        paddingVertical:responsiveHeight(.5),
-        borderRadius:responsiveHeight(1),
-        backgroundColor:"#808080"
+    notSubmitedContainer: {
+        paddingHorizontal: responsiveHeight(1),
+        paddingVertical: responsiveHeight(.5),
+        borderRadius: responsiveHeight(1),
+        backgroundColor: "#808080"
     },
     notSubmitedTitle:
     {
@@ -483,33 +483,67 @@ export const styles = StyleSheet.create({
         fontFamily: fonts.textFont,
         color: colors.white,
     },
-    approvalRequestDataContainer:{
-        borderBottomWidth:1,
-        padding:responsiveHeight(1)
+    approvalRequestDataContainer: {
+        borderBottomWidth: 1,
+        padding: responsiveHeight(1)
     },
-    activeApprovalRequestDataContainer:{
-        borderBottomWidth:1,
-        padding:responsiveHeight(1),
-        backgroundColor:"#a6acaf"
+    activeApprovalRequestDataContainer: {
+        borderBottomWidth: 1,
+        padding: responsiveHeight(1),
+        backgroundColor: "#a6acaf"
     },
-    approvalRequestDataTitle:{
+    approvalRequestDataTitle: {
+        fontSize: responsiveHeight(1.5),
+        fontFamily: fonts.textFont,
+        color: colors.primary
+    },
+    activeApprovalRequestDataTitle: {
+        fontSize: responsiveHeight(1.5),
+        fontFamily: fonts.textFont,
+        color: colors.white
+    },
+    reqTitle: {
+        fontSize: responsiveHeight(1.2),
+        fontFamily: fonts.textFont,
+        color: colors.primary,
+    },
+    activeReqTitle: {
+        fontSize: responsiveHeight(1.2),
+        fontFamily: fonts.textFont,
+        color: colors.white,
+    },
+    bookedMsgContainer:
+    {
+        marginTop: responsiveHeight(3),
+        paddingHorizontal: responsiveWidth(2),
+        gap: responsiveHeight(2)
+    },
+    statusContainer:
+    {
+        flexDirection:'row',
+        alignItems:'center',
+        gap:responsiveWidth(1.5),
+        marginTop:responsiveHeight(1)
+    },
+    statusTitle:
+    {
+        color:colors.white,
+        paddingHorizontal:10,
+        borderRadius:responsiveHeight(2),
+        backgroundColor:'#ffa500' ,
         fontSize:responsiveHeight(1.5),
         fontFamily:fonts.textFont,
-        color:colors.primary
+        paddingVertical:responsiveHeight(.3)
     },
-    activeApprovalRequestDataTitle:{
+    activeStatusTitle:
+    {
+        color:colors.white,
+        paddingHorizontal:10,
+        borderRadius:responsiveHeight(2),
+        backgroundColor:'#008000' ,
         fontSize:responsiveHeight(1.5),
         fontFamily:fonts.textFont,
-        color:colors.white
-    },
-    reqTitle:{
-        fontSize:responsiveHeight(1.2),
-        fontFamily:fonts.textFont,
-        color:colors.primary, 
-    },
-    activeReqTitle:{
-        fontSize:responsiveHeight(1.2),
-        fontFamily:fonts.textFont,
-        color:colors.white, 
+        paddingVertical:responsiveHeight(.3)
+
     }
 })

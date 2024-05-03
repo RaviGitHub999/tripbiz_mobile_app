@@ -13,7 +13,6 @@ mainContainer:{
     flexDirection:'row',
     justifyContent:'space-between',
     alignItems:"center",
-
 },
 filterTitleContainer:{
     flexDirection:'row',
@@ -56,5 +55,16 @@ applyFiltersBtnText: {
     backgroundColor: colors.black,
     alignItems:'center',
     justifyContent:'center'
+  },
+  clearFilterContainer:{
+    alignSelf:"flex-end",
+    borderBottomWidth:1,
+    borderColor:colors.facebook,
+    color:colors.black
+  },
+  clearFilterTitle:{
+    fontSize:responsiveHeight(2),
+    fontFamily:fonts.textFont,
+    color:colors.facebook
   },
 })

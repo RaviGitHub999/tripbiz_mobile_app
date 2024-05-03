@@ -87,6 +87,21 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
     await actions.editAdminTrips(id, tripData, finalTravDetails, submittedHotels, submittedFlights, requestIds, tripData.data?.name)
     setPaymentLoading(false)
   }
+  var handleManagerClick = async () => {
+    var req = await actions.sendApproval(userId, userAccountDetails?.manager?.userId, id, travellerDetails, price)
+    await actions.sendBookingApprovalEmail({
+        id: userId,
+        userName: userAccountDetails.firstName + userAccountDetails.lastName,
+        userEmail: userAccountDetails.email,
+        managerEmail: userAccountDetails.manager.email,
+        managerName: userAccountDetails.manager.firstName + userAccountDetails.manager.lastName,
+        tripName: tripData.name
+    })
+    setTraveller(true)
+    await getTripData()
+    setRequestData(req.reqData)
+    setRequestId(req.reqId)
+}
   var flightSubmittedIds = tripData?.data
     ? tripData?.data?.flights
       .filter(flight => flight.status !== 'Not Submitted')
@@ -265,19 +280,23 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
         email: userAccountDetails?.email,
       },
     ]);
-    var totprice =
-      tripData.requestData.length > 0
-        ? tripData?.requestData?.reduce((acc, item) => acc + item.data.price, 0)
-        : 0;
-    var finprice = price - totprice;
-    console.log(finprice);
-    var reqIds =
-      tripData.requestData.length > 0
-        ? tripData?.requestData?.map(req => req.id)
-        : [];
+    // var totprice =
+    //   tripData.requestData.length > 0
+    //     ? tripData?.requestData?.reduce((acc, item) => acc + item.data.price, 0)
+    //     : 0;
+    // var finprice = price - totprice;
+    // console.log(finprice);
+    // var reqIds =
+    //   tripData.requestData.length > 0
+    //     ? tripData?.requestData?.map(req => req.id)
+    //     : [];
+    var mainprice = tripData.flights.filter((flight) => flightNotSubmittedIds.includes(flight.id)).reduce((sum, obj) => sum + obj?.data?.finalPrice, 0) + tripData.hotels.filter((flight) => hotelNotSubmittedIds.includes(flight.id)).reduce((sum, obj) => sum + obj?.data?.hotelTotalPrice, 0)
+    // + tripData.cabs.filter((flight) => cabNotSubmittedIds.includes(flight.id)).reduce((sum, obj) => sum + obj?.data?.cabFinalPrice, 0);
+
+    var reqIds = tripData.requestData.length > 0 ? tripData?.requestData?.map((req) => req.id) : [];
     setBookingPrice(price);
     setRequestIds(reqIds);
-    setFinalPrice(finprice);
+    setFinalPrice(mainprice);
     setRequestId(tripData?.requestData[0]?.id);
     setRequestData(tripData?.requestData[0]?.data);
   };
@@ -399,7 +418,7 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
             var isInternational =
               item.data.flightNew.segments[0].destCountryCode !== 'IN' ||
               item.data.flightNew.segments[0].originCountryCode !== 'IN';
-
+console.log(item.data.flightNew.segments[0].destCountryCode)
             return (
               <View style={{ paddingHorizontal: responsiveHeight(1.5) }}>
                 <InputField
@@ -424,14 +443,13 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
           <View style={[styles.btn, { marginVertical: responsiveHeight(2) }]}>
             {isEdit[item.id] ? (
               <TouchableOpacity
-                onPress={() =>
-                  {
-                    setIsEdit({
-                      ...isEdit,
-                      [item.id]: !isEdit[item.id],
-                    })
-                    setUserDetails(travellerDetails[item.id])
-                  }
+                onPress={() => {
+                  setIsEdit({
+                    ...isEdit,
+                    [item.id]: !isEdit[item.id],
+                  })
+                  setUserDetails(travellerDetails[item.id])
+                }
                 }>
                 <Text style={styles.btnTitle}>Edit</Text>
               </TouchableOpacity>
@@ -1274,668 +1292,6 @@ onLoad={() => console.log("Image loaded successfully")}
           </View>
         </PopUp>
         {/* Proceed to Booking */}
-        {/* <PopUp
-          customStyles={{ width: '100%', height: '0%' }}
-          value={traveller}
-          handlePopUpClose={() => {
-            setTraveller(false);
-            setSelectedTab('travellers');
-            setShowError(false);
-          }}>
-         <View>
-           <View style={styles.tripDetailsTravellerTabs}>
-            <TouchableOpacity
-              style={
-                selectedTab === 'travellers'
-                  ? styles.tripDetailsTravellerSelectedEachTab
-                  : styles.tripDetailsTravellerEachTab
-              }
-              onPress={() => handleSelectedTab('travellers')}>
-              <Text
-                style={
-                  selectedTab === 'travellers'
-                    ? styles.tabTitlesSelected
-                    : styles.tabTitles
-                }>
-                Traveller Details
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={
-                selectedTab === 'approval'
-                  ? styles.tripDetailsTravellerSelectedEachTab
-                  : styles.tripDetailsTravellerEachTab
-              }
-              onPress={() => handleSelectedTab('approval')}>
-              <Text
-                style={
-                  selectedTab === 'approval'
-                    ? styles.tabTitlesSelected
-                    : styles.tabTitles
-                }>
-                Review and Approval
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={
-                selectedTab === 'payment'
-                  ? styles.tripDetailsTravellerSelectedEachTab
-                  : styles.tripDetailsTravellerEachTab
-              }
-              onPress={() => handleSelectedTab('payment')}>
-              <Text
-                style={
-                  selectedTab === 'payment'
-                    ? styles.tabTitlesSelected
-                    : styles.tabTitles
-                }>
-                Make Payment
-              </Text>
-            </TouchableOpacity>
-          </View>
-          {selectedTab === 'travellers' ? (
-            <KeyboardAwareScrollView>
-              <View
-                style={{
-                  borderWidth: 2,
-                  borderColor: 'green',
-                  marginTop: responsiveHeight(2),
-                  flexDirection: 'row',
-                }}>
-                <View style={{ borderRightWidth: 2, borderColor: 'blue' }}>
-                  {tripData?.flights?.map((flight, ind) => {
-                    const date1 = new Date(
-                      flight.data.flight.Segments[0][0].Origin.DepTime,
-                    );
-                    const monthAbbreviation1 = date1.toLocaleString('default', {
-                      month: 'short',
-                    });
-                    const day1 = date1.getDate();
-                    var flightReq = tripData.data.flights.filter(hotelMain => {
-                      return hotelMain.id === flight.id;
-                    });
-                    var flightStatus = tripData.data.flights.filter(
-                      f => f.id === flight.id,
-                    );
-                    var color = statuses.filter(status => {
-                      return status?.status === flightStatus[0]?.status;
-                    });
-                    var reqColor = reqStatuses.filter(status => {
-                      return status?.status === flightReq[0]?.requestStatus;
-                    });
-                    return (
-                      <TouchableOpacity
-                        style={[
-                          styles.travelDetailsFlightCard,
-                          {
-                            backgroundColor: color[0]
-                              ? color[0].color
-                              : '#808080',
-                          },
-                        ]}
-                        onPress={() => {
-                          setTravellerCount({
-                            adults: Number(flight?.data?.adults),
-                            child: Number(flight?.data?.child),
-                            infant: Number(flight?.data?.infant),
-                          });
-                          setTripId(flight.id);
-                        }}>
-                        <IconSwitcher
-                          componentName="MaterialIcons"
-                          iconName="flight-takeoff"
-                          color="black"
-                          iconsize={4}
-                        />
-                        <View
-                          style={{
-                            position: 'absolute',
-                            right: responsiveWidth(1),
-                            top: responsiveHeight(0),
-                          }}>
-                          <Text>{ind + 1}</Text>
-                        </View>
-                      </TouchableOpacity>
-                    );
-                  })}
-
-                  {tripData?.hotels?.map((hotel, ind) => {
-                    const monthNames = [
-                      'Jan',
-                      'Feb',
-                      'Mar',
-                      'Apr',
-                      'May',
-                      'Jun',
-                      'Jul',
-                      'Aug',
-                      'Sep',
-                      'Oct',
-                      'Nov',
-                      'Dec',
-                    ];
-                    const date = new Date(
-                      hotel?.data?.hotelSearchQuery?.checkInDate?.seconds * 1000,
-                    );
-                    const formattedDate1 = `${monthNames[date.getMonth()]
-                      } ${date.getDate()}`;
-                    const date2 = new Date(
-                      hotel?.data?.hotelSearchQuery?.checkOutDate.seconds *
-                      1000,
-                    );
-                    const formattedDate2 = `${monthNames[date2.getMonth()]
-                      } ${date2.getDate()}`;
-                    var hotelReq = tripData?.data?.hotels.filter(hotelMain => {
-                      return hotelMain.id === hotel.id;
-                    });
-                    var hotelStatus = tripData?.data?.hotels?.filter(
-                      f => f.id === hotel.id,
-                    );
-                    var color = statuses.filter(status => {
-                      return status?.status === hotelStatus[0]?.status;
-                    });
-
-                    var reqColor = reqStatuses.filter(status => {
-                      return status?.status === hotelReq[0]?.requestStatus;
-                    });
-                    return (
-                      <TouchableOpacity
-                        style={[
-                          styles.travelDetailsFlightCard,
-                          {
-                            backgroundColor: color[0]
-                              ? color[0].color
-                              : '#808080',
-                          },
-                        ]}
-                        onPress={() => {
-                          var adults =
-                            hotel?.data?.hotelSearchQuery?.hotelRoomArr.reduce(
-                              (acc, obj) => {
-                                acc.adults += parseInt(obj.adults, 10);
-                                acc.child += parseInt(obj.child, 10);
-                                return acc;
-                              },
-                              { adults: 0, child: 0 },
-                            );
-                          setTravellerCount(adults);
-                          setTripId(hotel.id);
-                        }}>
-                        <IconSwitcher
-                          componentName="FontAwesome6"
-                          iconName="hotel"
-                          color="black"
-                          iconsize={2.5}
-                        />
-                        <View
-                          style={{
-                            position: 'absolute',
-                            right: responsiveWidth(1),
-                            top: responsiveHeight(0),
-                          }}>
-                          <Text>{ind + 1}</Text>
-                        </View>
-                      </TouchableOpacity>
-                    );
-                  })}
-                </View>
-                <View style={{ borderWidth: 2, borderColor: 'yellow', flex: 1 }}>
-                  
-
-<FlatList
-      data={tripData?.flights?.filter(flight => flight.id === tripId)}
-      renderItem={renderItem}
-      keyExtractor={(item, index) => index.toString()}
-    />
-     <FlatList
-      data={tripData?.hotels?.filter(hotel => hotel.id === tripId)}
-      renderItem={hotelrenderItem}
-      keyExtractor={(item, index) => index.toString()}
-    />
-                
-                  <View>
-                    {showError && (
-                      <View>
-                        <Text>Please fill traveller details for each item</Text>
-                      </View>
-                    )}
-                    <TouchableOpacity
-                      onPress={() => {
-                        if (
-                          flightNotSubmittedIds?.every(item =>
-                            Object.keys(travellerDetails).includes(item),
-                          )
-                        ) {
-                          setSelectedTab('approval');
-                        } else {
-                          setShowError(true);
-                        }
-                      }}>
-                      <Text>Next</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-            </KeyboardAwareScrollView>
-          ) : 
-            null}
-            {}
-          {selectedTab === 'approval' ? (
-            <View
-              style={{
-                height: '95%',
-                flexDirection: 'row',
-                marginTop: responsiveHeight(3),
-              }}>
-              <View style={{ borderRightWidth: 1, }}>
-                {tripData?.hotels?.filter(hotel => !hotelIds.includes(hotel.id))
-                  ?.length > 0 ||
-                  tripData?.flights?.filter(
-                    hotel => !flightsIds.includes(hotel.id),
-                  )?.length > 0 ? (
-                  <TouchableOpacity
-                    style={{ borderBottomWidth: 1, padding: responsiveHeight(1) }}>
-                    <Text style={styles.tripDetailsTitle}>
-                      {tripData?.flights?.filter(
-                        hotel => !flightsIds.includes(hotel.id),
-                      )?.length > 0 ? (
-                        <>
-                          {
-                            tripData?.flights?.filter(
-                              hotel => !flightsIds.includes(hotel.id),
-                            )?.length
-                          }
-                          &nbsp;Flights
-                        </>
-                      ) : null}
-                    </Text>
-                    <Text style={styles.tripDetailsTitle}>
-                      {tripData?.hotels?.filter(
-                        hotel => !hotelIds.includes(hotel.id),
-                      )?.length > 0 ? (
-                        <>
-                          {
-                            tripData?.hotels?.filter(
-                              hotel => !hotelIds.includes(hotel.id),
-                            )?.length
-                          }
-                          &nbsp;Hotels
-                        </>
-                      ) : null}
-                    </Text>
-                  </TouchableOpacity>
-                ) : null}
-              </View>
-              <View style={{ flex: 1 }}>
-                <ScrollView>
-                  <View style={{ margin: responsiveHeight(1) }}>
-                    <View
-                      style={{
-                        padding: responsiveHeight(1),
-                        borderRadius: responsiveHeight(1),
-                        backgroundColor: colors.white,
-                        elevation: responsiveHeight(1),
-                        gap: responsiveHeight(0.5),
-                      }}>
-                      <Text style={styles.title}>
-                        {userAccountDetails?.firstName} (
-                        {userAccountDetails?.email})
-                      </Text>
-                      <Text style={styles.title}>{tripData.data?.name}</Text>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          gap: responsiveHeight(2),
-                        }}>
-                        {tripData?.hotels?.filter(
-                          hotel => !hotelIds.includes(hotel.id),
-                        )?.length > 0 ? (
-                          <View style={styles.btn}>
-                            <Text style={styles.btnTitle}>
-                              Hotels -{' '}
-                              {
-                                tripData?.hotels?.filter(
-                                  hotel => !hotelIds.includes(hotel.id),
-                                )?.length
-                              }
-                            </Text>
-                          </View>
-                        ) : null}
-                        {tripData?.flights?.filter(
-                          hotel => !flightsIds.includes(hotel.id),
-                        )?.length > 0 ? (
-                          <View style={styles.btn}>
-                            <Text style={styles.btnTitle}>
-                              Flights -{' '}
-                              {
-                                tripData?.flights?.filter(
-                                  hotel => !flightsIds.includes(hotel.id),
-                                )?.length
-                              }
-                            </Text>
-                          </View>
-                        ) : null}
-                      </View>
-                      <Text style={styles.title}>
-                        Total price:
-                        <Text style={[styles.title, { color: colors.secondary }]}>
-                          {' '}
-                          &#8377;{' '}
-                          {`${Math.ceil(finalPrice).toLocaleString('en-IN')} `}
-                        </Text>
-                      </Text>
-                      <Text style={styles.subTitle}>
-                        Requested on:
-                        <Text
-                          style={[
-                            styles.subTitle,
-                            { color: colors.highlight },
-                          ]}>{` ${newdate}`}</Text>
-                      </Text>
-                      <TouchableOpacity
-                        style={{
-                          alignSelf: 'center',
-                          flexDirection: 'row',
-                          justifyContent: 'center',
-                        }}
-                        onPress={toggleUp}>
-                        <Text style={styles.subTitle}>
-                          {!fareIsOpen ? 'View' : 'Close'} Trip Details
-                        </Text>
-                        <IconSwitcher
-                          componentName="EvilIcons"
-                          iconName={fareIsOpen ? 'chevron-up' : 'chevron-down'}
-                          color="black"
-                          iconsize={3}
-                        />
-                      </TouchableOpacity>
-                      {fareIsOpen ? (
-                        <>
-                          <View>
-                            {tripData?.hotels?.filter((hotel) => !hotelIds.includes(hotel.id))?.map((hotel, s) => {
-                              const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-                              ];
-                              const startdate = new Date(hotel?.data?.hotelSearchQuery?.checkInDate.seconds * 1000);
-                              const formattedDate1 = `${monthNames[startdate.getMonth()]} ${startdate.getDate()}`;
-                              var endDate = getDate(hotel?.data?.hotelSearchQuery?.checkOutDate.seconds);
-                              var adults = hotel?.data?.hotelSearchQuery?.hotelRoomArr.reduce((acc, obj) => {
-                                acc.adults += parseInt(obj.adults, 10);
-                                acc.child += parseInt(obj.child, 10);
-                                return acc;
-                              }, { adults: 0, child: 0 });
-                              return (
-                                <>
-                                  {s === 0 ? (
-                                    <Text
-                                      style={[
-                                        styles.title,
-                                        { textAlign: 'center' },
-                                      ]}>
-                                      Hotels
-                                    </Text>
-                                  ) : null}
-                                  <View style={styles.hotelCard}>
-                                    <HCard hotel={hotel} formattedDate1={formattedDate1} endDate={endDate} adults={adults} />
-                                  </View>
-                                  <View style={styles.card}>
-                                    <Text
-                                      style={[
-                                        styles.title,
-                                        { textAlign: 'center' },
-                                      ]}>
-                                      Traveller Details
-                                    </Text>
-                                    <View>
-                                      <>
-                                        {tripData?.data?.travellerDetails ? (
-                                          <>
-                                            {
-                                              tripData.data.travellerDetails[hotel.id]?.map((trav, i) => {
-                                                var type = i + 1 <= travellerCount.adults ? 'Adult' : "Child"
-                                                var index = i + 1 <= travellerCount.adults ? i + 1 : (i + 1 - travellerCount.adults)
-                                                return (
-                                                  <TravDetails trav={trav} type={type} index={index} />
-                                                )
-                                              })
-                                            }
-                                          </>
-                                        ) : (
-                                          <>
-                                            {
-                                              travellerDetails[hotel.id]?.map((trav, i) => {
-                                                var type = i + 1 <= travellerCount.adults ? 'Adult' : "Child"
-                                                var index = i + 1 <= travellerCount.adults ? i + 1 : (i + 1 - travellerCount.adults)
-                                                return (
-                                                  <TravDetails trav={trav} type={type} index={index} />
-                                                )
-                                              })
-                                            }
-                                          </>
-                                        )}
-                                      </>
-                                    </View>
-                                  </View>
-                                </>
-                              )
-                            })}
-                          </View>
-
-                          <View>
-                            {tripData?.flights
-                              ?.filter(hotel => !flightsIds.includes(hotel.id))
-                              ?.map((flight, s) => {
-                                var airlinename =
-                                  flight.data.flightNew.segments[0].airlineName;
-                                var airline = flightsLogosData?.filter(a => {
-                                  return airlinename.toLowerCase() === a.id;
-                                });
-                                var flightArr = [flight.data.flight].map(
-                                  (flight, f) => {
-                                    return {
-                                      ...actions.modifyFlightObject(flight),
-                                    };
-                                  },
-                                );
-                                var adults = flight.data.adults;
-                                var child = flight.data.child;
-                                var infant = flight.data.infant;
-
-                                return (
-                                  <>
-                                    {s === 0 ? (
-                                      <Text
-                                        style={[
-                                          styles.title,
-                                          { textAlign: 'center' },
-                                        ]}>
-                                        Flights
-                                      </Text>
-                                    ) : null}
-                                    <View style={styles.card}>
-                                      <FCard
-                                        airline={airline}
-                                        flightArr={flightArr}
-                                      />
-                                      <View
-                                        style={{
-                                          alignSelf: 'flex-end',
-                                          marginTop: responsiveHeight(1),
-                                        }}>
-                                        <Text
-                                          style={[
-                                            styles.totalPrice,
-                                            { fontSize: responsiveHeight(1.5) },
-                                          ]}>{`${flightArr[0].fare.toLocaleString(
-                                            'en-IN',
-                                          )}`}</Text>
-                                      </View>
-                                    </View>
-                                    <View style={styles.card}>
-                                      <Text
-                                        style={[
-                                          styles.title,
-                                          { textAlign: 'center' },
-                                        ]}>
-                                        Traveller Details
-                                      </Text>
-                                      <View>
-                                        <>
-                                          {tripData?.data?.travellerDetails ? (
-                                            <>
-                                              {tripData.data.travellerDetails[
-                                                flight.id
-                                              ]?.map((trav, i) => {
-                                                var type =
-                                                  i + 1 <= adults
-                                                    ? 'Adult'
-                                                    : i + 1 <= adults + child
-                                                      ? 'Child'
-                                                      : 'Infant';
-                                                var index =
-                                                  i + 1 <= adults
-                                                    ? i + 1
-                                                    : i + 1 <= adults + child
-                                                      ? i - adults + 1
-                                                      : i - (adults + child) + 1;
-                                                return (
-                                                  <TravDetails
-                                                    type={type}
-                                                    index={index}
-                                                    trav={trav}
-                                                  />
-                                                );
-                                              })}
-                                            </>
-                                          ) : (
-                                            <>
-                                              {travellerDetails[flight.id]?.map(
-                                                (trav, i) => {
-                                                  var type =
-                                                    i + 1 <= adults
-                                                      ? 'Adult'
-                                                      : i + 1 <= adults + child
-                                                        ? 'Child'
-                                                        : 'Infant';
-                                                  var index =
-                                                    i + 1 <= adults
-                                                      ? i + 1
-                                                      : i + 1 <= adults + child
-                                                        ? i - adults + 1
-                                                        : i -
-                                                        (adults + child) +
-                                                        1;
-                                                  return (
-                                                    <TravDetails
-                                                      trav={trav}
-                                                      index={index}
-                                                      type={type}
-                                                    />
-                                                  );
-                                                },
-                                              )}
-                                            </>
-                                          )}
-                                        </>
-                                      </View>
-                                    </View>
-                                  </>
-                                );
-                              })}
-                          </View>
-                        </>
-                      ) : null}
-                    </View>
-                  </View>
-                </ScrollView>
-              </View>
-            </View>
-          ) : null}
-          {
-            selectedTab === "payment" ?
-              <>
-               {tripData?.hotels?.filter((hotel) => !hotelSubmittedIds.includes(hotel.id))?.length !== 0 || tripData?.flights?.filter((hotel) => !flightSubmittedIds.includes(hotel.id))?.length !== 0 || tripData?.cabs?.filter((hotel) => !cabSubmittedIds.includes(hotel.id))?.length !== 0 ?
-                 <View style={styles.paymentMainConatainer}>
-                 <View style={styles.paymentTitleContainer}>
-                   <Text style={[styles.title, { fontSize: responsiveHeight(2) }]}>Complete the payment</Text>
-                   <Text style={[styles.subTitle, { fontSize: responsiveHeight(1.7) }]}>Select the trips you want to complete the payment</Text>
-                 </View>
-                 <View style={[styles.card, { width: '100%',gap:responsiveHeight(2) }]}>
-                   <View style={styles.paymentCheckBoxContainer}>
-                     <TouchableOpacity onPress={() => {
-                       if (!checked) {
-                         setChecked(true)
-                         setBookingPrice((prev) => prev + finalPrice)
-                       }
-                       else {
-                         setChecked(false)
-                         setBookingPrice((prev) => prev - finalPrice)
-                       }
-                     }}>
-                       <IconSwitcher componentName='MaterialIcons' iconName={checked ? "check-box" : 'check-box-outline-blank'} color={checked ? colors.facebook : colors.gray} iconsize={3} />
-                     </TouchableOpacity>
-                     <View style={styles.notSubmitedContainer}>
-                       <Text style={styles.notSubmitedTitle}>Not Submitted</Text>
-                     </View>
-                   </View>
-                   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                     <View style={{ flex: 1, flexDirection: 'row', flexWrap: "wrap" }}>
-                       <Text style={styles.title}>{tripData?.flights?.filter((hotel) => flightNotSubmittedIds.includes(hotel.id)).length > 0 ? (<>{tripData?.flights?.filter((hotel) => flightNotSubmittedIds.includes(hotel.id)).length}-Flights&nbsp;, </>) : (null)}</Text>
-                       <Text style={styles.title}>{tripData?.hotels?.filter((hotel) => hotelNotSubmittedIds.includes(hotel.id)).length > 0 ? (<>{tripData?.hotels?.filter((hotel) => hotelNotSubmittedIds.includes(hotel.id)).length}-Hotels&nbsp;</>) : (null)}</Text>
-                     </View>
-                     <View>
-                       <Text style={styles.title}>Price:&nbsp;<Text style={[styles.title,{color:colors.secondary}]}>&#8377;{Math.ceil(finalPrice).toLocaleString("en-IN")}</Text></Text>
-                     </View>
-
-                   </View>
-                 </View>
-                 <View style={{alignItems:'center',gap:responsiveHeight(1)}}>
-                   <Text style={[styles.title,{fontSize:responsiveHeight(1.8)}]}>Account Balance:  <Text style={[styles.totalPrice,{fontSize:responsiveHeight(1.8)}]}>&#8377;{Math.ceil(userAccountDetails.balance)}</Text></Text>
-                   {
-                     bookingPrice > 0 ? (
-                       <>
-                       {
-                        userAccountDetails.balance < bookingPrice ?
-                        <View style={{alignItems:'center',gap:responsiveHeight(2)}}>
-                         <Text style={[styles.subTitle]}>You dont have enough money to complete payment.Add money to the wallet</Text>
-                         <TouchableOpacity style={[styles.btn,{paddingVertical:responsiveHeight(1)}]} onPress={()=>navigate("Wallet")}>
-                           <Text style={styles.btnTitle}>Add money</Text>
-                         </TouchableOpacity>
-                        </View> :
-                        
-                        <View style={{alignItems:'center',gap:responsiveHeight(2)}}>
-                         <Text style={[styles.subTitle,{fontSize:responsiveHeight(1.8)}]}>Complete the payment</Text> 
-                  <TouchableOpacity style={[styles.btn,{paddingVertical:responsiveHeight(1),alignItems:"center",justifyContent:'center',width:responsiveHeight(18)}]} onPress={handleClick}>
-                 { !paymentLoading ?<Text style={[styles.btnTitle,{width:responsiveHeight(15)}]}>Make payment</Text>:<ActivityIndicator size={'small'} color={colors.facebook} />}
-                   </TouchableOpacity>
-                         
-                        </View>
-                       }
-
-                       </>
-                     ) :
-                     <View>
-                       <Text style={[styles.subTitle,{color:colors.red}]}>
-                       Please select any one of the above to select for booking
-                       </Text>
-                     </View>
-                   }
-                   
-                 </View>
-               </View>
-               :
-               <View>
-                <Text style={styles.title}>Thank you for the booking. Your booking has been submitted. We will get back to you soon.</Text>
-                <TouchableOpacity onPress={() => setTraveller(false)} style={[styles.btn,{paddingVertical:responsiveHeight(1)}]}>
-                  <Text style={styles.btnTitle}>Close</Text>
-                </TouchableOpacity>
-               </View>
-               }
-              </>
-               : null
-          }
-         </View>
-        </PopUp> */}
         <Modal
           animationType="slide"
           transparent={true}
@@ -2038,14 +1394,14 @@ onLoad={() => console.log("Image loaded successfully")}
                               var reqColor = reqStatuses.filter(status => {
                                 return status?.status === flightReq[0]?.requestStatus;
                               });
+                           
                               return (
                                 <TouchableOpacity
                                   style={[
                                     styles.travelDetailsFlightCard,
                                     {
-                                      backgroundColor: color[0]
-                                        ? color[0].color
-                                        : '#808080',
+                                        backgroundColor:!isEdit[flight.id]?"white": color[0]
+                                        ? color[0].color:'#808080'
                                     },
                                   ]}
                                   onPress={() => {
@@ -2118,9 +1474,8 @@ onLoad={() => console.log("Image loaded successfully")}
                                   style={[
                                     styles.travelDetailsFlightCard,
                                     {
-                                      backgroundColor: color[0]
-                                        ? color[0].color
-                                        : '#808080',
+                                      backgroundColor:!isEdit[hotel.id]?"white": color[0]
+                                      ? color[0].color:'#808080'
                                     },
                                   ]}
                                   onPress={() => {
@@ -2288,589 +1643,689 @@ onLoad={() => console.log("Image loaded successfully")}
 
                     <View style={{ flex: 1 }}>
                       <ScrollView>
+                        {/* approval details sidebar- */}
+                        {/* two times mapping-first one for req data second one for not requested data */}
                         {
                           tripData?.requestData?.length > 0 && (requestData && requestId) ?
-                          
-                          <View style={{ margin: responsiveHeight(1) }}>
-                            <View
-                          style={{
-                            padding: responsiveHeight(1),
-                            borderRadius: responsiveHeight(1),
-                            backgroundColor: colors.white,
-                            elevation: responsiveHeight(1),
-                            gap: responsiveHeight(0.5),
-                            marginVertical: responsiveHeight(1)
-                          }}>
-                            <Text style={styles.title}>
-                              {userAccountDetails?.firstName} (
-                              {userAccountDetails?.email})
-                            </Text>
-                            <Text style={styles.title}>{tripData.data?.name}</Text>
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                                gap: responsiveHeight(2),
-                              }}>
-                              {tripData?.hotels?.filter(
-                                hotel => requestData?.hotels.includes(hotel.id),
-                              )?.length > 0 ? (
-                                <View style={styles.btn}>
-                                  <Text style={styles.btnTitle}>
-                                    Hotels -{' '}
-                                    {
-                                      tripData?.hotels?.filter(
-                                        hotel => requestData?.hotels.includes(hotel.id),
-                                      )?.length
-                                    }
-                                  </Text>
-                                </View>
-                              ) : null}
-                              {tripData?.flights?.filter(
-                                hotel => requestData?.flights.includes(hotel.id),
-                              )?.length > 0 ? (
-                                <View style={styles.btn}>
-                                  <Text style={styles.btnTitle}>
-                                    Flights -{' '}
-                                    {
-                                      tripData?.flights?.filter(
-                                        hotel => requestData?.flights.includes(hotel.id),
-                                      )?.length
-                                    }
-                                  </Text>
-                                </View>
-                              ) : null}
-                            </View>
-                            <Text style={styles.title}>
-                              Total price:
-                              <Text style={[styles.title, { color: colors.secondary }]}>
-                                {' '}
-                                &#8377;{' '}
-                                {`${Math.ceil(requestData?.price).toLocaleString('en-IN')} `}
-                              </Text>
-                            </Text>
-                            <Text style={styles.subTitle}>
-                              Requested on:
-                              <Text
-                                style={[
-                                  styles.subTitle,
-                                  { color: colors.highlight },
-                                ]}>{(new Date(requestData?.createdAt?.seconds * 1000)).toLocaleDateString()}</Text>
-                            </Text>
-                            <TouchableOpacity
-                              style={{
-                                alignSelf: 'center',
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                              }}
-                              onPress={toggleUp}>
-                              <Text style={styles.subTitle}>
-                                {!fareIsOpen ? 'View' : 'Close'} Trip Details
-                              </Text>
-                              <IconSwitcher
-                                componentName="EvilIcons"
-                                iconName={fareIsOpen ? 'chevron-up' : 'chevron-down'}
-                                color="black"
-                                iconsize={3}
-                              />
-                            </TouchableOpacity>
-                            {fareIsOpen ? (
-                              <>
-                                <View>
-                                  {tripData?.hotels?.filter((hotel) => requestData?.hotels.includes(hotel.id))?.map((hotel, s) => {
-                                    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                                      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-                                    ];
-                                    const startdate = new Date(hotel?.data?.hotelSearchQuery?.checkInDate.seconds * 1000);
-                                    const formattedDate1 = `${monthNames[startdate.getMonth()]} ${startdate.getDate()}`;
-                                    var endDate = getDate(hotel?.data?.hotelSearchQuery?.checkOutDate.seconds);
-                                    var adults = hotel?.data?.hotelSearchQuery?.hotelRoomArr.reduce((acc, obj) => {
-                                      acc.adults += parseInt(obj.adults, 10);
-                                      acc.child += parseInt(obj.child, 10);
-                                      return acc;
-                                    }, { adults: 0, child: 0 });
-                                    return (
+
+                            <View style={{ margin: responsiveHeight(1) }}>
+                              
+                              <View style={[styles.card, { width: "100%", gap: responsiveHeight(.5), alignItems: 'center' }]}>
+                                <Text style={[styles.title,{fontSize:responsiveHeight(1.8),marginBottom:responsiveHeight(1.5)}]}>Manager Approval</Text>
+                                {
+                                  Object.keys(userAccountDetails?.manager).length > 0 ?
+                                    <>
+                                      <Text style={styles.subTitle}>{`Manager Name : `}</Text>
+                                      <Text style={styles.title}>{`${userAccountDetails?.manager?.name}(${userAccountDetails?.manager?.email})`}</Text>
                                       <>
-                                        {s === 0 ? (
-                                          <Text
-                                            style={[
-                                              styles.title,
-                                              { textAlign: 'center' },
-                                            ]}>
-                                            Hotels
-                                          </Text>
-                                        ) : null}
-                                        <View style={styles.hotelCard}>
-                                          <HCard hotel={hotel} formattedDate1={formattedDate1} endDate={endDate} adults={adults} />
-                                        </View>
-                                        <View style={styles.card}>
-                                          <Text
-                                            style={[
-                                              styles.title,
-                                              { textAlign: 'center' },
-                                            ]}>
-                                            Traveller Details
-                                          </Text>
-                                          <View>
+                                        {
+                                          requestId ?
                                             <>
-                                              {tripData?.data?.travellerDetails ? (
-                                                <>
-                                                  {
-                                                    tripData.data.travellerDetails[hotel.id]?.map((trav, i) => {
-                                                      var type = i + 1 <= travellerCount.adults ? 'Adult' : "Child"
-                                                      var index = i + 1 <= travellerCount.adults ? i + 1 : (i + 1 - travellerCount.adults)
-                                                      return (
-                                                        <TravDetails trav={trav} type={type} index={index} />
-                                                      )
-                                                    })
-                                                  }
-                                                </>
-                                              ) : (
-                                                <>
-                                                  {
-                                                    travellerDetails[hotel.id]?.map((trav, i) => {
-                                                      var type = i + 1 <= travellerCount.adults ? 'Adult' : "Child"
-                                                      var index = i + 1 <= travellerCount.adults ? i + 1 : (i + 1 - travellerCount.adults)
-                                                      return (
-                                                        <TravDetails trav={trav} type={type} index={index} />
-                                                      )
-                                                    })
-                                                  }
-                                                </>
-                                              )}
+                                              {
+                                                requestData?.status === "Approved" ?
+                                                  <View>
+                                                    <Text style={styles.subTitle}>Your trip is approved</Text>
+                                                    <View style={styles.statusContainer}>
+                                                    <Text style={styles.subTitle}>Status:</Text>
+                                                    <Text style={requestData?.status === "Pending" ?styles.statusTitle:styles.activeStatusTitle}>{requestData?.status}</Text>
+                                                    </View>
+                                                  </View>
+                                                  : <View>
+                                                    <Text style={styles.subTitle}>Your trip is submitted for approval</Text>
+                                                    <View style={styles.statusContainer}>
+                                                    <Text style={styles.subTitle}>Status:</Text>
+                                                    <Text style={requestData?.status === "Pending" ?styles.statusTitle:styles.activeStatusTitle}>{requestData?.status}</Text>
+                                                    </View>
+                                                  </View>
+                                              }
                                             </>
-                                          </View>
-                                        </View>
+                                            :
+                                            <>
+                                              <Text style={styles.subTitle}>{`Send booking for Approval: `}</Text>
+                                              <TouchableOpacity style={styles.btn} onPress={handleManagerClick}>
+                                                <Text style={[styles.subTitle,{color:colors.white}]}>Yes</Text>
+                                              </TouchableOpacity>
+                                              <Text style={styles.title}>OR</Text>
+                                              <Text style={styles.subTitle}>Continue booking without Approval</Text>
+                                            </>
+                                        }
                                       </>
-                                    )
-                                  })}
+                                    </> :
+                                    <View>
+                                      <Text>
+                                        No manager assigned
+                                      </Text>
+                                    </View>
+                                }
+
+                              </View>
+                              
+                              <View
+                                style={{
+                                  padding: responsiveHeight(1),
+                                  borderRadius: responsiveHeight(1),
+                                  backgroundColor: colors.white,
+                                  elevation: responsiveHeight(1),
+                                  gap: responsiveHeight(0.5),
+                                  marginVertical: responsiveHeight(1)
+                                }}>
+                                <Text style={styles.title}>
+                                  {userAccountDetails?.firstName} (
+                                  {userAccountDetails?.email})
+                                </Text>
+                                <Text style={styles.title}>{tripData.data?.name}</Text>
+                                <View
+                                  style={{
+                                    flexDirection: 'row',
+                                    gap: responsiveHeight(2),
+                                  }}>
+
+                                  {tripData?.hotels?.filter(
+                                    hotel => requestData?.hotels.includes(hotel.id),
+                                  )?.length > 0 ? (
+                                    <View style={styles.btn}>
+                                      <Text style={styles.btnTitle}>
+                                        Hotels -{' '}
+                                        {
+                                          tripData?.hotels?.filter(
+                                            hotel => requestData?.hotels.includes(hotel.id),
+                                          )?.length
+                                        }
+                                      </Text>
+                                    </View>
+                                  ) : null}
+
+                                  {tripData?.flights?.filter(
+                                    hotel => requestData?.flights.includes(hotel.id),
+                                  )?.length > 0 ? (
+                                    <View style={styles.btn}>
+                                      <Text style={styles.btnTitle}>
+                                        Flights -{' '}
+                                        {
+                                          tripData?.flights?.filter(
+                                            hotel => requestData?.flights.includes(hotel.id),
+                                          )?.length
+                                        }
+                                      </Text>
+                                    </View>
+                                  ) : null}
                                 </View>
 
-                                <View>
-                                  {tripData?.flights
-                                    ?.filter(hotel => requestData?.flights.includes(hotel.id))
-                                    ?.map((flight, s) => {
-                                      var airlinename =
-                                        flight.data.flightNew.segments[0].airlineName;
-                                      var airline = flightsLogosData?.filter(a => {
-                                        return airlinename.toLowerCase() === a.id;
-                                      });
-                                      var flightArr = [flight.data.flight].map(
-                                        (flight, f) => {
-                                          return {
-                                            ...actions.modifyFlightObject(flight),
-                                          };
-                                        },
-                                      );
-                                      var adults = flight.data.adults;
-                                      var child = flight.data.child;
-                                      var infant = flight.data.infant;
-
-                                      return (
-                                        <>
-                                          {s === 0 ? (
-                                            <Text
-                                              style={[
-                                                styles.title,
-                                                { textAlign: 'center' },
-                                              ]}>
-                                              Flights
-                                            </Text>
-                                          ) : null}
-                                          <View style={styles.card}>
-                                            <FCard
-                                              airline={airline}
-                                              flightArr={flightArr}
-                                            />
-                                            <View
-                                              style={{
-                                                alignSelf: 'flex-end',
-                                                marginTop: responsiveHeight(1),
-                                              }}>
+                                <Text style={styles.title}>
+                                  Total price:
+                                  <Text style={[styles.title, { color: colors.secondary }]}>
+                                    {' '}
+                                    &#8377;{' '}
+                                    {`${Math.ceil(requestData?.price).toLocaleString('en-IN')} `}
+                                  </Text>
+                                </Text>
+                                <Text style={styles.subTitle}>
+                                  Requested on:
+                                  <Text
+                                    style={[
+                                      styles.subTitle,
+                                      { color: colors.highlight },
+                                    ]}>{(new Date(requestData?.createdAt?.seconds * 1000)).toLocaleDateString()}</Text>
+                                </Text>
+                                <TouchableOpacity
+                                  style={{
+                                    alignSelf: 'center',
+                                    flexDirection: 'row',
+                                    justifyContent: 'center',
+                                  }}
+                                  onPress={toggleUp}>
+                                  <Text style={styles.subTitle}>
+                                    {!fareIsOpen ? 'View' : 'Close'} Trip Details
+                                  </Text>
+                                  <IconSwitcher
+                                    componentName="EvilIcons"
+                                    iconName={fareIsOpen ? 'chevron-up' : 'chevron-down'}
+                                    color="black"
+                                    iconsize={3}
+                                  />
+                                </TouchableOpacity>
+                                {fareIsOpen ? (
+                                  <>
+                                    <View>
+                                      {tripData?.hotels?.filter((hotel) => requestData?.hotels.includes(hotel.id))?.map((hotel, s) => {
+                                        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                                          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+                                        ];
+                                        const startdate = new Date(hotel?.data?.hotelSearchQuery?.checkInDate.seconds * 1000);
+                                        const formattedDate1 = `${monthNames[startdate.getMonth()]} ${startdate.getDate()}`;
+                                        var endDate = getDate(hotel?.data?.hotelSearchQuery?.checkOutDate.seconds);
+                                        var adults = hotel?.data?.hotelSearchQuery?.hotelRoomArr.reduce((acc, obj) => {
+                                          acc.adults += parseInt(obj.adults, 10);
+                                          acc.child += parseInt(obj.child, 10);
+                                          return acc;
+                                        }, { adults: 0, child: 0 });
+                                        return (
+                                          <>
+                                            {s === 0 ? (
                                               <Text
                                                 style={[
-                                                  styles.totalPrice,
-                                                  { fontSize: responsiveHeight(1.5) },
-                                                ]}>{`${flightArr[0].fare.toLocaleString(
-                                                  'en-IN',
-                                                )}`}</Text>
+                                                  styles.title,
+                                                  { textAlign: 'center' },
+                                                ]}>
+                                                Hotels
+                                              </Text>
+                                            ) : null}
+                                            <View style={styles.hotelCard}>
+                                              <HCard hotel={hotel} formattedDate1={formattedDate1} endDate={endDate} adults={adults} />
                                             </View>
-                                          </View>
-                                          <View style={styles.card}>
-                                            <Text
-                                              style={[
-                                                styles.title,
-                                                { textAlign: 'center' },
-                                              ]}>
-                                              Traveller Details
-                                            </Text>
-                                            <View>
-                                              <>
-                                                {tripData?.data?.travellerDetails ? (
-                                                  <>
-                                                    {tripData.data.travellerDetails[
-                                                      flight.id
-                                                    ]?.map((trav, i) => {
-                                                      var type =
-                                                        i + 1 <= adults
-                                                          ? 'Adult'
-                                                          : i + 1 <= adults + child
-                                                            ? 'Child'
-                                                            : 'Infant';
-                                                      var index =
-                                                        i + 1 <= adults
-                                                          ? i + 1
-                                                          : i + 1 <= adults + child
-                                                            ? i - adults + 1
-                                                            : i - (adults + child) + 1;
-                                                      return (
-                                                        <TravDetails
-                                                          type={type}
-                                                          index={index}
-                                                          trav={trav}
-                                                        />
-                                                      );
-                                                    })}
-                                                  </>
-                                                ) : (
-                                                  <>
-                                                    {travellerDetails[flight.id]?.map(
-                                                      (trav, i) => {
-                                                        var type =
-                                                          i + 1 <= adults
-                                                            ? 'Adult'
-                                                            : i + 1 <= adults + child
-                                                              ? 'Child'
-                                                              : 'Infant';
-                                                        var index =
-                                                          i + 1 <= adults
-                                                            ? i + 1
-                                                            : i + 1 <= adults + child
-                                                              ? i - adults + 1
-                                                              : i -
-                                                              (adults + child) +
-                                                              1;
-                                                        return (
-                                                          <TravDetails
-                                                            trav={trav}
-                                                            index={index}
-                                                            type={type}
-                                                          />
-                                                        );
-                                                      },
-                                                    )}
-                                                  </>
-                                                )}
-                                              </>
-                                            </View>
-                                          </View>
-                                        </>
-                                      );
-                                    })}
-                                </View>
-                              </>
-                            ) : null}
-                          </View>
-                          </View>
-                          :
-                          <View style={{ margin: responsiveHeight(1) }}>
-                          <View
-                            style={{
-                              padding: responsiveHeight(1),
-                              borderRadius: responsiveHeight(1),
-                              backgroundColor: colors.white,
-                              elevation: responsiveHeight(1),
-                              gap: responsiveHeight(0.5),
-                              marginVertical: responsiveHeight(1)
-                            }}>
-                            <Text style={styles.title}>
-                              {userAccountDetails?.firstName} (
-                              {userAccountDetails?.email})
-                            </Text>
-                            <Text style={styles.title}>{tripData.data?.name}</Text>
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                                gap: responsiveHeight(2),
-                              }}>
-                              {tripData?.hotels?.filter(
-                                hotel => !hotelIds.includes(hotel.id),
-                              )?.length > 0 ? (
-                                <View style={styles.btn}>
-                                  <Text style={styles.btnTitle}>
-                                    Hotels -{' '}
-                                    {
-                                      tripData?.hotels?.filter(
-                                        hotel => !hotelIds.includes(hotel.id),
-                                      )?.length
-                                    }
-                                  </Text>
-                                </View>
-                              ) : null}
-                              {tripData?.flights?.filter(
-                                hotel => !flightsIds.includes(hotel.id),
-                              )?.length > 0 ? (
-                                <View style={styles.btn}>
-                                  <Text style={styles.btnTitle}>
-                                    Flights -{' '}
-                                    {
-                                      tripData?.flights?.filter(
-                                        hotel => !flightsIds.includes(hotel.id),
-                                      )?.length
-                                    }
-                                  </Text>
-                                </View>
-                              ) : null}
-                            </View>
-                            <Text style={styles.title}>
-                              Total price:
-                              <Text style={[styles.title, { color: colors.secondary }]}>
-                                {' '}
-                                &#8377;{' '}
-                                {`${Math.ceil(finalPrice).toLocaleString('en-IN')} `}
-                              </Text>
-                            </Text>
-                            <Text style={styles.subTitle}>
-                              Requested on:
-                              <Text
-                                style={[
-                                  styles.subTitle,
-                                  { color: colors.highlight },
-                                ]}>{` ${newdate}`}</Text>
-                            </Text>
-                            <TouchableOpacity
-                              style={{
-                                alignSelf: 'center',
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                              }}
-                              onPress={toggleUp}>
-                              <Text style={styles.subTitle}>
-                                {!fareIsOpen ? 'View' : 'Close'} Trip Details
-                              </Text>
-                              <IconSwitcher
-                                componentName="EvilIcons"
-                                iconName={fareIsOpen ? 'chevron-up' : 'chevron-down'}
-                                color="black"
-                                iconsize={3}
-                              />
-                            </TouchableOpacity>
-                            {fareIsOpen ? (
-                              <>
-                                <View>
-                                  {tripData?.hotels?.filter((hotel) => !hotelIds.includes(hotel.id))?.map((hotel, s) => {
-                                    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                                      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-                                    ];
-                                    const startdate = new Date(hotel?.data?.hotelSearchQuery?.checkInDate.seconds * 1000);
-                                    const formattedDate1 = `${monthNames[startdate.getMonth()]} ${startdate.getDate()}`;
-                                    var endDate = getDate(hotel?.data?.hotelSearchQuery?.checkOutDate.seconds);
-                                    var adults = hotel?.data?.hotelSearchQuery?.hotelRoomArr.reduce((acc, obj) => {
-                                      acc.adults += parseInt(obj.adults, 10);
-                                      acc.child += parseInt(obj.child, 10);
-                                      return acc;
-                                    }, { adults: 0, child: 0 });
-                                    return (
-                                      <>
-                                        {s === 0 ? (
-                                          <Text
-                                            style={[
-                                              styles.title,
-                                              { textAlign: 'center' },
-                                            ]}>
-                                            Hotels
-                                          </Text>
-                                        ) : null}
-                                        <View style={styles.hotelCard}>
-                                          <HCard hotel={hotel} formattedDate1={formattedDate1} endDate={endDate} adults={adults} />
-                                        </View>
-                                        <View style={styles.card}>
-                                          <Text
-                                            style={[
-                                              styles.title,
-                                              { textAlign: 'center' },
-                                            ]}>
-                                            Traveller Details
-                                          </Text>
-                                          <View>
-                                            <>
-                                              {tripData?.data?.travellerDetails ? (
-                                                <>
-                                                  {
-                                                    tripData.data.travellerDetails[hotel.id]?.map((trav, i) => {
-                                                      var type = i + 1 <= travellerCount.adults ? 'Adult' : "Child"
-                                                      var index = i + 1 <= travellerCount.adults ? i + 1 : (i + 1 - travellerCount.adults)
-                                                      return (
-                                                        <TravDetails trav={trav} type={type} index={index} />
-                                                      )
-                                                    })
-                                                  }
-                                                </>
-                                              ) : (
-                                                <>
-                                                  {
-                                                    travellerDetails[hotel.id]?.map((trav, i) => {
-                                                      var type = i + 1 <= travellerCount.adults ? 'Adult' : "Child"
-                                                      var index = i + 1 <= travellerCount.adults ? i + 1 : (i + 1 - travellerCount.adults)
-                                                      return (
-                                                        <TravDetails trav={trav} type={type} index={index} />
-                                                      )
-                                                    })
-                                                  }
-                                                </>
-                                              )}
-                                            </>
-                                          </View>
-                                        </View>
-                                      </>
-                                    )
-                                  })}
-                                </View>
-
-                                <View>
-                                  {tripData?.flights
-                                    ?.filter(hotel => !flightsIds.includes(hotel.id))
-                                    ?.map((flight, s) => {
-                                      var airlinename =
-                                        flight.data.flightNew.segments[0].airlineName;
-                                      var airline = flightsLogosData?.filter(a => {
-                                        return airlinename.toLowerCase() === a.id;
-                                      });
-                                      var flightArr = [flight.data.flight].map(
-                                        (flight, f) => {
-                                          return {
-                                            ...actions.modifyFlightObject(flight),
-                                          };
-                                        },
-                                      );
-                                      var adults = flight.data.adults;
-                                      var child = flight.data.child;
-                                      var infant = flight.data.infant;
-
-                                      return (
-                                        <>
-                                          {s === 0 ? (
-                                            <Text
-                                              style={[
-                                                styles.title,
-                                                { textAlign: 'center' },
-                                              ]}>
-                                              Flights
-                                            </Text>
-                                          ) : null}
-                                          <View style={styles.card}>
-                                            <FCard
-                                              airline={airline}
-                                              flightArr={flightArr}
-                                            />
-                                            <View
-                                              style={{
-                                                alignSelf: 'flex-end',
-                                                marginTop: responsiveHeight(1),
-                                              }}>
+                                            <View style={styles.card}>
                                               <Text
                                                 style={[
-                                                  styles.totalPrice,
-                                                  { fontSize: responsiveHeight(1.5) },
-                                                ]}>{`${flightArr[0].fare.toLocaleString(
-                                                  'en-IN',
-                                                )}`}</Text>
+                                                  styles.title,
+                                                  { textAlign: 'center' },
+                                                ]}>
+                                                Traveller Details
+                                              </Text>
+                                              <View>
+                                                <>
+                                                  {tripData?.data?.travellerDetails ? (
+                                                    <>
+                                                      {
+                                                        tripData.data.travellerDetails[hotel.id]?.map((trav, i) => {
+                                                          var type = i + 1 <= travellerCount.adults ? 'Adult' : "Child"
+                                                          var index = i + 1 <= travellerCount.adults ? i + 1 : (i + 1 - travellerCount.adults)
+                                                          return (
+                                                            <TravDetails trav={trav} type={type} index={index} />
+                                                          )
+                                                        })
+                                                      }
+                                                    </>
+                                                  ) : (
+                                                    <>
+                                                      {
+                                                        travellerDetails[hotel.id]?.map((trav, i) => {
+                                                          var type = i + 1 <= travellerCount.adults ? 'Adult' : "Child"
+                                                          var index = i + 1 <= travellerCount.adults ? i + 1 : (i + 1 - travellerCount.adults)
+                                                          return (
+                                                            <TravDetails trav={trav} type={type} index={index} />
+                                                          )
+                                                        })
+                                                      }
+                                                    </>
+                                                  )}
+                                                </>
+                                              </View>
                                             </View>
-                                          </View>
-                                          <View style={styles.card}>
-                                            <Text
-                                              style={[
-                                                styles.title,
-                                                { textAlign: 'center' },
-                                              ]}>
-                                              Traveller Details
-                                            </Text>
-                                            <View>
-                                              <>
-                                                {tripData?.data?.travellerDetails ? (
+                                          </>
+                                        )
+                                      })}
+                                    </View>
+
+                                    <View>
+                                      {tripData?.flights
+                                        ?.filter(hotel => requestData?.flights.includes(hotel.id))
+                                        ?.map((flight, s) => {
+                                          var airlinename =
+                                            flight.data.flightNew.segments[0].airlineName;
+                                          var airline = flightsLogosData?.filter(a => {
+                                            return airlinename.toLowerCase() === a.id;
+                                          });
+                                          var flightArr = [flight.data.flight].map(
+                                            (flight, f) => {
+                                              return {
+                                                ...actions.modifyFlightObject(flight),
+                                              };
+                                            },
+                                          );
+                                          var adults = flight.data.adults;
+                                          var child = flight.data.child;
+                                          var infant = flight.data.infant;
+
+                                          return (
+                                            <>
+                                              {s === 0 ? (
+                                                <Text
+                                                  style={[
+                                                    styles.title,
+                                                    { textAlign: 'center' },
+                                                  ]}>
+                                                  Flights
+                                                </Text>
+                                              ) : null}
+                                              <View style={styles.card}>
+                                                <FCard
+                                                  airline={airline}
+                                                  flightArr={flightArr}
+                                                />
+                                                <View
+                                                  style={{
+                                                    alignSelf: 'flex-end',
+                                                    marginTop: responsiveHeight(1),
+                                                  }}>
+                                                  <Text
+                                                    style={[
+                                                      styles.totalPrice,
+                                                      { fontSize: responsiveHeight(1.5) },
+                                                    ]}>{`${flightArr[0].fare.toLocaleString(
+                                                      'en-IN',
+                                                    )}`}</Text>
+                                                </View>
+                                              </View>
+                                              <View style={styles.card}>
+                                                <Text
+                                                  style={[
+                                                    styles.title,
+                                                    { textAlign: 'center' },
+                                                  ]}>
+                                                  Traveller Details
+                                                </Text>
+                                                <View>
                                                   <>
-                                                    {tripData.data.travellerDetails[
-                                                      flight.id
-                                                    ]?.map((trav, i) => {
-                                                      var type =
-                                                        i + 1 <= adults
-                                                          ? 'Adult'
-                                                          : i + 1 <= adults + child
-                                                            ? 'Child'
-                                                            : 'Infant';
-                                                      var index =
-                                                        i + 1 <= adults
-                                                          ? i + 1
-                                                          : i + 1 <= adults + child
-                                                            ? i - adults + 1
-                                                            : i - (adults + child) + 1;
-                                                      return (
-                                                        <TravDetails
-                                                          type={type}
-                                                          index={index}
-                                                          trav={trav}
-                                                        />
-                                                      );
-                                                    })}
-                                                  </>
-                                                ) : (
-                                                  <>
-                                                    {travellerDetails[flight.id]?.map(
-                                                      (trav, i) => {
-                                                        var type =
-                                                          i + 1 <= adults
-                                                            ? 'Adult'
-                                                            : i + 1 <= adults + child
-                                                              ? 'Child'
-                                                              : 'Infant';
-                                                        var index =
-                                                          i + 1 <= adults
-                                                            ? i + 1
-                                                            : i + 1 <= adults + child
-                                                              ? i - adults + 1
-                                                              : i -
-                                                              (adults + child) +
-                                                              1;
-                                                        return (
-                                                          <TravDetails
-                                                            trav={trav}
-                                                            index={index}
-                                                            type={type}
-                                                          />
-                                                        );
-                                                      },
+                                                    {tripData?.data?.travellerDetails ? (
+                                                      <>
+                                                        {tripData.data.travellerDetails[
+                                                          flight.id
+                                                        ]?.map((trav, i) => {
+                                                          var type =
+                                                            i + 1 <= adults
+                                                              ? 'Adult'
+                                                              : i + 1 <= adults + child
+                                                                ? 'Child'
+                                                                : 'Infant';
+                                                          var index =
+                                                            i + 1 <= adults
+                                                              ? i + 1
+                                                              : i + 1 <= adults + child
+                                                                ? i - adults + 1
+                                                                : i - (adults + child) + 1;
+                                                          return (
+                                                            <TravDetails
+                                                              type={type}
+                                                              index={index}
+                                                              trav={trav}
+                                                            />
+                                                          );
+                                                        })}
+                                                      </>
+                                                    ) : (
+                                                      <>
+                                                        {travellerDetails[flight.id]?.map(
+                                                          (trav, i) => {
+                                                            var type =
+                                                              i + 1 <= adults
+                                                                ? 'Adult'
+                                                                : i + 1 <= adults + child
+                                                                  ? 'Child'
+                                                                  : 'Infant';
+                                                            var index =
+                                                              i + 1 <= adults
+                                                                ? i + 1
+                                                                : i + 1 <= adults + child
+                                                                  ? i - adults + 1
+                                                                  : i -
+                                                                  (adults + child) +
+                                                                  1;
+                                                            return (
+                                                              <TravDetails
+                                                                trav={trav}
+                                                                index={index}
+                                                                type={type}
+                                                              />
+                                                            );
+                                                          },
+                                                        )}
+                                                      </>
                                                     )}
                                                   </>
-                                                )}
-                                              </>
-                                            </View>
-                                          </View>
-                                        </>
-                                      );
-                                    })}
+                                                </View>
+                                              </View>
+                                            </>
+                                          );
+                                        })}
+                                    </View>
+                                  </>
+                                ) : null}
+                              </View>
+                            </View>
+                            :
+                            <View style={{ margin: responsiveHeight(1) }}>
+
+                              <View style={[styles.card, { width: "100%", gap: responsiveHeight(.5), alignItems: 'center' }]}>
+                                <Text style={[styles.title,{fontSize:responsiveHeight(1.8),marginBottom:responsiveHeight(1.5)}]}>Manager Approval</Text>
+                                {
+                                  Object.keys(userAccountDetails?.manager).length > 0 ?
+                                    <>
+                                      <Text style={styles.subTitle}>{`Manager Name : `}</Text>
+                                      <Text style={styles.title}>{`${userAccountDetails?.manager?.name}(${userAccountDetails?.manager?.email})`}</Text>
+                                      <>
+                                        {
+                                          requestId ?
+                                            <>
+                                              {
+                                                requestData?.status === "Approved" ?
+                                                  <View>
+                                                    <Text style={styles.subTitle}>Your trip is approved</Text>
+                                                    <View style={styles.statusContainer}>
+                                                    <Text style={styles.subTitle}>Status:</Text>
+                                                    <Text style={requestData?.status === "Pending" ?styles.statusTitle:styles.activeStatusTitle}>{requestData?.status}</Text>
+                                                    </View>
+                                                  </View>
+                                                  : <View>
+                                                    <Text style={styles.subTitle}>Your trip is submitted for approval</Text>
+                                                    <View style={styles.statusContainer}>
+                                                    <Text style={styles.subTitle}>Status:</Text>
+                                                    <Text style={requestData?.status === "Pending" ?styles.statusTitle:styles.activeStatusTitle}>{requestData?.status}</Text>
+                                                    </View>
+                                                  </View>
+                                              }
+                                            </>
+                                            :
+                                            <>
+                                              <Text style={styles.subTitle}>{`Send booking for Approval: `}</Text>
+                                              <TouchableOpacity style={styles.btn} onPress={handleManagerClick}>
+                                                <Text style={[styles.subTitle,{color:colors.white}]}>Yes</Text>
+                                              </TouchableOpacity>
+                                              <Text style={styles.title}>OR</Text>
+                                              <Text style={styles.subTitle}>Continue booking without Approval</Text>
+                                            </>
+                                        }
+                                      </>
+                                    </> :
+                                    <View>
+                                      <Text>
+                                        No manager assigned
+                                      </Text>
+                                    </View>
+                                }
+
+                              </View>
+
+                              <View
+                                style={[styles.card, { width: "100%", gap: responsiveHeight(.5) }]}>
+                                <Text style={styles.title}>
+                                  {userAccountDetails?.firstName} (
+                                  {userAccountDetails?.email})
+                                </Text>
+                                <Text style={styles.title}>{tripData.data?.name}</Text>
+                                <View
+                                  style={{
+                                    flexDirection: 'row',
+                                    gap: responsiveHeight(2),
+                                  }}>
+                                  {tripData?.hotels?.filter(
+                                    hotel => !hotelIds.includes(hotel.id),
+                                  )?.length > 0 ? (
+                                    <View style={styles.btn}>
+                                      <Text style={styles.btnTitle}>
+                                        Hotels -{' '}
+                                        {
+                                          tripData?.hotels?.filter(
+                                            hotel => !hotelIds.includes(hotel.id),
+                                          )?.length
+                                        }
+                                      </Text>
+                                    </View>
+                                  ) : null}
+                                  {tripData?.flights?.filter(
+                                    hotel => !flightsIds.includes(hotel.id),
+                                  )?.length > 0 ? (
+                                    <View style={styles.btn}>
+                                      <Text style={styles.btnTitle}>
+                                        Flights -{' '}
+                                        {
+                                          tripData?.flights?.filter(
+                                            hotel => !flightsIds.includes(hotel.id),
+                                          )?.length
+                                        }
+                                      </Text>
+                                    </View>
+                                  ) : null}
                                 </View>
-                              </>
-                            ) : null}
-                          </View>
-                        </View>
+                                <Text style={styles.title}>
+                                  Total price:
+                                  <Text style={[styles.title, { color: colors.secondary }]}>
+                                    {' '}
+                                    &#8377;{' '}
+                                    {`${Math.ceil(finalPrice).toLocaleString('en-IN')} `}
+                                  </Text>
+                                </Text>
+                                <Text style={styles.subTitle}>
+                                  Requested on:
+                                  <Text
+                                    style={[
+                                      styles.subTitle,
+                                      { color: colors.highlight },
+                                    ]}>{` ${newdate}`}</Text>
+                                </Text>
+                                <TouchableOpacity
+                                  style={{
+                                    alignSelf: 'center',
+                                    flexDirection: 'row',
+                                    justifyContent: 'center',
+                                  }}
+                                  onPress={toggleUp}>
+                                  <Text style={styles.subTitle}>
+                                    {!fareIsOpen ? 'View' : 'Close'} Trip Details
+                                  </Text>
+                                  <IconSwitcher
+                                    componentName="EvilIcons"
+                                    iconName={fareIsOpen ? 'chevron-up' : 'chevron-down'}
+                                    color="black"
+                                    iconsize={3}
+                                  />
+                                </TouchableOpacity>
+                                {fareIsOpen ? (
+                                  <>
+                                    <View>
+                                      {tripData?.hotels?.filter((hotel) => !hotelIds.includes(hotel.id))?.map((hotel, s) => {
+                                        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                                          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+                                        ];
+                                        const startdate = new Date(hotel?.data?.hotelSearchQuery?.checkInDate.seconds * 1000);
+                                        const formattedDate1 = `${monthNames[startdate.getMonth()]} ${startdate.getDate()}`;
+                                        var endDate = getDate(hotel?.data?.hotelSearchQuery?.checkOutDate.seconds);
+                                        var adults = hotel?.data?.hotelSearchQuery?.hotelRoomArr.reduce((acc, obj) => {
+                                          acc.adults += parseInt(obj.adults, 10);
+                                          acc.child += parseInt(obj.child, 10);
+                                          return acc;
+                                        }, { adults: 0, child: 0 });
+                                        return (
+                                          <>
+                                            {s === 0 ? (
+                                              <Text
+                                                style={[
+                                                  styles.title,
+                                                  { textAlign: 'center' },
+                                                ]}>
+                                                Hotels
+                                              </Text>
+                                            ) : null}
+                                            <View style={styles.hotelCard}>
+                                              <HCard hotel={hotel} formattedDate1={formattedDate1} endDate={endDate} adults={adults} />
+                                            </View>
+                                            <View style={styles.card}>
+                                              <Text
+                                                style={[
+                                                  styles.title,
+                                                  { textAlign: 'center' },
+                                                ]}>
+                                                Traveller Details
+                                              </Text>
+                                              <View>
+                                                <>
+                                                  {tripData?.data?.travellerDetails ? (
+                                                    <>
+                                                      {
+                                                        tripData.data.travellerDetails[hotel.id]?.map((trav, i) => {
+                                                          var type = i + 1 <= travellerCount.adults ? 'Adult' : "Child"
+                                                          var index = i + 1 <= travellerCount.adults ? i + 1 : (i + 1 - travellerCount.adults)
+                                                          return (
+                                                            <TravDetails trav={trav} type={type} index={index} />
+                                                          )
+                                                        })
+                                                      }
+                                                    </>
+                                                  ) : (
+                                                    <>
+                                                      {
+                                                        travellerDetails[hotel.id]?.map((trav, i) => {
+                                                          var type = i + 1 <= travellerCount.adults ? 'Adult' : "Child"
+                                                          var index = i + 1 <= travellerCount.adults ? i + 1 : (i + 1 - travellerCount.adults)
+                                                          return (
+                                                            <TravDetails trav={trav} type={type} index={index} />
+                                                          )
+                                                        })
+                                                      }
+                                                    </>
+                                                  )}
+                                                </>
+                                              </View>
+                                            </View>
+                                          </>
+                                        )
+                                      })}
+                                    </View>
+
+                                    <View>
+                                      {tripData?.flights
+                                        ?.filter(hotel => !flightsIds.includes(hotel.id))
+                                        ?.map((flight, s) => {
+                                          var airlinename =
+                                            flight.data.flightNew.segments[0].airlineName;
+                                          var airline = flightsLogosData?.filter(a => {
+                                            return airlinename.toLowerCase() === a.id;
+                                          });
+                                          var flightArr = [flight.data.flight].map(
+                                            (flight, f) => {
+                                              return {
+                                                ...actions.modifyFlightObject(flight),
+                                              };
+                                            },
+                                          );
+                                          var adults = flight.data.adults;
+                                          var child = flight.data.child;
+                                          var infant = flight.data.infant;
+
+                                          return (
+                                            <>
+                                              {s === 0 ? (
+                                                <Text
+                                                  style={[
+                                                    styles.title,
+                                                    { textAlign: 'center' },
+                                                  ]}>
+                                                  Flights
+                                                </Text>
+                                              ) : null}
+                                              <View style={styles.card}>
+                                                <FCard
+                                                  airline={airline}
+                                                  flightArr={flightArr}
+                                                />
+                                                <View
+                                                  style={{
+                                                    alignSelf: 'flex-end',
+                                                    marginTop: responsiveHeight(1),
+                                                  }}>
+                                                  <Text
+                                                    style={[
+                                                      styles.totalPrice,
+                                                      { fontSize: responsiveHeight(1.5) },
+                                                    ]}>{`${flightArr[0].fare.toLocaleString(
+                                                      'en-IN',
+                                                    )}`}</Text>
+                                                </View>
+                                              </View>
+                                              <View style={styles.card}>
+                                                <Text
+                                                  style={[
+                                                    styles.title,
+                                                    { textAlign: 'center' },
+                                                  ]}>
+                                                  Traveller Details
+                                                </Text>
+                                                <View>
+                                                  <>
+                                                    {tripData?.data?.travellerDetails ? (
+                                                      <>
+                                                        {tripData.data.travellerDetails[
+                                                          flight.id
+                                                        ]?.map((trav, i) => {
+                                                          var type =
+                                                            i + 1 <= adults
+                                                              ? 'Adult'
+                                                              : i + 1 <= adults + child
+                                                                ? 'Child'
+                                                                : 'Infant';
+                                                          var index =
+                                                            i + 1 <= adults
+                                                              ? i + 1
+                                                              : i + 1 <= adults + child
+                                                                ? i - adults + 1
+                                                                : i - (adults + child) + 1;
+                                                          return (
+                                                            <TravDetails
+                                                              type={type}
+                                                              index={index}
+                                                              trav={trav}
+                                                            />
+                                                          );
+                                                        })}
+                                                      </>
+                                                    ) : (
+                                                      <>
+                                                        {travellerDetails[flight.id]?.map(
+                                                          (trav, i) => {
+                                                            var type =
+                                                              i + 1 <= adults
+                                                                ? 'Adult'
+                                                                : i + 1 <= adults + child
+                                                                  ? 'Child'
+                                                                  : 'Infant';
+                                                            var index =
+                                                              i + 1 <= adults
+                                                                ? i + 1
+                                                                : i + 1 <= adults + child
+                                                                  ? i - adults + 1
+                                                                  : i -
+                                                                  (adults + child) +
+                                                                  1;
+                                                            return (
+                                                              <TravDetails
+                                                                trav={trav}
+                                                                index={index}
+                                                                type={type}
+                                                              />
+                                                            );
+                                                          },
+                                                        )}
+                                                      </>
+                                                    )}
+                                                  </>
+                                                </View>
+                                              </View>
+                                            </>
+                                          );
+                                        })}
+                                    </View>
+                                  </>
+                                ) : null}
+                              </View>
+                            </View>
                         }
-                       
+
                       </ScrollView>
                     </View>
 
                   </View>
-                 
-                 
+
+
                   <View style={{ backgroundColor: colors.highlightLite, paddingRight: responsiveHeight(2), paddingVertical: responsiveHeight(1), borderRadius: responsiveHeight(1) }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: responsiveHeight(1) }}>
                       <TouchableOpacity style={[styles.btn]} onPress={() => {
                         setSelectedTab("travellers")
                       }}>
-                        <Text style={styles.btnTitle}>Previous</Text>
+                        <Text style={[styles.subTitle,{color:colors.white}]}>Previous</Text>
                       </TouchableOpacity>
                       <TouchableOpacity style={[styles.btn]} onPress={() => {
                         setSelectedTab("payment")
                       }}>
-                        <Text style={styles.btnTitle}>Next</Text>
+                        <Text style={[styles.subTitle,{color:colors.white}]}>Next</Text>
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -2879,7 +2334,7 @@ onLoad={() => console.log("Image loaded successfully")}
               {
                 selectedTab === "payment" ?
                   <>
-                    {tripData?.hotels?.filter((hotel) => !hotelSubmittedIds.includes(hotel.id))?.length !== 0 || tripData?.flights?.filter((hotel) => !flightSubmittedIds.includes(hotel.id))?.length !== 0 || tripData?.cabs?.filter((hotel) => !cabSubmittedIds.includes(hotel.id))?.length !== 0 ?
+                    {tripData?.hotels?.filter((hotel) => !hotelSubmittedIds.includes(hotel.id))?.length !== 0 || tripData?.flights?.filter((hotel) => !flightSubmittedIds.includes(hotel.id))?.length !== 0 ?
                       <View style={styles.paymentMainConatainer}>
                         <View style={styles.paymentTitleContainer}>
                           <Text style={[styles.title, { fontSize: responsiveHeight(2) }]}>Complete the payment</Text>
@@ -2949,7 +2404,7 @@ onLoad={() => console.log("Image loaded successfully")}
                         </View>
                       </View>
                       :
-                      <View>
+                      <View style={styles.bookedMsgContainer}>
                         <Text style={styles.title}>Thank you for the booking. Your booking has been submitted. We will get back to you soon.</Text>
                         <TouchableOpacity onPress={() => setTraveller(false)} style={[styles.btn, { paddingVertical: responsiveHeight(1) }]}>
                           <Text style={styles.btnTitle}>Close</Text>

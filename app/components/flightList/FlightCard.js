@@ -32,6 +32,8 @@ const FlightCard = ({
   bookingPage,
   segIndex,
   removeFilters,
+
+
 }) => {
   const {
     actions,
@@ -47,8 +49,13 @@ const FlightCard = ({
   var [showStopDtls, setShowStopDtls] = useState(false);
   var [cancellation, setCancellation] = useState(false);
   var [cancelDtls, setCancelDtls] = useState([]);
-  var [isOpen, setIsOpen] = useState(false);
+  var [isOpen, setIsOpen] =  useState(false);
   const [open, setOpen] = useState(false)
+
+  useEffect(()=>
+{
+  setIsOpen(false)
+},[flightResJType])
   var flightArr = flightGrp.map((flight, f) => {
     return { ...actions.modifyFlightObject(flight) };
   });
@@ -102,7 +109,14 @@ const FlightCard = ({
     setCancelDtls([]);
   }
   const toggle = () => {
-    setIsOpen(!isOpen);
+    setIsOpen((prev) => !prev );
+    // setIsOpen((prevIndices) => {
+    //   if (prevIndices.includes(index)) {
+    //     return prevIndices.filter((i) => i !== index);
+    //   } else {
+    //     return [...prevIndices, index];
+    //   }
+    // });
   };
   const handleRenderingFlightCard = ({ item }) => {
     // console.log(item,"first")
@@ -358,7 +372,7 @@ const FlightCard = ({
       )}
       {flightArr.length > 1 ? <TouchableOpacity style={styles.viewAllPrice} onPress={toggle}>
         <Text style={styles.viewAllPriceTitle}>View Prices</Text>
-        <IconSwitcher componentName='Feather' iconName={isOpen ? "chevron-up" : 'chevron-down'} iconsize={2.5} color={colors.black} />
+        <IconSwitcher componentName='Feather' iconName={isOpen? "chevron-up" : 'chevron-down'} iconsize={2.5} color={colors.black} />
       </TouchableOpacity> : null}
       {isOpen && <View>
         {

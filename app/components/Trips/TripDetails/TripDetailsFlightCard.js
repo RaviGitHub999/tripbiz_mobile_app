@@ -33,10 +33,17 @@ const TripDetailsFlightCard = ({
     const [openFlightPrice, setOpenFlightPrice] = useState(false)
     const [openFareRules, setOpenFareRules] = useState(false)
     const { actions, adults, children, infants, flightsLogosData, flightResList, bookingFlight, flightResJType, domesticFlight } = useContext(MyContext)
-    // useEffect(()=>
-    // {
-    //     actions.handleFlightsLogos()
-    // },[])
+    var statuses = [
+        { status: "Paid and Submitted", color: "#ffa500" },
+        { status: "Need clarification", color: "#FFC107" },
+        { status: "Price Revision", color: "#2196F3" },
+        { status: "Booked", color: "#4CAF50" },
+        { status: "Cancelled", color: "#FF0000" },
+        { status: "Submitted,Payment Pending", color: "#ffa500" },
+        { status: "Booked,Payment Pending", color: "#4AF50" },
+        { status: "Not Submitted", color: "#808080" }];
+    var color = statuses.filter((status) => { return status?.status === flightStatus?.status })
+    // var adColor = statuses.filter((status) => { return status?.status === flightResList?.status })
     var id = flightBooking?.seats[0].length > 0 ? Object.keys(flightBooking?.seats[0][0]) : ''
     var fareData = tripsPage ? actions.getTotalFares([flightBooking]) : '';
     var flightArr = flightGrp.map((flight, f) => {
@@ -248,7 +255,7 @@ const TripDetailsFlightCard = ({
                             </> :
 
                             <View style={styles.bookingStatusTitlesMainContainer}>
-                                <Text style={styles.bookingStatusTitles}>{`Booking Status : `}</Text>
+                                <Text style={[styles.bookingStatusTitles]}>{`Booking Status : `}</Text>
                                 <View style={[styles.bookingStatusTextContainer, { backgroundColor: reqColor[0] ? reqColor[0]?.color : "#808080" }]}>
                                     <Text style={styles.bookingStatusText}>Not Submitted</Text>
                                 </View>

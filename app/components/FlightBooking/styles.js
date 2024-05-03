@@ -85,6 +85,8 @@ export const styles = StyleSheet.create({
     },
     totalFareContainer: {
         backgroundColor:colors.white,
+        elevation:5,
+        marginTop:responsiveHeight(0.6)
     },
     totalFareToggleIconContainer: {
         alignSelf: 'center',
@@ -94,7 +96,8 @@ export const styles = StyleSheet.create({
          justifyContent: 'space-between',
           marginHorizontal: responsiveWidth(3),
            gap: responsiveHeight(1),
-           paddingBottom:responsiveHeight(2)
+           paddingBottom:responsiveHeight(2),
+           marginTop:responsiveHeight(1)
     },
     flightDepAndArrMainContainer:
     {
@@ -113,7 +116,7 @@ export const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingHorizontal: responsiveWidth(3.5),
         alignItems: 'center',
-        paddingVertical:responsiveHeight(1)
+        paddingVertical:responsiveHeight(1),
     },
     flighttotalFareText: {
         fontSize: responsiveHeight(2.3),

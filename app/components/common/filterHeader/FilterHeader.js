@@ -3,7 +3,7 @@ import React, { useContext } from 'react'
 import { styles } from './styles'
 import IconSwitcher from '../icons/IconSwitcher'
 import { colors } from '../../../config/theme'
-const FilterHeader = ({ handlefiltersToggleActions, children, value, customStyle,filtersCount,handlefilters}) => {
+const FilterHeader = ({ handlefiltersToggleActions,removeFilters, children, value, customStyle,filtersCount,handlefilters}) => {
     return (
       !value?  <TouchableOpacity style={styles.container} onPress={handlefiltersToggleActions}>
             <View style={styles.mainContainer}>
@@ -43,6 +43,9 @@ const FilterHeader = ({ handlefiltersToggleActions, children, value, customStyle
             {!value? 
             <IconSwitcher componentName='Ionicons' iconName='chevron-down' color={colors.black} iconsize={3.5} />
                :null}
+              {filtersCount > 0 ?<TouchableOpacity style={styles.clearFilterContainer} onPress={() => removeFilters()}>
+                    <Text style={styles.clearFilterTitle}>Clear Filters</Text>
+                </TouchableOpacity>:null}
                {
                 value?
                 <TouchableOpacity style={styles.applyFiltersBtn} onPress={handlefilters}>

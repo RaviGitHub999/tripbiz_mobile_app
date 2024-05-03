@@ -356,7 +356,7 @@ const HotelResList = ({ navigation: { navigate, goBack, push } }) => {
                     }`}</Text>}
             </View>
 
-            <FilterHeader handlefiltersToggleActions={handleOpenFilters} value={openFilters} customStyle={{ rowGap: responsiveHeight(1), paddingHorizontal: responsiveWidth(4) }} filtersCount={count} handlefilters={filterHotels}>
+            <FilterHeader handlefiltersToggleActions={handleOpenFilters} value={openFilters} customStyle={{ rowGap: responsiveHeight(1), paddingHorizontal: responsiveWidth(4) }} filtersCount={count} handlefilters={filterHotels} removeFilters={removeFilters}>
                 <Text style={styles.ratingTitle}>Rating</Text>
                 <View style={styles.container}>
                     {openFilters && generatePattern()}

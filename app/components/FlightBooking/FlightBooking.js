@@ -74,7 +74,7 @@ const FlightBooking = ({ navigation: { navigate } }) => {
     //     );
     // }
     const toggleHeight = () => {
-        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setIsExpanded(!isExpanded);
     };
     const changeBookIndex = (value) => {
@@ -468,7 +468,47 @@ const FlightBooking = ({ navigation: { navigate } }) => {
                     <TouchableOpacity onPress={toggleHeight} style={styles.totalFareToggleIconContainer}>
                         <IconSwitcher componentName='Ionicons' iconName={isExpanded ? "chevron-down-sharp" : 'chevron-up-sharp'} color={colors.black} iconsize={3} />
                     </TouchableOpacity>
-                    {isExpanded &&
+                    
+                    <View style={styles.totalFareFlightDetailsContainer}>
+                        <Text style={styles.flighttotalFareText}>Total fare</Text>
+                        <Text style={styles.flightPrice}>{`₹ ${Math.ceil(finalPrice)?.toLocaleString("en-IN")}/-`}</Text>
+                        {
+                            selectedTripId ?
+                                <View style={{ width: '40%' }}>
+                                    <Text style={{ fontSize: responsiveHeight(2), color: colors.primary }}>{`Do you want to add to ${selectedTrip?.data?.name ? selectedTrip?.data?.name : selectedTripId}`}</Text>
+                                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly' }}>
+                                        <TouchableOpacity onPress={
+                                            () => {
+                                                navigate("TripDetails", { id: selectedTripId })
+                                                actions.editTripById(selectedTripId, bookingFlight, "flights");
+                                                actions.handleSelectedTripId()
+                                            }
+                                        } style={styles.yesBtn}>
+                                            <Text style={styles.yesBtnText}>yes</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity style={styles.yesBtn} onPress={() => {
+                                            actions.setFlightBookPage(false);
+                                            actions.setBookingFlight([]);
+                                        }}>
+                                            <Text style={styles.yesBtnText}>Back</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                                :
+                                <TouchableOpacity style={styles.submitTripBtn} onPress={() => {
+                                    setSubmitIsOpen(true);
+                                }}>
+                                    <Text style={styles.submitTripBtnText}>Add to trip</Text>
+                                </TouchableOpacity>
+                        }
+
+
+
+                    </View>
+                </View>
+
+                <PopUp value={isExpanded} handlePopUpClose={toggleHeight} customStyles={{width:"100%"}}>
+                {isExpanded &&
                         <View style={styles.totalFareFlightDetailsMainContainer}>
                             {
                                 bookingFlight.map((book, b) => {
@@ -528,43 +568,7 @@ const FlightBooking = ({ navigation: { navigate } }) => {
                             </View>
 
                         </View>}
-                    <View style={styles.totalFareFlightDetailsContainer}>
-                        <Text style={styles.flighttotalFareText}>Total fare</Text>
-                        <Text style={styles.flightPrice}>{`₹ ${Math.ceil(finalPrice)?.toLocaleString("en-IN")}/-`}</Text>
-                        {
-                            selectedTripId ?
-                                <View style={{ width: '40%' }}>
-                                    <Text style={{ fontSize: responsiveHeight(2), color: colors.primary }}>{`Do you want to add to ${selectedTrip?.data?.name ? selectedTrip?.data?.name : selectedTripId}`}</Text>
-                                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly' }}>
-                                        <TouchableOpacity onPress={
-                                            () => {
-                                                navigate("TripDetails", { id: selectedTripId })
-                                                actions.editTripById(selectedTripId, bookingFlight, "flights");
-                                                actions.handleSelectedTripId()
-                                            }
-                                        } style={styles.yesBtn}>
-                                            <Text style={styles.yesBtnText}>yes</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={styles.yesBtn} onPress={() => {
-                                            actions.setFlightBookPage(false);
-                                            actions.setBookingFlight([]);
-                                        }}>
-                                            <Text style={styles.yesBtnText}>Back</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-                                :
-                                <TouchableOpacity style={styles.submitTripBtn} onPress={() => {
-                                    setSubmitIsOpen(true);
-                                }}>
-                                    <Text style={styles.submitTripBtnText}>Add to trip</Text>
-                                </TouchableOpacity>
-                        }
-
-
-
-                    </View>
-                </View>
+                </PopUp>
                 <Modal
                     animationType="slide"
                     visible={selectSeats}

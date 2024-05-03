@@ -282,6 +282,7 @@ export default class MyProvider extends Component {
         name: newTripCompleteString,
         status: ""
       },
+      isopen:false,
       actions: {
        handleBookinghotelquery:(query)=>
        {
@@ -610,29 +611,6 @@ this.setState({bookinghotelquery:query})
             console.error("Error fetching hotel city list:", error);
           }
         },
-
-        // changeCityKeyword :  (query) => {
-        //   // console.log(query,"=======>")
-        //   var results =  this.state.hotelFuse.search(query);
-        //   // console.log("Search results", results[0]?.item?.item);
-        //   this.setState({
-        //     cityHotelRes:results
-        //   });
-        // },
-        // fetchHotelCityList:async(keyword)=>
-        // {
-
-        //   if(controller)
-        //   {
-        //     controller.abort()
-        //   }
-        //   controller=new AbortController()
-        //   const { signal } = controller;
-        //   const querySnapshot  =await firestore().collection("hotelAutoComplete").where("DESTINATION","==",'Parbhani').get(signal)
-        //   const hotels = querySnapshot.docs.map(doc => doc.data());
-        //   console.log(hotels,"lll")
-        //   return hotels
-        // },
         changeCityKeyword: this.debounce(async (keyword) => {
           if (keyword !== "") {
             try {
@@ -676,11 +654,6 @@ this.setState({bookinghotelquery:query})
 
         }, 500),
         handleChangeCityHotel: (keyword) => {
-
-          // this.setState({
-          //   cityHotelQuery:keyword,
-          //   cityHotelResBox:true
-          // })
           this.setState({
             hotelCityLoading:true
           })
@@ -698,58 +671,6 @@ this.setState({bookinghotelquery:query})
             cityHotelItem: item
           })
         },
-        // handleOpenCheckinCalender: () => {
-        //   this.setState(prevState => ({
-        //     calenderOpen: {
-        //       ...prevState.calenderOpen,
-        //       checkInCalender: true
-        //     }
-        //   }));
-        // },
-        // handleOpenCheckoutCalender: () => {
-        //   this.setState(prevState => ({
-        //     calenderOpen: {
-        //       ...prevState.calenderOpen,
-        //       checkOutCalender: true
-        //     }
-        //   }));
-        // },
-     
-        
-
-        // handleCheckOutCalender: (event, selectedDate) => {
-        //   if (event.type === 'set') {
-        //     this.setState(prevState => ({
-        //       calenderOpen: {
-        //         ...prevState.calenderOpen,
-        //         checkOutCalender: false
-        //       }
-        //     }))
-        //     if (selectedDate) {
-        //       const formattedDate = selectedDate.toLocaleDateString('en-US', {
-        //         month: 'short',
-        //         day: 'numeric',
-        //       });
-        //       this.setState({
-        //         selectedHotelCheckOutDate: selectedDate,
-        //         selectedCheckOutDate: formattedDate,
-        //         checkOutTime: selectedDate
-        //       })
-        //     }
-        //     if (this.state.checkInTime) {
-        //       const nights = Number(this.state.actions.diffNights(selectedDate, this.state.selectedHotelCheckInDate))
-        //       this.setState({ hotelNights: nights })
-        //     }
-        //   }
-        //   else {
-        //     this.setState(prevState => ({
-        //       calenderOpen: {
-        //         ...prevState.calenderOpen,
-        //         checkOutCalender: false
-        //       }
-        //     }))
-        //   }
-        // },
         handleHotelRooms: (rooms) => {
           var roomsArr = [...this.state.hotelRoomArr];
           if (rooms > roomsArr.length) {
@@ -793,37 +714,6 @@ this.setState({bookinghotelquery:query})
             hotelRoomArr: roomsArr
           })
         },
-
-        // setHotelRating: (value) => {
-        //   this.setState({
-        //     hotelRating: value
-        //   });
-        // },
-        // setHotelPriceStart: (value) => {
-        //   this.setState({
-        //     hotelPriceStart: value
-        //   });
-        // },
-        // setHotelPriceEnd: (value) => {
-        //   this.setState({
-        //     hotelPriceEnd: value
-        //   });
-        // },
-        // setHotelSearchText: (value) => {
-        //   this.setState({
-        //     hotelSearchText: value
-        //   });
-        // },
-
-        
-
-
-
-
-
-
-
-
         separateFlightsByType: (results) => {
           this.setState({
             flightResList: results,
@@ -880,163 +770,7 @@ this.setState({bookinghotelquery:query})
           }
           return false;
         },
-        // modifyFlightObject: (flight) => {
-        //   var totalDuration = 0;
-        //   var segments = flight?.Segments?.map((segment, sg) => {
-        //     var seg1 = segment[0];
-        //     var segLast = segment[segment.length - 1];
-
-        //     var originCityName = seg1.Origin.Airport.CityName;
-        //     var originAirportCode = seg1.Origin.Airport.AirportCode;
-        //     var originAirportName = seg1.Origin.Airport.AirportName;
-        //     var originTerminal = seg1.Origin.Airport.Terminal;
-
-        //     var destCityName = segLast.Destination.Airport.CityName;
-        //     var destAirportCode = segLast.Destination.Airport.AirportCode;
-        //     var destAirportName = segLast.Destination.Airport.AirportName;
-        //     var destTerminal = segLast.Destination.Airport.Terminal;
-
-        //     var depTimeDate = new Date(seg1.Origin.DepTime);
-        //     var arrTimeDate = new Date(segLast.Destination.ArrTime);
-
-        //     var depTimeArr = seg1.Origin.DepTime.split("T")[1].split(":");
-        //     var arrTimeArr = segLast.Destination.ArrTime.split("T")[1].split(":");
-        //     var depTime = `${depTimeArr[0]}:${depTimeArr[1]}`;
-        //     var arrTime = `${arrTimeArr[0]}:${arrTimeArr[1]}`;
-
-        //     var durationSum = 0;
-
-        //     var stopOverPts = [];
-        //     var charNum = 0;
-
-        //     var segRoutes = [];
-
-        //     var dur = 0;
-        //     var flightCodes = [];
-
-        //     segment.forEach((seg, s) => {
-        //       var flightCode = `${seg.Airline.AirlineCode} - ${seg.Airline.FlightNumber} ${seg.Airline.FareClass}`;
-        //       flightCodes[s] = flightCode;
-
-        //       var flightDuration =
-        //         seg.Duration !== 0 ? seg.Duration : seg.AccumulatedDuration;
-
-        //       dur += flightDuration + seg.GroundTime;
-
-        //       durationSum += flightDuration;
-
-        //       if (s > 0) {
-        //         var currDepTime = seg.Origin.DepTime;
-        //         var prevArrTime = segment[s - 1].Destination.ArrTime;
-
-        //         var diffMin = this.state.actions.diffMinutes(
-        //           prevArrTime,
-        //           currDepTime
-        //         );
-        //         durationSum += diffMin;
-
-        //         var stopDurationNum = diffMin / 60;
-        //         var stopDurHours = Math.floor(stopDurationNum);
-        //         var stopDurMins = Math.ceil(
-        //           60 * (stopDurationNum - Math.floor(stopDurationNum))
-        //         );
-        //         var stopDuration = `${stopDurHours ? `${stopDurHours}h ` : ""}${stopDurMins !== 0 ? `${stopDurMins}m` : ""
-        //           }`;
-
-        //         charNum += seg.Origin.Airport.CityName.length;
-
-        //         stopOverPts.push({
-        //           cityName: seg.Origin.Airport.CityName,
-        //           stopDuration,
-        //           charNum
-        //         });
-        //       }
-
-        //       var durNum = flightDuration / 60;
-        //       var durHrs = Math.floor(durNum);
-        //       var durMns = Math.ceil(60 * (durNum - Math.floor(durNum)));
-        //       var durationStr = `${durHrs ? `${durHrs}h ` : ""}${durMns !== 0 ? `${durMns}m` : ""
-        //         }`;
-
-        //       var dpTimeStr = seg.Origin.DepTime;
-        //       var arTimeStr = seg.Destination.ArrTime;
-        //       const dateObject1 = new Date(dpTimeStr);
-        //       const formattedDate1 = `${dateObject1.toDateString()} ${dateObject1.toTimeString()}`;
-        //       const dateObject2= new Date(dpTimeStr);
-        //       const formattedDate2 = `${dateObject2.toDateString()} ${dateObject2.toTimeString()}`;
-        //       var depDate = new Date(dpTimeStr);
-        //       var arrDate = new Date(arTimeStr);
-        //       // console.log(depDate,".........seg.Origin.DepTime........")
-        //       var dpTimeArr = dpTimeStr.split("T")[1].split(":");
-        //       var arTimeArr = arTimeStr.split("T")[1].split(":");
-        //       var dpTime = `${dpTimeArr[0]}:${dpTimeArr[1]}`;
-        //       var arTime = `${arTimeArr[0]}:${arTimeArr[1]}`;
-
-        //       segRoutes.push({
-        //         originCode: seg.Origin.Airport.AirportCode,
-        //         destCode: seg.Destination.Airport.AirportCode,
-        //         flightDur: durationStr,
-        //         layoverDur: stopDuration ? stopDuration : null,
-        //         depTime: dpTime,
-        //         arrTime: arTime,
-        //         arrAfterDays: this.state.actions.diffNights(depDate, arrDate),
-        //         arrCity: seg.Origin.Airport.CityName,
-        //         destCity: seg.Destination.Airport.CityName
-        //       });
-        //     });
-
-        //     var cabinClass = cabinclassMap[segment[0].CabinClass];
-        //     var durationNum = durationSum / 60;
-        //     var durHours = Math.floor(durationNum);
-        //     var durMins = Math.ceil(60 * (durationNum - Math.floor(durationNum)));
-        //     var duration = `${durHours ? `${durHours}h ` : ""}${durMins !== 0 ? `${durMins}m` : ""
-        //       }`;
-
-        //     var arrAfterDays = this.state.actions.diffNights(
-        //       depTimeDate,
-        //       arrTimeDate
-        //     );
-
-        //     totalDuration += dur;
-
-        //     return {
-        //       airlineName: seg1.Airline.AirlineName,
-        //       mainFlgtCode: flightCodes[0],
-        //       flightCodes,
-        //       arrTime,
-        //       arrTimeDate,
-        //       depTime,
-        //       depTimeDate,
-        //       arrAfterDays,
-        //       originCityName,
-        //       originAirportCode,
-        //       originAirportName,
-        //       originTerminal,
-        //       destCityName,
-        //       destAirportCode,
-        //       destAirportName,
-        //       destTerminal,
-        //       duration,
-        //       dur,
-        //       stopOverPts,
-        //       segRoutes,
-        //       baggage: seg1.Baggage,
-        //       cabinBaggage: seg1.CabinBaggage,
-        //       cabinClass
-        //     };
-        //   });
-
-        //   return {
-        //     segments,
-        //     fare: flight.Fare.OfferedFare
-        //       ? Math.ceil(flight.Fare.OfferedFare)
-        //       : Math.ceil(flight.Fare.PublishedFare),
-        //     fareType: flight.FareClassification?.Type,
-        //     fareRules: flight.MiniFareRules ? flight.MiniFareRules : [],
-        //     resultIndex: flight.ResultIndex,
-        //     totalDuration
-        //   };
-        // },
+        
         modifyFlightObject: (flight) => {
           var totalDuration = 0;
           var totalDur = 0;
@@ -1048,11 +782,13 @@ this.setState({bookinghotelquery:query})
             var originAirportCode = seg1.Origin.Airport.AirportCode;
             var originAirportName = seg1.Origin.Airport.AirportName;
             var originTerminal = seg1.Origin.Airport.Terminal;
+            var originCountryCode = segLast.Origin.Airport.CountryCode;
 
             var destCityName = segLast.Destination.Airport.CityName;
             var destAirportCode = segLast.Destination.Airport.AirportCode;
             var destAirportName = segLast.Destination.Airport.AirportName;
             var destTerminal = segLast.Destination.Airport.Terminal;
+            var destCountryCode = segLast.Destination.Airport.CountryCode;
 
             var depTimeDate = new Date(seg1.Origin.DepTime);
             var arrTimeDate = new Date(segLast.Destination.ArrTime);
@@ -1175,10 +911,12 @@ this.setState({bookinghotelquery:query})
               originAirportCode,
               originAirportName,
               originTerminal,
+              originCountryCode,
               destCityName,
               destAirportCode,
               destAirportName,
               destTerminal,
+              destCountryCode, 
               duration,
               dur,
               stopOverPts,
@@ -1301,11 +1039,9 @@ this.setState({bookinghotelquery:query})
             byCost: value
           });
         },
-        isOpenViewPrices: () => {
-          flightArr[0].segments.map((ele) => {
-            console.log(ele.ResultIndex)
-          })
-        },
+        isOpenViewPrices :() => {
+          this.setState(prevState => ({ isopen: !prevState.isopen }));
+      },
         validSeatMap: (seatData) => {
           var valid = false;
           //console.log(seatData);
@@ -2593,30 +2329,7 @@ this.setState({setidToIndex:idToIndex})
             }
           }
         },
-        // calculateTotalFlightFare: (bookingFlight, bookIndex) => {
-        //   var totalFare = 0;
-
-        //   totalFare += bookingFlight[bookIndex].flight?.Fare?.OfferedFare
-        //     ? Math.ceil(bookingFlight[bookIndex].flight?.Fare?.OfferedFare)
-        //     : Math.ceil(bookingFlight[bookIndex].flight?.Fare?.PublishedFare);
-
-        //   bookingFlight[bookIndex].baggagePrice.forEach((bgp, b) => {
-        //     totalFare += bgp;
-        //   });
-        //   bookingFlight[bookIndex].mealPrice.forEach((mp, b) => {
-        //     totalFare += mp;
-        //   });
-        //   bookingFlight[bookIndex].seats.forEach((seatSeg, sg) => {
-        //     seatSeg.forEach((seat, s) => {
-        //       Object.values(seat).forEach((sp, b) => {
-        //         totalFare += sp.Price ? sp.Price : 0;
-        //       });
-        //     });
-        //   });
-
-        //   return totalFare;
-        // },
-
+       
         calculateTotalFlightFare: (bookingFlight, bookIndex) => {
           var totalFare = 0;
 
@@ -2648,40 +2361,6 @@ this.setState({setidToIndex:idToIndex})
           });
           return totalFare;
         },
-
-        // getTotalFares: (bookingFlight) => {
-        //   var totalFareSum = 0;
-        //   var totalSeatCharges = 0;
-        //   var totalBaggagePrice = 0;
-        //   var totalMealPrice = 0;
-
-        //   bookingFlight.forEach((seg, s) => {
-        //     totalFareSum += seg.totalFare ? Number(seg.totalFare) : 0;
-        //     totalSeatCharges += seg.seatCharges ? Number(seg.seatCharges) : 0;
-
-        //     if (Array.isArray(seg.baggagePrice)) {
-        //       seg?.baggagePrice &&
-        //         seg?.baggagePrice?.forEach((price, p) => {
-        //           totalBaggagePrice += price ? Number(price) : 0;
-        //         });
-        //     }
-        //     if (Array.isArray(seg.mealPrice)) {
-        //       seg.mealPrice &&
-        //         seg.mealPrice?.forEach((price, p) => {
-        //           totalMealPrice += price ? Number(price) : 0;
-        //         });
-        //     }
-        //   });
-        //   var finalPrice = totalFareSum + (totalFareSum * this.state.domesticFlight) / 100
-        //   return {
-        //     totalFareSum,
-        //     totalSeatCharges,
-        //     totalBaggagePrice,
-        //     totalMealPrice,
-        //     finalPrice
-        //   };
-        // },
-
         getTotalFares: (bookingFlight) => {
           var totalFareSum = 0;
           var totalSeatCharges = 0;
@@ -3121,7 +2800,7 @@ this.setState({setidToIndex:idToIndex})
             const userData = accSnapShot.data();
             const finalBalance = Number(userData.balance) - Number(price);
             const data = {
-              Date: firestore.Timestamp.now(),
+              Date: Date.now(),
               type: "Debit",
               amount: price,
               application: tripName,
@@ -3306,7 +2985,7 @@ this.setState({setidToIndex:idToIndex})
               flights: flightArray,
               // cabs: cabArray,
               status: "Not Submitted",
-              submittedDate: firestore.Timestamp.now(),
+              submittedDate: Date.now(),
               travellerDetails: userDetails
             });
         
@@ -3347,38 +3026,9 @@ this.setState({setidToIndex:idToIndex})
             console.error("Error adding trip to admin:", error);
           }
         },
-        editTripStatus : async (userId, tripId, adminTripId, status, hotelId, type,) => {
-          try {
-            if (type === "add") {
-              const accountCollectionRef = firestore().collection("Accounts").doc(userId);
-              const tripCollectionRef = accountCollectionRef.collection("trips").doc(tripId);
-              const userHotelDetails = await tripCollectionRef.get();
-              const userHotelArray = userHotelDetails.data().hotels;
-              const userCurrHotel = userHotelArray.find((hotel) => hotel.id === hotelId);
-              await tripCollectionRef.update({
-                hotels: firestore.FieldValue.arrayRemove(userCurrHotel),
-                hotels: firestore.FieldValue.arrayUnion({ ...userCurrHotel, status: status })
-              });
-              
-              const adminCollectionRef = firestore().collection("Accounts").doc(this.state.adminDetails.userid);
-              const admintripCollectionRef = adminCollectionRef.collection("trips").doc(adminTripId);
-              const adminHotelDetails = await admintripCollectionRef.get();
-              const adminHotelArray = adminHotelDetails.data().hotels;
-              const admincurrHotel = adminHotelArray.find((hotel) => hotel.id === hotelId);
-              await admintripCollectionRef.update({
-                hotels: firestore.FieldValue.arrayRemove(admincurrHotel),
-                hotels: firestore.FieldValue.arrayUnion({ ...userCurrHotel, status: status, bookedAt: firestore.Timestamp.now() })
-              });
-            }
+       
         
-            // Similar logic for other types "flight" and "cabs"
-            // Ensure to replace db.collection() with firestore().collection()
-        
-          } catch (error) {
-            console.log(error);
-          }
-        },
-         editAdminTrips :async (tripid, data, travellerDetails, submittedHotels, submittedFlights, requestIds, tripName,) => {
+         editAdminTrips :async (tripid, data, travellerDetails, submittedHotels, submittedFlights, requestIds, tripName) => {
           try {
             const accountDocRef = firestore().collection("Accounts").doc(this.state.adminDetails.userid);
             const tripCollectionRef = accountDocRef.collection("trips");
@@ -3390,14 +3040,24 @@ this.setState({setidToIndex:idToIndex})
             });
         
             // Update trip request status for each request
-            await Promise.all(requestIds.map(async (req) => {
-              const userDocRef = firestore().collection("Accounts").doc(this.state.userId);
-              const tripReqcollectionRef = userDocRef.collection("tripRequests");
-              const tripReqDoc = tripReqcollectionRef.doc(req);
-              await tripReqDoc.update({
-                tripStatus: "Submitted"
-              });
-            }));
+            // await Promise.all(requestIds.map(async (req) => {
+            //   const userDocRef = firestore().collection("Accounts").doc(this.state.userId);
+            //   const tripReqcollectionRef = userDocRef.collection("tripRequests");
+            //   const tripReqDoc = tripReqcollectionRef.doc(req);
+            //   await tripReqDoc.update({
+            //     tripStatus: "Submitted"
+            //   });
+            // }));
+
+            await requestIds.forEach(async(req)=>
+          {
+            const userDocRef = firestore().collection("Accounts").doc(this.state.userId);
+            const tripReqcollectionRef = userDocRef.collection("tripRequests");
+            const tripReqDoc = tripReqcollectionRef.doc(req);
+            await tripReqDoc.update({
+              tripStatus: "Submitted"
+            });
+          })
         
             const flightArray = submittedFlights?.map((flight) => {
               return { status: "Not Submitted", id: flight };
@@ -3630,7 +3290,7 @@ this.setState({setidToIndex:idToIndex})
           return newtripdocRef.id;
         },
 
-        editTripById: async (id, data, type) => {
+            editTripById: async (id, data, type) => {
           try {
             const newState = {
               searchingFlights: false,
@@ -3808,7 +3468,143 @@ this.setState({setidToIndex:idToIndex})
         handleSelectedTripId:()=>
         {
           this.setState({selectedTripId:null})
+        },
+
+ sendApproval : async (userId, managerId, tripId, travellerDetails, price) => {
+          const userDocRef = firestore().collection("Accounts").doc(userId);
+          const tripCollecRef = userDocRef.collection("trips").doc(tripId);
+          const tripData = await tripCollecRef.get();
+        
+          const flightArray = tripData.data().flights.filter((flight) => flight.requestStatus === "Not Requested");
+          const hotelArray = tripData.data().hotels.filter((hotel) => hotel.requestStatus === "Not Requested");
+          // const cabArray = tripData.data()?.cabs?.filter((cab) => cab.requestStatus === "Not Requested");
+        
+          const reqFlights = flightArray.map((flight) => flight.id);
+          const reqHotels = hotelArray.map((hotel) => hotel.id);
+          // const reqCabs = cabArray?.length > 0 ? cabArray?.map((cab) => cab.id) : [];
+        
+          const tripReqcollectionRef = userDocRef.collection("tripRequests");
+          const newtripdocRef = await tripReqcollectionRef.add({
+            createdAt: new Date(),
+            status: "Pending",
+            tripId: tripId,
+            userId: userId,
+            price: price,
+            flights: reqFlights,
+            hotels: reqHotels,
+            // cabs: reqCabs,
+            tripStatus: "Not Submitted"
+          });
+        
+          const managerDocRef = firestore().collection("Accounts").doc(managerId);
+        
+          await managerDocRef.update({
+            approvalRequests: firestore.FieldValue.arrayUnion({
+              userId: userId,
+              status: "Pending",
+              tripId: tripId,
+              requestId: newtripdocRef.id,
+              totalPrice: price,
+              flights: reqFlights,
+              hotels: reqHotels,
+              // cabs: reqCabs
+            })
+          });
+        
+          const newTravellers = { ...tripData.data().travellerDetails, ...travellerDetails };
+          await tripCollecRef.update({
+            requestId: firestore.FieldValue.arrayUnion(newtripdocRef.id),
+            travellerDetails: newTravellers,
+            price: price
+          });
+
+         await  flightArray.map(async (flight) => {
+                await tripCollecRef.update({
+                  flights: firestore.FieldValue.arrayRemove(flight)
+                });
+                const newflight = { ...flight, requestStatus: "Pending" };
+                await tripCollecRef.update({
+                  flights: firestore.FieldValue.arrayUnion(newflight)
+                });
+              }),
+
+      await hotelArray.map(async (hotel) => {
+        await tripCollecRef.update({
+          hotels: firestore.FieldValue.arrayRemove(hotel)
+        });
+        const newhotel = { ...hotel, requestStatus: "Pending" };
+        await tripCollecRef.update({
+          hotels: firestore.FieldValue.arrayUnion(newhotel)
+        });
+      }),
+
+      await Promise.all([await this.state.actions.getTripDoc(tripId, this.state.userId)])
+          // await Promise.all([
+          //   ...flightArray.map(async (flight) => {
+          //     await tripCollecRef.update({
+          //       flights: firestore.FieldValue.arrayRemove(flight)
+          //     });
+          //     const newflight = { ...flight, requestStatus: "Pending" };
+          //     await tripCollecRef.update({
+          //       flights: firestore.FieldValue.arrayUnion(newflight)
+          //     });
+          //   }),
+          //   ...hotelArray.map(async (hotel) => {
+          //     await tripCollecRef.update({
+          //       hotels: firestore.FieldValue.arrayRemove(hotel)
+          //     });
+          //     const newhotel = { ...hotel, requestStatus: "Pending" };
+          //     await tripCollecRef.update({
+          //       hotels: firestore.FieldValue.arrayUnion(newhotel)
+          //     });
+          //   }),
+          //   // ...(cabArray || []).map(async (cab) => {
+          //   //   await tripCollecRef.update({
+          //   //     cabs: firestore.FieldValue.arrayRemove(cab)
+          //   //   });
+          //   //   const newCab = { ...cab, requestStatus: "Pending" };
+          //   //   await tripCollecRef.update({
+          //   //     cabs: firestore.FieldValue.arrayUnion(newCab)
+          //   //   });
+          //   // })
+          // ]);
+        
+          const reqData = {
+            createdAt: new Date(),
+            status: "Pending",
+            tripId: tripId,
+            userId: userId,
+            price: price,
+            flights: reqFlights,
+            hotels: reqHotels,
+            // cabs: cabArray || []
+          };
+          const reqId = newtripdocRef.id;
+        
+          return { reqId, reqData };
+        },
+        sendBookingApprovalEmail :async (userData) => {
+          try {
+            const response = await fetch("https://tripbizzapi-lxyskuwaba-uc.a.run.app/sendBookingApprovalEmail", {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(userData),
+            });
+        
+            if (!response.ok) {
+              console.log(response);
+            }
+        
+            const data = await response.json();
+            console.log(data);
+          } catch (error) {
+            console.log(error);
+          }
         }
+
+
 
       },
       
@@ -3854,28 +3650,10 @@ this.setState({setidToIndex:idToIndex})
       }, delay);
     };
   };
-  //   fuse = new Fuse(AirportsData, {
-  //     keys: ["cityName", "name", "iataCode", "countryName"],
-  //     includeScore: true,
-  //     threshold: 0.2
-  // });
-  // changeCityKeyword = this.debounce((query) => {
-  //   var results = this.state.hotelFuse.search(query);
-  //   console.log("Search results", results);
-  //   this.setState({
-  //     cityHotelRes: results
-  //   });
-  // }, 1000);
-
-
-
-
   render() {
-    // Include actions in the context value
     const contextValue = {
       ...this.state,
     };
-
     return (
       <MyContext.Provider value={contextValue}>
         {this.props.children}

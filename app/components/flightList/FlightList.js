@@ -1,5 +1,5 @@
 import { View, Text, FlatList, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native'
-import React, { useCallback, useContext, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import MyContext from '../../context/Context'
 import FlightCard from './FlightCard'
 import IconSwitcher from '../common/icons/IconSwitcher'
