@@ -214,6 +214,59 @@ const FlightBooking = ({ navigation: { navigate } }) => {
                                 </TouchableOpacity>
                             </View> : null
                     }
+
+{
+                        bookingFlight[bookIndex].seatData &&
+                            bookingFlight[bookIndex].seatData[segIndex] &&
+                            actions.validSeatMap(bookingFlight[bookIndex].seatData[segIndex]) ?
+                            <View style={styles.seatSelectionBtnContainer}>
+                                {bookingFlight[bookIndex].seats &&
+                                    bookingFlight[bookIndex].seats[segIndex] &&
+                                    bookingFlight[bookIndex].seats[segIndex].length > 0 ?
+                                    (
+                                        <View style={{ flexDirection: 'row', columnGap: responsiveHeight(1) }}>
+                                            {
+                                                bookingFlight[bookIndex].flightNew.segments[
+                                                    segIndex
+                                                ].segRoutes.map((route, r) => {
+                                                    return (
+                                                        <View style={{ backgroundColor: colors.white, paddingVertical: responsiveHeight(1), paddingHorizontal: responsiveWidth(2), borderRadius: responsiveHeight(2), rowGap: responsiveHeight(0.8) }}>
+                                                            <View style={{ flexDirection: "row", alignItems: 'center', columnGap: responsiveWidth(1) }}>
+                                                                <Text style={{ fontSize: responsiveHeight(1.8), fontFamily: fonts.textFont, color: colors.black }}>{`${route.originCode}`}</Text>
+                                                                <IconSwitcher componentName='AntDesign' iconName='arrowright' color='black' iconsize={2} />
+                                                                <Text style={{ fontSize: responsiveHeight(1.8), fontFamily: fonts.textFont, color: colors.black }}>{`${route.destCode}`}</Text>
+                                                            </View>
+                                                            <View style={{ flexDirection: 'row' }}>
+                                                                {bookingFlight[bookIndex].seats &&
+                                                                    bookingFlight[bookIndex].seats[segIndex] &&
+                                                                    bookingFlight[bookIndex].seats[segIndex][r] &&
+                                                                    Object.keys(
+                                                                        bookingFlight[bookIndex].seats[segIndex][r]
+                                                                    ).map((seatCode, c) => {
+                                                                        if (
+                                                                            c ===
+                                                                            Object.keys(
+                                                                                bookingFlight[bookIndex].seats[segIndex][r]
+                                                                            ).length -
+                                                                            1
+                                                                        ) {
+                                                                            return <Text style={styles.seatCode}>{seatCode}</Text>;
+                                                                        }
+                                                                        return <Text style={styles.seatCode}>{`${seatCode}, `}</Text>;
+                                                                    })}
+                                                            </View>
+                                                        </View>)
+                                                })}
+                                        </View>
+                                    ) : null}
+                                <TouchableOpacity style={styles.seatSelectionBtn} onPress={handleSeatSelectionPopUp}>
+                                    <Text style={styles.seatSelectionBtnTitle}>Select seats</Text>
+                                </TouchableOpacity>
+                            </View> : null
+                    }
+
+
+
                     <View style={styles.baggageAndMealsContainer}>
                         {/* Baggage and Meals */}
                         <Text style={styles.baggageAndMealsTitle}>Baggage and Meals</Text>
@@ -327,58 +380,6 @@ const FlightBooking = ({ navigation: { navigate } }) => {
 
                         </View>
                     </View>
-
-
-                    {
-                        bookingFlight[bookIndex].seatData &&
-                            bookingFlight[bookIndex].seatData[segIndex] &&
-                            actions.validSeatMap(bookingFlight[bookIndex].seatData[segIndex]) ?
-                            <View style={styles.seatSelectionBtnContainer}>
-                                {bookingFlight[bookIndex].seats &&
-                                    bookingFlight[bookIndex].seats[segIndex] &&
-                                    bookingFlight[bookIndex].seats[segIndex].length > 0 ?
-                                    (
-                                        <View style={{ flexDirection: 'row', columnGap: responsiveHeight(1) }}>
-                                            {
-                                                bookingFlight[bookIndex].flightNew.segments[
-                                                    segIndex
-                                                ].segRoutes.map((route, r) => {
-                                                    return (
-                                                        <View style={{ backgroundColor: colors.white, paddingVertical: responsiveHeight(1), paddingHorizontal: responsiveWidth(2), borderRadius: responsiveHeight(2), rowGap: responsiveHeight(0.8) }}>
-                                                            <View style={{ flexDirection: "row", alignItems: 'center', columnGap: responsiveWidth(1) }}>
-                                                                <Text style={{ fontSize: responsiveHeight(1.8), fontFamily: fonts.textFont, color: colors.black }}>{`${route.originCode}`}</Text>
-                                                                <IconSwitcher componentName='AntDesign' iconName='arrowright' color='black' iconsize={2} />
-                                                                <Text style={{ fontSize: responsiveHeight(1.8), fontFamily: fonts.textFont, color: colors.black }}>{`${route.destCode}`}</Text>
-                                                            </View>
-                                                            <View style={{ flexDirection: 'row' }}>
-                                                                {bookingFlight[bookIndex].seats &&
-                                                                    bookingFlight[bookIndex].seats[segIndex] &&
-                                                                    bookingFlight[bookIndex].seats[segIndex][r] &&
-                                                                    Object.keys(
-                                                                        bookingFlight[bookIndex].seats[segIndex][r]
-                                                                    ).map((seatCode, c) => {
-                                                                        if (
-                                                                            c ===
-                                                                            Object.keys(
-                                                                                bookingFlight[bookIndex].seats[segIndex][r]
-                                                                            ).length -
-                                                                            1
-                                                                        ) {
-                                                                            return <Text style={styles.seatCode}>{seatCode}</Text>;
-                                                                        }
-                                                                        return <Text style={styles.seatCode}>{`${seatCode}, `}</Text>;
-                                                                    })}
-                                                            </View>
-                                                        </View>)
-                                                })}
-                                        </View>
-                                    ) : null}
-                                <TouchableOpacity style={styles.seatSelectionBtn} onPress={handleSeatSelectionPopUp}>
-                                    <Text style={styles.seatSelectionBtnTitle}>Select seats</Text>
-                                </TouchableOpacity>
-                            </View> : null
-                    }
-
 
                     {/* Cancellation and date change */}
                     {bookingFlight[bookIndex].flight.MiniFareRules &&

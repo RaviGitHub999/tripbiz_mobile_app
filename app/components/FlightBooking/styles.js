@@ -162,7 +162,8 @@ export const styles = StyleSheet.create({
     },
     flightResultsNavMainContainer: {
         flexDirection: "row",
-        alignSelf: 'center',
+        // alignSelf: 'center',
+        paddingHorizontal: responsiveWidth(5),
         columnGap: responsiveHeight(2),
         marginTop: responsiveHeight(2)
     },
