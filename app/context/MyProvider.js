@@ -5,7 +5,7 @@ import Fuse from 'fuse.js';
 import AirportsData from "../components/jsonData/Airports.json"
 import HotelsData from "../components/jsonData/Hotels.json"
 import axios from 'axios';
-import firestore, { firebase } from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import convert from "xml-js";
 import moment from 'moment';
@@ -333,8 +333,8 @@ this.setState({bookinghotelquery:query})
         },
         loginAction: async () => {
           try {
-            const email1 = "pavan@gmail.com"
-            const password1 = 'pavan@gmail'
+            const email1 = "dev@tripfriday.com"
+            const password1 ="tripfriday123"
             const response = await auth().signInWithEmailAndPassword(email1, password1);
             return { user: response.user };
           } catch (error) {
@@ -3602,8 +3602,23 @@ this.setState({setidToIndex:idToIndex})
           } catch (error) {
             console.log(error);
           }
+        },
+  updateUserProfile : async (userid, userData) => {
+          const accountDocRef = firestore().collection("Accounts").doc(userid);  
+          await accountDocRef.update({
+            firstName: userData.firstName ? userData.firstName : '',
+            lastName: userData.lastName ? userData.lastName : '',
+            mobileNumber: userData.mobileNumber ? userData.mobileNumber : '',
+            passportNumber: userData.passportNumber ? userData.passportNumber : '',
+            GSTNo: userData.GSTNo ? userData.GSTNo : '',
+            PANNo: userData.PANNo ? userData.PANNo : '',
+            companyName: userData.companyName ? userData.companyName : '',
+          });
+        
+          const accdata = await accountDocRef.get();
+          return accdata.data();
         }
-
+        
 
 
       },
@@ -3619,6 +3634,7 @@ this.setState({setidToIndex:idToIndex})
   componentDidMount = async () => {
     auth().onAuthStateChanged(async (user) => {
       if (user) {
+        await this.state.actions.getUserById(user?.uid);
         this.setState({
           userId: user?.uid,
           isLoading: true,

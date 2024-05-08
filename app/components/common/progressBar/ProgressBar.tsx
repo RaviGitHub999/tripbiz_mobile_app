@@ -19,7 +19,7 @@ const ProgressBar = () => {
       interval = setInterval(() => {
         // Set a fixed increment value to achieve slow continuous progress
         setProgress((prevProgress) =>
-          Math.min(0.98, prevProgress + 0.003) // Adjust the increment value as needed
+          Math.min(0.98, prevProgress + 0.002) // Adjust the increment value as needed
         );
       }, 100); // Adjust the interval time as needed for desired speed
     }, 3000);
@@ -64,7 +64,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: responsiveHeight(2),
     fontFamily: fonts.primary,
-    color: colors.primary
+    color: colors.primary,
+
   },
 });
 

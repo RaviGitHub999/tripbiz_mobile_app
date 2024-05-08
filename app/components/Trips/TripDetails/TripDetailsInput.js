@@ -3,8 +3,7 @@ import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, TouchableWitho
 import { colors } from '../../../config/theme';
 import { responsiveHeight, responsiveWidth } from '../../../utils/responsiveScale';
 
-const TripDetailsInput = ({placeholderName,stateValue,handleonChange,isEditable}) => {
-  const [text, setText] = useState("");
+const TripDetailsInput = ({placeholderName,stateValue,handleonChange, isEditable}) => {
   const [isFocused, setIsFocused] = useState(false);
 
   const handleFocus = () => {
@@ -14,6 +13,8 @@ const TripDetailsInput = ({placeholderName,stateValue,handleonChange,isEditable}
   const handleBlur = () => {
     setIsFocused(false);
   };
+
+
   return ( 
           <TextInput 
             placeholder={placeholderName} 

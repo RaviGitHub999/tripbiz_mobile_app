@@ -37,6 +37,7 @@ const MainNavigation=()=>
           <Stack.Screen name="HotelResList" component={HotelResList} />
           <Stack.Screen name="HotelInfo" component={HotelInfo} />
           <Stack.Screen name="TripDetails" component={TripDetails} />
+          <Stack.Screen name="Login" component={Login} />
     </Stack.Navigator>
   )
 }
@@ -56,20 +57,5 @@ const AppNavigator = () => {
   return !isLoading?<UserStatus/>:userId ? <MainNavigation /> : <AuthNavigation />;
 
 };
-
-// const AppNavigator = () => {
-//   return (
-//        <Stack.Navigator screenOptions={{ headerShown: false }}>
-//            {/* <Stack.Screen name="Splash" component={Splash} />
-//           <Stack.Screen name="Login" component={Login} /> */}
-//          <Stack.Screen name="CustomerBottomNavigation" component={BottomNavigation} />
-//           <Stack.Screen name="OneWayFlights" component={FlightsSearchRes} />
-//           <Stack.Screen name="HotelResList" component={HotelResList} />
-//           <Stack.Screen name="HotelInfo" component={HotelInfo} />
-//           <Stack.Screen name="TripDetails" component={TripDetails} />
-//     </Stack.Navigator> 
-//   )
-// }
-
 export default AppNavigator
 

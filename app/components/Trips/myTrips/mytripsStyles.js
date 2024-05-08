@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     paddingHorizontal: responsiveHeight(3),
-    backgroundColor:colors.white
+    backgroundColor:colors.whiteSmoke
   },
   title: {
     fontSize: responsiveHeight(2.5),

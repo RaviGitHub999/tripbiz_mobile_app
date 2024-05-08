@@ -9,11 +9,13 @@ import {
   responsiveHeight,
 } from '../../../utils/responsiveScale';
 import { RefreshControl } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 const MyTrips = ({navigation:{navigate}}) => {
   var {actions, userTripStatus, userId, noOfPages} = useContext(MyContext);
   var [currentPage, setCurrentPage] = useState(1);
   var [trips, setTrips] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const isFocused = useIsFocused();
   useEffect(() => {
     setTrips(userTripStatus);
     return () => {
@@ -21,6 +23,11 @@ const MyTrips = ({navigation:{navigate}}) => {
     };
   }, [userTripStatus]);
 
+  useEffect(() => {
+    if (isFocused) {
+ actions.getLastDoc();
+    }
+  }, [isFocused]);
   const getTime = seconds => {
     const timestampInSeconds = seconds;
     const date = new Date(timestampInSeconds * 1000);
