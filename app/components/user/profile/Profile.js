@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Button } from 'react-native'
+import { View, Text, TouchableOpacity, Button, TouchableWithoutFeedback } from 'react-native'
 import React, { useContext, useState } from 'react'
 import { styles } from './profileStyles'
 import TripDetailsInput from '../../Trips/TripDetails/TripDetailsInput'
@@ -70,7 +70,8 @@ const Profile = () => {
     setEdit(!edit)
 }
   return (
-    <KeyboardAwareScrollView
+  
+     <KeyboardAwareScrollView
       resetScrollToCoords={{ x: 0, y: 0 }}
       contentContainerStyle={styles.container}
     >
@@ -176,6 +177,7 @@ const Profile = () => {
         </View> : null}
       </View>
     </KeyboardAwareScrollView>
+ 
   )
 }
 

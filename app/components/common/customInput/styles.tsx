@@ -14,9 +14,10 @@ export const styles = StyleSheet.create({
         borderBottomColor: colors.primary
     },
     textInputBox: {
-        width: "100%",
+        // width: "100%",
         fontSize: responsiveFontSize(2.3),
-        fontFamily: fonts.textInput
+        fontFamily: fonts.textInput,
+        flex:1
     },
     title: {
         fontSize: responsiveFontSize(2.3),

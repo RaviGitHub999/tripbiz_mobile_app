@@ -9,6 +9,7 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import convert from "xml-js";
 import moment from 'moment';
+import { Alert } from 'react-native';
 const cabinclassMap = {
   1: "Any cabin class",
   2: "Economy",
@@ -283,6 +284,8 @@ export default class MyProvider extends Component {
         status: ""
       },
       isopen:false,
+      emailNotFound: false,
+      approveLoading: true,
       actions: {
        handleBookinghotelquery:(query)=>
        {
@@ -331,16 +334,43 @@ this.setState({bookinghotelquery:query})
         handleFilterActions: () => {
           this.setState({ filterActions: !this.state.filterActions })
         },
-        loginAction: async () => {
+        loginAction: async (email,password) => {
           try {
-            const email1 = "dev@tripfriday.com"
-            const password1 ="tripfriday123"
-            const response = await auth().signInWithEmailAndPassword(email1, password1);
+            const response = await auth().signInWithEmailAndPassword(email, password);
+            this.setState({email:"",password:""})
             return { user: response.user };
+
           } catch (error) {
-            throw error;
+            Alert.alert(
+              'Error',
+              error.message,
+              [{ text: 'OK' }]
+            );
+           
           }
         },
+        
+ changeUserPassword : async (currentPassword, newPassword) => {
+  try {
+    const user = auth().currentUser;
+    
+    // Reauthenticate the user with their current password
+    const credential = auth.EmailAuthProvider.credential(user.email, currentPassword);
+    await user.reauthenticateWithCredential(credential);
+    
+    // Change the user's password
+    await user.updatePassword(newPassword);
+
+    return true;
+  } catch (error) {
+    Alert.alert(
+      'Error',
+      error.message,
+      [{ text: 'OK' }]
+    );
+    // throw error;
+  }
+},
         handleDropDownState: (payload) => {
           switch (payload.stateName) {
             case "Adults":
@@ -3617,9 +3647,162 @@ this.setState({setidToIndex:idToIndex})
         
           const accdata = await accountDocRef.get();
           return accdata.data();
-        }
-        
+        },
+         editManager : async (managerData) => {
+          try {
+            const accountsRef = firestore().collection("Accounts");
+            const userQuery = await accountsRef.where("email", "==", managerData.email).get();
+            
+            if (userQuery.empty) {
+              this.setState({
+                emailNotFound: true
+              })
+              return;
+            }
+      
+            const userData = userQuery.docs.map(doc => doc.data())[0];
+      
+            const currentUserRef = accountsRef.doc(this.state.userId);
+            const managerData1 = {
+              status: "pending",
+              userId: userData.userid,
+            };
+      
+            await currentUserRef.update({
+              manager: managerData1
+            });
+      
+            const managerRef = accountsRef.doc(userData.userid);
+            const notifications = {
+              userId: this.state.userId,
+              message: "You have a new manager request.",
+              name: this.state.userAccountDetails.firstName,
+              email:  this.state.userAccountDetails.email
+            };
+      
+            await managerRef.update({
+              notifications: firestore.FieldValue.arrayUnion(notifications)
+            });
+          } catch (error) {
+            console.error(error);
+          }
+        },
+      
+     getTripsFlights : async (flightIds, tripId, userId) => {
+          try {
+            const flightsArray = [];
+            
+            if (flightIds.length > 0) {
+              for (const flightId of flightIds) {
+                const flightDocRef = firestore()
+                  .collection("Accounts")
+                  .doc(userId)
+                  .collection("trips")
+                  .doc(tripId)
+                  .collection("flights")
+                  .doc(flightId);
+                
+                const querySnapshot = await flightDocRef.get();
+                const sendData = querySnapshot.data();
+                const modifiedFlightObj = await this.state.actions.objToArr(sendData);
+                
+                flightsArray.push({
+                  id: querySnapshot.id,
+                  data: modifiedFlightObj,
+                });
+              }
+            }
+            
+            return flightsArray;
+          } catch (error) {
+            console.error("Error getting flights:", error);
+            return [];
+          }
+        },
 
+      getTripsHotels : async (hotelIds, tripId, userId) => {
+          try {
+            const hotelArray = [];
+            
+            if (hotelIds.length > 0) {
+              for (const hotelId of hotelIds) {
+                const hotelDocRef = firestore()
+                  .collection("Accounts")
+                  .doc(userId)
+                  .collection("trips")
+                  .doc(tripId)
+                  .collection("hotels")
+                  .doc(hotelId);
+                
+                const querySnapshot = await hotelDocRef.get();
+                const sendData = querySnapshot.data();
+                
+                hotelArray.push({
+                  id: querySnapshot.id,
+                  data: sendData,
+                });
+              }
+            }
+            
+            return hotelArray;
+          } catch (error) {
+            console.error("Error getting hotels:", error);
+            return [];
+          }
+        },
+ getTripsForApproval : async (approvalRequests) => {
+  console.log("lllllll")
+  const requestData = [];
+          this.setState({
+            approveLoading: true,
+          }); 
+          try {
+            if (approvalRequests) {
+              for (const req of approvalRequests) {
+                const userDataRef = firestore().collection("Accounts").doc(req.userId);
+                const data = await userDataRef.get();
+                const tripRef = userDataRef.collection("trips").doc(req.tripId);
+                
+                const [flights, hotels, cabs] = await Promise.all([
+                  await this.state.actions.getTripsFlights(req.flights, req.tripId, req.userId),
+                  await this.state.actions.getTripsHotels(req.hotels, req.tripId, req.userId),
+                  // actions.getTripsCabs(req.cabs, req.tripId, req.userId),
+                ]);
+                
+                const doc = await tripRef.get();
+                const tripReqRef = userDataRef.collection("tripRequests").doc(req.requestId);
+                const reqDoc = await tripReqRef.get();
+                
+                const tripDetails = {
+                  userDetails: data.data(),
+                  tripDetails: {
+                    id: doc.id,
+                    data: doc.data(),
+                    hotels: hotels,
+                    flights: flights,
+                    // cabs: cabs,
+                  },
+                  requestDetails: reqDoc.data(),
+                  approvalRequest: req,
+                };
+                
+                requestData.push(tripDetails);
+              }
+            }
+       
+            this.setState({
+              approveLoading: false,
+            });
+            return requestData;
+          } catch (error) {
+            Alert.alert(
+              'Error',
+              error.message,
+              [{ text: 'OK' }]
+            );
+            throw error;
+          }
+        },
 
       },
       

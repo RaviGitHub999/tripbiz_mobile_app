@@ -9,17 +9,42 @@ export const styles=StyleSheet.create(
             flex:1,
             alignItems:'center',
             // justifyContent:'center' 
+            backgroundColor:colors.whiteSmoke,
+            paddingTop:responsiveHeight(5),
+            gap:responsiveHeight(1)
         },
         maintitle:{
             fontSize:responsiveHeight(3),
             fontFamily:fonts.textFont,
+            color:colors.primary,marginBottom:responsiveHeight(3)
+        },
+        inputContainer:{
+            width:"70%",
+            gap:responsiveHeight(1)
+        },
+        btn:{
+            borderWidth:1,
+            padding:responsiveHeight(1.5),
+            borderRadius:responsiveHeight(1.6),
+            backgroundColor:colors.primary
+        },
+        btnTitle:{
+            fontSize:responsiveHeight(1.9),
+            fontFamily:fonts.textInput,
+            color:colors.white
+
+        },
+        subTitle:
+        {
+            fontSize:responsiveHeight(1.9),
+            fontFamily:fonts.textInput,
             color:colors.primary
         },
-        inPut:{
-            borderRadius: responsiveHeight(1),
-            paddingHorizontal: responsiveWidth(3),
-            height:responsiveHeight(5),
-            borderWidth:1,
+        errorTitle:
+        {
+            fontSize:responsiveHeight(1.6),
+            fontFamily:fonts.textFont,
+            color:colors.red
         }
     }
 )

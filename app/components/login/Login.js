@@ -22,7 +22,9 @@ actions.handleOnChangeText({event,name})
   const handleLogin = async () => {
     setIsLoading(true)
     try {
-      const result = await actions.loginAction();
+      if(email!==""&&password!=="")
+        {
+    const result = await actions.loginAction(email,password);
       setIsLoading(false)
       Alert.alert(
         'Login successful!',
@@ -37,6 +39,8 @@ actions.handleOnChangeText({event,name})
         ],
         { cancelable: false }
       );
+      
+        }
     } catch (error) {
       setIsLoading(false)
       Alert.alert('Login failed', error.message);
