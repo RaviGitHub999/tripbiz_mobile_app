@@ -8,6 +8,8 @@ import { colors, fonts } from '../../../config/theme'
 import PopUp from '../../common/popup/PopUp'
 import WebView from 'react-native-webview'
 import { styles } from './tripdetailsFlightCardstyles'
+import ReCheck from '../../common/recheck/ReCheck'
+import FCard from './FCard'
 const TripDetailsFlightCard = ({
     flightGrp,
     index,
@@ -21,19 +23,25 @@ const TripDetailsFlightCard = ({
     flightId,
     tripsPage,
 }) => {
-    var [stopDtls, setStopDtls] = useState([]);
-    var [showStopDtls, setShowStopDtls] = useState(false);
-    var [tripsBaggage, setTripsBaggage] = useState(false)
-    var [tripsCancellation, setTripsCancellation] = useState(false)
-    var [tripsMeals, setTripsMeals] = useState(false)
-    var [tripsSeat, setTripsSeat] = useState(false)
+    const [stopDtls, setStopDtls] = useState([]);
+    const [showStopDtls, setShowStopDtls] = useState(false);
+    const [tripsBaggage, setTripsBaggage] = useState(false)
+    const [tripsCancellation, setTripsCancellation] = useState(false)
+    const [tripsMeals, setTripsMeals] = useState(false)
+    const [tripsSeat, setTripsSeat] = useState(false)
     const [openDelete, setOpenDelete] = useState(false)
     const [deleteId, setDeleteId] = useState(false)
     const [deleteType, setDeleteType] = useState(false)
     const [openFlightPrice, setOpenFlightPrice] = useState(false)
     const [openFareRules, setOpenFareRules] = useState(false)
-    const { actions, adults, children, infants, flightsLogosData, flightResList, bookingFlight, flightResJType, domesticFlight } = useContext(MyContext)
-    var statuses = [
+    const [openPriceReCheck, setOpenPriceReCheck] = useState(false)
+    const [reCheckLoading, setReCheckLoading] = useState(false)
+    const [reCheckData, setReCheckData] = useState(null)
+    const [reCheckBaggage, setReCheckBaggage] = useState(0)
+    const [reCheckMeals, setReCheckMeals] = useState(0)
+    const [reCheckSeats, setReCheckSeats] = useState(0)
+    const { actions, flightsLogosData, domesticFlight } = useContext(MyContext)
+    const statuses = [
         { status: "Paid and Submitted", color: "#ffa500" },
         { status: "Need clarification", color: "#FFC107" },
         { status: "Price Revision", color: "#2196F3" },
@@ -41,15 +49,22 @@ const TripDetailsFlightCard = ({
         { status: "Cancelled", color: "#FF0000" },
         { status: "Submitted,Payment Pending", color: "#ffa500" },
         { status: "Booked,Payment Pending", color: "#4AF50" },
-        { status: "Not Submitted", color: "#808080" }];
-    var color = statuses.filter((status) => { return status?.status === flightStatus?.status })
-    // var adColor = statuses.filter((status) => { return status?.status === flightResList?.status })
-    var id = flightBooking?.seats[0].length > 0 ? Object.keys(flightBooking?.seats[0][0]) : ''
-    var fareData = tripsPage ? actions.getTotalFares([flightBooking]) : '';
-    var flightArr = flightGrp.map((flight, f) => {
+        { status: "Not Submitted", color: "#808080" }
+    ];
+    // var color = statuses.filter((status) => { return status?.status === flightStatus?.status })
+    const adColor = statuses.filter((status) => { return status?.status === flightStatus?.status })
+    const id = flightBooking?.seats[0].length > 0 ? Object.keys(flightBooking?.seats[0][0]) : ''
+    const fareData = tripsPage ? actions.getTotalFares([flightBooking]) : '';
+    const flightArr = flightGrp.map((flight, f) => {
         return { ...actions.modifyFlightObject(flight) };
     });
     let airlinename = flightArr[0].segments[0].airlineName;
+
+    var originalDate = flightStatus?.updatedAt ? new Date(flightStatus.updatedAt) : new Date(timeStamp);
+    var threeHoursAfter = new Date(originalDate.getTime() + (3 * 60 * 60 * 1000));
+    var currentTime = new Date();
+    var isTimeReCheck = flightStatus?.status === "Not Submitted" ? currentTime > threeHoursAfter : false
+   
     const flightSymbol = useCallback(
         airlineName => {
             const logo = flightsLogosData.find(
@@ -59,6 +74,7 @@ const TripDetailsFlightCard = ({
         },
         [flightsLogosData],
     );
+    var flightLogo=[{url:flightSymbol(airlinename)}]
     const handleDelete = async () => {
         await actions.deleteTripItem(tripId, deleteId, deleteType);
         setOpenDelete(false)
@@ -74,91 +90,87 @@ const TripDetailsFlightCard = ({
         });
 
         return (
-            <View >
-
-                <View style={{ rowGap: responsiveHeight(1.2) }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', width: "70%", flexWrap: "wrap" }}>
-                            <View style={styles.flightLogoContainer}>
-                                {flightSymbol(airlinename) ? (
-                                    <Image
-                                        source={{ uri: flightSymbol(airlinename) }}
-                                        style={styles.flightLogo}
-                                        resizeMode="contain"
-                                    />
-                                ) : (
-                                    <IconSwitcher
-                                        componentName="FontAwesome5"
-                                        iconName="plane-departure"
-                                        iconsize={3}
-                                    />
-                                )}
-                            </View>
-                            <View >
-                                <Text style={styles.airlineName}> {`${item.airlineName}`}</Text>
-                            </View>
-                            <View >
-                                <Text style={styles.flightNumbers}> ({flightCode})</Text>
-                            </View>
+            <View style={styles.renderingMainContainer}>
+                <View style={styles.headerContainer}>
+                    <View style={styles.flightDetailsContainer}>
+                        <View style={styles.flightLogoContainer}>
+                            {flightSymbol(airlinename) ? (
+                                <Image
+                                    source={{ uri: flightSymbol(airlinename) }}
+                                    style={styles.flightLogo}
+                                    resizeMode="contain"
+                                />
+                            ) : (
+                                <IconSwitcher
+                                    componentName="FontAwesome5"
+                                    iconName="plane-departure"
+                                    iconsize={3}
+                                />
+                            )}
                         </View>
-                        <View style={{ backgroundColor: colors.highlight, padding: responsiveHeight(1), borderTopLeftRadius: responsiveHeight(2), borderBottomLeftRadius: responsiveHeight(2), marginRight: responsiveHeight(-1.5), width: "25%" }}>
-                            <Text style={{ fontSize: responsiveHeight(1.8), fontFamily: fonts.primary, color: colors.primary }}>{item.depTimeDate.toString().slice(4, 10)}</Text>
+                        <View >
+                            <Text style={styles.airlineName}> {`${item.airlineName}`}</Text>
+                        </View>
+                        <View >
+                            <Text style={styles.flightNumbers}> ({flightCode})</Text>
                         </View>
                     </View>
-                    <View style={styles.flightsTimingContainer}>
-                        <View style={styles.originContainer}>
-                            <Text style={styles.originTitle}>{item.originAirportCode}</Text>
-                            <Text style={styles.flightTimings}>{item.depTime}</Text>
-                        </View>
-                        <View style={styles.directionContainer}>
-                            <TouchableOpacity style={styles.stopsBtn} onPress={() => handleStops(item)}>
-                                <Text style={styles.stopsBtnText}>
-                                    {item.stopOverPts.length === 0
-                                        ? 'Direct'
-                                        : `${item.stopOverPts.length > 1
-                                            ? `${item.stopOverPts.length} stops`
-                                            : '1 stop'
-                                        }`}
-                                </Text>
-                                {item.stopOverPts.length !== 0 ? (
-                                    <IconSwitcher
-                                        componentName="EvilIcons"
-                                        iconName="chevron-up"
-                                        iconsize={3.5}
-                                        color={colors.highlight}
-                                    />
-                                ) : null}
-                            </TouchableOpacity>
-                            <View style={{ borderTopWidth: 1, borderStyle: 'dashed' }}></View>
-                            <Text style={styles.flighttotalTime}>{item.duration}</Text>
-                        </View>
-                        <View style={styles.destinationContainer}>
-                            <Text style={styles.destinationTitle}> {item.destAirportCode}</Text>
-                            <Text style={styles.flightTimings}> {item.arrTime}</Text>
-                        </View>
-                        <View>
-                            {/* {
+                    <View style={styles.depTimeDateContainer}>
+                        <Text style={styles.depTimeDate}>{item.depTimeDate.toString().slice(4, 10)}</Text>
+                    </View>
+                </View>
+                <View style={styles.flightsTimingContainer}>
+                    <View style={styles.originContainer}>
+                        <Text style={styles.originTitle}>{item.originAirportCode}</Text>
+                        <Text style={styles.flightTimings}>{item.depTime}</Text>
+                    </View>
+                    <View style={styles.directionContainer}>
+                        <TouchableOpacity style={styles.stopsBtn} onPress={() => handleStops(item)}>
+                            <Text style={styles.stopsBtnText}>
+                                {item.stopOverPts.length === 0
+                                    ? 'Direct'
+                                    : `${item.stopOverPts.length > 1
+                                        ? `${item.stopOverPts.length} stops`
+                                        : '1 stop'
+                                    }`}
+                            </Text>
+                            {item.stopOverPts.length !== 0 ? (
+                                <IconSwitcher
+                                    componentName="EvilIcons"
+                                    iconName="chevron-up"
+                                    iconsize={3.5}
+                                    color={colors.highlight}
+                                />
+                            ) : null}
+                        </TouchableOpacity>
+                        <View style={styles.dashedLine}></View>
+                        <Text style={styles.flighttotalTime}>{item.duration}</Text>
+                    </View>
+                    <View style={styles.destinationContainer}>
+                        <Text style={styles.destinationTitle}> {item.destAirportCode}</Text>
+                        <Text style={styles.flightTimings}> {item.arrTime}</Text>
+                    </View>
+                    <View>
+                        {/* {
                   <View>
                     <Text>{`+ ${item.arrAfterDays}`}</Text>
                     <Text>{`${item.arrAfterDays > 1 ? "Days" : "Day"}`}</Text>
                     </View>
                 }  */}
-                        </View>
                     </View>
+                </View>
 
-                    <View style={styles.bookingFlightCityNameAirportName}>
-                        <View style={{ width: "50%", gap: responsiveHeight(0.3) }}>
-                            <Text style={{ fontFamily: fonts.primary, color: colors.lightGray, fontSize: responsiveHeight(1.5) }}>{item.originCityName}</Text>
-                            <Text style={{ fontFamily: fonts.primary, color: "#969696", fontSize: responsiveHeight(1.5) }}>{item.originAirportName}</Text>
-                        </View>
-                        <View style={{ width: '50%', alignItems: 'flex-end', gap: responsiveHeight(0.3) }}>
-                            <Text style={{ fontFamily: fonts.primary, color: colors.lightGray, fontSize: responsiveHeight(1.5) }}>{item.destCityName}</Text>
-                            <Text style={{ fontFamily: fonts.primary, color: "#969696", fontSize: responsiveHeight(1.5) }}  >{item.destAirportName}</Text>
-                        </View>
+                <View style={styles.bookingFlightCityNameAirportName}>
+                    <View style={styles.originDetailsContainer}>
+                        <Text style={styles.originCityName}>{item.originCityName}</Text>
+                        <Text style={styles.originAirportName}>{item.originAirportName}</Text>
+                    </View>
+                    <View style={styles.destDetailsContainer}>
+                        <Text style={styles.destCityName}>{item.destCityName}</Text>
+                        <Text style={styles.destAirportName} >{item.destAirportName}</Text>
                     </View>
                 </View>
             </View>
-
         );
     };
     const handleStops = (item) => {
@@ -199,10 +211,70 @@ const TripDetailsFlightCard = ({
     const handleFareRulesClose = () => {
         setOpenFareRules(false)
     }
+    const increaseFontSizeScript = `
+        var style = document.createElement('style');
+        style.innerHTML = 'body { font-size: 40px !important; }';
+        document.head.appendChild(style);
+      `;
+    const handleDeleteRecheckFlight = () => {
+        setOpenDelete(true)
+        setDeleteType("flights")
+        setDeleteId(flightId)
+    }
+    const getUpdatedFares = (ssrData) => {
+        var baggagePrice = 0
+        var mealPrice = 0
+        var seatPrice = 0
+        if (ssrData.Baggage) {
+            flightBooking?.selectedBaggage?.forEach((selectedBaggage, s) => {
+                selectedBaggage.forEach((selected) => {
+                    const matchingBag = ssrData.Baggage[s].find((bag) => bag.Weight === selected.baggage && bag.Price === selected.price);
+                    if (matchingBag) {
+                        baggagePrice += matchingBag.Price;
+                    }
+                });
+            });
+        }
+        if (ssrData.MealDynamic) {
+            flightBooking?.selectedMeals?.forEach((selectedMeals, s) => {
+                selectedMeals.forEach((selected) => {
+                    const matchingMeal = ssrData.MealDynamic[s].find((meal) => meal.AirlineDescription === selected.mealDesc && meal.Price === selected.price);
+                    if (matchingMeal) {
+                        mealPrice += matchingMeal.Price;
+                    }
+                });
+            });
+        }
+        if (ssrData.SeatDynamic) {
+            var x = 0;
+            flightBooking.seats.forEach((seat, s) => {
+                seat.forEach((t, i) => {
+                    Object.keys(t).forEach((sa) => {
+                        var seatDetails = t[sa]
+                        var matchingData = ssrData?.SeatDynamic[s].SegmentSeat[i].RowSeats[Number(seatDetails.RowNo)].Seats.find((X) => X.RowNo === seatDetails.RowNo && X.SeatNo === seatDetails.SeatNo)
+                        x += matchingData.Price
+                    })
+                })
+            })
+        }
+        setReCheckSeats(x);
+        setReCheckBaggage(baggagePrice)
+        setReCheckMeals(mealPrice)
+    }
+    const handleRecheckFlightPrice = async () => {
+        setReCheckLoading(true)
+        setOpenPriceReCheck(true)
+        var data = await actions.getFlightUpdatedDetails(flightBooking.flightRequest, flightBooking.flight)
+        getUpdatedFares(data.ssrData)
+        setReCheckData(data)
+        setReCheckLoading(false)
+        setDeleteType("flights")
+        setDeleteId(flightId)
+    }
     return (
 
-        <View style={{ flex: 1 }}>
-            <View style={styles.card}>
+        <View style={styles.mainConatiner}>
+            <View style={[styles.card, { backgroundColor: flightStatus ? flightStatus.status === "Booked" ? "honeydew" : "white" : null }]}>
                 <FlatList
                     data={flightArr[0].segments}
                     renderItem={handleRenderingFlightCard}
@@ -214,15 +286,15 @@ const TripDetailsFlightCard = ({
                 <View style={styles.flightBookingTravellerDetailsContainer}>
                     <Text style={styles.flightBookingTravellerDetailsTitle}>{flightBooking.flightNew.fareType}</Text>
                     <Text style={styles.flightBookingTravellerDetailsTitle}>
-                        {`${adults} ${adults > 1 ? "Adults" : "Adults"
-                            } ${children > 0 ? `, ${children} ${children > 1 ? "children" : "child"
-                                }` : ''}   ${infants > 0 ? `, ${infants} ${infants > 1 ? "infants" : "infant"
+                        {`${flightBooking.adults} ${flightBooking.adults > 1 ? "Adults" : "Adults"
+                            } ${flightBooking.child > 0 ? `, ${flightBooking.child} ${flightBooking.child > 1 ? "children" : "child"
+                                }` : ''}   ${flightBooking.infant > 0 ? `, ${flightBooking.infant} ${flightBooking.infant > 1 ? "infants" : "infant"
                                     }` : ''}`}
                     </Text>
                     <Text style={styles.flightBookingTravellerDetailsTitle}>{flightArr[0].segments[0].cabinClass}</Text>
                 </View>
 
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: responsiveHeight(3), alignItems: 'center' }}>
+                <View style={styles.flightExpensesContainer}>
                     <TouchableOpacity onPress={handletripsBaggageinfo}>
                         <IconSwitcher componentName='MaterialIcons' iconName='luggage' color={colors.primary} iconsize={3} />
                     </TouchableOpacity>
@@ -240,6 +312,14 @@ const TripDetailsFlightCard = ({
                     </TouchableOpacity>
                 </View>
                 <View style={styles.flightPriceMainContainer}>
+
+                    <View style={styles.bookingStatusTitlesMainContainer}>
+                        <Text style={styles.bookingStatusTitles}>{`Approval Status : `}</Text>
+                        <View style={[styles.bookingStatusTextContainer, { backgroundColor: reqColor[0] ? reqColor[0]?.color : "#808080" }]}>
+                            <Text style={styles.bookingStatusText}>{flightReq[0]?.requestStatus}</Text>
+                        </View>
+                    </View>
+
                     {
                         flightStatus ?
                             <>
@@ -247,7 +327,7 @@ const TripDetailsFlightCard = ({
                                     flightStatus?.status ?
                                         <View style={styles.bookingStatusTitlesMainContainer}>
                                             <Text style={styles.bookingStatusTitles}>{`Booking Status : `}</Text>
-                                            <View style={[styles.bookingStatusTextContainer, { backgroundColor: reqColor[0] ? reqColor[0]?.color : "#808080" }]}>
+                                            <View style={[styles.bookingStatusTextContainer, { backgroundColor: adColor[0] ? adColor[0].color : "#808080" }]}>
                                                 <Text style={styles.bookingStatusText}>{flightStatus.status}</Text>
                                             </View>
                                         </View> : null
@@ -256,18 +336,11 @@ const TripDetailsFlightCard = ({
 
                             <View style={styles.bookingStatusTitlesMainContainer}>
                                 <Text style={[styles.bookingStatusTitles]}>{`Booking Status : `}</Text>
-                                <View style={[styles.bookingStatusTextContainer, { backgroundColor: reqColor[0] ? reqColor[0]?.color : "#808080" }]}>
+                                <View style={[styles.bookingStatusTextContainer, { backgroundColor: adColor[0] ? adColor[0].color : "#808080" }]}>
                                     <Text style={styles.bookingStatusText}>Not Submitted</Text>
                                 </View>
                             </View>
                     }
-
-                    <View style={styles.bookingStatusTitlesMainContainer}>
-                        <Text style={styles.bookingStatusTitles}>{`Approval Status : `}</Text>
-                        <View style={[styles.bookingStatusTextContainer, { backgroundColor: reqColor[0] ? reqColor[0]?.color : "#808080" }]}>
-                            <Text style={styles.bookingStatusText}>{flightReq[0]?.requestStatus}</Text>
-                        </View>
-                    </View>
 
                     <View style={styles.hotelTotalPriceContainer}>
                         <Text style={styles.hotelTotalPrice}>{`Total Price : ₹ ${Math.ceil(flightBooking?.finalPrice)?.toLocaleString("en-IN")}`}</Text>
@@ -294,61 +367,49 @@ const TripDetailsFlightCard = ({
                         </TouchableOpacity>
                     </>
                 </View>
-
+                {isTimeReCheck ? <View style={{ position: 'absolute', width: responsiveWidth(89), bottom: 10, paddingHorizontal: responsiveWidth(2) }}>
+                    <ReCheck handleDelete={handleDeleteRecheckFlight} handleRecheck={handleRecheckFlightPrice} />
+                </View> : null}
             </View>
 
+            <PopUp value={showStopDtls} handlePopUpClose={handleStopsClose}>
+                <View>
+                    {
+                        stopDtls &&
+                        stopDtls.map((stop, s) => {
+                            return (
 
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={showStopDtls}>
-                <View style={{ flex: 1 }}>
-                    <View style={{ height: "100%", width: "100%", backgroundColor: colors.black, position: "absolute", opacity: 0.5, }}></View>
-                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginHorizontal: 10 }}>
-                        <View style={{ backgroundColor: 'white', width: '100%', paddingVertical: 10, paddingHorizontal: 15, borderRadius: 10 }}>
-                            <TouchableOpacity onPress={handleStopsClose} style={{ alignItems: 'flex-end' }}>
-                                <IconSwitcher componentName='Entypo' iconName='cross' iconsize={3} color='black' />
-                            </TouchableOpacity>
-                            <View>
-                                {
-                                    stopDtls &&
-                                    stopDtls.map((stop, s) => {
-                                        return (
-
-                                            <View>
-                                                {
-                                                    stop.layoverDur ?
-                                                        <View style={{ flexDirection: 'row' }}>
-                                                            <IconSwitcher componentName='AntDesign' iconsize={3} iconName='arrowright' color='black' />
-                                                            <Text> {`Layover for ${stop.layoverDur} in ${stop.arrCity}`}</Text>
-                                                        </View>
-                                                        : null
-                                                }
-                                                <View style={styles.flightsTimingContainer}>
-
-                                                    <View style={styles.originContainer}>
-                                                        <Text style={styles.originTitle}>{stop.depTime}</Text>
-                                                        <Text style={styles.flightTimings}>{stop.originCode}</Text>
-                                                    </View>
-                                                    <View style={[styles.directionContainer, { justifyContent: 'center' }]}>
-                                                        <View style={{ borderTopWidth: 1, borderStyle: 'dashed' }}></View>
-                                                        <Text style={styles.flighttotalTime}>{stop.flightDur}</Text>
-                                                    </View>
-                                                    <View style={styles.destinationContainer}>
-                                                        <Text style={styles.destinationTitle}> {stop.arrTime}</Text>
-                                                        <Text style={styles.flightTimings}> {stop.destCode}</Text>
-                                                    </View>
-                                                    <View></View>
-                                                </View>
+                                <View>
+                                    {
+                                        stop.layoverDur ?
+                                            <View style={{ flexDirection: 'row' }}>
+                                                <IconSwitcher componentName='AntDesign' iconsize={3} iconName='arrowright' color='black' />
+                                                <Text> {`Layover for ${stop.layoverDur} in ${stop.arrCity}`}</Text>
                                             </View>
-                                        )
-                                    })
-                                }
-                            </View>
-                        </View>
-                    </View>
+                                            : null
+                                    }
+                                    <View style={styles.flightsTimingContainer}>
+
+                                        <View style={styles.originContainer}>
+                                            <Text style={styles.originTitle}>{stop.depTime}</Text>
+                                            <Text style={styles.flightTimings}>{stop.originCode}</Text>
+                                        </View>
+                                        <View style={[styles.directionContainer, { justifyContent: 'center' }]}>
+                                            <View style={{ borderTopWidth: 1, borderStyle: 'dashed' }}></View>
+                                            <Text style={styles.flighttotalTime}>{stop.flightDur}</Text>
+                                        </View>
+                                        <View style={styles.destinationContainer}>
+                                            <Text style={styles.destinationTitle}> {stop.arrTime}</Text>
+                                            <Text style={styles.flightTimings}> {stop.destCode}</Text>
+                                        </View>
+                                        <View></View>
+                                    </View>
+                                </View>
+                            )
+                        })
+                    }
                 </View>
-            </Modal>
+            </PopUp>
 
             <PopUp value={tripsBaggage} handlePopUpClose={handletripsBaggageinfoClose}>
                 {
@@ -595,17 +656,26 @@ const TripDetailsFlightCard = ({
                     <Text style={styles.totalFare}>&#8377; {` ${Math.ceil(fareData?.finalPrice).toLocaleString("en-IN")}`}</Text>
                 </View>
             </PopUp>
+
             <PopUp value={openFareRules} handlePopUpClose={handleFareRulesClose} customStyles={{ width: "100%" }}>
 
                 {flightBooking?.fareRules ?
                     <View style={{ height: responsiveHeight(40) }}>
                         <WebView
-                            source={{ html: flightBooking?.fareRules }} />
+                            source={{ html: flightBooking?.fareRules }} injectedJavaScript={increaseFontSizeScript} />
                     </View>
                     : <View style={styles.notfoundFareRuleContainer}>
                         <Text style={styles.notfoundFareRuleTitle}>Not Found Any FareRules</Text>
                     </View>}
 
+            </PopUp>
+            {/* recheckRatesPopUp */}
+            <PopUp value={openPriceReCheck} handlePopUpClose={() => {
+                setOpenPriceReCheck(false)
+            }}>
+                {tripsPage ? (
+            <FCard airline={flightLogo} flightArr={flightArr} />
+          ) : (null)}
             </PopUp>
         </View>
 

@@ -56,9 +56,10 @@ const HomeScreen = (props: any) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Search {activeComponent} for your business travels</Text>
+        
       </View>
       <View style={styles.headersContainer}>
+      <Text style={styles.headerText}>Search {activeComponent} for your business travels</Text>
         <View style={styles.nav} >
           <FlatList ref={flatListRef} data={components} renderItem={({ item }) => {
             return (

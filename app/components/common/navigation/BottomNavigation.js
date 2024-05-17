@@ -1,6 +1,5 @@
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '../../home/HomeScreen';
 import IconSwitcher from '../icons/IconSwitcher';
 import { colors, fonts } from '../../../config/theme';
@@ -10,13 +9,13 @@ import MyTrips from '../../Trips/myTrips/MyTrips';
 import Profile from '../../user/profile/Profile';
 import { createStackNavigator } from '@react-navigation/stack';
 import ProfileHome from '../../user/profile/ProfileHome';
-import { View } from 'react-native';
 import ChangePassword from '../../user/changePassword/ChangePassword';
 import Role from '../../user/role/Role';
+import ReCheck from '../recheck/ReCheck';
 const Stack = createStackNavigator();
 const ProfileStack = () => {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName='ProfileHome'>
       <Stack.Screen name="ProfileHome" component={ProfileHome} />
       <Stack.Screen name="Profile" component={Profile} />
       <Stack.Screen name="ChangePassword" component={ChangePassword} />
@@ -70,7 +69,7 @@ const BottomNavigation = () => {
       />
       <Tab.Screen
         name="Wallet"
-        component={Wallet}
+        component={ReCheck}
         options={{
           tabBarLabel: 'Wallet',
           tabBarIcon: ({ color, size }) => (

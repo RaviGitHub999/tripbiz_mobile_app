@@ -3,10 +3,10 @@ import { responsiveFontSize, responsiveHeight, responsiveWidth } from "../../../
 import { colors, fonts } from "../../../config/theme";
 export const styles = StyleSheet.create({
     mainContainer: {
-        rowGap: responsiveHeight(1.5),
+        rowGap: responsiveHeight(.5),
     },
     textInputContainer: {
-        borderBottomWidth: responsiveHeight(.3),
+        borderBottomWidth: responsiveHeight(.18),
         flexDirection: "row",
         alignItems: 'center',
         paddingHorizontal: responsiveWidth(2),
@@ -21,6 +21,7 @@ export const styles = StyleSheet.create({
     },
     title: {
         fontSize: responsiveFontSize(2.3),
-        fontFamily: fonts.textFont
+        fontFamily: fonts.textFont,
+        color:colors.primary
     }
 })

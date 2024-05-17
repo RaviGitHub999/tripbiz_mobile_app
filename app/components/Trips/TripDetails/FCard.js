@@ -2,9 +2,7 @@ import {View, Text, StyleSheet, Image} from 'react-native';
 import React from 'react';
 import IconSwitcher from '../../common/icons/IconSwitcher';
 import { colors, fonts } from '../../../config/theme';
-import { responsiveHeight, responsiveWidth } from '../../../utils/responsiveScale';
-import { TouchableOpacity } from 'react-native';
-
+import { responsiveHeight} from '../../../utils/responsiveScale';
 const FCard = props => {
   const {flightArr, airline} = props;
   return (
@@ -29,7 +27,7 @@ const FCard = props => {
                          <IconSwitcher componentName='MaterialIcons' iconName='flight-takeoff' color={colors.gray} iconsize={2}/>
                     }
                     <Text style={styles.flightTimings}>{`${segment.airlineName}`}</Text>
-                    <Text style={styles.flightTimings}>{flightCode}</Text>
+                    <Text style={styles.flightTimings}>{`( ${flightCode} )`}</Text>
                 </View>
                 {/* <View style={{alignSelf:'flex-end',marginBottom:responsiveHeight(1),backgroundColor:colors.highlight,padding:responsiveHeight(.5),borderRadius:responsiveHeight(1)}}>
                     <Text style={styles.flightTimings}>

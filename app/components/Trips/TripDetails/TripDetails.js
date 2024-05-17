@@ -14,7 +14,6 @@ import MyContext from '../../../context/Context';
 import { styles } from './styles';
 import IconSwitcher from '../../common/icons/IconSwitcher';
 import { colors } from '../../../config/theme';
-import firestore from '@react-native-firebase/firestore';
 import ProgressBar from '../../common/progressBar/ProgressBar';
 import { useRoute } from '@react-navigation/native';
 import {
@@ -30,9 +29,9 @@ import FCard from './FCard';
 import TravDetails from './TravDetails';
 import HCard from './HCard';
 import { Modal } from 'react-native';
+import ReCheck from '../../common/recheck/ReCheck';
 const TripDetails = ({ navigation: { navigate, goBack } }) => {
   const [mounted, setMounted] = useState(true);
-  const [airlinelogos, setAirlinelogos] = useState([]);
   const [popup, setPopUp] = useState({
     hotelPrice: false,
   });
@@ -60,6 +59,15 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
   var [fareIsOpen, setFareIsOpen] = useState(false);
   const [checked, setChecked] = useState(true);
   const [paymentLoading, setPaymentLoading] = useState(false)
+  const [hotelDetails, setHotelDetails] = useState(null)
+  const [formatDate, setFormatDate] = useState(null)
+  const [hotelEndDate, setHotelEndDate] = useState(null)
+  const [hotelAdults, setHotelAdults] = useState(null)
+  const [reCheckHotelName, setReCheckHotelName] = useState(false)
+  const [reCheckLoading, setReCheckLoading] = useState(false)
+  const [oldSelectedRoom, setOldSelectedRoom] = useState([])
+  const [newSelectedRoom, setNewSelectedRoom] = useState([])
+  const [openPriceReCheck, setOpenPriceReCheck] = useState(false)
   const {
     actions,
     tripData,
@@ -90,18 +98,18 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
   var handleManagerClick = async () => {
     var req = await actions.sendApproval(userId, userAccountDetails?.manager?.userId, id, travellerDetails, price)
     await actions.sendBookingApprovalEmail({
-        id: userId,
-        userName: userAccountDetails.firstName + userAccountDetails.lastName,
-        userEmail: userAccountDetails.email,
-        managerEmail: userAccountDetails.manager.email,
-        managerName: userAccountDetails.manager.firstName + userAccountDetails.manager.lastName,
-        tripName: tripData.name
+      id: userId,
+      userName: userAccountDetails.firstName + userAccountDetails.lastName,
+      userEmail: userAccountDetails.email,
+      managerEmail: userAccountDetails.manager.email,
+      managerName: userAccountDetails.manager.firstName + userAccountDetails.manager.lastName,
+      tripName: tripData.name
     })
     setTraveller(true)
     await getTripData()
     setRequestData(req.reqData)
     setRequestId(req.reqId)
-}
+  }
   var flightSubmittedIds = tripData?.data
     ? tripData?.data?.flights
       .filter(flight => flight.status !== 'Not Submitted')
@@ -137,7 +145,6 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
     setRefreshing(true);
     setTimeout(async () => {
       await getTripData();
-      await getData();
       setRefreshing(false);
     }, 2000);
   };
@@ -192,26 +199,6 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
   const getTripData = async () => {
     var user = userId;
     actions.getTripDocById(id, user);
-  };
-  const getData = async () => {
-    const db = firestore();
-    const AccountsCollectionRef = db.collection('airlinelogos');
-
-    try {
-      const querySnapshot = await AccountsCollectionRef.get();
-      const updatedAirlinelogos = [];
-
-      querySnapshot.forEach(doc => {
-        // doc.data() is never undefined for query doc snapshots
-        const { id, url } = doc.data();
-        updatedAirlinelogos.push({ id, url });
-        setAirlinelogos(prevState => ({ ...prevState, [id]: url }));
-      });
-
-      setAirlinelogos(updatedAirlinelogos);
-    } catch (error) {
-      console.error('Error getting documents: ', error);
-    }
   };
 
   const handlehotelPriceinfo = hotel => {
@@ -306,7 +293,6 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
       if (!tripDataLoading) {
         var fetchData = async () => {
           await getTripData();
-          await getData();
           actions.handleFlightsLogos();
         };
         fetchData();
@@ -418,7 +404,7 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
             var isInternational =
               item.data.flightNew.segments[0].destCountryCode !== 'IN' ||
               item.data.flightNew.segments[0].originCountryCode !== 'IN';
-console.log(item.data.flightNew.segments[0].destCountryCode)
+            console.log(item.data.flightNew.segments[0].destCountryCode)
             return (
               <View style={{ paddingHorizontal: responsiveHeight(1.5) }}>
                 <InputField
@@ -576,7 +562,26 @@ console.log(item.data.flightNew.segments[0].destCountryCode)
     );
   };
 
-
+  const handleDeleteRecheckHotel = () => {
+    setOpenDelete(true)
+    setDeleteType("hotels")
+    setDeleteId(hotel.id)
+  }
+  const handleRecheckHotelPrice = async (adults, endDate, formattedDate1, hotel) => {
+    setHotelAdults(adults)
+    setHotelEndDate(endDate)
+    setFormatDate(formattedDate1)
+    setHotelDetails(hotel)
+    setReCheckLoading(true)
+    setReCheckHotelName(hotel.data.hotelInfo.HotelInfoResult.HotelDetails.HotelName)
+    setOpenPriceReCheck(true)
+    var data = await actions.getHotelUpdatedDetails([hotel.data.hotelSearchQuery.cityHotel], [hotel.data.hotelCode], hotel.data.hotelSearchQuery, hotel.data.selectedRoomType)
+    setOldSelectedRoom(hotel.data.selectedRoomType)
+    setNewSelectedRoom(data)
+    setReCheckLoading(false)
+    setDeleteType("hotels")
+    setDeleteId(hotel.id)
+  }
   return tripDataLoading ? (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <ProgressBar />
@@ -725,6 +730,10 @@ console.log(item.data.flightNew.segments[0].destCountryCode)
                               status?.status === hotelReq[0]?.requestStatus
                             );
                           });
+                          var originalDate = hotelData[0]?.updatedAt ? new Date(hotelData[0]?.updatedAt) : new Date(hotelTimeStamp);
+                          var threeHoursAfter = new Date(originalDate.getTime() + (3 * 60 * 60 * 1000));
+                          var currentTime = new Date();
+                          var isTimeReCheck = hotelData[0]?.status === "Not Submitted" ? currentTime > threeHoursAfter : false
                           for (var i = 1; i <= Math.ceil(starRating); i++) {
                             if (i > starRatingFull) {
                               rating.push(
@@ -749,7 +758,7 @@ console.log(item.data.flightNew.segments[0].destCountryCode)
 
                           return (
                             <View key={ind}>
-                              <View style={styles.hotelCard}>
+                              <View style={[styles.hotelCard, { backgroundColor: hotelStatus[0] ? hotelStatus[0].status === "Booked" ? "honeydew" : "white" : null }]}>
                                 <View style={styles.hotelDetailsContainer}>
                                   <View style={styles.hotelImgContainer}>
                                     {/* <Image
@@ -890,8 +899,8 @@ onLoad={() => console.log("Image loaded successfully")}
                                                 ) ? (
                                                 <>
                                                   <IconSwitcher
-                                                    componentName="MaterialCommunityIcons"
-                                                    iconName="cancel"
+                                                    componentName="Ionicons"
+                                                    iconName="checkmark-circle"
                                                     color={colors.primary}
                                                     iconsize={2.5}
                                                   />
@@ -927,6 +936,27 @@ onLoad={() => console.log("Image loaded successfully")}
                                     },
                                   )}
                                 <View style={styles.hotelPriceMainContainer}>
+                                  <View
+                                    style={
+                                      styles.bookingStatusTitlesMainContainer
+                                    }>
+                                    <Text
+                                      style={
+                                        styles.bookingStatusTitles
+                                      }>{`Approval Status : `}</Text>
+                                    <View
+                                      style={[
+                                        styles.bookingStatusTextContainer,
+                                        {
+                                          backgroundColor: reqColor[0] ? reqColor[0].color
+                                            : '#808080',
+                                        },
+                                      ]}>
+                                      <Text style={styles.bookingStatusText}>
+                                        {hotelReq[0]?.requestStatus}
+                                      </Text>
+                                    </View>
+                                  </View>
                                   {hotelStatus[0]?.status ? (
                                     <View
                                       style={
@@ -975,30 +1005,6 @@ onLoad={() => console.log("Image loaded successfully")}
                                       </View>
                                     </View>
                                   )}
-
-                                  <View
-                                    style={
-                                      styles.bookingStatusTitlesMainContainer
-                                    }>
-                                    <Text
-                                      style={
-                                        styles.bookingStatusTitles
-                                      }>{`Approval Status : `}</Text>
-                                    <View
-                                      style={[
-                                        styles.bookingStatusTextContainer,
-                                        {
-                                          backgroundColor: color[0]
-                                            ? color[0].color
-                                            : '#808080',
-                                        },
-                                      ]}>
-                                      <Text style={styles.bookingStatusText}>
-                                        {hotelReq[0]?.requestStatus}
-                                      </Text>
-                                    </View>
-                                  </View>
-
                                   <View style={styles.hotelTotalPriceContainer}>
                                     <Text
                                       style={
@@ -1046,6 +1052,10 @@ onLoad={() => console.log("Image loaded successfully")}
                                     </TouchableOpacity>
                                   </>
                                 </View>
+
+                                {isTimeReCheck ? <View style={{ position: 'absolute', width: responsiveWidth(89), bottom: 10, paddingHorizontal: responsiveWidth(2) }}>
+                                  <ReCheck handleDelete={handleDeleteRecheckHotel} handleRecheck={() => handleRecheckHotelPrice(adults, endDate, formattedDate1, hotel)} />
+                                </View> : null}
                               </View>
                             </View>
                           );
@@ -1149,7 +1159,7 @@ onLoad={() => console.log("Image loaded successfully")}
 
         <View style={styles.totalPriceContainer}>
           <Text style={styles.totalPriceTitle}>Total price:</Text>
-          <Text style={styles.totalPrice}>{`₹ ${Math.ceil(price)}`}</Text>
+          <Text style={styles.totalPrice}>{`₹ ${Math.ceil(price).toLocaleString('en-IN')}`}</Text>
           {tripData?.data?.flights?.filter(
             flight => flight.status === 'Not Submitted',
           )?.length > 0 ||
@@ -1394,14 +1404,14 @@ onLoad={() => console.log("Image loaded successfully")}
                               var reqColor = reqStatuses.filter(status => {
                                 return status?.status === flightReq[0]?.requestStatus;
                               });
-                           
+
                               return (
                                 <TouchableOpacity
                                   style={[
                                     styles.travelDetailsFlightCard,
                                     {
-                                        backgroundColor:!isEdit[flight.id]?"white": color[0]
-                                        ? color[0].color:'#808080'
+                                      backgroundColor: !isEdit[flight.id] ? "white" : color[0]
+                                        ? color[0].color : '#808080'
                                     },
                                   ]}
                                   onPress={() => {
@@ -1474,8 +1484,8 @@ onLoad={() => console.log("Image loaded successfully")}
                                   style={[
                                     styles.travelDetailsFlightCard,
                                     {
-                                      backgroundColor:!isEdit[hotel.id]?"white": color[0]
-                                      ? color[0].color:'#808080'
+                                      backgroundColor: !isEdit[hotel.id] ? "white" : color[0]
+                                        ? color[0].color : '#808080'
                                     },
                                   ]}
                                   onPress={() => {
@@ -1649,9 +1659,9 @@ onLoad={() => console.log("Image loaded successfully")}
                           tripData?.requestData?.length > 0 && (requestData && requestId) ?
 
                             <View style={{ margin: responsiveHeight(1) }}>
-                              
+
                               <View style={[styles.card, { width: "100%", gap: responsiveHeight(.5), alignItems: 'center' }]}>
-                                <Text style={[styles.title,{fontSize:responsiveHeight(1.8),marginBottom:responsiveHeight(1.5)}]}>Manager Approval</Text>
+                                <Text style={[styles.title, { fontSize: responsiveHeight(1.8), marginBottom: responsiveHeight(1.5) }]}>Manager Approval</Text>
                                 {
                                   Object.keys(userAccountDetails?.manager).length > 0 ?
                                     <>
@@ -1666,15 +1676,15 @@ onLoad={() => console.log("Image loaded successfully")}
                                                   <View>
                                                     <Text style={styles.subTitle}>Your trip is approved</Text>
                                                     <View style={styles.statusContainer}>
-                                                    <Text style={styles.subTitle}>Status:</Text>
-                                                    <Text style={requestData?.status === "Pending" ?styles.statusTitle:styles.activeStatusTitle}>{requestData?.status}</Text>
+                                                      <Text style={styles.subTitle}>Status:</Text>
+                                                      <Text style={requestData?.status === "Pending" ? styles.statusTitle : styles.activeStatusTitle}>{requestData?.status}</Text>
                                                     </View>
                                                   </View>
                                                   : <View>
                                                     <Text style={styles.subTitle}>Your trip is submitted for approval</Text>
                                                     <View style={styles.statusContainer}>
-                                                    <Text style={styles.subTitle}>Status:</Text>
-                                                    <Text style={requestData?.status === "Pending" ?styles.statusTitle:styles.activeStatusTitle}>{requestData?.status}</Text>
+                                                      <Text style={styles.subTitle}>Status:</Text>
+                                                      <Text style={requestData?.status === "Pending" ? styles.statusTitle : styles.activeStatusTitle}>{requestData?.status}</Text>
                                                     </View>
                                                   </View>
                                               }
@@ -1683,7 +1693,7 @@ onLoad={() => console.log("Image loaded successfully")}
                                             <>
                                               <Text style={styles.subTitle}>{`Send booking for Approval: `}</Text>
                                               <TouchableOpacity style={styles.btn} onPress={handleManagerClick}>
-                                                <Text style={[styles.subTitle,{color:colors.white}]}>Yes</Text>
+                                                <Text style={[styles.subTitle, { color: colors.white }]}>Yes</Text>
                                               </TouchableOpacity>
                                               <Text style={styles.title}>OR</Text>
                                               <Text style={styles.subTitle}>Continue booking without Approval</Text>
@@ -1699,7 +1709,7 @@ onLoad={() => console.log("Image loaded successfully")}
                                 }
 
                               </View>
-                              
+
                               <View
                                 style={{
                                   padding: responsiveHeight(1),
@@ -1986,7 +1996,7 @@ onLoad={() => console.log("Image loaded successfully")}
                             <View style={{ margin: responsiveHeight(1) }}>
 
                               <View style={[styles.card, { width: "100%", gap: responsiveHeight(.5), alignItems: 'center' }]}>
-                                <Text style={[styles.title,{fontSize:responsiveHeight(1.8),marginBottom:responsiveHeight(1.5)}]}>Manager Approval</Text>
+                                <Text style={[styles.title, { fontSize: responsiveHeight(1.8), marginBottom: responsiveHeight(1.5) }]}>Manager Approval</Text>
                                 {
                                   Object.keys(userAccountDetails?.manager).length > 0 ?
                                     <>
@@ -2001,15 +2011,15 @@ onLoad={() => console.log("Image loaded successfully")}
                                                   <View>
                                                     <Text style={styles.subTitle}>Your trip is approved</Text>
                                                     <View style={styles.statusContainer}>
-                                                    <Text style={styles.subTitle}>Status:</Text>
-                                                    <Text style={requestData?.status === "Pending" ?styles.statusTitle:styles.activeStatusTitle}>{requestData?.status}</Text>
+                                                      <Text style={styles.subTitle}>Status:</Text>
+                                                      <Text style={requestData?.status === "Pending" ? styles.statusTitle : styles.activeStatusTitle}>{requestData?.status}</Text>
                                                     </View>
                                                   </View>
                                                   : <View>
                                                     <Text style={styles.subTitle}>Your trip is submitted for approval</Text>
                                                     <View style={styles.statusContainer}>
-                                                    <Text style={styles.subTitle}>Status:</Text>
-                                                    <Text style={requestData?.status === "Pending" ?styles.statusTitle:styles.activeStatusTitle}>{requestData?.status}</Text>
+                                                      <Text style={styles.subTitle}>Status:</Text>
+                                                      <Text style={requestData?.status === "Pending" ? styles.statusTitle : styles.activeStatusTitle}>{requestData?.status}</Text>
                                                     </View>
                                                   </View>
                                               }
@@ -2018,7 +2028,7 @@ onLoad={() => console.log("Image loaded successfully")}
                                             <>
                                               <Text style={styles.subTitle}>{`Send booking for Approval: `}</Text>
                                               <TouchableOpacity style={styles.btn} onPress={handleManagerClick}>
-                                                <Text style={[styles.subTitle,{color:colors.white}]}>Yes</Text>
+                                                <Text style={[styles.subTitle, { color: colors.white }]}>Yes</Text>
                                               </TouchableOpacity>
                                               <Text style={styles.title}>OR</Text>
                                               <Text style={styles.subTitle}>Continue booking without Approval</Text>
@@ -2320,12 +2330,12 @@ onLoad={() => console.log("Image loaded successfully")}
                       <TouchableOpacity style={[styles.btn]} onPress={() => {
                         setSelectedTab("travellers")
                       }}>
-                        <Text style={[styles.subTitle,{color:colors.white}]}>Previous</Text>
+                        <Text style={[styles.subTitle, { color: colors.white }]}>Previous</Text>
                       </TouchableOpacity>
                       <TouchableOpacity style={[styles.btn]} onPress={() => {
                         setSelectedTab("payment")
                       }}>
-                        <Text style={[styles.subTitle,{color:colors.white}]}>Next</Text>
+                        <Text style={[styles.subTitle, { color: colors.white }]}>Next</Text>
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -2419,6 +2429,119 @@ onLoad={() => console.log("Image loaded successfully")}
           </View>
 
         </Modal>
+
+        {/* Rechecking Hotels */}
+        <PopUp value={openPriceReCheck}
+          handlePopUpClose={() => setOpenPriceReCheck(false)}
+          customStyles={{ height: "80%",width:'90%'}}
+        >
+        
+         <HCard hotel={hotelDetails} formattedDate1={formatDate} endDate={hotelEndDate} adults={hotelAdults} />
+          <View style={{ marginTop: responsiveHeight(2) }}>
+            {
+              reCheckLoading ?
+                <ActivityIndicator size={'large'} />
+                :
+                  <View>
+                    <Text>Hotel Price Recheck</Text>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                      <Text >Hotel Name:</Text>
+                      <Text style={{ flex: 1 }} numberOfLines={1}>
+                        Leonia Holistic Destination</Text>
+                    </View>
+                    <Text>Room Details</Text>
+                    {
+                      oldSelectedRoom.map((room,f)=>
+                      {
+                        return (
+                          <View style={styles.hotelRoomFeatures}>
+                            <View
+                              style={
+                                styles.hotelRoomFeaturesContainer1
+                              }>
+                              <Text style={[styles.roomType,{fontSize:responsiveHeight(1.5)}]}>
+                                {room.RoomTypeName}
+                              </Text>
+                              
+                            </View>
+                            <View
+                              style={
+                                styles.hotelRoomFeaturesContainer2
+                              }>
+                              <View style={styles.mealsDeatils}>
+                                <IconSwitcher
+                                  componentName="MaterialIcons"
+                                  iconName="dinner-dining"
+                                  color={colors.primary}
+                                  iconsize={1.5}
+                                />
+                                <Text
+                                  style={
+                                    [styles.foodAndCancellationTitle,{fontSize:responsiveHeight(1.2)}]
+                                  }>
+                                  {room.Inclusion &&
+                                  room.Inclusion.length > 0
+                                    ? actions.checkForTboMeals(
+                                        room.Inclusion,
+                                      )
+                                    : 'No meals'}
+                                </Text>
+                              </View>
+                              <View style={styles.mealsDeatils}>
+                                {room.LastCancellationDate &&
+                                actions.validCancelDate(
+                                  room.LastCancellationDate,
+                                ) ? (
+                                  <>
+                                    <IconSwitcher
+                                      componentName="MaterialCommunityIcons"
+                                      iconName="cancel"
+                                      color={colors.primary}
+                                      iconsize={1.5}
+                                    />
+                                    <Text
+                                      style={
+                                        [styles.foodAndCancellationTitle,{fontSize:responsiveHeight(1.2)}]
+                                      }>{`Free cancellation upto ${new Date(
+                                      room.LastCancellationDate,
+                                    )
+                                      .toString()
+                                      .slice(4, 10)}`}</Text>
+                                  </>
+                                ) : (
+                                  <>
+                                    <IconSwitcher
+                                      componentName="MaterialCommunityIcons"
+                                      iconName="cancel"
+                                      color={colors.primary}
+                                      iconsize={1.5}
+                                    />
+                                    <Text
+                                      style={
+                                        styles.foodAndCancellationTitle
+                                      }>
+                                      {'Non-refundable'}
+                                    </Text>
+                                  </>
+                                )}
+                              </View>
+                            </View>
+                          </View>
+                        );
+                      })
+                    }
+                    <Text>Old Rates:<Text>&#8377;{oldSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPriceRoundedOff), 0).toLocaleString()}</Text></Text>
+                    <Text>Service Charges:<Text>&#8377;{Math.ceil(((oldSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPriceRoundedOff), 0)) * domesticHotel) / 100).toLocaleString()}</Text></Text>
+                    <Text>Old Total Price:<Text>&#8377;{Math.ceil(oldSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPriceRoundedOff), 0) + ((oldSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPriceRoundedOff), 0)) * domesticHotel) / 100).toLocaleString()}</Text></Text>
+                    <Text>New Rates:<Text></Text>&#8377;{Math.ceil(newSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPrice), 0)).toLocaleString()}</Text>
+                    <Text>Service Charges:<Text>&#8377;{Math.ceil(((newSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPrice), 0)) * domesticHotel) / 100).toLocaleString()}</Text></Text>
+                    <Text>New Total Price:<Text>&#8377;{Math.ceil(newSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPrice), 0) + ((newSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPrice), 0)) * domesticHotel) / 100).toLocaleString()}</Text></Text>
+                  </View>
+                  
+            }
+          </View>
+        
+        </PopUp>
       </View>
     )
   );

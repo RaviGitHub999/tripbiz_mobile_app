@@ -2,38 +2,37 @@ import { StyleSheet } from "react-native"
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from "../../utils/responsiveScale"
 import { colors, fonts } from "../../config/theme"
 export const styles = StyleSheet.create({
-    container: {
-        flex: 1,
+    scrollViewContainer: {
+        flexGrow: 1, 
+        justifyContent: 'center', 
+        paddingVertical: responsiveHeight(5), 
       },
-    scrollContainer: {
-        flexGrow: 1,
-      },
-    mainContainer: {
+      container: {
         flex: 1,
-        justifyContent: 'center'
-    },
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
     title: {
         textAlign: 'center',
         fontSize: responsiveHeight(4.5),
-        fontFamily: fonts.textFont,
+        fontFamily: fonts.primary,
         color: colors.primary,
         marginBottom: responsiveHeight(4)
     },
     inputContainer: {
         paddingHorizontal: responsiveWidth(10),
-        rowGap: responsiveHeight(5)
+        rowGap: responsiveHeight(2),
+        width:'100%'
     },
     forgotPassword: {
-        textAlign: "right",
-        paddingRight: responsiveWidth(10),
-        marginTop: responsiveHeight(2.5),
-        fontSize:responsiveFontSize(1.9),
+        fontSize:responsiveFontSize(1.7),
         fontFamily:fonts.textInput,
-        color:colors.black
+        color:colors.black,
+        alignSelf:'flex-end'
     },
     btnContainer: {
-        marginHorizontal: responsiveWidth(18),
-        marginTop: responsiveHeight(2)
+        marginTop: responsiveHeight(3),
+        width:"50%"
     },
     iconContainer1: {
         height: responsiveWidth(13),
@@ -84,5 +83,13 @@ export const styles = StyleSheet.create({
         width:"100%",
         alignItems:"center",
         justifyContent:'center'
+    },
+    errorMsgContainer:{
+        gap:responsiveHeight(1)
+    },
+    errorMsg:{
+color:colors.red,
+fontFamily:fonts.primary,
+fontSize:responsiveHeight(1.6)
     }
 })

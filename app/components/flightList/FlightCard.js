@@ -277,7 +277,11 @@ const FlightCard = ({
       </View>
     );
   };
-
+  const increaseFontSizeScript = `
+  var style = document.createElement('style');
+  style.innerHTML = 'body { font-size: 40px !important; }';
+  document.head.appendChild(style);
+`;
   return (
     <View
       style={
@@ -523,7 +527,7 @@ const FlightCard = ({
 {
   cancelDtls.length===0?
   <View style={styles.BarIndicatorContainer}>
-    <BarIndicator color={colors.highlight} />
+    <BarIndicator color={colors.highlight} count={5} size={responsiveFontSize(3)}/>
   </View> 
   :(
     <>
@@ -581,7 +585,9 @@ const FlightCard = ({
                     <View style={{ height: responsiveHeight(40) }}>
                     <WebView
                         source={{ html:cancelDtls }}
-                        nestedScrollEnabled />
+                        nestedScrollEnabled 
+                        injectedJavaScript={increaseFontSizeScript}
+                        />
                 </View>
              
     }

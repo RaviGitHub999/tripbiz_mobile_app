@@ -14,6 +14,7 @@ import HotelInfo from '../../hotel/hotelInfo/HotelInfo';
 import TripDetails from '../../Trips/TripDetails/TripDetails';
 import MyContext from '../../../context/Context';
 import { ActivityIndicator, View } from 'react-native';
+import ChangePassword from '../../user/changePassword/ChangePassword';
 const Stack = createStackNavigator();
 
 
@@ -23,7 +24,8 @@ const AuthNavigation=()=>
     <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Splash" component={Splash} />
           <Stack.Screen name="Login" component={Login} />
-          {/* <Stack.Screen name="CustomerBottomNavigation" component={MainNavigation} /> */}
+          <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
+          <Stack.Screen name="ChangePassword" component={ChangePassword} />
     </Stack.Navigator>
   )
 }
@@ -32,7 +34,7 @@ const MainNavigation=()=>
 {
   return(
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-         <Stack.Screen name="CustomerBottomNavigation" component={BottomNavigation} />
+         <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
           <Stack.Screen name="OneWayFlights" component={FlightsSearchRes} />
           <Stack.Screen name="HotelResList" component={HotelResList} />
           <Stack.Screen name="HotelInfo" component={HotelInfo} />

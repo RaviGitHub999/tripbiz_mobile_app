@@ -105,6 +105,105 @@ export const styles = StyleSheet.create(
             fontSize: responsiveHeight(2),
             fontFamily: fonts.primary,
             color: colors.white,
-        }
+        },
+        card:{
+            backgroundColor:colors.white,
+            paddingVertical:responsiveHeight(1.5),
+            borderRadius:responsiveHeight(2),
+            marginBottom:responsiveHeight(1),
+            gap:responsiveHeight(1.5),
+            shadowColor: colors.black,
+            shadowOffset: { width: responsiveWidth(-0.2), height: responsiveHeight(-5) },
+            shadowOpacity: responsiveHeight(0.3),
+            shadowRadius: responsiveHeight(3),
+            elevation: responsiveHeight(0.4),
+            marginHorizontal:responsiveHeight(.5),
+            marginTop:responsiveHeight(.5),
+            alignItems:'center'
+          },
+          cardTitle:
+          {
+            fontSize:responsiveHeight(1.8),
+            fontFamily:fonts.primary,
+            color:colors.primary
+          },
+          date:{
+            color:colors.highlight
+          },
+          tripListCount:{
+            flexDirection:'row',
+            gap:responsiveHeight(1.5),
+            flexWrap:"wrap"
+          },
+          eachTripList:
+          {
+            padding:responsiveHeight(1),
+            borderRadius:responsiveHeight(1),
+            alignItems:"center",
+            justifyContent:'center',
+            backgroundColor:colors.whiteSmoke
+          },
+          eachTripListTitle:{
+            fontSize:responsiveHeight(1.6),
+            fontFamily:fonts.primary,
+            color:colors.primary
+          },
+          priceTitle:
+          {
+            fontSize:responsiveHeight(1.8),
+            fontFamily:fonts.primary,
+            color:colors.primary
+          },
+          price:{
+            color:colors.secondary
+          },
+          DetailsBtn: {
+            borderWidth: 1,
+            paddingHorizontal: responsiveHeight(1.5),
+            borderRadius: responsiveHeight(1.6),
+            backgroundColor: colors.primary,
+            alignItems: 'center',
+            paddingVertical:responsiveHeight(1),
+        },
+        headers:{
+            alignItems:'center',
+            gap:responsiveHeight(.5)
+        },
+        statusTitle:{
+            fontSize:responsiveHeight(2),
+            fontFamily:fonts.textInput,
+            color:colors.primary  
+        },
+        statusContainer:{
+            alignItems:'center',
+            justifyContent:'center',
+            paddingHorizontal:responsiveHeight(1.5),
+            paddingVertical:responsiveHeight(.3),
+            borderRadius:responsiveHeight(1),
+        },
+        title: {
+            fontSize: responsiveHeight(2),
+            fontFamily: fonts.primary,
+            color: colors.primary
+        },
+        hotelCard: {
+            paddingVertical: responsiveHeight(2.5),
+            paddingHorizontal: responsiveWidth(3),
+            shadowColor: colors.black,
+            shadowOffset: { width: responsiveWidth(-0.2), height: responsiveHeight(-5) },
+            shadowOpacity: responsiveHeight(0.3),
+            shadowRadius: responsiveHeight(3),
+            elevation: responsiveHeight(0.4),
+            backgroundColor: colors.white,
+            borderRadius: responsiveHeight(1.5),
+            marginHorizontal: responsiveWidth(1),
+            marginBottom: responsiveHeight(1.5)
+        },
+        totalPrice: {
+            fontSize: responsiveHeight(2),
+            color: colors.secondary,
+            fontFamily: fonts.primary
+        },
+        
     }
 )

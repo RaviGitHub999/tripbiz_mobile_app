@@ -37,7 +37,7 @@ const handleProfileNavigation = (action) => {
     <View style={styles.mainContainer}>
        <View style={styles.headerContainer}>
        <Image source={require("./assets/UserProfile1.png")} style={styles.img}/>
-      <View style={styles.headerTitleContainer}><Text style={styles.title}>{`Name :${userAccountDetails?.firstName}`}</Text></View>
+      <View style={styles.headerTitleContainer}><Text style={styles.title}>{`Name :${userAccountDetails?.firstName} ${userAccountDetails?.lastName}`}</Text></View>
        </View>
        <View style={styles.profileSettingsContainer}>
         <TouchableOpacity onPress={()=>handleProfileNavigation()}>
@@ -99,7 +99,7 @@ const styles=StyleSheet.create(
        },
        title:
        {
-        fontSize:responsiveHeight(2),
+        fontSize:responsiveHeight(2.5),
         fontFamily:fonts.primary,
         color:colors.primary
        }

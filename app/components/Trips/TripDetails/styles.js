@@ -49,7 +49,6 @@ export const styles = StyleSheet.create({
         shadowOpacity: responsiveHeight(0.3),
         shadowRadius: responsiveHeight(3),
         elevation: responsiveHeight(0.4),
-        backgroundColor: colors.white,
         borderRadius: responsiveHeight(1.5),
         marginHorizontal: responsiveWidth(1),
         marginBottom: responsiveHeight(1.5)
@@ -122,13 +121,13 @@ export const styles = StyleSheet.create({
     },
     roomType: {
         fontSize: responsiveHeight(1.8),
-        fontFamily: fonts.textFont,
+        fontFamily: fonts.secondry,
         color: colors.primary
     },
     foodAndCancellationTitle:
     {
         fontSize: responsiveHeight(1.5),
-        fontFamily: fonts.textFont,
+        fontFamily: fonts.primary,
         color: colors.lightGray
     },
     hotelPriceMainContainer:
@@ -254,7 +253,7 @@ export const styles = StyleSheet.create({
     bookingStatusTitles:
     {
         fontSize: responsiveHeight(1.7),
-        fontFamily: fonts.textInput,
+        fontFamily: fonts.primary,
         color: colors.lightGray
     },
     bookingStatusTextContainer: {
@@ -282,7 +281,7 @@ export const styles = StyleSheet.create({
     },
     hotelRoomPrice: {
         fontSize: responsiveHeight(1.8),
-        fontFamily: fonts.textFont,
+        fontFamily: fonts.primary,
         color: colors.secondary
     },
     HotelRoomFeaturesMainCon: {

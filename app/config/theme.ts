@@ -2,7 +2,7 @@
 
 export const fonts = {
     primary: 'Montserrat-SemiBold',
-    // secondry: 'Montserrat-Medium',
+    secondry: 'Montserrat-Bold',
     title: 'Montserrat-Black',
     subTitle: 'Montserrat-Light',
     textInput: "Montserrat-Regular",

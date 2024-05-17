@@ -22,7 +22,8 @@ export const styles = StyleSheet.create({
         height: responsiveHeight(6),
         backgroundColor: colors.white,
         borderRadius: responsiveHeight(2),
-        overflow: 'hidden'
+        overflow: 'hidden',
+        marginTop:responsiveHeight(2)
     },
     navItem: {
         flex: 1,
@@ -36,7 +37,7 @@ export const styles = StyleSheet.create({
     },
     section: {
         marginTop:responsiveHeight(3),
-        flex:0.76,
+        flex:0.86,
         paddingHorizontal: responsiveWidth(5),
         backgroundColor:colors.white,
         borderRadius:responsiveHeight(2),
@@ -51,7 +52,9 @@ export const styles = StyleSheet.create({
         position: 'absolute',
         height: "100%",
         width: '100%',
-        marginTop: "33%",
+        marginTop: "10%",
+        // alignItems:'center',
+        // justifyContent:'center',
         paddingHorizontal: "2%"
     },
     categoriesContainer:{

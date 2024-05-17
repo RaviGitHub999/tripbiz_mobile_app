@@ -6,6 +6,14 @@
       "sha1": "ad9c434705a52d90ac5a770e591c2325fb48c2dc"
     },
     {
+      "path": "app/assets/fonts/Montserrat-Bold.ttf",
+      "sha1": "98c66622226025f539568865af96df5175e2979c"
+    },
+    {
+      "path": "app/assets/fonts/Montserrat-ExtraBold.ttf",
+      "sha1": "1e3298f51b4766e2810a4a2c09a2c75c323d5e7e"
+    },
+    {
       "path": "app/assets/fonts/Montserrat-Light.ttf",
       "sha1": "9dfbddad5025d8d224b4939e54c1a4ac8ac6015b"
     },

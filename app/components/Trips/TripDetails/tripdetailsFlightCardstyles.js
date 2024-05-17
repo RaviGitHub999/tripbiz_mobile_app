@@ -2,14 +2,16 @@ import { StyleSheet } from "react-native";
 import { colors, fonts } from "../../../config/theme";
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from "../../../utils/responsiveScale";
 export const styles = StyleSheet.create({
+    mainConatiner:{
+        flex:1
+    },
     card: {
-        backgroundColor: 'white',
         borderRadius: responsiveHeight(1.5),
         marginHorizontal: responsiveWidth(1),
         marginTop: responsiveHeight(1),
         marginBottom: responsiveHeight(1),
         padding: responsiveHeight(1.5),
-        // Shadow properties for iOS
+        paddingBottom:responsiveHeight(3),
         shadowColor: colors.black,
         shadowOffset: { width: responsiveWidth(-0.2), height: responsiveHeight(-5) },
         shadowOpacity: responsiveHeight(0.3),
@@ -214,7 +216,7 @@ export const styles = StyleSheet.create({
     bookingStatusTitles:
     {
         fontSize: responsiveHeight(1.7),
-        fontFamily: fonts.textInput,
+        fontFamily: fonts.primary,
         color: colors.lightGray
     },
     addedHotelTimeAndDate: {
@@ -356,5 +358,78 @@ export const styles = StyleSheet.create({
         fontSize: responsiveHeight(2),
         fontFamily: fonts.textInput,
         color: colors.primary
+    },
+    renderingMainContainer:{
+        rowGap: responsiveHeight(1.2) 
+    },
+    headerContainer:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between' ,
+    
+    },
+    flightDetailsContainer:
+    {
+        flexDirection: 'row',
+         alignItems: 'center', 
+         width: "70%", 
+         flexWrap: "wrap" ,
+    },
+    depTimeDateContainer:{
+        backgroundColor: colors.highlight, 
+        padding: responsiveHeight(1), 
+        borderTopLeftRadius: responsiveHeight(2), 
+        borderBottomLeftRadius: responsiveHeight(2), 
+        marginRight: responsiveHeight(-1.5), 
+        width: "25%"
+    },
+    depTimeDate:{
+        fontSize: responsiveHeight(1.8), 
+        fontFamily: fonts.primary, 
+        color: colors.primary   
+    },
+    dashedLine:{
+        borderTopWidth: responsiveHeight(0.15), 
+        borderStyle: 'dashed' 
+    },
+    originDetailsContainer:{
+        width: "50%", 
+        gap: responsiveHeight(0.3)  
+    },
+    destDetailsContainer:{
+        width: '50%', 
+        alignItems: 'flex-end', 
+        gap: responsiveHeight(0.3) 
+    },
+    originCityName:{
+        fontFamily: fonts.primary, 
+        color: colors.lightGray, 
+        fontSize: responsiveHeight(1.5)
+    },
+    originAirportName:{
+        fontFamily: fonts.primary, 
+        color: "#969696", 
+        fontSize: responsiveHeight(1.5),
+        textAlign:"left"
+    },
+    destCityName:{
+        fontFamily: fonts.primary, 
+        color: colors.lightGray, 
+        fontSize: responsiveHeight(1.5),
+        
+    },
+    destAirportName:
+    {
+        fontFamily: fonts.primary, 
+        color: "#969696", fontSize: 
+        responsiveHeight(1.5) ,
+        textAlign:"right"
+    },
+    flightExpensesContainer:
+    {
+        flexDirection: 'row', 
+        justifyContent: 'space-between', 
+        marginTop: responsiveHeight(3), 
+        alignItems: 'center' 
     }
 })
