@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     borderRadius: responsiveHeight(1),
     elevation: 4,
     paddingHorizontal: responsiveWidth(3),
-    height:responsiveHeight(5),
+    // height:responsiveHeight(5),
   },
 });
 

@@ -415,7 +415,7 @@ export const styles = StyleSheet.create({
     {
         alignSelf: 'center',
         paddingHorizontal: responsiveHeight(2),
-        paddingVertical: responsiveHeight(0.5),
+        paddingVertical: responsiveHeight(1),
         borderRadius: responsiveHeight(1),
         backgroundColor: colors.primary
     },
@@ -544,5 +544,24 @@ export const styles = StyleSheet.create({
         fontFamily:fonts.textFont,
         paddingVertical:responsiveHeight(.3)
 
+    },
+    recheckPriceTitle:
+    {
+        fontSize:responsiveHeight(2.5),
+        fontFamily:fonts.primary,
+        textAlign:'center',
+        color:colors.primary
+    },
+    recheckPriceContainer:
+    {
+        gap:responsiveHeight(.8),
+        marginTop:responsiveHeight(2)
+    },
+    hotelRecheckBtnContainer:
+    {
+        flexDirection:"row",
+        alignItems:'center',
+        justifyContent:'space-evenly',
+        marginTop:responsiveHeight(3)
     }
 })

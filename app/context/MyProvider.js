@@ -4063,6 +4063,59 @@ export default class MyProvider extends Component {
   
           return selectedRooms;
         },
+
+        updateHotelBookingDetails : async (newPrice, hotelId, tripId) => {
+          try {
+            const tripsRef = firestore()
+              .collection("Accounts")
+              .doc(this.state.userId)
+              .collection("trips")
+              .doc(tripId);
+      
+            const tripSnap = await tripsRef.get();
+            const tripData = tripSnap.data();
+      
+            if (!tripData || !tripData.hotels) {
+              console.log('No trip data or hotels found');
+              return;
+            }
+      
+            const tripItem = tripData.hotels.find((hotel) => hotel.id === hotelId);
+            if (!tripItem) {
+              console.log('No hotel found with the given ID');
+              return;
+            }
+      
+            await tripsRef.update({
+              hotels: firestore.FieldValue.arrayRemove(tripItem)
+            });
+      
+            await tripsRef.update({
+              hotels: firestore.FieldValue.arrayUnion({ ...tripItem, updatedAt: Date.now() })
+            });
+      
+            const itemRef = tripsRef.collection("hotels").doc(hotelId);
+            const itemSnap = await itemRef.get();
+            const itemData = itemSnap.data();
+      
+            if (!itemData) {
+              console.log('No item data found');
+              return;
+            }
+      
+            const totPrice = itemData.hotelTotalPrice - itemData.hotelFinalPrice + newPrice;
+            itemData.hotelTotalPrice = totPrice;
+            itemData.hotelFinalPrice = newPrice;
+      
+            await itemRef.update(itemData);
+      
+            // Assuming getTripDocById is defined and properly updates the state
+            await this.state.actions.getTripDocById(tripId, this.state.userId);
+          } catch (error) {
+            console.error('Error updating hotel booking details:', error);
+          }
+        },
+
       },
 
 

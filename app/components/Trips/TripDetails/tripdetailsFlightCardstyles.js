@@ -157,7 +157,8 @@ export const styles = StyleSheet.create({
     {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: responsiveHeight(0.6)
+        gap: responsiveHeight(0.6),
+        flexWrap:'wrap'
     },
     dashedLine: {
         borderTopWidth: responsiveHeight(0.1),
@@ -390,7 +391,7 @@ export const styles = StyleSheet.create({
     },
     dashedLine:{
         borderTopWidth: responsiveHeight(0.15), 
-        borderStyle: 'dashed' 
+        borderStyle: 'dashed' ,marginVertical:responsiveHeight(1)
     },
     originDetailsContainer:{
         width: "50%", 
@@ -431,5 +432,10 @@ export const styles = StyleSheet.create({
         justifyContent: 'space-between', 
         marginTop: responsiveHeight(3), 
         alignItems: 'center' 
+    },
+    subTitles:{
+        fontSize:responsiveHeight(1.5),
+        fontFamily:fonts.textFont,
+        color:colors.primary
     }
 })

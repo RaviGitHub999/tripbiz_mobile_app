@@ -45,7 +45,7 @@ const TripDetailsFlightCard = ({
         { status: "Paid and Submitted", color: "#ffa500" },
         { status: "Need clarification", color: "#FFC107" },
         { status: "Price Revision", color: "#2196F3" },
-        { status: "Booked", color: "#4CAF50" },
+        { status: "Booked", color: "#008000" },
         { status: "Cancelled", color: "#FF0000" },
         { status: "Submitted,Payment Pending", color: "#ffa500" },
         { status: "Booked,Payment Pending", color: "#4AF50" },
@@ -452,7 +452,7 @@ const TripDetailsFlightCard = ({
                                                                 return (
                                                                     <View style={styles.cancellationContainer}>
                                                                         <IconSwitcher componentName='AntDesign' iconName='arrowright' color={colors.lightGray} iconsize={2.5} />
-                                                                        <Text>{rule.To === null ||
+                                                                        <Text style={styles.subTitles}>{rule.To === null ||
                                                                             rule.From === null ||
                                                                             rule.Unit === null
                                                                             ? ""
@@ -485,7 +485,7 @@ const TripDetailsFlightCard = ({
                                                                 return (
                                                                     <View style={styles.cancellationContainer}>
                                                                         <IconSwitcher componentName='AntDesign' iconName='arrowright' color={colors.lightGray} iconsize={2.5} />
-                                                                        <Text>{rule.To === null ||
+                                                                        <Text style={styles.subTitles}>{rule.To === null ||
                                                                             rule.From === null ||
                                                                             rule.Unit === null
                                                                             ? ""
@@ -660,7 +660,7 @@ const TripDetailsFlightCard = ({
             <PopUp value={openFareRules} handlePopUpClose={handleFareRulesClose} customStyles={{ width: "100%" }}>
 
                 {flightBooking?.fareRules ?
-                    <View style={{ height: responsiveHeight(40) }}>
+                    <View style={{ height: responsiveHeight(60) }}>
                         <WebView
                             source={{ html: flightBooking?.fareRules }} injectedJavaScript={increaseFontSizeScript} />
                     </View>
