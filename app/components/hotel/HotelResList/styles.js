@@ -214,5 +214,14 @@ flex:1
     fontSize:responsiveHeight(2.5),
     fontFamily:fonts.primary,
     color:colors.primary
+  },
+  progressBarContainer:{
+    flex: 1,
+    alignItems: 'center', 
+    justifyContent: 'center',
+    paddingHorizontal:responsiveWidth(4)
+  },
+  progressbar:{
+width:'100%'
   }
 })

@@ -49,6 +49,7 @@ fontFamily:fonts.textFont
     right: 0,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal:responsiveWidth(4)
 },
 nodata:{
     textAlign:'center',

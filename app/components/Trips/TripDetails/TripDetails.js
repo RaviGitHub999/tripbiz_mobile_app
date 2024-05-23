@@ -69,6 +69,8 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
   const [newSelectedRoom, setNewSelectedRoom] = useState([])
   const [openPriceReCheck, setOpenPriceReCheck] = useState(false)
   const [reCheck, setReCheck] = useState(false)
+  const [selectedCard, setSelectedCard] = useState({ index: null, list: null });
+
   const {
     actions,
     tripData,
@@ -112,6 +114,9 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
     setRequestData(req.reqData)
     setRequestId(req.reqId)
   }
+  const handlePress = (index, list) => {
+    setSelectedCard({ index, list });
+  };
   var flightSubmittedIds = tripData?.data
     ? tripData?.data?.flights
       .filter(flight => flight.status !== 'Not Submitted')
@@ -585,8 +590,10 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
     setDeleteId(hotel.id)
   }
   return tripDataLoading ? (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <View style={styles.LoaderContainer}>
+      <View style={styles.Loader}>
       <ProgressBar />
+      </View>
     </View>
   ) : (
     tripData && (
@@ -733,7 +740,7 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
                             );
                           });
                           var originalDate = hotelData[0]?.updatedAt ? new Date(hotelData[0]?.updatedAt) : new Date(hotelTimeStamp);
-                          var threeHoursAfter = new Date(originalDate.getTime() + (0.01 * 60 * 60 * 1000));
+                          var threeHoursAfter = new Date(originalDate.getTime() + (3* 60 * 60 * 1000));
                           var currentTime = new Date();
                           var isTimeReCheck = hotelData[0]?.status === "Not Submitted" ? currentTime > threeHoursAfter : false
                           for (var i = 1; i <= Math.ceil(starRating); i++) {
@@ -1056,7 +1063,7 @@ onLoad={() => console.log("Image loaded successfully")}
                                 </View>
 
                                 {isTimeReCheck ? <View style={{ position: 'absolute', width: responsiveWidth(89), bottom: 10, paddingHorizontal: responsiveWidth(2) }}>
-                                  <ReCheck handleDelete={()=>handleDeleteRecheckHotel(hotel.id)} handleRecheck={() => handleRecheckHotelPrice(adults, endDate, formattedDate1, hotel)} />
+                                  <ReCheck handleDelete={() => handleDeleteRecheckHotel(hotel.id)} handleRecheck={() => handleRecheckHotelPrice(adults, endDate, formattedDate1, hotel)} />
                                 </View> : null}
                               </View>
                             </View>
@@ -1168,45 +1175,45 @@ onLoad={() => console.log("Image loaded successfully")}
             tripData?.data?.hotels?.filter(
               flight => flight.status === 'Not Submitted',
             )?.length > 0 ? (
-     <>
-     {
-      
-      !(tripData?.data?.flights.every((flight) => {
-        var hotelData = tripData?.data?.flights.filter((hotels) => hotels.id === flight.id)
-        var hotelTimeStamp = hotelData[0]?.updatedAt ? new Date(hotelData[0].updatedAt) : new Date(hotelData[0]?.date?.seconds * 1000)
-        var originalDate = new Date(hotelTimeStamp);
-        var threeHoursAfter = new Date(originalDate.getTime() + (3 * 60 * 60 * 1000));
-        var currentTime = new Date();
-        var isTimeReCheck = currentTime > threeHoursAfter
-        return isTimeReCheck
-    }) && tripData?.data?.hotels.every((hotel) => {
-        var hotelData = tripData?.data?.hotels.filter((hotels) => hotels.id === hotel.id)
-        var hotelTimeStamp = hotelData[0]?.updatedAt ? new Date(hotelData[0].updatedAt) : new Date(hotelData[0]?.date?.seconds * 1000)
-        var originalDate = new Date(hotelTimeStamp);
-        var threeHoursAfter = new Date(originalDate.getTime() + (3 * 60 * 60 * 1000));
-        var currentTime = new Date();
-        var isTimeReCheck = currentTime > threeHoursAfter
-        return isTimeReCheck
-    })) && (tripData.flights.length > 0 || tripData.data.hotels.length > 0)
-        ?
-           <>
-             <TouchableOpacity style={styles.proceedToBookingBtn}>
-             <Text
-               style={styles.proceedToBookingBtnTitle}
-               onPress={onBtnClick}>
-               Proceed to Booking
-             </Text>
-           </TouchableOpacity> 
-           </>:
-            <TouchableOpacity style={styles.proceedToBookingBtn}>
-            <Text
-              style={styles.proceedToBookingBtnTitle}
-              onPress={() => setReCheck(true)}>
-             Recheck
-            </Text>
-          </TouchableOpacity> 
-     }
-     </>
+            <>
+              {
+
+                (tripData?.data?.flights.every((flight) => {
+                  var hotelData = tripData?.data?.flights.filter((hotels) => hotels.id === flight.id)
+                  var hotelTimeStamp = hotelData[0]?.updatedAt ? new Date(hotelData[0].updatedAt) : new Date(hotelData[0]?.date?.seconds * 1000)
+                  var originalDate = new Date(hotelTimeStamp);
+                  var threeHoursAfter = new Date(originalDate.getTime() + (3 * 60 * 60 * 1000));
+                  var currentTime = new Date();
+                  var isTimeReCheck = currentTime > threeHoursAfter
+                  return isTimeReCheck
+                }) && tripData?.data?.hotels.every((hotel) => {
+                  var hotelData = tripData?.data?.hotels.filter((hotels) => hotels.id === hotel.id)
+                  var hotelTimeStamp = hotelData[0]?.updatedAt ? new Date(hotelData[0].updatedAt) : new Date(hotelData[0]?.date?.seconds * 1000)
+                  var originalDate = new Date(hotelTimeStamp);
+                  var threeHoursAfter = new Date(originalDate.getTime() + (3 * 60 * 60 * 1000));
+                  var currentTime = new Date();
+                  var isTimeReCheck = currentTime > threeHoursAfter
+                  return isTimeReCheck
+                }))
+                  ?
+                  <>
+                    <TouchableOpacity style={styles.proceedToBookingBtn}>
+                      <Text
+                        style={styles.proceedToBookingBtnTitle}
+                        onPress={onBtnClick}>
+                        Proceed to Booking
+                      </Text>
+                    </TouchableOpacity>
+                  </> :
+                  <TouchableOpacity style={styles.proceedToBookingBtn} onPress={() => setReCheck(true)}>
+                    <Text
+                      style={styles.proceedToBookingBtnTitle}
+                    >
+                      Recheck
+                    </Text>
+                  </TouchableOpacity>
+              }
+            </>
           ) : null}
         </View>
 
@@ -1438,7 +1445,7 @@ onLoad={() => console.log("Image loaded successfully")}
                               var reqColor = reqStatuses.filter(status => {
                                 return status?.status === flightReq[0]?.requestStatus;
                               });
-
+                              const isSelected = selectedCard.index === ind && selectedCard.list === 'a';
                               return (
                                 <TouchableOpacity
                                   style={[
@@ -1447,6 +1454,9 @@ onLoad={() => console.log("Image loaded successfully")}
                                       backgroundColor: !isEdit[flight.id] ? "white" : color[0]
                                         ? color[0].color : '#808080'
                                     },
+                                    {
+                                      borderBottomWidth: isSelected ? responsiveHeight(0.5) : 0
+                                    }
                                   ]}
                                   onPress={() => {
                                     setTravellerCount({
@@ -1455,6 +1465,7 @@ onLoad={() => console.log("Image loaded successfully")}
                                       infant: Number(flight?.data?.infant),
                                     });
                                     setTripId(flight.id);
+                                    handlePress(ind, 'a')
                                   }}>
                                   <IconSwitcher
                                     componentName="MaterialIcons"
@@ -1513,6 +1524,7 @@ onLoad={() => console.log("Image loaded successfully")}
                               var reqColor = reqStatuses.filter(status => {
                                 return status?.status === hotelReq[0]?.requestStatus;
                               });
+                              const isSelected = selectedCard.index === ind && selectedCard.list === 'b';
                               return (
                                 <TouchableOpacity
                                   style={[
@@ -1521,6 +1533,9 @@ onLoad={() => console.log("Image loaded successfully")}
                                       backgroundColor: !isEdit[hotel.id] ? "white" : color[0]
                                         ? color[0].color : '#808080'
                                     },
+                                    {
+                                      borderBottomWidth: isSelected ? responsiveHeight(0.5) : 0
+                                    }
                                   ]}
                                   onPress={() => {
                                     var adults =
@@ -1534,6 +1549,7 @@ onLoad={() => console.log("Image loaded successfully")}
                                       );
                                     setTravellerCount(adults);
                                     setTripId(hotel.id);
+                                    handlePress(ind, 'b')
                                   }}>
                                   <IconSwitcher
                                     componentName="FontAwesome6"
@@ -2468,226 +2484,235 @@ onLoad={() => console.log("Image loaded successfully")}
         <PopUp value={openPriceReCheck}
           handlePopUpClose={() => setOpenPriceReCheck(false)}
         >
-          
-            
-              <HCard hotel={hotelDetails} formattedDate1={formatDate} endDate={hotelEndDate} adults={hotelAdults} />
-              
-              <View style={{ marginTop: responsiveHeight(2) }}>
-                {
-                  reCheckLoading ?
-                    <ActivityIndicator size={'large'} />
-                    :
-                    
-                      newSelectedRoom.length > 0 ?  
-                      <View>
-                      <Text style={styles.recheckPriceTitle}>Hotel Price Recheck</Text>
-                      <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
-                        <Text style={[styles.subTitle, { fontSize: responsiveHeight(1.8) }]}>Hotel Name:</Text>
-                        <Text style={[styles.title, { flex: 1 }]} numberOfLines={1}>
-                          {reCheckHotelName}</Text>
-                      </View>
-                      <Text style={[styles.subTitle, { fontSize: responsiveHeight(1.8) }]}>Room Details</Text>
-                      {
-                        oldSelectedRoom.map((room, f) => {
-                          return (
-                            <View style={styles.hotelRoomFeatures}>
-                              <View
-                                style={
-                                  styles.hotelRoomFeaturesContainer1
-                                }>
-                                <Text style={[styles.roomType, { fontSize: responsiveHeight(1.5) }]}>
-                                  {room.RoomTypeName}
-                                </Text>
 
+
+          <HCard hotel={hotelDetails} formattedDate1={formatDate} endDate={hotelEndDate} adults={hotelAdults} />
+
+          <View style={{ marginTop: responsiveHeight(2) }}>
+            {
+              reCheckLoading ?
+               <View style={styles.progressBarContainer}>
+                <ProgressBar/>
+                <Text style={[styles.roomType,{textAlign:"center"}]}>ReChecking Hotel Rates</Text>
+                </View>
+                :
+
+                newSelectedRoom.length > 0 ?
+                  <View>
+                    <Text style={styles.recheckPriceTitle}>Hotel Price Recheck</Text>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
+                      <Text style={[styles.subTitle, { fontSize: responsiveHeight(1.8) }]}>Hotel Name:</Text>
+                      <Text style={[styles.title, { flex: 1 }]} numberOfLines={1}>
+                        {reCheckHotelName}</Text>
+                    </View>
+                    <Text style={[styles.subTitle, { fontSize: responsiveHeight(1.8) }]}>Room Details</Text>
+                    {
+                      oldSelectedRoom.map((room, f) => {
+                        return (
+                          <View style={styles.hotelRoomFeatures}>
+                            <View
+                              style={
+                                styles.hotelRoomFeaturesContainer1
+                              }>
+                              <Text style={[styles.roomType, { fontSize: responsiveHeight(1.5) }]}>
+                                {room.RoomTypeName}
+                              </Text>
+
+                            </View>
+                            <View
+                              style={
+                                styles.hotelRoomFeaturesContainer2
+                              }>
+                              <View style={styles.mealsDeatils}>
+                                <IconSwitcher
+                                  componentName="MaterialIcons"
+                                  iconName="dinner-dining"
+                                  color={colors.primary}
+                                  iconsize={2}
+                                />
+                                <Text
+                                  style={
+                                    [styles.foodAndCancellationTitle]
+                                  }>
+                                  {room.Inclusion &&
+                                    room.Inclusion.length > 0
+                                    ? actions.checkForTboMeals(
+                                      room.Inclusion,
+                                    )
+                                    : 'No meals'}
+                                </Text>
                               </View>
-                              <View
-                                style={
-                                  styles.hotelRoomFeaturesContainer2
-                                }>
-                                <View style={styles.mealsDeatils}>
-                                  <IconSwitcher
-                                    componentName="MaterialIcons"
-                                    iconName="dinner-dining"
-                                    color={colors.primary}
-                                    iconsize={2}
-                                  />
-                                  <Text
-                                    style={
-                                      [styles.foodAndCancellationTitle]
-                                    }>
-                                    {room.Inclusion &&
-                                      room.Inclusion.length > 0
-                                      ? actions.checkForTboMeals(
-                                        room.Inclusion,
+                              <View style={styles.mealsDeatils}>
+                                {room.LastCancellationDate &&
+                                  actions.validCancelDate(
+                                    room.LastCancellationDate,
+                                  ) ? (
+                                  <>
+                                    <IconSwitcher
+                                      componentName="Ionicons"
+                                      iconName="checkmark-circle"
+                                      color={colors.primary}
+                                      iconsize={2}
+                                    />
+                                    <Text
+                                      style={
+                                        [styles.foodAndCancellationTitle, { fontSize: responsiveHeight(1.2) }]
+                                      }>{`Free cancellation upto ${new Date(
+                                        room.LastCancellationDate,
                                       )
-                                      : 'No meals'}
-                                  </Text>
-                                </View>
-                                <View style={styles.mealsDeatils}>
-                                  {room.LastCancellationDate &&
-                                    actions.validCancelDate(
-                                      room.LastCancellationDate,
-                                    ) ? (
-                                    <>
-                                      <IconSwitcher
-                                        componentName="Ionicons"
-                                        iconName="checkmark-circle"
-                                        color={colors.primary}
-                                        iconsize={2}
-                                      />
-                                      <Text
-                                        style={
-                                          [styles.foodAndCancellationTitle, { fontSize: responsiveHeight(1.2) }]
-                                        }>{`Free cancellation upto ${new Date(
-                                          room.LastCancellationDate,
-                                        )
-                                          .toString()
-                                          .slice(4, 10)}`}</Text>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <IconSwitcher
-                                        componentName="MaterialCommunityIcons"
-                                        iconName="cancel"
-                                        color={colors.primary}
-                                        iconsize={1.5}
-                                      />
-                                      <Text
-                                        style={
-                                          styles.foodAndCancellationTitle
-                                        }>
-                                        {'Non-refundable'}
-                                      </Text>
-                                    </>
-                                  )}
-                                </View>
-                              </View>
-                              <View>
-                                {
-                                  room.Inclusion.length > 0 ? (
-                                    room.Inclusion.map((inclusion) => {
-                                      return (
-                                        <Text style={
-                                          styles.foodAndCancellationTitle
-                                        }>
-                                          {
-                                            inclusion
-                                          }
-                                        </Text>
-                                      )
-                                    })
-                                  ) : (null)
-                                }
+                                        .toString()
+                                        .slice(4, 10)}`}</Text>
+                                  </>
+                                ) : (
+                                  <>
+                                    <IconSwitcher
+                                      componentName="MaterialCommunityIcons"
+                                      iconName="cancel"
+                                      color={colors.primary}
+                                      iconsize={1.5}
+                                    />
+                                    <Text
+                                      style={
+                                        styles.foodAndCancellationTitle
+                                      }>
+                                      {'Non-refundable'}
+                                    </Text>
+                                  </>
+                                )}
                               </View>
                             </View>
-                          );
-                        })
-                      }
-                      <View style={styles.recheckPriceContainer}>
-                        <Text style={styles.hotelTitle}>Old Rates:<Text style={styles.hotelRoomPrice}>&#8377;{oldSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPriceRoundedOff), 0).toLocaleString()}</Text></Text>
-                        <Text style={styles.hotelTitle}>Service Charges:<Text style={styles.hotelRoomPrice}>&#8377;{Math.ceil(((oldSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPriceRoundedOff), 0)) * domesticHotel) / 100).toLocaleString()}</Text></Text>
-                        <Text style={styles.hotelTitle}>Old Total Price:<Text style={styles.hotelRoomPrice}>&#8377;{Math.ceil(oldSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPriceRoundedOff), 0) + ((oldSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPriceRoundedOff), 0)) * domesticHotel) / 100).toLocaleString()}</Text></Text>
-                        <Text style={styles.hotelTitle}>New Rates:<Text style={styles.hotelRoomPrice}>&#8377;{Math.ceil(newSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPrice), 0)).toLocaleString()}</Text></Text>
-                        <Text style={styles.hotelTitle}>Service Charges:<Text style={styles.hotelRoomPrice}>&#8377;{Math.ceil(((newSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPrice), 0)) * domesticHotel) / 100).toLocaleString()}</Text></Text>
-                        <Text style={styles.hotelTitle}>New Total Price:<Text style={styles.hotelRoomPrice}>&#8377;{Math.ceil(newSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPrice), 0) + ((newSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPrice), 0)) * domesticHotel) / 100).toLocaleString()}</Text></Text>
-                      </View>
+                            <View>
+                              {
+                                room.Inclusion.length > 0 ? (
+                                  room.Inclusion.map((inclusion) => {
+                                    return (
+                                      <Text style={
+                                        styles.foodAndCancellationTitle
+                                      }>
+                                        {
+                                          inclusion
+                                        }
+                                      </Text>
+                                    )
+                                  })
+                                ) : (null)
+                              }
+                            </View>
+                          </View>
+                        );
+                      })
+                    }
+                    <View style={styles.recheckPriceContainer}>
+                      <Text style={styles.hotelTitle}>Old Rates:<Text style={styles.hotelRoomPrice}>&#8377;{oldSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPriceRoundedOff), 0).toLocaleString()}</Text></Text>
+                      <Text style={styles.hotelTitle}>Service Charges:<Text style={styles.hotelRoomPrice}>&#8377;{Math.ceil(((oldSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPriceRoundedOff), 0)) * domesticHotel) / 100).toLocaleString()}</Text></Text>
+                      <Text style={styles.hotelTitle}>Old Total Price:<Text style={styles.hotelRoomPrice}>&#8377;{Math.ceil(oldSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPriceRoundedOff), 0) + ((oldSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPriceRoundedOff), 0)) * domesticHotel) / 100).toLocaleString()}</Text></Text>
+                      <Text style={styles.hotelTitle}>New Rates:<Text style={styles.hotelRoomPrice}>&#8377;{Math.ceil(newSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPrice), 0)).toLocaleString()}</Text></Text>
+                      <Text style={styles.hotelTitle}>Service Charges:<Text style={styles.hotelRoomPrice}>&#8377;{Math.ceil(((newSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPrice), 0)) * domesticHotel) / 100).toLocaleString()}</Text></Text>
+                      <Text style={styles.hotelTitle}>New Total Price:<Text style={styles.hotelRoomPrice}>&#8377;{Math.ceil(newSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPrice), 0) + ((newSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPrice), 0)) * domesticHotel) / 100).toLocaleString()}</Text></Text>
+                    </View>
 
-                      <View style={styles.hotelRecheckBtnContainer}>
-                        <TouchableOpacity style={styles.btn} onPress={async () => { await actions.updateHotelBookingDetails(newSelectedRoom.reduce((sum, arr) => sum + Math.ceil(Number(arr.Price.OfferedPrice)), 0), deleteId, id); setOpenPriceReCheck(false) }}>
-                          <Text style={styles.btnTitle}>Keep Hotel</Text>
-                        </TouchableOpacity>
+                    <View style={styles.hotelRecheckBtnContainer}>
+                      <TouchableOpacity style={styles.btn} onPress={async () => { await actions.updateHotelBookingDetails(newSelectedRoom.reduce((sum, arr) => sum + Math.ceil(Number(arr.Price.OfferedPrice)), 0), deleteId, id); setOpenPriceReCheck(false) }}>
+                        <Text style={styles.btnTitle}>Keep Hotel</Text>
+                      </TouchableOpacity>
 
-                        <TouchableOpacity style={[styles.btn, { backgroundColor: colors.whiteSmoke }]} onPress={() => { handleDelete(), setOpenPriceReCheck(false) }}>
-                          <Text style={[styles.btnTitle, { color: colors.primary }]} >Delete Hotel</Text>
-                        </TouchableOpacity>
-
-                      </View>
+                      <TouchableOpacity style={[styles.btn, { backgroundColor: colors.whiteSmoke }]} onPress={() => { handleDelete(), setOpenPriceReCheck(false) }}>
+                        <Text style={[styles.btnTitle, { color: colors.primary }]} >Delete Hotel</Text>
+                      </TouchableOpacity>
 
                     </View>
-                    :
-                    <>
-                      <Text style={styles
-                        .title
-                      }>The selected hotel is not available please change the hotel</Text>
-                      <TouchableOpacity style={styles.btn} onPress={() => { handleDelete(), setOpenPriceReCheck(false) }}>
-                        <Text style={styles.btnTitle} >Delete Hotel</Text>
-                      </TouchableOpacity>
-                    </>
 
-                }
-              </View>
-          
-          
+                  </View>
+                  :
+                  <>
+                    <Text style={styles
+                      .title
+                    }>The selected hotel is not available please change the hotel</Text>
+                    <TouchableOpacity style={styles.btn} onPress={() => { handleDelete(), setOpenPriceReCheck(false) }}>
+                      <Text style={styles.btnTitle} >Delete Hotel</Text>
+                    </TouchableOpacity>
+                  </>
+
+            }
+          </View>
+
+
         </PopUp>
         {/* Rechecking Button */}
         <PopUp value={reCheck} handlePopUpClose={() => {
-                    setReCheck(false)
-                }}>
-<Text style={[styles.hotelTitle,{textAlign:'center'}]}>Re-check Rates</Text>
-<Text style={[styles.hotelTitle,{  }]}>Please re-check rates for the below.Since it is more than 3 hours since they have been added to 'My Trips'</Text>
+          setReCheck(false)
+        }}>
+          <Text style={[styles.hotelTitle, { textAlign: 'center' }]}>Re-check Rates</Text>
+          <Text style={[styles.hotelTitle, {}]}>Please re-check rates for the below.Since it is more than 3 hours since they have been added to 'My Trips'</Text>
 
-      <View>
-      {
-                            tripData?.flights?.filter((flight) => {
-                                var hotelData = tripData?.data?.flights.filter((hotels) => hotels.id === flight.id)
-                                var hotelTimeStamp = new Date(hotelData[0]?.date?.seconds * 1000)
-                                var originalDate = new Date(hotelTimeStamp);
-                                var threeHoursAfter = new Date(originalDate.getTime() + (3 * 60 * 60 * 1000));
-                                var currentTime = new Date();
-                                var isTimeReCheck = currentTime > threeHoursAfter
-                                return isTimeReCheck
-                            }).length > 0 && (
-                                <Text >Flights</Text>
-                            )
-                        }
-                        {
-                            tripData?.flights?.filter((flight) => {
-                                var hotelData = tripData?.data?.flights.filter((hotels) => hotels.id === flight.id)
-                                var hotelTimeStamp = new Date(hotelData[0]?.date?.seconds * 1000)
-                                var originalDate = new Date(hotelTimeStamp);
-                                var threeHoursAfter = new Date(originalDate.getTime() + (3 * 60 * 60 * 1000));
-                                var currentTime = new Date();
-                                var isTimeReCheck = currentTime > threeHoursAfter
-                                return isTimeReCheck
-                            }).map((flight) => {
-                                return (
-                                    <Text>
-                                        {flight.data.flightNew.segments[0].destCityName} to {flight.data.flightNew.segments[0].originCityName}
-                                    </Text>
-                                )
-                            })
-                        }
-                        {
-                            tripData?.flights?.filter((flight) => {
-                                var hotelData = tripData?.data?.flights.filter((hotels) => hotels.id === flight.id)
-                                var hotelTimeStamp = new Date(hotelData[0]?.date?.seconds * 1000)
-                                var originalDate = new Date(hotelTimeStamp);
-                                var threeHoursAfter = new Date(originalDate.getTime() + (3 * 60 * 60 * 1000));
-                                var currentTime = new Date();
-                                var isTimeReCheck = currentTime > threeHoursAfter
-                                return isTimeReCheck
-                            }).length > 0 && (
-                                <Text >Hotels</Text>
-                            )
-                        }
-                        {
-                            tripData?.hotels?.filter((hotel) => {
-                                var hotelData = tripData?.data?.hotels.filter((hotels) => hotels.id === hotel.id)
-                                var hotelTimeStamp = new Date(hotelData[0]?.date?.seconds * 1000)
-                                var originalDate = new Date(hotelTimeStamp);
-                                var threeHoursAfter = new Date(originalDate.getTime() + (3 * 60 * 60 * 1000));
-                                var currentTime = new Date();
-                                var isTimeReCheck = currentTime > threeHoursAfter
-                                return isTimeReCheck
-                            }).map((hotel) => {
-                                return (
-                                    <Text>
-                                        {hotel.data.hotelInfo.HotelInfoResult.HotelDetails.HotelName}
-                                    </Text>
-                                )
-                            })
-                        }
-      </View>  
+          <View style={styles.recheckingDetails}>
+            <View style={styles.eachRecheckingDetails}>
+              <View>
+              {
+                tripData?.flights?.filter((flight) => {
+                  var hotelData = tripData?.data?.flights.filter((hotels) => hotels.id === flight.id)
+                  var hotelTimeStamp = new Date(hotelData[0]?.date?.seconds * 1000)
+                  var originalDate = new Date(hotelTimeStamp);
+                  var threeHoursAfter = new Date(originalDate.getTime() + (3* 60 * 60 * 1000));
+                  var currentTime = new Date();
+                  var isTimeReCheck = currentTime > threeHoursAfter
+                  return isTimeReCheck
+                }).length > 0 && (
+                  <Text >Flights</Text>
+                )
+              }
+              </View>
+              {
+                tripData?.flights?.filter((flight) => {
+                  var hotelData = tripData?.data?.flights.filter((hotels) => hotels.id === flight.id)
+                  var hotelTimeStamp = new Date(hotelData[0]?.date?.seconds * 1000)
+                  var originalDate = new Date(hotelTimeStamp);
+                  var threeHoursAfter = new Date(originalDate.getTime() + (3 * 60 * 60 * 1000));
+                  var currentTime = new Date();
+                  var isTimeReCheck = currentTime > threeHoursAfter
+                  return isTimeReCheck
+                }).map((flight) => {
+                  return (
+                    <Text>
+                      {flight.data.flightNew.segments[0].destCityName} to {flight.data.flightNew.segments[0].originCityName}
+                    </Text>
+                  )
+                })
+              }
+            </View>
+            <View style={styles.eachRecheckingDetails}>
+              {
+                tripData?.flights?.filter((flight) => {
+                  var hotelData = tripData?.data?.flights.filter((hotels) => hotels.id === flight.id)
+                  var hotelTimeStamp = new Date(hotelData[0]?.date?.seconds * 1000)
+                  var originalDate = new Date(hotelTimeStamp);
+                  var threeHoursAfter = new Date(originalDate.getTime() + (3 * 60 * 60 * 1000));
+                  var currentTime = new Date();
+                  var isTimeReCheck = currentTime > threeHoursAfter
+                  return isTimeReCheck
+                }).length > 0 && (
+                  <Text >Hotels</Text>
+                )
+              }
+              {
+                tripData?.hotels?.filter((hotel) => {
+                  var hotelData = tripData?.data?.hotels.filter((hotels) => hotels.id === hotel.id)
+                  var hotelTimeStamp = new Date(hotelData[0]?.date?.seconds * 1000)
+                  var originalDate = new Date(hotelTimeStamp);
+                  var threeHoursAfter = new Date(originalDate.getTime() + (3 * 60 * 60 * 1000));
+                  var currentTime = new Date();
+                  var isTimeReCheck = currentTime > threeHoursAfter
+                  return isTimeReCheck
+                }).map((hotel) => {
+                  return (
+                    <Text>
+                      {hotel.data.hotelInfo.HotelInfoResult.HotelDetails.HotelName}
+                    </Text>
+                  )
+                })
+              }
+            </View>
+          </View>
         </PopUp>
       </View>
     )

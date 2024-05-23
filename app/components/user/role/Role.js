@@ -16,13 +16,15 @@ import TravDetails from '../../Trips/TripDetails/TravDetails';
 import FCard from '../../Trips/TripDetails/FCard';
 const Role = () => {
   const { actions, userAccountDetails, flightsLogosData, teamMembers, notifications, approveLoading } = useContext(MyContext)
+  
+  console.log(approveLoading,"approveLoading")
   const [openManager, setOpenManager] = useState(false);
   const [managerData, setManagerData] = useState({
     name: '',
     email: ''
   })
   const [selectedTab, setSelectedTab] = useState("Pending")
-  const [tripsData, setTripsData] = useState();
+  const [tripsData, setTripsData] = useState([]);
   const [mounted, setMounted] = useState(true);
   const [openTrip, setOpenTrip] = useState(null)
   const [trip, setTrip] = useState(null)
@@ -158,7 +160,7 @@ const Role = () => {
                       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: responsiveHeight(2), gap: responsiveHeight(2), flexWrap: "wrap" }}>
                         <BarIndicator color={colors.highlight} count={6} size={responsiveHeight(4)} style={{ flex: 0 }} />
                         <Text style={styles.managerDataTitle}>Loading Approve Request...</Text>
-                      </View> :
+                      </View> :tripsData.length>0?
                       tripsData?.filter((a) => {
                         return a?.requestDetails?.status === selectedTab
                       })?.sort((a, b) => {
@@ -199,7 +201,10 @@ const Role = () => {
                             </TouchableOpacity>
                           </View>
                         )
-                      })
+                      }):
+                      <View style={styles.NodatamsgTitleContainer}>
+                      <Text style={styles.NodatamsgTitle}>No Data Found!!!</Text>
+                      </View>
                   }
                 </View>
               </View>

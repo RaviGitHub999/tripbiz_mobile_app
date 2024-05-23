@@ -7,6 +7,7 @@ export const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+        paddingHorizontal:responsiveWidth(4)
     },
     backBtnContainer: {
         justifyContent: 'center',

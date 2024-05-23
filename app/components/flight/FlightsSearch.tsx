@@ -25,22 +25,22 @@ interface IProps {
 }
 const FlightsSearch: React.FC<IProps> = ({ navigation: { navigate } }) => {
   const [isSearchReady, setSearchReady] = useState(false);
-  const [active, setActive] = useState(btns[0].journeyType)
+  // const [active, setActive] = useState(btns[0].journeyType)
   const [calenderOpen, setCalenderOpen] = useState<CalenderOpen>({ departureCalender: false, returCalender: false })
-  const { departureformattedDate, actions, oriRes, desRes, origin, airportOriginLoading, airportOriginData, destination, originSelectedAirport, originselected, destinationSelectedAirPort, destinationselected, departure, returnDate, dateValue, returnDateValue, airportDestData, airportDestLoading,directflight } = useContext<any>(MyContext)
+  const { journeyWay,departureformattedDate, actions, oriRes, desRes, origin, airportOriginLoading, airportOriginData, destination, originSelectedAirport, originselected, destinationSelectedAirPort, destinationselected, departure, returnDate, dateValue, returnDateValue, airportDestData, airportDestLoading,directflight } = useContext<any>(MyContext)
   const handleActive = useCallback((item: IBtns) => {
-    setActive(item.journeyType);
+    // setActive(item.journeyType);
     actions.handleJourneyWay(item.journeyTypeNo);
   }, []);
   const handleRender = useCallback(({ item }: { item: IBtns }) => {
 
     return (
-      <TouchableOpacity style={[styles.btnsContainer, active === item.journeyType && styles.active]}
+      <TouchableOpacity style={[styles.btnsContainer, journeyWay === item.journeyTypeNo && styles.active]}
         onPress={() => handleActive(item)}>
-        <Text style={[styles.btnTitle, active === item.journeyType && styles.activeText]}>{item.journeyType}</Text>
+        <Text style={[styles.btnTitle, journeyWay === item.journeyTypeNo && styles.activeText]}>{item.journeyType}</Text>
       </TouchableOpacity>
     );
-  }, [active, setActive]);
+  }, [journeyWay]);
   const handleSelectedDate = useCallback((event: DateTimePickerEvent, selectedDate?: Date) => {
     // console.log("clicked");
     // debugger
@@ -164,9 +164,9 @@ const FlightsSearch: React.FC<IProps> = ({ navigation: { navigate } }) => {
                   </View>}
               </View> : null
           }
-          <View {...active === "Round Trip" && { style: { flexDirection: 'row', justifyContent: 'space-between' } }}>
-            <SearchInputs  btn={true} dropDown={false} placeholder={departure}{...active === "Round Trip" && { customStyles: { width: responsiveWidth(41) } }} handleDatePicker={handleOpenCalender} />
-            {active === "Round Trip" && <SearchInputs  btn={true} dropDown={false} placeholder={returnDate} customStyles={{ width: responsiveWidth(41) }} handleDatePicker={handleOpenReturnCalender} />}
+          <View {...journeyWay === "2" && { style: { flexDirection: 'row', justifyContent: 'space-between' } }}>
+            <SearchInputs  btn={true} dropDown={false} placeholder={departure}{...journeyWay === "2" && { customStyles: { width: responsiveWidth(41) } }} handleDatePicker={handleOpenCalender} />
+            {journeyWay === "2" && <SearchInputs  btn={true} dropDown={false} placeholder={returnDate} customStyles={{ width: responsiveWidth(41) }} handleDatePicker={handleOpenReturnCalender} />}
           </View>
           <View style={{ flexDirection: "row", justifyContent: 'space-evenly' }}>
             <DropDown length={10} particularState='Adults' placeHolder='Adults'/>

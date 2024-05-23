@@ -437,5 +437,81 @@ export const styles = StyleSheet.create({
         fontSize:responsiveHeight(1.5),
         fontFamily:fonts.textFont,
         color:colors.primary
+    },
+    recheckPriceMainContainer:{
+        alignItems:'center',
+        marginTop:responsiveHeight(2),
+        gap:responsiveHeight(1)
+    },
+    recheckPriceTitle: {
+        fontSize: responsiveHeight(2.8),
+        color: colors.primary,
+        fontFamily: fonts.primary
+    },
+    flightDetails:
+    {
+        flexDirection:"row",
+        alignItems:"center",
+        alignSelf:'center',
+        // paddingHorizontal:responsiveHeight(5),
+        flexWrap:'wrap'
+    },
+    recheckPriceTitles:
+    {
+        fontSize: responsiveHeight(1.8),
+        color: colors.primary,
+        fontFamily: fonts.primary
+    },
+    recheckPriceSubTitles:
+    {
+        fontSize: responsiveHeight(1.8),
+        color: colors.primary,
+        fontFamily: fonts.textInput
+    },
+    recheckPrices:{
+        fontSize: responsiveHeight(1.8),
+        color: colors.secondary,
+        fontFamily: fonts.primary   
+    },
+    recheckRatesContainer:{
+        gap:responsiveHeight(.5)
+    },
+    recheckBtnContainers:
+    {
+flexDirection:'row',
+justifyContent:'space-evenly',
+width:'100%',
+marginVertical:responsiveHeight(2),
+alignItems:'center'
+
+    },
+    btn:{
+        paddingHorizontal:responsiveWidth(3),
+        paddingVertical:responsiveHeight(1.2),
+        borderRadius:responsiveHeight(1),
+        backgroundColor:colors.primary,
+        alignItems:'center'
+    },
+    btnTitle:{
+        fontSize: responsiveHeight(1.8),
+        color: colors.white,
+        fontFamily: fonts.primary   
+    },
+    exceedDateContainer:
+    {
+        marginTop:responsiveHeight(2),
+        gap:responsiveHeight(1.6)
+    },
+    progressBarContainer:
+    {
+        marginVertical:responsiveHeight(2),
+        gap:responsiveHeight(2)
+    },
+    progressBarTitle: {
+        fontSize: responsiveHeight(1.8),
+        fontFamily: fonts.secondry,
+        color: colors.primary,
+        textAlign:'center'
     }
+
 })

@@ -10,10 +10,14 @@ export const styles = StyleSheet.create(
       backgroundColor: colors.white,
       paddingHorizontal: responsiveWidth(4),
     },
-    progessBarContainer: {
+    progressBarContainer:{
       flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center'
+      alignItems: 'center', 
+      justifyContent: 'center',
+      paddingHorizontal:responsiveWidth(4)
+    },
+    progressbar:{
+  width:'100%'
     },
     backIconContainer: {
       marginTop: responsiveHeight(1),

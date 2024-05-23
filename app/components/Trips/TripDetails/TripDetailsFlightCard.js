@@ -1,4 +1,4 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity, Modal } from 'react-native'
+import { View, Text, Image, StyleSheet, TouchableOpacity, Modal, ActivityIndicator } from 'react-native'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { FlatList } from 'react-native-gesture-handler'
 import MyContext from '../../../context/Context'
@@ -10,6 +10,7 @@ import WebView from 'react-native-webview'
 import { styles } from './tripdetailsFlightCardstyles'
 import ReCheck from '../../common/recheck/ReCheck'
 import FCard from './FCard'
+import ProgressBar from '../../common/progressBar/ProgressBar'
 const TripDetailsFlightCard = ({
     flightGrp,
     index,
@@ -40,6 +41,7 @@ const TripDetailsFlightCard = ({
     const [reCheckBaggage, setReCheckBaggage] = useState(0)
     const [reCheckMeals, setReCheckMeals] = useState(0)
     const [reCheckSeats, setReCheckSeats] = useState(0)
+    const [checkingDate,setCheckingDate]=useState(null)
     const { actions, flightsLogosData, domesticFlight } = useContext(MyContext)
     const statuses = [
         { status: "Paid and Submitted", color: "#ffa500" },
@@ -79,6 +81,16 @@ const TripDetailsFlightCard = ({
         await actions.deleteTripItem(tripId, deleteId, deleteType);
         setOpenDelete(false)
     }
+
+    function isDateNotLessThanCurrent(givenDate) {
+        const currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+        const dateToCheck = new Date(givenDate);
+        dateToCheck.setHours(0, 0, 0, 0);
+        return dateToCheck >= currentDate;
+    }
+
+
     const handleRenderingFlightCard = ({ item }) => {
         var flightCode = '';
         item.flightCodes.forEach((code, c) => {
@@ -88,7 +100,7 @@ const TripDetailsFlightCard = ({
                 flightCode += `${code}, `;
             }
         });
-
+setCheckingDate(isDateNotLessThanCurrent(item.depTimeDate))
         return (
             <View style={styles.renderingMainContainer}>
                 <View style={styles.headerContainer}>
@@ -264,9 +276,13 @@ const TripDetailsFlightCard = ({
     const handleRecheckFlightPrice = async () => {
         setReCheckLoading(true)
         setOpenPriceReCheck(true)
-        var data = await actions.getFlightUpdatedDetails(flightBooking.flightRequest, flightBooking.flight)
-        getUpdatedFares(data.ssrData)
-        setReCheckData(data)
+        if(checkingDate)
+            {
+                var data = await actions.getFlightUpdatedDetails(flightBooking.flightRequest, flightBooking.flight)
+                getUpdatedFares(data.ssrData)
+                setReCheckData(data)
+            }
+
         setReCheckLoading(false)
         setDeleteType("flights")
         setDeleteId(flightId)
@@ -674,12 +690,75 @@ const TripDetailsFlightCard = ({
                 setOpenPriceReCheck(false)
             }}>
                 {tripsPage ? (
-            <FCard airline={flightLogo} flightArr={flightArr} />
-          ) : (null)}
+                    <>
+                        <FCard airline={flightLogo} flightArr={flightArr} />
+                      { checkingDate?<>
+                       {reCheckLoading?
+                                       <View style={styles.progressBarContainer}>
+                                       <ProgressBar/>
+                                       <Text style={styles.progressBarTitle}>ReChecking Flight Rates</Text>
+                                       </View>
+                        :<View style={styles.recheckPriceMainContainer}>
+                            <Text style={styles.recheckPriceTitle}>Flight Price Recheck</Text>
+                            <View style={styles.flightDetails}>
+                                <Text style={styles.recheckPriceSubTitles}>Flight Details:</Text>
+                                <Text numberOfLines={1} ellipsizeMode='tail' style={styles.recheckPriceTitles}>{
+                                    flightBooking.flightNew.segments[0].originCityName
+                                } to {flightBooking.flightNew.segments[0].destCityName}</Text>
+                            </View>
+                            <View style={styles.recheckRatesContainer}>
+                                <Text style={styles.recheckPriceTitles}>Old Rates</Text>
+                                <Text style={styles.recheckPriceSubTitles}>Flight Price:<Text style={styles.recheckPrices}> &#8377;{` ${flightBooking.flight.Fare.OfferedFare
+                                    ? Math.ceil(flightBooking.flight.Fare.OfferedFare).toLocaleString("en-IN") : Math.ceil(flightBooking.flight.Fare.PublishedFare).toLocaleString("en-IN")}`}</Text> </Text>
+                                {fareData?.totalBaggagePrice ? <Text style={styles.recheckPriceSubTitles}>Baggage:<Text style={styles.recheckPrices}>{` ${fareData?.totalBaggagePrice?.toLocaleString("en-IN")}`}</Text></Text> : null}
+                                {fareData?.totalMealPrice ? <Text style={styles.recheckPriceSubTitles}>Meal:<Text style={styles.recheckPrices}>{` ${fareData?.totalMealPrice?.toLocaleString("en-IN")}`}</Text></Text> : null}
+                                {fareData?.totalSeatCharges ? <Text style={styles.recheckPriceSubTitles}>Seat:<Text style={styles.recheckPrices}> {` ${fareData?.totalSeatCharges?.toLocaleString("en-IN")}`}</Text></Text> : null}
+                                <Text style={styles.recheckPriceSubTitles}>Service Fee and Taxes :<Text style={styles.recheckPrices}> &#8377; {Math.ceil((fareData?.totalFareSum * domesticFlight) / 100)}</Text> </Text>
+                                <Text style={styles.recheckPriceSubTitles}>Total Price :<Text style={styles.recheckPrices}> &#8377; {Math.ceil(fareData?.finalPrice).toLocaleString("en-IN")}</Text> </Text>
+                            </View>
+
+                            <View style={styles.recheckRatesContainer}>
+                                <Text style={styles.recheckPriceTitles}>New Rates</Text>
+                                <Text style={styles.recheckPriceSubTitles}>Flight Price:<Text style={styles.recheckPrices}>&#8377;{` ${reCheckData?.flightData?.Fare?.OfferedFare
+                                    ? Math.ceil(
+                                        reCheckData?.flightData?.Fare?.OfferedFare
+                                    ).toLocaleString("en-IN")
+                                    : Math.ceil(
+                                        reCheckData?.flightData?.Fare?.PublishedFare
+                                    ).toLocaleString("en-IN")
+                                    }`}</Text> </Text>
+                                {fareData?.totalBaggagePrice ? <Text style={styles.recheckPriceSubTitles}>Baggage:<Text style={styles.recheckPrices}> {Math.ceil(reCheckBaggage).toLocaleString("en-IN")}</Text></Text> : null}
+                                {fareData?.totalMealPrice ? <Text style={styles.recheckPriceSubTitles}>Meal:<Text style={styles.recheckPrices}> {Math.ceil(reCheckMeals).toLocaleString("en-IN")}</Text></Text> : null}
+                                {fareData?.totalSeatCharges ? <Text style={styles.recheckPriceSubTitles}>Seat:<Text style={styles.recheckPrices}> {Math.ceil(reCheckSeats).toLocaleString("en-IN")}</Text></Text> : null}
+                                <Text style={styles.recheckPriceSubTitles}>Service Fee and Taxes :<Text style={styles.recheckPrices}> &#8377;{` ${Math.ceil(((reCheckData?.flightData?.Fare?.OfferedFare + reCheckBaggage + reCheckSeats + reCheckMeals) * domesticFlight) / 100)?.toLocaleString("en-IN")}`}</Text> </Text>
+                                <Text style={styles.recheckPriceSubTitles}>Total Price :<Text style={styles.recheckPrices}> &#8377; {` ${Math.ceil((reCheckData?.flightData?.Fare?.OfferedFare + reCheckBaggage + reCheckSeats + reCheckMeals) + (((reCheckData?.flightData?.Fare?.OfferedFare + reCheckBaggage + reCheckSeats + reCheckMeals) * domesticFlight) / 100))?.toLocaleString("en-IN")}`}</Text> </Text>
+                            </View>
+                                    <View style={styles.recheckBtnContainers}>
+                                        <TouchableOpacity style={styles.btn} onPress={async () => await actions.updateFlightBookingDetails(reCheckData?.flightData?.Fare?.OfferedFare, flightId, tripId)}>
+                                            <Text style={styles.btnTitle}>Keep Flight</Text>
+                                        </TouchableOpacity>
+
+                                        <TouchableOpacity style={[styles.btn,{backgroundColor:colors.whiteSmoke}]} onPress={handleDelete}>
+                                            <Text style={[styles.recheckPriceSubTitles]}>Delete Flight</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                        </View>}
+                       </>:
+                       <View style={styles.exceedDateContainer}>
+                        <Text style={styles
+                            .recheckPriceTitles
+                          }>Flight date has exceeded. Please change the date.</Text>
+                          <TouchableOpacity style={[styles.btn]} onPress={() => { handleDelete(), setOpenPriceReCheck(false) }}>
+                            <Text style={styles.btnTitle} >Delete Hotel</Text>
+                          </TouchableOpacity>
+                       </View>
+                       }
+                    </>
+                ) : (null)}
             </PopUp>
         </View>
 
     )
 }
 
-export default TripDetailsFlightCard
+export default React.memo(TripDetailsFlightCard)

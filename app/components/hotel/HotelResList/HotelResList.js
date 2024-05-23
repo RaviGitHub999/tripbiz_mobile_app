@@ -331,8 +331,10 @@ const HotelResList = ({ navigation: { navigate, goBack, push } }) => {
         removeFilters()
     }
     if (searchingHotels) {
-        return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <ProgressBar />
+        return <View style={styles.progressBarContainer}>
+           <View style={styles.progressbar}>
+           <ProgressBar />
+           </View>
         </View>
     }
     return (

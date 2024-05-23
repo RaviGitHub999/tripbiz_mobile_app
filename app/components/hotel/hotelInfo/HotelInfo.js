@@ -230,7 +230,11 @@ const HotelInfo = ({ route: { params }, navigation: { goBack, navigate } }) => {
         )
     }
     if (fetchingHotelInfo || isLoading) {
-        return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><ProgressBar /></View>
+        return <View style={styles.progressBarContainer}>
+            <View style={styles.progressbar}>
+                <ProgressBar />
+            </View>
+        </View>
     }
     return (
         <>
@@ -626,69 +630,69 @@ const HotelInfo = ({ route: { params }, navigation: { goBack, navigate } }) => {
 
             <PopUp value={isExpanded} handlePopUpClose={toggleHeight}>
                 <>
-                    {isExpanded &&   
+                    {isExpanded &&
                         // <View style={bookingHotel?.selectedRoomType?.length >= 3 ? { height: responsiveHeight(30) } : { height: responsiveHeight(20) }}>
-                            // <ScrollView style={{ rowGap: responsiveHeight(1) }} >
-                             <>
-                                {bookingHotel?.selectedRoomType &&
-                                    bookingHotel?.selectedRoomType?.map((room, r) => {
-                                        return (
-                                            <View style={styles.card}>
-                                                <View style={styles.cardMainSubContainer}>
-                                                    <View style={styles.cardSubContainer1}>
-                                                        <Text style={styles.roomType}>{room.RoomTypeName}</Text>
-                                                        <View style={styles.mealsDescriptionContainer}>
-                                                            <IconSwitcher componentName='MaterialIcons' iconName='dinner-dining' color='black' iconsize={3} />
-                                                            <Text style={styles.inclusion}>{room.Inclusion && room.Inclusion.length > 0
-                                                                ? actions.checkForTboMeals(room.Inclusion)
-                                                                : "No meals"}
-                                                            </Text>
-                                                        </View>
-                                                    </View>
-                                                    <View style={styles.cardSubContainer2}>
-                                                        <Text style={styles.roomPrice}>{`₹ ${room.Price.OfferedPriceRoundedOff
-                                                            ? room.Price.OfferedPriceRoundedOff.toLocaleString(
-                                                                "en-IN"
-                                                            )
-                                                            : room.Price.PublishedPriceRoundedOff.toLocaleString(
-                                                                "en-IN"
-                                                            )
-                                                            }`}</Text>
-                                                        {
-                                                            room.LastCancellationDate &&
-                                                                actions.validCancelDate(
-                                                                    room.LastCancellationDate
-                                                                ) ? <View style={styles.mealsDescriptionContainer}>
-                                                                <IconSwitcher componentName='MaterialCommunityIcons' iconName='cancel' color='black' iconsize={2} />
-                                                                <Text style={styles.inclusion}>{`Free cancellation upto ${new Date(
-                                                                    room.LastCancellationDate
-                                                                )
-                                                                    .toString()
-                                                                    .slice(4, 10)}`}</Text>
-                                                            </View> : <View style={styles.mealsDescriptionContainer}>
-                                                                <IconSwitcher componentName='MaterialCommunityIcons' iconName='cancel' color='black' iconsize={2} />
-                                                                <Text style={styles.inclusion}>Non-refundable</Text>
-                                                            </View>
-                                                        }
-
+                        // <ScrollView style={{ rowGap: responsiveHeight(1) }} >
+                        <>
+                            {bookingHotel?.selectedRoomType &&
+                                bookingHotel?.selectedRoomType?.map((room, r) => {
+                                    return (
+                                        <View style={styles.card}>
+                                            <View style={styles.cardMainSubContainer}>
+                                                <View style={styles.cardSubContainer1}>
+                                                    <Text style={styles.roomType}>{room.RoomTypeName}</Text>
+                                                    <View style={styles.mealsDescriptionContainer}>
+                                                        <IconSwitcher componentName='MaterialIcons' iconName='dinner-dining' color='black' iconsize={3} />
+                                                        <Text style={styles.inclusion}>{room.Inclusion && room.Inclusion.length > 0
+                                                            ? actions.checkForTboMeals(room.Inclusion)
+                                                            : "No meals"}
+                                                        </Text>
                                                     </View>
                                                 </View>
+                                                <View style={styles.cardSubContainer2}>
+                                                    <Text style={styles.roomPrice}>{`₹ ${room.Price.OfferedPriceRoundedOff
+                                                        ? room.Price.OfferedPriceRoundedOff.toLocaleString(
+                                                            "en-IN"
+                                                        )
+                                                        : room.Price.PublishedPriceRoundedOff.toLocaleString(
+                                                            "en-IN"
+                                                        )
+                                                        }`}</Text>
+                                                    {
+                                                        room.LastCancellationDate &&
+                                                            actions.validCancelDate(
+                                                                room.LastCancellationDate
+                                                            ) ? <View style={styles.mealsDescriptionContainer}>
+                                                            <IconSwitcher componentName='MaterialCommunityIcons' iconName='cancel' color='black' iconsize={2} />
+                                                            <Text style={styles.inclusion}>{`Free cancellation upto ${new Date(
+                                                                room.LastCancellationDate
+                                                            )
+                                                                .toString()
+                                                                .slice(4, 10)}`}</Text>
+                                                        </View> : <View style={styles.mealsDescriptionContainer}>
+                                                            <IconSwitcher componentName='MaterialCommunityIcons' iconName='cancel' color='black' iconsize={2} />
+                                                            <Text style={styles.inclusion}>Non-refundable</Text>
+                                                        </View>
+                                                    }
+
+                                                </View>
                                             </View>
-                                        )
-                                    })}
+                                        </View>
+                                    )
+                                })}
 
-                                <View style={styles.hotelPriceContainer}>
-                                    <Text style={styles.hotelPriceText}>Hotel Price</Text>
-                                    <Text style={styles.hotelPriceTP}>{` ₹ ${bookingHotel?.hotelFinalPrice?.toLocaleString("en-IN")} `}</Text>
-                                </View>
-                                <View style={styles.dashedLine} />
-                                <View style={styles.hotelPriceContainer}>
-                                    <Text style={styles.hotelPriceText}>Service Charges</Text>
-                                    <Text style={styles.hotelPriceTP}>{` + ${Math.round((bookingHotel?.hotelFinalPrice * domesticHotel) / 100)}`}</Text>
-                                </View>
-                             </>
+                            <View style={styles.hotelPriceContainer}>
+                                <Text style={styles.hotelPriceText}>Hotel Price</Text>
+                                <Text style={styles.hotelPriceTP}>{` ₹ ${bookingHotel?.hotelFinalPrice?.toLocaleString("en-IN")} `}</Text>
+                            </View>
+                            <View style={styles.dashedLine} />
+                            <View style={styles.hotelPriceContainer}>
+                                <Text style={styles.hotelPriceText}>Service Charges</Text>
+                                <Text style={styles.hotelPriceTP}>{` + ${Math.round((bookingHotel?.hotelFinalPrice * domesticHotel) / 100)}`}</Text>
+                            </View>
+                        </>
 
-                            // </ScrollView>
+                        // </ScrollView>
                         // </View>
                     }
                 </>

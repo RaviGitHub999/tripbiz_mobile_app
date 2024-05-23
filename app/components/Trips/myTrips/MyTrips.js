@@ -7,6 +7,7 @@ import MyContext from '../../../context/Context';
 import ProgressBar from '../../common/progressBar/ProgressBar';
 import {
   responsiveHeight,
+  responsiveWidth,
 } from '../../../utils/responsiveScale';
 import { RefreshControl } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
@@ -42,8 +43,10 @@ const MyTrips = ({navigation:{navigate}}) => {
 }
   if (userTripStatus.tripLoading) {
     return (
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-        <ProgressBar />
+      <View style={styles.progressBarContainer}>
+       <View style={styles.progressbar}>
+       <ProgressBar />
+       </View>
       </View>
     );
   }

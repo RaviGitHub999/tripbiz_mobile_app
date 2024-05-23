@@ -241,7 +241,6 @@ export default class MyProvider extends Component {
       },
       selectedHotelCheckInDate: new Date,
       selectedHotelCheckOutDate: new Date,
-      // hotelSearchNights:0,
       checkInTime: null,
       checkOutTime: null,
       hotelSearchAdults: 0,
@@ -249,10 +248,6 @@ export default class MyProvider extends Component {
       searchingHotels: true,
       cityHotelResBox: false,
       filterActions: false,
-      // hotelRating: null,
-      // hotelPriceStart: null,
-      // hotelPriceEnd: null,
-      // hotelSearchText: null,
       hotelInfoRes: false,
       fetchingHotelInfo: true,
       idToIndex: {},
@@ -1499,18 +1494,68 @@ export default class MyProvider extends Component {
             .catch((err) => console.log(err));
 
           console.log(flightRes);
-          this.state.actions.separateFlightsByType(
-            flightRes.flightResult.Response.Results
-          );
-          this.setState({
-            flightResult: flightRes.flightResult.Response,
-            flightSearchToken: flightRes.tokenId,
-            searchingFlights: false,
-            flightSessionStarted: true,
-            flightTraceId: flightRes.flightResult.Response.TraceId,
-            flightResult: flightRes.flightResult.Response,
-          });
-          setTimeout(() => {
+
+          var flightReqs = [];
+          if (flightRes?.flightResult?.Response?.Results.length === 1) {
+            console.log(request);
+            flightReqs.push(request);
+            this.setState({
+              flightReq1: request,
+            });
+            this.setState({
+              flightReq: flightReqs,
+            });
+          } else {
+            var req1 = request;
+            var req2 = request;
+            var segments1 = request.segments[0];
+            var segments2 = request.segments[1];
+            req1.segments = [segments1];
+            req2.segments = [segments2];
+            var new1 = { ...req1, segments: [segments1] };
+            var new2 = { ...req2, segments: [segments2] };
+            new1.journeyType = "1";
+            new2.journeyType = "1";
+            flightReqs.push(new1, new2);
+            this.setState({
+              flightReq: flightReqs,
+            });
+          }
+          if (flightRes.flightResult?.errorMessage) {
+            this.setState({
+              flightResult: {},
+              flightResList: [],
+              searchingFlights: false,
+              flightSessionStarted: true,
+              flightErrorMessage: flightRes.flightResult.errorMessage,
+            });
+          } else {
+            this.state.actions.separateFlightsByType(
+              flightRes.flightResult.Response.Results
+            );
+            this.setState({
+              flightSearchToken: flightRes.tokenId,
+              searchingFlights: false,
+              flightSessionStarted: true,
+              flightTraceId: flightRes.flightResult.Response.TraceId,
+              flightResult: flightRes.flightResult.Response,
+            });
+          }
+
+
+
+          // this.state.actions.separateFlightsByType(
+          //   flightRes.flightResult.Response.Results
+          // );
+          // this.setState({
+          //   flightResult: flightRes.flightResult.Response,
+          //   flightSearchToken: flightRes.tokenId,
+          //   searchingFlights: false,
+          //   flightSessionStarted: true,
+          //   flightTraceId: flightRes.flightResult.Response.TraceId,
+          //   flightResult: flightRes.flightResult.Response,
+          // });
+            var flightSessionTimeout = setTimeout(() => {
             this.setState(
               {
                 flightSessionStarted: false,
@@ -1521,6 +1566,7 @@ export default class MyProvider extends Component {
               }
             );
           }, 840000);
+          clearTimeout(flightSessionTimeout);
         },
         getRecommondedHotelList: async () => {
           console.log('reco called');
@@ -2268,7 +2314,7 @@ export default class MyProvider extends Component {
 
             console.log("Flight booking res", flightBookData);
             this.setState({
-              flightBookData,
+              // flightBookData,
               bookingFlight,
               flightBookDataLoading: false
             });
@@ -2335,7 +2381,8 @@ export default class MyProvider extends Component {
             adults: this.state.adults,
             child: this.state.children,
             infant: this.state.infants,
-            travellers: this.state.flightTravellers
+            travellers: this.state.flightTravellers,
+            flightRequest: this.state.flightReq[this.state.flightResJType],
           };
 
           if (
@@ -3445,8 +3492,9 @@ export default class MyProvider extends Component {
             //       countryName: ""
             //     },
             // },
-            origin: "",
-            destination: "",
+            // destinationSelectedAirPort:"",
+            origin: null,
+            destination: null,
             departure: "Departure Date",
             returnDate: "Return Date",
             adults: 1,
@@ -3454,6 +3502,8 @@ export default class MyProvider extends Component {
             infants: 0,
             directflight: false,
             oneStopFlight: false,
+            journeyWay:"1",
+            flightResJType:0
           })
           this.state.actions.setFlightBookPage(false)
         },
@@ -3804,50 +3854,52 @@ export default class MyProvider extends Component {
           });
           const requestData = [];
 
-          if (approvalRequests) {
+         
             try {
-              await Promise.all(
-                approvalRequests.map(async (req) => {
-                  const userDataRef = firestore().collection("Accounts").doc(req.userId);
-                  const userData = await userDataRef.get();
-                  const tripRef = userDataRef.collection("trips").doc(req.tripId);
-
-                  const [flights, hotels, cabs] = await Promise.all([
-                    await this.state.actions.getTripsFlights(req.flights, req.tripId, req.userId),
-                    await this.state.actions.getTripsHotels(req.hotels, req.tripId, req.userId),
-                    // await this.state.actions.getTripsCabs(req.cabs, req.tripId, req.userId),
-                  ]);
-
-                  const tripDoc = await tripRef.get();
-                  const tripReqRef = userDataRef.collection("tripRequests").doc(req.requestId);
-                  const reqDoc = await tripReqRef.get();
-
-                  const tripDetails = {
-                    userDetails: userData.data(),
-                    tripDetails: {
-                      id: tripDoc.id,
-                      data: tripDoc.data(),
-                      hotels: hotels,
-                      flights: flights,
-                      // cabs: cabs,
-                    },
-                    requestDetails: reqDoc.data(),
-                    approvalRequest: req,
-                  };
-
-                  requestData.push(tripDetails);
-                })
-              );
+             if(approvalRequests!==undefined)
+              {
+                await Promise.all(
+                  approvalRequests.map(async (req) => {
+                    const userDataRef = firestore().collection("Accounts").doc(req.userId);
+                    const userData = await userDataRef.get();
+                    const tripRef = userDataRef.collection("trips").doc(req.tripId);
+  
+                    const [flights, hotels, cabs] = await Promise.all([
+                      await this.state.actions.getTripsFlights(req.flights, req.tripId, req.userId),
+                      await this.state.actions.getTripsHotels(req.hotels, req.tripId, req.userId),
+                      // await this.state.actions.getTripsCabs(req.cabs, req.tripId, req.userId),
+                    ]);
+  
+                    const tripDoc = await tripRef.get();
+                    const tripReqRef = userDataRef.collection("tripRequests").doc(req.requestId);
+                    const reqDoc = await tripReqRef.get();
+  
+                    const tripDetails = {
+                      userDetails: userData.data(),
+                      tripDetails: {
+                        id: tripDoc.id,
+                        data: tripDoc.data(),
+                        hotels: hotels,
+                        flights: flights,
+                        // cabs: cabs,
+                      },
+                      requestDetails: reqDoc.data(),
+                      approvalRequest: req,
+                    };
+  
+                    requestData.push(tripDetails);
+                  })
+                );
+              }
               this.setState({
                 approveLoading: false,
               });
+              console.log("second")
               return requestData;
             } catch (error) {
               console.error('Error getting trips for approval: ', error);
             }
-          }
-
-          setApproveLoading(false);
+          
         },
         sendBookingApprovedEmail: async (userData) => {
           try {
@@ -4113,6 +4165,50 @@ export default class MyProvider extends Component {
             await this.state.actions.getTripDocById(tripId, this.state.userId);
           } catch (error) {
             console.error('Error updating hotel booking details:', error);
+          }
+        },
+ updateFlightBookingDetails : async (newPrice, flightId, tripId, ) => {
+          try {
+            const tripsRef = firestore().collection("Accounts").doc(this.state.userId).collection("trips").doc(tripId);
+            const tripSnap = await tripsRef.get();
+            const tripData = tripSnap.data();
+        
+            const tripItem = tripData.flights.filter((flight) => flight.id === flightId);
+            if (tripItem.length === 0) {
+              throw new Error("Flight not found in the trip data");
+            }
+        
+            console.log(tripItem);
+        
+            await tripsRef.update({
+              flights: firestore.FieldValue.arrayRemove(tripItem[0])
+            });
+        
+            await tripsRef.update({
+              flights: firestore.FieldValue.arrayUnion({ ...tripItem[0], updatedAt:Date.now() })
+            });
+        
+            const itemRef = tripsRef.collection("flights").doc(flightId);
+            const itemSnap = await itemRef.get();
+            const itemData = itemSnap.data();
+        
+            if (!itemData["0"]) {
+              throw new Error("Flight data not found in the item data");
+            }
+        
+            const updatedItemData = { ...itemData };
+            updatedItemData["0"].finalPrice = updatedItemData["0"].finalPrice - updatedItemData["0"].flight.Fare.OfferedFare + newPrice;
+            updatedItemData["0"].totalFare = updatedItemData["0"].totalFare - updatedItemData["0"].flight.Fare.OfferedFare + newPrice;
+            updatedItemData["0"].flightNew.fare = updatedItemData["0"].flightNew.fare - updatedItemData["0"].flight.Fare.OfferedFare + newPrice;
+            updatedItemData["0"].flight.Fare.OfferedFare = newPrice;
+            updatedItemData["0"].flight.Fare.PublishedFare = newPrice;
+        
+            await itemRef.update(updatedItemData);
+        
+            // Assuming getTripDocById is a function imported from your actions file
+            await this.state.actions.getTripDocById(tripId, this.state.userId);
+          } catch (error) {
+            console.error("Error updating flight booking details: ", error);
           }
         },
 

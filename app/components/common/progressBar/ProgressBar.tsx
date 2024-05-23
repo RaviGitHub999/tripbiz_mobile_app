@@ -40,7 +40,8 @@ const ProgressBar = () => {
       <Progress.Bar
         progress={progress}
         indeterminate={indeterminate}
-        width={responsiveHeight(45)}
+        // width={responsiveHeight(45)}
+        width={null}
         height={responsiveHeight(2)}
         borderRadius={responsiveHeight(1.5)}
         borderWidth={responsiveHeight(0.2)}

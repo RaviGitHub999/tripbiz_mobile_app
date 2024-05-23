@@ -97,5 +97,14 @@ color:colors.highlight
   },
   btnTitle:{
     color:colors.white
+  },
+  progressBarContainer:{
+    flex: 1,
+    alignItems: 'center', 
+    justifyContent: 'center',
+    paddingHorizontal:responsiveWidth(4)
+  },
+  progressbar:{
+width:'100%'
   }
 });

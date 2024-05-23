@@ -66,13 +66,12 @@ const FlightBooking = ({ navigation: { navigate } }) => {
     }, []);
 
 
-    // if (flightBookDataLoading||isLoading) {
-    //     return (
-    //         <View style={styles.mainContainer}>
-    //             <ProgressBar />
-    //         </View>
-    //     );
-    // }
+    const increaseFontSizeScript = `
+    var style = document.createElement('style');
+    style.innerHTML = 'body { font-size: 40px !important; }';
+    document.head.appendChild(style);
+  `;
+
     const toggleHeight = () => {
         // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setIsExpanded(!isExpanded);
@@ -85,13 +84,13 @@ const FlightBooking = ({ navigation: { navigate } }) => {
     };
     const handleSeatSelectionPopUp = () => {
         setSelectSeats(true);
-        if (seatOpen) {
+        
             setSeatData(
                 actions.fillUpSegmentSeats(
                     bookingFlight[bookIndex].seatData[segIndex].SegmentSeat
                 )
             );
-        }
+        
         setSeatOpen(false)
         setWingPosArr(
             actions.getWingPosArr(
@@ -156,14 +155,18 @@ const FlightBooking = ({ navigation: { navigate } }) => {
         navigate("TripDetails", { id: newtripid });
         await actions.getLastDoc();
     };
-    if (isLoading) {
-        return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><ProgressBar /></View>
-    }
+    // if (isLoading) {
+    //     return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    //         <ProgressBar />
+    //         </View>
+    // }
     return (
         // isLoading ? <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><ProgressBar /></View> :
 
-        flightBookDataLoading ? <View style={styles.mainContainer}>
-            <ProgressBar />
+        flightBookDataLoading||isLoading ? <View style={styles.mainContainer}>
+           <View style={{width:'100%'}}>
+           <ProgressBar />
+           </View>
         </View> :
             <View style={{ flex: 1 }}>
                 <TouchableOpacity style={styles.backBtnContainer} onPress={() => {
@@ -824,10 +827,12 @@ const FlightBooking = ({ navigation: { navigate } }) => {
                     </View>
                 </Modal>
                 <PopUp value={fareIsOpen} handlePopUpClose={() => setFareIsOpen(false)} customStyles={{ width: "100%" }}>
-                    <View style={{ height: responsiveHeight(40) }}>
+                    <View style={{ height: responsiveHeight(60) }}>
                         <WebView
                             source={{ html: bookingFlight[bookIndex].fareRules }}
-                            nestedScrollEnabled />
+                            nestedScrollEnabled 
+                            injectedJavaScript={increaseFontSizeScript}
+                            />
                     </View>
                 </PopUp>
             </View>

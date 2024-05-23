@@ -383,15 +383,13 @@ export const styles = StyleSheet.create({
     },
     travelDetailsFlightCard:
     {
-        // borderWidth:1,
-        // borderColor:'red',
-        padding: responsiveHeight(1),
+        borderColor:colors.primaryLite,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        // gap:responsiveHeight(.3),
         height: responsiveHeight(7),
-        // backgroundColor:'gray'
+        width: responsiveHeight(7),
+        marginBottom:2
     },
     tripRouteCon: {
         flexDirection: 'row',
@@ -404,12 +402,14 @@ export const styles = StyleSheet.create({
         flexWrap: 'wrap',
         marginTop: responsiveHeight(1),
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        paddingHorizontal:responsiveWidth(1)
     },
     tripDetailsTitle: {
         fontSize: responsiveHeight(1.5),
         fontFamily: fonts.textFont,
-        color: colors.primary
+        color: colors.primary,
+        textAlign:'center'
     },
     btn:
     {
@@ -563,5 +563,28 @@ export const styles = StyleSheet.create({
         alignItems:'center',
         justifyContent:'space-evenly',
         marginTop:responsiveHeight(3)
-    }
+    },
+    recheckingDetails:
+    {
+        gap:responsiveHeight(1),
+        marginTop:responsiveHeight(2)
+    },
+    eachRecheckingDetails:
+    {
+        gap:responsiveHeight(1),
+    },
+    progressBarContainer:
+    {
+        marginVertical:responsiveHeight(2),
+        gap:responsiveHeight(2)
+    },
+    LoaderContainer:{
+        flex: 1,
+        alignItems: 'center', 
+        justifyContent: 'center',
+        paddingHorizontal:responsiveWidth(4)
+      },
+      Loader:{
+    width:'100%'
+      }
 })
