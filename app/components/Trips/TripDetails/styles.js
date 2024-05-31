@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { responsiveHeight, responsiveWidth } from "../../../utils/responsiveScale";
+import { responsiveFontSize, responsiveHeight, responsiveWidth } from "../../../utils/responsiveScale";
 import { colors, fonts } from "../../../config/theme";
 
 export const styles = StyleSheet.create({
@@ -557,6 +557,26 @@ export const styles = StyleSheet.create({
         gap:responsiveHeight(.8),
         marginTop:responsiveHeight(2)
     },
+    recheckPriceSubContainer:
+    {
+       gap:responsiveHeight(.8)
+    },
+    recheckPriceChildContainer:
+    {
+        gap:responsiveHeight(.5)
+    },
+    oldprices:
+    {
+        fontSize:responsiveHeight(1.8),
+        fontFamily:fonts.primary,
+        color:colors.gray,
+        textDecorationLine:'line-through',
+    },
+    newPrice:{
+        fontSize:responsiveHeight(1.8),
+        fontFamily:fonts.primary,
+        color:colors.gray,
+    },
     hotelRecheckBtnContainer:
     {
         flexDirection:"row",
@@ -586,5 +606,32 @@ export const styles = StyleSheet.create({
       },
       Loader:{
     width:'100%'
+      },
+      voucherContainer:
+      {
+        flexDirection:"row",
+        alignItems:"center",
+        gap:responsiveHeight(1),
+        borderWidth:responsiveFontSize(0.18),
+        alignSelf:'flex-start',
+        padding:responsiveWidth(2),
+        borderColor:colors.primary,
+        borderRadius:responsiveHeight(1)
+      },
+      voucherTitle:
+      {
+        fontSize:responsiveHeight(1.8),
+        fontFamily:fonts.secondry,
+        textAlign:'center',
+        color:colors.primary
+      },
+      recheckCard:
+      {
+        backgroundColor:'white',
+        elevation:responsiveHeight(1),
+        margin:responsiveHeight(.4),
+        padding:responsiveHeight(1),
+        borderRadius:responsiveHeight(1)
       }
+
 })

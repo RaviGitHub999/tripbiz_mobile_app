@@ -127,7 +127,10 @@ const FlightsSearchRes = (props) => {
                                         <Text style={styles.selectedDomesticFlightsPrice}>  {`₹ ${totalFareSum.toLocaleString("en-IN")}`}</Text>
                                         <TouchableOpacity style={styles.selectedDomesticFlightsbookBtn}
                                             onPress={() =>
+                                                {
                                                 actions.fetchingFlightBookData(bookingFlight)
+                                                actions.setBookingPage()
+                                            }
                                             }>
                                             <Text style={styles.selectedDomesticFlightsbookBtnTitle}>Book</Text>
                                         </TouchableOpacity>

@@ -21,19 +21,19 @@ const FCard = props => {
           return (
            
               <View style={{gap:responsiveHeight(1)}}>
-                <View style={{flexDirection:"row",alignItems:'center',gap:responsiveHeight(.9),flexWrap:'wrap'}}>
+                <View style={{flexDirection:"row",alignItems:'center',gap:responsiveHeight(.9),flexWrap:'wrap',borderWidth:1,width:"80%"}}>
                     {
                          airline[0] ?<Image source={{uri:airline[0]?.url}} style={{height:20,width:20}}/>:
                          <IconSwitcher componentName='MaterialIcons' iconName='flight-takeoff' color={colors.gray} iconsize={2}/>
                     }
-                    <Text style={styles.flightTimings}>{`${segment.airlineName}`}</Text>
-                    <Text style={styles.flightTimings}>{`( ${flightCode} )`}</Text>
+                    <View style={{width:"40%"}}><Text style={styles.flightTimings}>{`${segment.airlineName}`}</Text></View>
+                    <View style={{width:"40%"}}><Text style={styles.flightTimings}>{`( ${flightCode} )`}</Text></View>
                 </View>
-                {/* <View style={{alignSelf:'flex-end',marginBottom:responsiveHeight(1),backgroundColor:colors.highlight,padding:responsiveHeight(.5),borderRadius:responsiveHeight(1)}}>
+                <View style={{alignSelf:'flex-end',marginBottom:responsiveHeight(1),backgroundColor:colors.highlight,padding:responsiveHeight(.5),borderRadius:responsiveHeight(1)}}>
                     <Text style={styles.flightTimings}>
                     {segment.depTimeDate.toString().slice(4, 10)}
                     </Text>
-                </View> */}
+                </View>
                 <View style={styles.flightsTimingContainer}>
                         <View style={styles.originContainer}>
                             <Text style={styles.originTitle}>{segment.originAirportCode}</Text>

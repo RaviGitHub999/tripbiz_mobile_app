@@ -59,13 +59,6 @@ const FlightCard = ({
   var flightArr = flightGrp.map((flight, f) => {
     return { ...actions.modifyFlightObject(flight) };
   });
-  // var flightArr = flightGrp.map((flight, f) => {
-  //   const modifiedFlight = actions.modifyFlightObject(flight);
-  //   const key = f.toString();
-  //   return {...modifiedFlight, key};
-  // });
-  // console.log(flightArr[0].segments,"find")
-  let airlinename = flightArr[0].segments[0].airlineName;
   const flightSymbol = useCallback(
     airlineName => {
       const logo = flightsLogosData.find(
@@ -132,9 +125,9 @@ const FlightCard = ({
       <View style={{ rowGap: responsiveHeight(2) }}>
         <View style={bookingFlight ? { flexDirection: 'row', alignItems: 'center' } : styles.logoHeader}>
           <View style={styles.flightLogoContainer}>
-            {flightSymbol(airlinename) ? (
+            {flightSymbol(item.airlineName) ? (
               <Image
-                source={{ uri: flightSymbol(airlinename) }}
+                source={{ uri: flightSymbol(item.airlineName) }}
                 style={styles.flightLogo}
                 resizeMode="contain"
               />
@@ -298,6 +291,7 @@ const FlightCard = ({
         initialNumToRender={5}
         maxToRenderPerBatch={5}
         windowSize={5}
+        ListEmptyComponent={<Text>No Data!!!</Text>}
       />
       {!bookingPage ? (
         <View>
@@ -314,7 +308,7 @@ const FlightCard = ({
               <TouchableOpacity onPress={handleCancellation}>
                 <IconSwitcher
                   componentName="MaterialCommunityIcons"
-                  iconName="cancel"
+                  iconName="calendar-remove"
                   color="black"
                   iconsize={3.5}
                 />
@@ -330,7 +324,7 @@ const FlightCard = ({
               <TouchableOpacity
                 style={styles.bookingButton}
                 onPress={() => {
-                  if(flightResJType === 1 && !bookingFlight)
+                  if(flightResJType === 1 && !bookingFlight.length>0)
                   {
                     setOpen(true);
                   }
@@ -401,13 +395,19 @@ const FlightCard = ({
                           iconsize={2.8}
                         />
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => {
-                        setCancellation(true);
-                        setCancelDtls(flight.fareRules);
-                      }}>
+                      <TouchableOpacity onPress={async () => {
+                          setCancellation(true);
+                          if (flight.fareRules.length === 0) {
+                            var details = await actions.fetchFareRule(flight.resultIndex, flightArr[f].segments[0].airlineName, 600)
+                            setCancelDtls(details)
+                          }
+                          else {
+                            setCancelDtls(flightArr[f].fareRules);
+                          }
+                        }}>
                         <IconSwitcher
                           componentName="MaterialCommunityIcons"
-                          iconName="cancel"
+                          iconName="calendar-remove"
                           color="black"
                           iconsize={2.8}
                         />
@@ -932,6 +932,7 @@ height:responsiveHeight(5)
   popUpNotification:{
     fontSize: responsiveHeight(1.8),
     color: "#fb4143",
-    fontFamily: fonts.primary
+    fontFamily: fonts.primary,
+    textAlign:"center"
   }
 });

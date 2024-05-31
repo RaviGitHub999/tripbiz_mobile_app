@@ -94,70 +94,80 @@ const FlightList = ({ index, props }) => {
   });
   const toggleSelection1 = (index) => {
     const updatedTimes = [...times];
-    setDepSelectedTime((prev) => prev === updatedTimes[index].time ? null : updatedTimes[index].time)
+    setArrSelectedTime((prev) => prev === updatedTimes[index].time ? null : updatedTimes[index].time)
+    // setDepSelectedTime((prev) => prev === updatedTimes[index].time ? null : updatedTimes[index].time)
   };
   const toggleSelection2 = (index) => {
     const updatedTimes = [...times];
-    setArrSelectedTime((prev) => prev === updatedTimes[index].time ? null : updatedTimes[index].time)
+    // setArrSelectedTime((prev) => prev === updatedTimes[index].time ? null : updatedTimes[index].time)
+    setDepSelectedTime((prev) => prev === updatedTimes[index].time ? null : updatedTimes[index].time)
   };
   const toggleintDepSelection1 = (index) => {
     const updatedTimes = [...times];
-    setIntSelectedDepTime1((prev) => prev === updatedTimes[index].time ? null : updatedTimes[index].time)
+    // setIntSelectedDepTime1((prev) => prev === updatedTimes[index].time ? null : updatedTimes[index].time)
+    setIntSelectedArrTime1((prev) => prev === updatedTimes[index].time ? null : updatedTimes[index].time)
   };
+
+  const toggleintDepSelection2 = () => {
+    const updatedTimes = [...times];
+    setIntSelectedArrTime2((prev) => prev === updatedTimes[index].time ? null : updatedTimes[index].time)
+  }
   const toggleintArrSelection1 = (index) => {
     const updatedTimes = [...times];
-    setIntSelectedArrTime1((prev) => prev === updatedTimes[index].time ? null : updatedTimes[index].time)
+    // setIntSelectedArrTime1((prev) => prev === updatedTimes[index].time ? null : updatedTimes[index].time)
+    setIntSelectedDepTime1((prev) => prev === updatedTimes[index].time ? null : updatedTimes[index].time)
   };
 
   const toggleintArrSelection2 = (index) => {
     const updatedTimes = [...times];
-    setIntSelectedArrTime2((prev) => prev === updatedTimes[index].time ? null : updatedTimes[index].time)
+    // setIntSelectedArrTime2((prev) => prev === updatedTimes[index].time ? null : updatedTimes[index].time)
+    setIntSelectedDepTime2((prev) => prev === updatedTimes[index].time ? null : updatedTimes[index].time)
   };
   const img1 = times.map((item, index) => {
     return (
-      <TouchableOpacity key={item.title} onPress={() => toggleSelection1(index)} style={[styles.sunimgCardContainer, depSelectedTime === item.time && styles.selected]}>
-        <Image source={{ uri: item.url }} style={styles.sunImges} />
-        <Text style={[styles.title, depSelectedTime === item.time && styles.selectedText]}>{item.title}</Text>
-      </TouchableOpacity>
-    )
-  })
-  const img2 = times.map((item, index) => {
-    return (
-      <TouchableOpacity key={item.title} onPress={() => toggleSelection2(index)} style={[styles.sunimgCardContainer, arrSelectedTime === item.time && styles.selected]}>
+      <TouchableOpacity key={item.title} onPress={() => toggleSelection1(index)} style={[styles.sunimgCardContainer, arrSelectedTime === item.time && styles.selected]}>
         <Image source={{ uri: item.url }} style={styles.sunImges} />
         <Text style={[styles.title, arrSelectedTime === item.time && styles.selectedText]}>{item.title}</Text>
       </TouchableOpacity>
     )
   })
+  const img2 = times.map((item, index) => {
+    return (
+      <TouchableOpacity key={item.title} onPress={() => toggleSelection2(index)} style={[styles.sunimgCardContainer, depSelectedTime === item.time && styles.selected]}>
+        <Image source={{ uri: item.url }} style={styles.sunImges} />
+        <Text style={[styles.title, depSelectedTime === item.time && styles.selectedText]}>{item.title}</Text>
+      </TouchableOpacity>
+    )
+  })
   const intdepimg1 = times.map((item, index) => {
     return (
-      <TouchableOpacity key={item.title} onPress={() => toggleintDepSelection1(index)} style={[styles.sunimgCardContainer, intdepSelectedTime1 === item.time && styles.selected]}>
-        <Image source={{ uri: item.url }} style={styles.sunImges} />
-        <Text style={[styles.title, intdepSelectedTime1 === item.time && styles.selectedText]}>{item.title}</Text>
-      </TouchableOpacity>
-    )
-  })
-  const intdepimg2 = times.map((item, index) => {
-    return (
-      <TouchableOpacity key={item.title} onPress={() => toggleintDepSelection2(index)} style={[styles.sunimgCardContainer, intdepSelectedTime2 === item.time && styles.selected]}>
-        <Image source={{ uri: item.url }} style={styles.sunImges} />
-        <Text style={[styles.title, intdepSelectedTime2 === item.time && styles.selectedText]}>{item.title}</Text>
-      </TouchableOpacity>
-    )
-  })
-  const intarrimg1 = times.map((item, index) => {
-    return (
-      <TouchableOpacity key={item.title} onPress={() => toggleintArrSelection1(index)} style={[styles.sunimgCardContainer, intarrSelectedTime1 === item.time && styles.selected]}>
+      <TouchableOpacity key={item.title} onPress={() => toggleintDepSelection1(index)} style={[styles.sunimgCardContainer, intarrSelectedTime1 === item.time && styles.selected]}>
         <Image source={{ uri: item.url }} style={styles.sunImges} />
         <Text style={[styles.title, intarrSelectedTime1 === item.time && styles.selectedText]}>{item.title}</Text>
       </TouchableOpacity>
     )
   })
-  const intarrimg2 = times.map((item, index) => {
+  const intdepimg2 = times.map((item, index) => {
     return (
-      <TouchableOpacity key={item.title} onPress={() => toggleintArrSelection2(index)} style={[styles.sunimgCardContainer, intarrSelectedTime2 === item.time && styles.selected]}>
+      <TouchableOpacity key={item.title} onPress={() => toggleintDepSelection2(index)} style={[styles.sunimgCardContainer, intarrSelectedTime2 === item.time && styles.selected]}>
         <Image source={{ uri: item.url }} style={styles.sunImges} />
         <Text style={[styles.title, intarrSelectedTime2 === item.time && styles.selectedText]}>{item.title}</Text>
+      </TouchableOpacity>
+    )
+  })
+  const intarrimg1 = times.map((item, index) => {
+    return (
+      <TouchableOpacity key={item.title} onPress={() => toggleintArrSelection1(index)} style={[styles.sunimgCardContainer, intdepSelectedTime1 === item.time && styles.selected]}>
+        <Image source={{ uri: item.url }} style={styles.sunImges} />
+        <Text style={[styles.title, intdepSelectedTime1 === item.time && styles.selectedText]}>{item.title}</Text>
+      </TouchableOpacity>
+    )
+  })
+  const intarrimg2 = times.map((item, index) => {
+    return (
+      <TouchableOpacity key={item.title} onPress={() => toggleintArrSelection2(index)} style={[styles.sunimgCardContainer, intdepSelectedTime2 === item.time && styles.selected]}>
+        <Image source={{ uri: item.url }} style={styles.sunImges} />
+        <Text style={[styles.title, intdepSelectedTime2 === item.time && styles.selectedText]}>{item.title}</Text>
       </TouchableOpacity>
     )
   })
@@ -504,157 +514,146 @@ const FlightList = ({ index, props }) => {
     actions.setFlightResJType(value)
     removeFilters()
   }, [])
-  
+const listEmpty=()=>
+  {
+    return(
+      <View style={styles.listEmptyContainer}>
+        <Text style={styles.filterHeader}>No Data Found!!!</Text>
+      </View>
+    )
+  }
   return (
     <View style={{ flex: 1 }}>
-      {/* {
-        flightResList.length > 0 ? <View>
-          {
-            !showFilters ?
-              <TouchableOpacity style={[styles.filtersHeaderContainer]} onPress={handlePress}>
-                <View style={styles.filtersIconContainer}>
-                  <IconSwitcher componentName='FontAwesome5' iconName='filter' color={colors.black} iconsize={3} />
-                  <Text style={styles.filterHeader}>{"Filters"}</Text>
-                  {count > 0 ? <View style={{ position: 'absolute', right: responsiveWidth(-5), top: responsiveHeight(0.5), borderWidth: 1, height: responsiveHeight(2.5), width: responsiveHeight(2.5), alignItems: 'center', justifyContent: 'center', borderRadius: responsiveHeight(2), backgroundColor: colors.highlight }}>
-                    <Text>{count}</Text>
-                  </View> : null}
+      {
+        flightResList.length > 0 ?
+          <FilterHeader value={showFilters} handlefiltersToggleActions={handlePress} handlefilters={applyFilters} filtersCount={count} removeFilters={removeFilters}>
+            <View style={styles.filtersmainContainer}>
+              <View>
+                <Text style={styles.filterTitles}>{"Airline"}</Text>
+                <View style={styles.flightNamesContentContainer}>
+                  {airlines.map((item) => {
+                    return (
+                      <TouchableOpacity onPress={() => handleFlightsNameFilter(item)} style={[styles.flightNameBtn, airline === item && styles.selectedFlightNameBtn]}>
+                        <Text style={[styles.flightName, airline === item && styles.selectedFlightName]}>{item}</Text>
+                      </TouchableOpacity>
+                    )
+                  })}
                 </View>
-                <IconSwitcher componentName='Ionicons' iconName='chevron-down' color={colors.black} iconsize={3.5} />
-              </TouchableOpacity> :
-             
-          }
-        </View> : null
-      } */}    
-{
-  flightResList.length > 0 ?
-  <FilterHeader value={showFilters} handlefiltersToggleActions={handlePress} handlefilters={applyFilters} filtersCount={count}>
-                  <View style={styles.filtersmainContainer}>
+              </View>
+              <View>
+                <Text style={styles.filterTitles}>{"Stops"}</Text>
+                {isInternationalRound ?
+                  <>
                     <View>
-                      <Text style={styles.filterTitles}>{"Airline"}</Text>
-                      <View style={styles.flightNamesContentContainer}>
-                        {airlines.map((item) => {
+                      <Text>Onward Flight</Text>
+                      <View style={[styles.stopsContainer]}>
+                        <FlatList ref={flatListRef} data={flightStops} renderItem={({ item, index }) => {
                           return (
-                            <TouchableOpacity onPress={() => handleFlightsNameFilter(item)} style={[styles.flightNameBtn, airline === item && styles.selectedFlightNameBtn]}>
-                              <Text style={[styles.flightName, airline === item && styles.selectedFlightName]}>{item}</Text>
+                            <TouchableOpacity onPress={() => handleintFlightStops1(item.stops, index)} style={[styles.flightStopsTitle, intStops1 === item.stops && styles.activeStop]}>
+                              <Text key={item.stops} style={[styles.flightStopsText, intStops1 === item.stops && styles.activeStopsText]}>{item.title}</Text>
                             </TouchableOpacity>
                           )
-                        })}
+                        }} horizontal showsHorizontalScrollIndicator={false} />
                       </View>
                     </View>
                     <View>
-                      <Text style={styles.filterTitles}>{"Stops"}</Text>
-                      {isInternationalRound ?
-                        <>
-                          <View>
-                            <Text>Onward Flight</Text>
-                            <View style={[styles.stopsContainer]}>
-                              <FlatList ref={flatListRef} data={flightStops} renderItem={({ item, index }) => {
-                                return (
-                                  <TouchableOpacity onPress={() => handleintFlightStops1(item.stops, index)} style={[styles.flightStopsTitle, intStops1 === item.stops && styles.activeStop]}>
-                                    <Text key={item.stops} style={[styles.flightStopsText, intStops1 === item.stops && styles.activeStopsText]}>{item.title}</Text>
-                                  </TouchableOpacity>
-                                )
-                              }} horizontal showsHorizontalScrollIndicator={false} />
-                            </View>
-                          </View>
-                          <View>
-                            <Text>Return Flight</Text>
-                            <View style={[styles.stopsContainer]}>
-                              <FlatList ref={flatListRef} data={flightStops} renderItem={({ item, index }) => {
-                                return (
-                                  <TouchableOpacity onPress={() => handleintFlightStops2(item.stops, index)} style={[styles.flightStopsTitle, intStops2 === item.stops && styles.activeStop]}>
-                                    <Text key={item.stops} style={[styles.flightStopsText, intStops2 === item.stops && styles.activeStopsText]}>{item.title}</Text>
-                                  </TouchableOpacity>
-                                )
-                              }} horizontal showsHorizontalScrollIndicator={false} />
-                            </View>
-                          </View>
+                      <Text>Return Flight</Text>
+                      <View style={[styles.stopsContainer]}>
+                        <FlatList ref={flatListRef} data={flightStops} renderItem={({ item, index }) => {
+                          return (
+                            <TouchableOpacity onPress={() => handleintFlightStops2(item.stops, index)} style={[styles.flightStopsTitle, intStops2 === item.stops && styles.activeStop]}>
+                              <Text key={item.stops} style={[styles.flightStopsText, intStops2 === item.stops && styles.activeStopsText]}>{item.title}</Text>
+                            </TouchableOpacity>
+                          )
+                        }} horizontal showsHorizontalScrollIndicator={false} />
+                      </View>
+                    </View>
 
-                        </>
+                  </>
 
 
-                        : <View style={[styles.stopsContainer]}>
-                          <FlatList ref={flatListRef} data={flightStops} renderItem={({ item, index }) => {
-                            return (
-                              <TouchableOpacity onPress={() => handleFlightStops(item.stops, index)} style={[styles.flightStopsTitle, stops === item.stops && styles.activeStop]}>
-                                <Text key={item.stops} style={[styles.flightStopsText, stops === item.stops && styles.activeStopsText]}>{item.title}</Text>
-                              </TouchableOpacity>
-                            )
-                          }} horizontal showsHorizontalScrollIndicator={false} />
-                        </View>}
+                  : <View style={[styles.stopsContainer]}>
+                    <FlatList ref={flatListRef} data={flightStops} renderItem={({ item, index }) => {
+                      return (
+                        <TouchableOpacity onPress={() => handleFlightStops(item.stops, index)} style={[styles.flightStopsTitle, stops === item.stops && styles.activeStop]}>
+                          <Text key={item.stops} style={[styles.flightStopsText, stops === item.stops && styles.activeStopsText]}>{item.title}</Text>
+                        </TouchableOpacity>
+                      )
+                    }} horizontal showsHorizontalScrollIndicator={false} />
+                  </View>}
+              </View>
+              <View>
+                <Text style={styles.filterTitles}>{"Departure Time"}</Text>
+                {isInternationalRound ?
+                  <>
+                    <View>
+                      <Text>Onward flight</Text>
+                      <View style={styles.mappedSunImgContainer}>
+                        {intdepimg1}
+                      </View>
                     </View>
                     <View>
-                      <Text style={styles.filterTitles}>{"Departure Time"}</Text>
-                      {isInternationalRound ?
-                        <>
-                          <View>
-                            <Text>Onward flight</Text>
-                            <View style={styles.mappedSunImgContainer}>
-                              {intdepimg1}
-                            </View>
-                          </View>
-                          <View>
-                            <Text>Return flight</Text>
-                            <View style={styles.mappedSunImgContainer}>
-                              {intdepimg2}
-                            </View>
-                          </View>
-                        </>
-                        :
-                        <View style={styles.mappedSunImgContainer}>
-                          {intarrimg1}
-                        </View>
-                      }
+                      <Text>Return flight</Text>
+                      <View style={styles.mappedSunImgContainer}>
+                        {intdepimg2}
+                      </View>
                     </View>
-                    <View>
-                      <Text style={styles.filterTitles}>{"Arrival Time"}</Text>
-                      {isInternationalRound ?
-                        <>
-                          <View>
-                            <Text>Onward flight</Text>
-                            <View style={styles.mappedSunImgContainer}>
-                              {intarrimg1}
-                            </View>
-                          </View>
-                          <View>
-                            <Text>Return flight</Text>
-                            <View style={styles.mappedSunImgContainer}>
-                              {intarrimg2}
-                            </View>
-                          </View>
-                        </>
-                        : <View style={styles.mappedSunImgContainer}>
-                          {img2}
-                        </View>}
-                    </View>
-                    <View style={styles.sortingMainContainer}>
-                      <Text style={styles.filterTitles}>{"Sort"}</Text>
-                      <FlatList data={sortData} renderItem={({ item, index }) => {
-                        return (
-                          <TouchableOpacity style={item.id === sortInd ? [styles.sortingBtnsContainer, styles.sortingBtnsSelectedContainer] : styles.sortingBtnsContainer} onPress={item.title === "Price" ? handleCost : handleDuration}>
-                            <Text style={item.id === sortInd ? [styles.sortingBtnText, styles.sortingBtnSelectedText] : styles.sortingBtnText}>{`${item.title}(${item.des})`}</Text>
-                          </TouchableOpacity>
-                        )
-                      }} horizontal />
-                    </View>
+                  </>
+                  :
+                  <View style={styles.mappedSunImgContainer}>
+                    {img1}
                   </View>
+                }
+              </View>
+              <View>
+                <Text style={styles.filterTitles}>{"Arrival Time"}</Text>
+                {isInternationalRound ?
+                  <>
+                    <View>
+                      <Text>Onward flight</Text>
+                      <View style={styles.mappedSunImgContainer}>
+                        {intarrimg1}
+                      </View>
+                    </View>
+                    <View>
+                      <Text>Return flight</Text>
+                      <View style={styles.mappedSunImgContainer}>
+                        {intarrimg2}
+                      </View>
+                    </View>
+                  </>
+                  : <View style={styles.mappedSunImgContainer}>
+                    {img2}
+                  </View>}
+              </View>
+              <View style={styles.sortingMainContainer}>
+                <Text style={styles.filterTitles}>{"Sort"}</Text>
+                <FlatList data={sortData} renderItem={({ item, index }) => {
+                  return (
+                    <TouchableOpacity style={item.id === sortInd ? [styles.sortingBtnsContainer, styles.sortingBtnsSelectedContainer] : styles.sortingBtnsContainer} onPress={item.title === "Price" ? handleCost : handleDuration}>
+                      <Text style={item.id === sortInd ? [styles.sortingBtnText, styles.sortingBtnSelectedText] : styles.sortingBtnText}>{`${item.title}(${item.des})`}</Text>
+                    </TouchableOpacity>
+                  )
+                }} horizontal />
+              </View>
+            </View>
 
-                  <TouchableOpacity style={styles.upArrowIcon} onPress={() => setShowFilters(false)}>
-                    <IconSwitcher componentName='Ionicons' iconName='chevron-up' color={colors.black} iconsize={3.5} />
-                  </TouchableOpacity>
-                {/* </ScrollView> */}
+            <TouchableOpacity style={styles.upArrowIcon} onPress={() => setShowFilters(false)}>
+              <IconSwitcher componentName='Ionicons' iconName='chevron-up' color={colors.black} iconsize={3.5} />
+            </TouchableOpacity>
+            {/* </ScrollView> */}
 
-  </FilterHeader>
-  :null
-}
+          </FilterHeader>
+          : null
+      }
 
-{
+      {
         count > 0 ? (
           <TouchableOpacity onPress={() => removeFilters()} style={styles.clearFiltersBtn}>
             <Text style={styles.clearFiltersBtnTitle}>Clear Filters</Text>
           </TouchableOpacity>
         ) : null
-      } 
+      }
       {
         flightResList.length > 1 && !internationalFlights ?
           <View style={styles.flightResultsNavMainContainer}>
@@ -675,11 +674,12 @@ const FlightList = ({ index, props }) => {
         {
           flightResList.length > 0 ? (
             flightResList[index] && !showFilters &&
-            (actions.filterFlights(flightResList[index]) ? <FlatList
+            <FlatList
               data={actions.filterFlights(flightResList[index])}
               renderItem={memoizedRenderItem}
               contentContainerStyle={{ paddingBottom: responsiveHeight(20) }}
-            /> : <Text>No results found</Text>)
+              ListEmptyComponent={listEmpty}
+            />
           ) : <View style={styles.noFlightsTitleContainer}>
             <Text style={styles.noFlightsTitle}>Flight search hasn't returned any results</Text>
           </View>
@@ -766,7 +766,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingLeft: responsiveWidth(2),
     paddingVertical: responsiveHeight(1.5),
-    borderWidth:1
+    borderWidth: 1
   },
   filterHeader: {
     fontSize: responsiveHeight(2.5),
@@ -780,7 +780,7 @@ const styles = StyleSheet.create({
   upArrowIcon: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop:responsiveHeight(1)
+    marginTop: responsiveHeight(1)
   },
   // filterHeader: {
   //     fontSize: responsiveHeight(2.8),
@@ -965,5 +965,9 @@ const styles = StyleSheet.create({
     fontFamily: fonts.primary,
     fontSize: responsiveHeight(2.8),
     color: colors.primary
+  },
+  listEmptyContainer:{
+    alignItems:'center',
+    marginTop:responsiveHeight(2)
   }
 })  

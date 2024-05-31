@@ -158,6 +158,7 @@ export default class MyProvider extends Component {
       outbound: "",
       inbound: "",
       airportOriginData: [],
+      bookingFlight:[],
       airportOriginLoading: false,
       originselected: false,
       destinationselected: false,
@@ -969,8 +970,28 @@ export default class MyProvider extends Component {
             flightResList: [],
             searchingFlights: true,
             flightBookPage: false,
-            flightSessionExpired: false
+            flightSessionExpired: false,
+            bookingFlight: [],
+            flightResJType:0,
           });
+          this.state.actions.setDestStartTime(null);
+          this.state.actions.setDestEndTime(null);
+          this.state.actions.setOriginStartTime(null);
+          this.state.actions.setOriginEndTime(null);
+          this.state.actions.setStopPts(null);
+          this.state.actions.setAirlineName("");
+          this.state.actions.setByCost(true);
+          this.state.actions.setByDuration(false);
+          this.state.actions.setIntDestEndTime1(null)
+          this.state.actions.setIntDestEndTime2(null)
+          this.state.actions.setIntDestStartTime1(null)
+          this.state.actions.setIntDestStartTime2(null)
+          this.state.actions.setIntOriginEndTime1(null)
+          this.state.actions.setIntOriginEndTime2(null)
+          this.state.actions.setIntOriginStartTime1(null)
+          this.state.actions.setIntOriginStartTime2(null)
+          this.state.actions.setIntStopPts1(null)
+          this.state.actions.setIntStopPts2(null)
         },
         setAirlineName: (value) => {
           this.setState({
@@ -1244,7 +1265,7 @@ export default class MyProvider extends Component {
               filteredArr = filteredArr.filter((a) => {
                 var newflightObj = this.state.actions.modifyFlightObject(a[0]);
                 return (
-                  new Date(newflightObj.segments[0].depTimeDate).getHours() >
+                  new Date(newflightObj.segments[0].depTimeDate).getHours() >=
                   this.state.originStartTime.getHours() &&
                   (new Date(newflightObj.segments[0].depTimeDate).getHours() <
                     this.state.originEndTime.getHours() ||
@@ -1259,7 +1280,7 @@ export default class MyProvider extends Component {
               filteredArr = filteredArr.filter((a) => {
                 var newflightObj = this.state.actions.modifyFlightObject(a[0]);
                 return (
-                  new Date(newflightObj.segments[0].depTimeDate).getHours() >
+                  new Date(newflightObj.segments[0].depTimeDate).getHours() >=
                   this.state.originStartTime.getHours() &&
                   new Date(newflightObj.segments[0].depTimeDate).getHours() <
                   this.state.originEndTime.getHours()
@@ -1272,7 +1293,7 @@ export default class MyProvider extends Component {
               filteredArr = filteredArr.filter((a) => {
                 var newflightObj = this.state.actions.modifyFlightObject(a[0]);
                 return (
-                  new Date(newflightObj.segments[0].arrTimeDate).getHours() >
+                  new Date(newflightObj.segments[0].arrTimeDate).getHours() >=
                   this.state.destStartTime.getHours() &&
                   (new Date(newflightObj.segments[0].arrTimeDate).getHours() <
                     this.state.destEndTime.getHours() ||
@@ -1287,7 +1308,7 @@ export default class MyProvider extends Component {
               filteredArr = filteredArr.filter((a) => {
                 var newflightObj = this.state.actions.modifyFlightObject(a[0]);
                 return (
-                  new Date(newflightObj.segments[0].arrTimeDate).getHours() >
+                  new Date(newflightObj.segments[0].arrTimeDate).getHours() >=
                   this.state.destStartTime.getHours() &&
                   new Date(newflightObj.segments[0].arrTimeDate).getHours() <
                   this.state.destEndTime.getHours()
@@ -1300,7 +1321,7 @@ export default class MyProvider extends Component {
               filteredArr = filteredArr.filter((a) => {
                 var newflightObj = this.state.actions.modifyFlightObject(a[0]);
                 return (
-                  new Date(newflightObj.segments[0].arrTimeDate).getHours() >
+                  new Date(newflightObj.segments[0].arrTimeDate).getHours() >=
                   this.state.intDestStartTime1.getHours() &&
                   (new Date(newflightObj.segments[0].arrTimeDate).getHours() <
                     this.state.intDestEndTime1.getHours() ||
@@ -1315,7 +1336,7 @@ export default class MyProvider extends Component {
               filteredArr = filteredArr.filter((a) => {
                 var newflightObj = this.state.actions.modifyFlightObject(a[0]);
                 return (
-                  new Date(newflightObj.segments[0].arrTimeDate).getHours() >
+                  new Date(newflightObj.segments[0].arrTimeDate).getHours() >=
                   this.state.intDestStartTime1.getHours() &&
                   new Date(newflightObj.segments[0].arrTimeDate).getHours() <
                   this.state.intDestEndTime1.getHours()
@@ -1328,7 +1349,7 @@ export default class MyProvider extends Component {
               filteredArr = filteredArr.filter((a) => {
                 var newflightObj = this.state.actions.modifyFlightObject(a[0]);
                 return (
-                  new Date(newflightObj.segments[1].arrTimeDate).getHours() >
+                  new Date(newflightObj.segments[1].arrTimeDate).getHours() >=
                   this.state.intDestStartTime2.getHours() &&
                   (new Date(newflightObj.segments[1].arrTimeDate).getHours() <
                     this.state.intDestEndTime2.getHours() ||
@@ -1343,7 +1364,7 @@ export default class MyProvider extends Component {
               filteredArr = filteredArr.filter((a) => {
                 var newflightObj = this.state.actions.modifyFlightObject(a[0]);
                 return (
-                  new Date(newflightObj.segments[1].arrTimeDate).getHours() >
+                  new Date(newflightObj.segments[1].arrTimeDate).getHours() >=
                   this.state.intDestStartTime2.getHours() &&
                   new Date(newflightObj.segments[1].arrTimeDate).getHours() <
                   this.state.intDestEndTime2.getHours()
@@ -1356,7 +1377,7 @@ export default class MyProvider extends Component {
               filteredArr = filteredArr.filter((a) => {
                 var newflightObj = this.state.actions.modifyFlightObject(a[0]);
                 return (
-                  new Date(newflightObj.segments[0].depTimeDate).getHours() >
+                  new Date(newflightObj.segments[0].depTimeDate).getHours() >=
                   this.state.intOriginStartTime1.getHours() &&
                   (new Date(newflightObj.segments[0].depTimeDate).getHours() <
                     this.state.intOriginEndTime1.getHours() ||
@@ -1375,7 +1396,7 @@ export default class MyProvider extends Component {
                   this.state.intOriginStartTime1.getHours()
                 );
                 return (
-                  new Date(newflightObj.segments[0].depTimeDate).getHours() >
+                  new Date(newflightObj.segments[0].depTimeDate).getHours() >=
                   this.state.intOriginStartTime1.getHours() &&
                   new Date(newflightObj.segments[0].depTimeDate).getHours() <
                   this.state.intOriginEndTime1.getHours()
@@ -1388,7 +1409,7 @@ export default class MyProvider extends Component {
               filteredArr = filteredArr.filter((a) => {
                 var newflightObj = this.state.actions.modifyFlightObject(a[0]);
                 return (
-                  new Date(newflightObj.segments[1].depTimeDate).getHours() >
+                  new Date(newflightObj.segments[1].depTimeDate).getHours() >=
                   this.state.intOriginStartTime2.getHours() &&
                   (new Date(newflightObj.segments[1].depTimeDate).getHours() <
                     this.state.intOriginEndTime2.getHours() ||
@@ -1403,7 +1424,7 @@ export default class MyProvider extends Component {
               filteredArr = filteredArr.filter((a) => {
                 var newflightObj = this.state.actions.modifyFlightObject(a[0]);
                 return (
-                  new Date(newflightObj.segments[1].depTimeDate).getHours() >
+                  new Date(newflightObj.segments[1].depTimeDate).getHours() >=
                   this.state.intOriginStartTime2.getHours() &&
                   new Date(newflightObj.segments[1].depTimeDate).getHours() <
                   this.state.intOriginEndTime2.getHours()
@@ -3503,12 +3524,11 @@ export default class MyProvider extends Component {
             directflight: false,
             oneStopFlight: false,
             journeyWay:"1",
-            flightResJType:0
+            flightResJType:0,
+            
           })
           this.state.actions.setFlightBookPage(false)
         },
-
-
         setSelectedTrip: async (value) => {
           this.setState({
             selectedTrip: value
@@ -4057,11 +4077,68 @@ export default class MyProvider extends Component {
           var ssrData = data2.ssrResult.Response;
           return { flightData, ssrData };
         },
+        // getHotelUpdatedDetails: async (
+        //   cityIds,
+        //   searchReq,
+        //   selectedRoom
+        // ) => {
+        //   var checkInDate = new Date(searchReq.checkInDate.seconds * 1000);
+        //   let roomGuests = [];
+  
+        //   searchReq.hotelRoomArr.forEach((room, r) => {
+        //     roomGuests.push({
+        //       NoOfAdults: Number(room.adults),
+        //       NoOfChild: Number(room.child),
+        //       ChildAge: room.childAge.map((child, c) => Number(child.age)),
+        //     });
+        //   });
+  
+        //   var request = {
+        //     checkInDate: this.state.actions.convertTboDateFormat(checkInDate),
+        //     nights: searchReq.hotelNights,
+        //     countryCode: searchReq.countryCode,
+        //     cityIds: cityIds,
+        //     hotelCodes: hotelCodes,
+        //     noOfRooms: searchReq.hotelRooms,
+        //     roomGuests: roomGuests,
+        //   };
+  
+        //   var reqs = await fetch(
+        //     "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/hotelResults",
+        //     {
+        //       method: "POST",
+        //       // credentials: "include",
+        //       headers: {
+        //         "Content-Type": "application/json",
+        //       },
+        //       body: JSON.stringify(request),
+        //     }
+        //   );
+        //   const res = await reqs.json();
+        //   var selectedRooms = [];
+        //   if (!res[0].error) {
+        //     res[0].roomResult.GetHotelRoomResult.HotelRoomsDetails.forEach(
+        //       (mainRoom) => {
+        //         selectedRoom.forEach((room) => {
+        //           if (
+        //             mainRoom.RoomTypeName === room.RoomTypeName &&
+        //             mainRoom.RoomTypeCode === room.RoomTypeCode &&
+        //             mainRoom.LastCancellationDate === room.LastCancellationDate
+        //           ) {
+        //             selectedRooms.push(mainRoom);
+        //           }
+        //         });
+        //       }
+        //     );
+        //   }
+  
+        //   return selectedRooms;
+        // },
         getHotelUpdatedDetails: async (
-          cityIds,
-          hotelCodes,
+          cityId,
           searchReq,
-          selectedRoom
+          selectedRoom,
+          hotelRes
         ) => {
           var checkInDate = new Date(searchReq.checkInDate.seconds * 1000);
           let roomGuests = [];
@@ -4078,14 +4155,14 @@ export default class MyProvider extends Component {
             checkInDate: this.state.actions.convertTboDateFormat(checkInDate),
             nights: searchReq.hotelNights,
             countryCode: searchReq.countryCode,
-            cityIds: cityIds,
-            hotelCodes: hotelCodes,
+            cityId: cityId,
             noOfRooms: searchReq.hotelRooms,
             roomGuests: roomGuests,
+            HotelId: hotelRes.HotelCode,
           };
   
-          var reqs = await fetch(
-            "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/hotelResults",
+          var hotelStatic = await fetch(
+            "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/hotelSearchRes",
             {
               method: "POST",
               // credentials: "include",
@@ -4094,28 +4171,62 @@ export default class MyProvider extends Component {
               },
               body: JSON.stringify(request),
             }
-          );
-          const res = await reqs.json();
-          var selectedRooms = [];
-          if (!res[0].error) {
-            res[0].roomResult.GetHotelRoomResult.HotelRoomsDetails.forEach(
-              (mainRoom) => {
-                selectedRoom.forEach((room) => {
-                  if (
-                    mainRoom.RoomTypeName === room.RoomTypeName &&
-                    mainRoom.RoomTypeCode === room.RoomTypeCode &&
-                    mainRoom.LastCancellationDate === room.LastCancellationDate
-                  ) {
-                    selectedRooms.push(mainRoom);
-                  }
-                });
-              }
-            );
+          )
+            .then((res) => res.json())
+            .catch((err) => console.log(err));
+          if (hotelStatic?.error?.ErrorCode > 0) {
+            return [];
           }
+          var hotelResults =
+            hotelStatic.hotelResult.HotelSearchResult.HotelResults;
+          var data = hotelResults.filter((hotel) => {
+            return hotel.HotelCode === hotelRes.HotelCode;
+          });
   
+          if (!data && data.length === 0) {
+            return [];
+          }
+          var infoReq = {
+            traceId: hotelStatic.hotelResult.HotelSearchResult.TraceId,
+            tokenId: hotelStatic.tokenId,
+            resultIndex: data[0].ResultIndex,
+            hotelCode: data[0].HotelCode,
+            categoryId:
+              data[0].SupplierHotelCodes && data[0].SupplierHotelCodes.length > 0
+                ? data[0].SupplierHotelCodes[0].CategoryId
+                : "",
+          };
+  
+          var hotelInfoRes = await fetch(
+            "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/hotelInfoRes",
+            {
+              method: "POST",
+              // credentials: "include",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(infoReq),
+            }
+          )
+            .then((res) => res.json())
+            .catch((err) => console.log(err));
+          var selectedRooms = [];
+          hotelInfoRes.roomResult.GetHotelRoomResult.HotelRoomsDetails.forEach(
+            (mainRoom) => {
+              selectedRoom.forEach((room) => {
+                if (
+                  mainRoom.RoomTypeName === room.RoomTypeName &&
+                  mainRoom.RoomTypeCode === room.RoomTypeCode &&
+                  mainRoom.LastCancellationDate === room.LastCancellationDate
+                ) {
+                  selectedRooms.push(mainRoom);
+                }
+              });
+            }
+          );
+          console.log(selectedRooms);
           return selectedRooms;
         },
-
         updateHotelBookingDetails : async (newPrice, hotelId, tripId) => {
           try {
             const tripsRef = firestore()

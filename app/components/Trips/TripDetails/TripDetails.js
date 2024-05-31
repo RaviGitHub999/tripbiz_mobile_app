@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   FlatList,
+  Alert,
+  Linking,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import MyContext from '../../../context/Context';
@@ -69,7 +71,7 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
   const [newSelectedRoom, setNewSelectedRoom] = useState([])
   const [openPriceReCheck, setOpenPriceReCheck] = useState(false)
   const [reCheck, setReCheck] = useState(false)
-  const [selectedCard, setSelectedCard] = useState({ index: null, list: null });
+  const [selectedCard, setSelectedCard] = useState({ index: 0, list: "a" });
 
   const {
     actions,
@@ -582,17 +584,30 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
     setReCheckLoading(true)
     setReCheckHotelName(hotel.data.hotelInfo.HotelInfoResult.HotelDetails.HotelName)
     setOpenPriceReCheck(true)
-    var data = await actions.getHotelUpdatedDetails([hotel.data.hotelSearchQuery.cityHotel], [hotel.data.hotelCode], hotel.data.hotelSearchQuery, hotel.data.selectedRoomType)
+    var data = await actions.getHotelUpdatedDetails(hotel.data.hotelSearchQuery
+      .cityHotel,
+      hotel.data.hotelSearchQuery,
+      hotel.data.selectedRoomType,
+      hotel.data.hotelSearchRes)
     setOldSelectedRoom(hotel.data.selectedRoomType)
     setNewSelectedRoom(data)
     setReCheckLoading(false)
     setDeleteType("hotels")
     setDeleteId(hotel.id)
   }
+
+  const downloadDoc = async (hotelStatus) => {
+    try {
+      await Linking.openURL(hotelStatus[0].downloadURL);
+    } catch (error) {
+      Alert.alert('Error', 'An error occurred while trying to open the URL');
+      console.error('An error occurred', error);
+    }
+  }
   return tripDataLoading ? (
     <View style={styles.LoaderContainer}>
       <View style={styles.Loader}>
-      <ProgressBar />
+        <ProgressBar />
       </View>
     </View>
   ) : (
@@ -740,7 +755,7 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
                             );
                           });
                           var originalDate = hotelData[0]?.updatedAt ? new Date(hotelData[0]?.updatedAt) : new Date(hotelTimeStamp);
-                          var threeHoursAfter = new Date(originalDate.getTime() + (3* 60 * 60 * 1000));
+                          var threeHoursAfter = new Date(originalDate.getTime() + (3 * 60 * 60 * 1000));
                           var currentTime = new Date();
                           var isTimeReCheck = hotelData[0]?.status === "Not Submitted" ? currentTime > threeHoursAfter : false
                           for (var i = 1; i <= Math.ceil(starRating); i++) {
@@ -793,19 +808,6 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
                                         console.log('Image loaded successfully')
                                       }
                                     />
-                                    {/* <FastImage
-style={styles.hotelImg}
-source={{
-  uri: imageError
-    ? "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
-    : img
-}}
-onError={() => {
-  console.log("Image loading error occurred");
-  setImageError(true);
-}}
-onLoad={() => console.log("Image loaded successfully")}
-/> */}
                                   </View>
                                   <View
                                     style={{
@@ -1033,6 +1035,11 @@ onLoad={() => console.log("Image loaded successfully")}
                                       />
                                     </TouchableOpacity>
                                   </View>
+                                  {hotelStatus[0]?.downloadURL ? <TouchableOpacity style={styles.voucherContainer} onPress={() =>
+                                    downloadDoc(hotelStatus)}>
+                                    <Text style={styles.voucherTitle}>Voucher</Text>
+                                    <IconSwitcher componentName='FontAwesome' iconName='download' iconsize={2} color={colors.primary} />
+                                  </TouchableOpacity> : null}
                                 </View>
                                 <View
                                   style={styles.addedHotelTimeAndDateContainer}>
@@ -1139,6 +1146,11 @@ onLoad={() => console.log("Image loaded successfully")}
                                 tripId={id}
                                 flightId={flight.id}
                                 tripsPage={true}
+                                downloadUrl={
+                                  flightStatus[0]?.downloadURL
+                                    ? flightStatus[0].downloadURL
+                                    : undefined
+                                }
                               />
                             </>
                           );
@@ -1163,6 +1175,25 @@ onLoad={() => console.log("Image loaded successfully")}
                 </View>
               </View>
             ) : null}
+
+            <>
+              <Text style={styles.flightCardTitle}>Trip Expenses</Text>
+              <View style={styles.addingHotelBtnContainer}>
+                <TouchableOpacity
+                  style={styles.addingHotelBtn}
+                >
+                  <Text style={styles.addingHotelBtnTitle}>
+                    Add Trip Expense{' '}
+                  </Text>
+                  <IconSwitcher
+                    componentName="Feather"
+                    iconName="plus"
+                    color={colors.primary}
+                    iconsize={3}
+                  />
+                </TouchableOpacity>
+              </View>
+            </>
           </View>
         </ScrollView>
 
@@ -1178,7 +1209,7 @@ onLoad={() => console.log("Image loaded successfully")}
             <>
               {
 
-                (tripData?.data?.flights.every((flight) => {
+                (!tripData?.data?.flights.every((flight) => {
                   var hotelData = tripData?.data?.flights.filter((hotels) => hotels.id === flight.id)
                   var hotelTimeStamp = hotelData[0]?.updatedAt ? new Date(hotelData[0].updatedAt) : new Date(hotelData[0]?.date?.seconds * 1000)
                   var originalDate = new Date(hotelTimeStamp);
@@ -1871,7 +1902,7 @@ onLoad={() => console.log("Image loaded successfully")}
                                               </Text>
                                             ) : null}
                                             <View style={styles.hotelCard}>
-                                              <HCard hotel={hotel} formattedDate1={formattedDate1} endDate={endDate} adults={adults} />
+                                              <HCard hotel={hotel} formattedDate1={formattedDate1} endDate={endDate} adults={adults} recheck={true}/>
                                             </View>
                                             <View style={styles.card}>
                                               <Text
@@ -2196,7 +2227,7 @@ onLoad={() => console.log("Image loaded successfully")}
                                               </Text>
                                             ) : null}
                                             <View style={styles.hotelCard}>
-                                              <HCard hotel={hotel} formattedDate1={formattedDate1} endDate={endDate} adults={adults} />
+                                              <HCard hotel={hotel} formattedDate1={formattedDate1} endDate={endDate} adults={adults} recheck={true}/>
                                             </View>
                                             <View style={styles.card}>
                                               <Text
@@ -2486,26 +2517,28 @@ onLoad={() => console.log("Image loaded successfully")}
         >
 
 
-          <HCard hotel={hotelDetails} formattedDate1={formatDate} endDate={hotelEndDate} adults={hotelAdults} />
+          <View style={styles.recheckCard}>
+          <HCard hotel={hotelDetails} formattedDate1={formatDate} endDate={hotelEndDate} adults={hotelAdults} recheck={false}/>
+          </View>
 
           <View style={{ marginTop: responsiveHeight(2) }}>
             {
               reCheckLoading ?
-               <View style={styles.progressBarContainer}>
-                <ProgressBar/>
-                <Text style={[styles.roomType,{textAlign:"center"}]}>ReChecking Hotel Rates</Text>
+                <View style={styles.progressBarContainer}>
+                  <ProgressBar />
+                  <Text style={[styles.roomType, { textAlign: "center" }]}>ReChecking Hotel Rates</Text>
                 </View>
                 :
 
                 newSelectedRoom.length > 0 ?
                   <View>
                     <Text style={styles.recheckPriceTitle}>Hotel Price Recheck</Text>
-                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
+                    {/* <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
                       <Text style={[styles.subTitle, { fontSize: responsiveHeight(1.8) }]}>Hotel Name:</Text>
                       <Text style={[styles.title, { flex: 1 }]} numberOfLines={1}>
                         {reCheckHotelName}</Text>
-                    </View>
-                    <Text style={[styles.subTitle, { fontSize: responsiveHeight(1.8) }]}>Room Details</Text>
+                    </View> */}
+                    {/* <Text style={[styles.subTitle, { fontSize: responsiveHeight(1.8) }]}>Room Details</Text>
                     {
                       oldSelectedRoom.map((room, f) => {
                         return (
@@ -2601,14 +2634,28 @@ onLoad={() => console.log("Image loaded successfully")}
                           </View>
                         );
                       })
-                    }
+                    } */}
+
                     <View style={styles.recheckPriceContainer}>
-                      <Text style={styles.hotelTitle}>Old Rates:<Text style={styles.hotelRoomPrice}>&#8377;{oldSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPriceRoundedOff), 0).toLocaleString()}</Text></Text>
-                      <Text style={styles.hotelTitle}>Service Charges:<Text style={styles.hotelRoomPrice}>&#8377;{Math.ceil(((oldSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPriceRoundedOff), 0)) * domesticHotel) / 100).toLocaleString()}</Text></Text>
-                      <Text style={styles.hotelTitle}>Old Total Price:<Text style={styles.hotelRoomPrice}>&#8377;{Math.ceil(oldSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPriceRoundedOff), 0) + ((oldSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPriceRoundedOff), 0)) * domesticHotel) / 100).toLocaleString()}</Text></Text>
-                      <Text style={styles.hotelTitle}>New Rates:<Text style={styles.hotelRoomPrice}>&#8377;{Math.ceil(newSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPrice), 0)).toLocaleString()}</Text></Text>
-                      <Text style={styles.hotelTitle}>Service Charges:<Text style={styles.hotelRoomPrice}>&#8377;{Math.ceil(((newSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPrice), 0)) * domesticHotel) / 100).toLocaleString()}</Text></Text>
-                      <Text style={styles.hotelTitle}>New Total Price:<Text style={styles.hotelRoomPrice}>&#8377;{Math.ceil(newSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPrice), 0) + ((newSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPrice), 0)) * domesticHotel) / 100).toLocaleString()}</Text></Text>
+
+                      <View style={styles.recheckPriceSubContainer}>
+                        <Text style={styles.hotelTitle}>Old Rates</Text>
+                        <View  style={styles.recheckPriceChildContainer}>
+                          <Text style={styles.oldprices}>Old Rates:<Text style={styles.hotelRoomPrice}>&#8377;{oldSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPriceRoundedOff), 0).toLocaleString()}</Text></Text>
+                          <Text style={styles.oldprices}>Service Charges:<Text style={styles.hotelRoomPrice}>&#8377;{Math.ceil(((oldSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPriceRoundedOff), 0)) * domesticHotel) / 100).toLocaleString()}</Text></Text>
+                          <Text style={styles.oldprices}>Old Total Price:<Text style={styles.hotelRoomPrice}>&#8377;{Math.ceil(oldSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPriceRoundedOff), 0) + ((oldSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPriceRoundedOff), 0)) * domesticHotel) / 100).toLocaleString()}</Text></Text>
+                        </View>
+                      </View>
+
+                      <View style={styles.recheckPriceSubContainer}>
+                        <Text style={styles.hotelTitle}>New Rates</Text>
+                        <View style={styles.recheckPriceChildContainer}>
+                          <Text style={styles.newPrice}>New Rates:<Text style={styles.hotelRoomPrice}>&#8377;{Math.ceil(newSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPrice), 0)).toLocaleString()}</Text></Text>
+                          <Text style={styles.newPrice}>Service Charges:<Text style={styles.hotelRoomPrice}>&#8377;{Math.ceil(((newSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPrice), 0)) * domesticHotel) / 100).toLocaleString()}</Text></Text>
+                          <Text style={styles.newPrice}>New Total Price:<Text style={styles.hotelRoomPrice}>&#8377;{Math.ceil(newSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPrice), 0) + ((newSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPrice), 0)) * domesticHotel) / 100).toLocaleString()}</Text></Text>
+                        </View>
+                      </View>
+
                     </View>
 
                     <View style={styles.hotelRecheckBtnContainer}>
@@ -2648,19 +2695,19 @@ onLoad={() => console.log("Image loaded successfully")}
           <View style={styles.recheckingDetails}>
             <View style={styles.eachRecheckingDetails}>
               <View>
-              {
-                tripData?.flights?.filter((flight) => {
-                  var hotelData = tripData?.data?.flights.filter((hotels) => hotels.id === flight.id)
-                  var hotelTimeStamp = new Date(hotelData[0]?.date?.seconds * 1000)
-                  var originalDate = new Date(hotelTimeStamp);
-                  var threeHoursAfter = new Date(originalDate.getTime() + (3* 60 * 60 * 1000));
-                  var currentTime = new Date();
-                  var isTimeReCheck = currentTime > threeHoursAfter
-                  return isTimeReCheck
-                }).length > 0 && (
-                  <Text >Flights</Text>
-                )
-              }
+                {
+                  tripData?.flights?.filter((flight) => {
+                    var hotelData = tripData?.data?.flights.filter((hotels) => hotels.id === flight.id)
+                    var hotelTimeStamp = new Date(hotelData[0]?.date?.seconds * 1000)
+                    var originalDate = new Date(hotelTimeStamp);
+                    var threeHoursAfter = new Date(originalDate.getTime() + (3 * 60 * 60 * 1000));
+                    var currentTime = new Date();
+                    var isTimeReCheck = currentTime > threeHoursAfter
+                    return isTimeReCheck
+                  }).length > 0 && (
+                    <Text >Flights</Text>
+                  )
+                }
               </View>
               {
                 tripData?.flights?.filter((flight) => {

@@ -39,7 +39,7 @@ const FlightBooking = ({ navigation: { navigate } }) => {
     var [activeTab, setActiveTab] = useState('tab1');
     const [isExpanded, setIsExpanded] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const { actions, selectedTripId, selectedTrip, flightBookDataLoading, bookingFlight, domesticFlight, internationalFlight, isInternationalRound, userTripStatus, } = useContext(MyContext)
+    const { actions, selectedTripId, selectedTrip, flightBookDataLoading, bookingFlight, domesticFlight, internationalFlight, isInternationalRound, userTripStatus } = useContext(MyContext)
     var { totalFareSum, totalSeatCharges, totalBaggagePrice, totalMealPrice, finalPrice } =
         actions.getTotalFares(bookingFlight);
     var myDate = bookingFlight[0].flight.Segments[0][bookingFlight[0].flight.Segments[0].length - 1].Origin.DepTime;
@@ -486,12 +486,15 @@ const FlightBooking = ({ navigation: { navigate } }) => {
                                                 navigate("TripDetails", { id: selectedTripId })
                                                 actions.editTripById(selectedTripId, bookingFlight, "flights");
                                                 actions.handleSelectedTripId()
+                                               
                                             }
                                         } style={styles.yesBtn}>
-                                            <Text style={styles.yesBtnText}>yes</Text>
+                                            <Text style={styles.yesBtnText}>Yes</Text>
                                         </TouchableOpacity>
+                                        
                                         <TouchableOpacity style={styles.yesBtn} onPress={() => {
                                             actions.setFlightBookPage(false);
+                                            actions.setFlightResJType(0)
                                             actions.setBookingFlight([]);
                                         }}>
                                             <Text style={styles.yesBtnText}>Back</Text>
@@ -501,6 +504,7 @@ const FlightBooking = ({ navigation: { navigate } }) => {
                                 :
                                 <TouchableOpacity style={styles.submitTripBtn} onPress={() => {
                                     setSubmitIsOpen(true);
+                                    
                                 }}>
                                     <Text style={styles.submitTripBtnText}>Add to trip</Text>
                                 </TouchableOpacity>

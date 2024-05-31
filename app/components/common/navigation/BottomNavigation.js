@@ -12,6 +12,7 @@ import ProfileHome from '../../user/profile/ProfileHome';
 import ChangePassword from '../../user/changePassword/ChangePassword';
 import Role from '../../user/role/Role';
 import ReCheck from '../recheck/ReCheck';
+import Pdf from '../../wallet/Pdf';
 const Stack = createStackNavigator();
 const ProfileStack = () => {
   return (
@@ -69,7 +70,7 @@ const BottomNavigation = () => {
       />
       <Tab.Screen
         name="Wallet"
-        component={ReCheck}
+        component={Pdf}
         options={{
           tabBarLabel: 'Wallet',
           tabBarIcon: ({ color, size }) => (

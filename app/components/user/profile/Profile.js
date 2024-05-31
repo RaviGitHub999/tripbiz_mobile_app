@@ -6,8 +6,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import IconSwitcher from '../../common/icons/IconSwitcher'
 import { colors } from '../../../config/theme'
 import MyContext from '../../../context/Context'
-import * as DocumentPicker from 'react-native-document-picker';
-import { responsiveHeight, responsiveWidth } from '../../../utils/responsiveScale'
+
 const Profile = () => {
   var { actions, userAccountDetails } = useContext(MyContext)
   var [edit, setEdit] = useState(true)

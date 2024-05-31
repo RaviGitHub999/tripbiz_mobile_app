@@ -512,6 +512,24 @@ alignItems:'center'
         fontFamily: fonts.secondry,
         color: colors.primary,
         textAlign:'center'
-    }
+    },
+    voucherContainer:
+      {
+        flexDirection:"row",
+        alignItems:"center",
+        gap:responsiveHeight(1),
+        borderWidth:responsiveFontSize(0.18),
+        alignSelf:'flex-start',
+        padding:responsiveWidth(2),
+        borderColor:colors.primary,
+        borderRadius:responsiveHeight(1)
+      },
+      voucherTitle:
+      {
+        fontSize:responsiveHeight(1.8),
+        fontFamily:fonts.secondry,
+        textAlign:'center',
+        color:colors.primary
+      }
 
 })
