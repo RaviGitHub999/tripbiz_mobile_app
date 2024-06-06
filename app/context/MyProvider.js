@@ -203,7 +203,6 @@ export default class MyProvider extends Component {
       flightTravellers: 0,
       originStartTime: null,
       originEndTime: null,
-      destStartTime: null,
       intOriginStartTime1: null,
       intOriginEndTime1: null,
       intOriginStartTime2: null,
@@ -2755,6 +2754,28 @@ export default class MyProvider extends Component {
             return []; // or handle the error accordingly
           }
         },
+      getAllExpenses : async (tripId, userId) => {
+          try {
+            const cabCollectionRef = firestore()
+              .collection('Accounts')
+              .doc(userId)
+              .collection('trips')
+              .doc(tripId)
+              .collection('expenses');
+            
+            const querySnapshot = await cabCollectionRef.get();
+            const expenseArray = [];
+            querySnapshot.forEach(doc => {
+              expenseArray.push({
+                id: doc.id,
+                data: doc.data(),
+              });
+            });
+            return expenseArray
+          } catch (error) {
+            console.error('Error fetching expenses: ', error);
+          }
+        },
         setUserAccountDetails: (value) => {
           this.setState({
             userAccountDetails: value
@@ -2941,6 +2962,7 @@ export default class MyProvider extends Component {
               this.state.actions.getAllFlights(doc.id, userid),
               this.state.actions.getAllHotels(doc.id, userid),
               sendData?.requestId ? this.state.actions.getRequests(sendData?.requestId, userid) : '',
+              this.state.actions.getAllExpenses(doc.id, userid),
               // this.state.actions.getAllCabs(doc.id, userid),
               // this.state.actions.getAllExpenses(doc.id, userid)
             ]);
@@ -2951,7 +2973,7 @@ export default class MyProvider extends Component {
               hotels: hotels,
               flights: flights,
               // cabs: cabs,
-              // expenses: expenses,
+               expenses,
               requestData: requestData
             });
 
@@ -3243,10 +3265,11 @@ export default class MyProvider extends Component {
 
             console.log(requestData, "requestData");
 
-            const [flights, hotels, requestData] = await Promise.all([
+            const [flights, hotels, requestData,expenses] = await Promise.all([
               this.state.actions.getAllFlights(docCollectionRef.id, userid),
               this.state.actions.getAllHotels(docCollectionRef.id, userid),
               sendData.requestId ? this.state.actions.getRequests(sendData.requestId, userid) : '',
+              this.state.actions.getAllExpenses(docCollectionRef.id, userid),
             ]);
 
             this.state.actions.setTripData({
@@ -3254,6 +3277,7 @@ export default class MyProvider extends Component {
               data: sendData,
               hotels: hotels,
               flights: flights,
+              expenses,
               requestData: requestData
             });
 

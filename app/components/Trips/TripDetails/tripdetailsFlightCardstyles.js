@@ -214,12 +214,6 @@ export const styles = StyleSheet.create({
         fontFamily: fonts.textFont,
         color: colors.secondary
     },
-    bookingStatusTitles:
-    {
-        fontSize: responsiveHeight(1.7),
-        fontFamily: fonts.primary,
-        color: colors.lightGray
-    },
     addedHotelTimeAndDate: {
         color: colors.primary,
         fontSize: responsiveHeight(1.7),
@@ -389,10 +383,6 @@ export const styles = StyleSheet.create({
         fontFamily: fonts.primary, 
         color: colors.primary   
     },
-    dashedLine:{
-        borderTopWidth: responsiveHeight(0.15), 
-        borderStyle: 'dashed' ,marginVertical:responsiveHeight(1)
-    },
     originDetailsContainer:{
         width: "50%", 
         gap: responsiveHeight(0.3)  
@@ -530,6 +520,24 @@ alignItems:'center'
         fontFamily:fonts.secondry,
         textAlign:'center',
         color:colors.primary
-      }
+      },
+      titles: {
+        fontSize: responsiveHeight(2),
+        fontFamily: fonts.primary,
+        color: colors.primary,
+
+          },
+    oldprices:
+    {
+        fontSize: responsiveHeight(1.8),
+        fontFamily: fonts.primary,
+        color: colors.gray,
+        textDecorationLine: 'line-through',
+    },
+    newPrice: {
+        fontSize: responsiveHeight(1.8),
+        fontFamily: fonts.primary,
+        color: colors.gray,
+    },
 
 })

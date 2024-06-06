@@ -2,12 +2,12 @@ import {View, Text, StyleSheet, Image} from 'react-native';
 import React from 'react';
 import IconSwitcher from '../../common/icons/IconSwitcher';
 import { colors, fonts } from '../../../config/theme';
-import { responsiveHeight} from '../../../utils/responsiveScale';
+import { responsiveHeight, responsiveWidth} from '../../../utils/responsiveScale';
 const FCard = props => {
   const {flightArr, airline} = props;
   return (
-    <View>
-      <View>
+    <View >
+      <View >
         {flightArr[0].segments.map((segment, sg) => {
           var flightCode = '';
           segment.flightCodes.forEach((code, c) => {
@@ -20,16 +20,16 @@ const FCard = props => {
 
           return (
            
-              <View style={{gap:responsiveHeight(1)}}>
-                <View style={{flexDirection:"row",alignItems:'center',gap:responsiveHeight(.9),flexWrap:'wrap',borderWidth:1,width:"80%"}}>
+              <View style={styles.flightCard}>
+                <View style={styles.flightCardHeader}>
                     {
                          airline[0] ?<Image source={{uri:airline[0]?.url}} style={{height:20,width:20}}/>:
                          <IconSwitcher componentName='MaterialIcons' iconName='flight-takeoff' color={colors.gray} iconsize={2}/>
                     }
-                    <View style={{width:"40%"}}><Text style={styles.flightTimings}>{`${segment.airlineName}`}</Text></View>
-                    <View style={{width:"40%"}}><Text style={styles.flightTimings}>{`( ${flightCode} )`}</Text></View>
+                    <Text style={styles.flightTimings}>{`${segment.airlineName}`}</Text>
+                   <Text style={styles.flightTimings}>{`( ${flightCode} )`}</Text>
                 </View>
-                <View style={{alignSelf:'flex-end',marginBottom:responsiveHeight(1),backgroundColor:colors.highlight,padding:responsiveHeight(.5),borderRadius:responsiveHeight(1)}}>
+                <View style={styles.flightDate}>
                     <Text style={styles.flightTimings}>
                     {segment.depTimeDate.toString().slice(4, 10)}
                     </Text>
@@ -136,5 +136,33 @@ const styles = StyleSheet.create({
         fontFamily: fonts.primary,
         color: colors.black,
     },
+    flightCardHeader:
+    {
+        flexDirection:"row",
+        alignItems:'center',
+        gap:responsiveHeight(.9),
+        flexWrap:'wrap',
+        width:"80%"
+    },
+    flightDate:
+    {
+        backgroundColor:colors.highlight,
+        padding:responsiveHeight(.5),
+        borderBottomLeftRadius:responsiveHeight(1),
+        borderTopLeftRadius:responsiveHeight(1),
+        position:'absolute',
+        right:0,
+        top:responsiveHeight(2)
+    },
+    flightCard:{
+        backgroundColor: 'white',
+        borderRadius: responsiveHeight(1.5),
+        elevation: responsiveHeight(0.4),
+        margin:responsiveHeight(1),
+        padding:responsiveHeight(2),
+        paddingHorizontal:responsiveWidth(2),
+        gap:responsiveHeight(3)
+    }
+
 });
 export default FCard;

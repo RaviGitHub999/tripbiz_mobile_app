@@ -195,7 +195,7 @@ const FlightsSearch: React.FC<IProps> = ({ navigation: { navigate } }) => {
         {calenderOpen.departureCalender && <DateTimePicker
           value={dateValue}
           mode="date"
-          display="default"
+          display="calendar"
           onChange={handleSelectedDate}
           minimumDate={new Date()}
           is24Hour={true}
@@ -203,7 +203,7 @@ const FlightsSearch: React.FC<IProps> = ({ navigation: { navigate } }) => {
         {calenderOpen.returCalender && <DateTimePicker
           value={returnDateValue}
           mode="date"
-          display="default"
+          display="calendar"
           onChange={handleSelectedReturnDate}
           minimumDate={dateValue}
           is24Hour={true}

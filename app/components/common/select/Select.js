@@ -72,12 +72,7 @@ import { responsiveHeight, responsiveWidth } from '../../../utils/responsiveScal
 import IconSwitcher from '../icons/IconSwitcher';
 import MyContext from '../../../context/Context';
 
-const data = [
-    { name: "ravi" },
-    { name: "ravi123" },
-    { name: "ravi456" },
-    { name: "ravi789" },
-];
+
 
 const Select = ({ bookIndex, segIndex, bookingFlight, name,traveller }) => {
     const [viewAll, setViewAll] = useState(false);
@@ -111,10 +106,10 @@ const{actions}=useContext(MyContext)
     return (
         <View>
             <TouchableOpacity style={styles.maincontainer} onPress={handledropDown}>
-               <View style={{width:"80%"}}>
+               <View style={{flex:1}}>
                <Text>{selectedItem ? selectedItem : name === "baggage" ? "No excess Baggage" : "No add-on meal"}</Text>
                </View>
-                <IconSwitcher componentName='Ionicons' iconName='chevron-down' color={colors.black} iconsize={3} />
+                <IconSwitcher componentName='Ionicons' iconName={viewAll?"chevron-up":'chevron-down'} color={colors.black} iconsize={3} />
             </TouchableOpacity>
             {viewAll ? (
                 <View style={styles.items}>
@@ -171,7 +166,7 @@ const styles = StyleSheet.create({
     items: {
         borderWidth: 1,
         rowGap: responsiveHeight(1),
-        height: responsiveHeight(18)
+        maxHeight: responsiveHeight(18)
     },
     item: {
         paddingVertical: responsiveHeight(1),

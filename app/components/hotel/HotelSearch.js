@@ -17,10 +17,7 @@ const Item = React.memo(({ cityHotel, handleSelect }) => {
       paddingHorizontal: responsiveWidth(2.5),
       margin: responsiveHeight(0.8)
     }} onPress={() => handleSelect(item)}>
-      <Text style={{fontSize:responsiveHeight(2),color:"black"}}>{`${item.DESTINATION},${item?.STATEPROVINCE
-        ? item?.STATEPROVINCE
-        : item?.COUNTRY
-        }`}</Text>
+      <Text style={{fontSize:responsiveHeight(2),color:"black"}}>{`${item.DESTINATION},${item?.COUNTRY}`}</Text>
     </TouchableOpacity>
   )
 })
@@ -67,10 +64,7 @@ const HotelSearch = ({ navigation: { navigate } }) => {
     setCountryCode(item.COUNTRYCODE);
     setCityHotelItem(item);
     setCityHotelResBox(false)
-    setCityHotelDisplay(`${item.DESTINATION}, ${item.STATEPROVINCE
-      ? item.STATEPROVINCE
-      : item.COUNTRY
-      }`)
+    setCityHotelDisplay(`${item.DESTINATION},${item.COUNTRY}`)
 
   }, [])
 
@@ -195,7 +189,7 @@ const HotelSearch = ({ navigation: { navigate } }) => {
       navigate("HotelResList")
       actions.hotelSearch({
         cityHotel,
-        cityDestName: `${cityHotelItem.DESTINATION}, ${cityHotelItem.STATEPROVINCE}`,
+        cityDestName: `${cityHotelItem.DESTINATION}, ${cityHotelItem.COUNTRY}`,
         countryCode,
         checkInDate,
         checkOutDate,

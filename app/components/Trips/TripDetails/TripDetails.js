@@ -10,6 +10,9 @@ import {
   FlatList,
   Alert,
   Linking,
+  TouchableHighlight,
+  Platform,
+  PermissionsAndroid
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import MyContext from '../../../context/Context';
@@ -32,6 +35,13 @@ import TravDetails from './TravDetails';
 import HCard from './HCard';
 import { Modal } from 'react-native';
 import ReCheck from '../../common/recheck/ReCheck';
+import CustomSelect from '../../common/customSelect/CustomSelect';
+import { TextInput } from 'react-native';
+// import DateTimePicker from 'react-native-ui-datepicker';
+// import dayjs from 'dayjs';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import moment from 'moment';
 const TripDetails = ({ navigation: { navigate, goBack } }) => {
   const [mounted, setMounted] = useState(true);
   const [popup, setPopUp] = useState({
@@ -71,7 +81,64 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
   const [newSelectedRoom, setNewSelectedRoom] = useState([])
   const [openPriceReCheck, setOpenPriceReCheck] = useState(false)
   const [reCheck, setReCheck] = useState(false)
+  const [openExpense, setOpenExpense] = useState(false);
   const [selectedCard, setSelectedCard] = useState({ index: 0, list: "a" });
+  // const [selectedItem, setSelectedItem] = useState("Select Expense");
+  const [expenseType, setExpenseType] = useState("Select Expense");
+  const [viewAll, setViewAll] = useState(false);
+  const [selectedItemIndex, setSelectedItemIndex] = useState(0);
+  // const [date, setDate] = useState(dayjs());
+  const [datePicker, setDatePicker] = useState(false)
+  const [expenseDate, setExpenseDate] = useState("");
+  const [expenseDescription, setExpenseDescription] = useState("");
+  const [cost, setCost] = useState("0");
+  const [receipt, setReceipt] = useState(null);
+  const expenseTypeData =
+    [
+      {
+        name: "Select Expense"
+      },
+      {
+        name: "Meal"
+      },
+      {
+        name: "Transport"
+      },
+      {
+        name: "Miscellaneous"
+      },
+
+    ]
+
+  const expenseRenderItem = (item, index) => {
+    return (
+      <TouchableHighlight
+        onPress={() => { setExpenseType(item.name), handledropDown(), setSelectedItemIndex(index) }}
+        style={[
+          styles.item,
+          selectedItemIndex === index && styles.itemHovered,
+        ]}
+        underlayColor={colors.whiteSmoke} >
+        <Text style={[styles.selectedItemTitle, selectedItemIndex === index && styles.activeSelectedItemTitle]}>{item.name}</Text>
+      </TouchableHighlight>
+    )
+  }
+  const handledropDown = () => {
+    setViewAll(!viewAll);
+  };
+
+  const handleSelectedDate = useCallback((event, selectedDate) => {
+    if (event.type === 'set') {
+      setDatePicker(false)
+      const formattedDate = selectedDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+      });
+      setExpenseDate(formattedDate)
+    } else {
+      setDatePicker(false)
+    }
+  }, []);
 
   const {
     actions,
@@ -335,7 +402,6 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
       const traveler = updatedUserDetails[index] || {};
       traveler[key] = value;
       updatedUserDetails[index] = traveler;
-      console.log(updatedUserDetails);
       return updatedUserDetails;
     });
   };
@@ -413,7 +479,6 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
             var isInternational =
               item.data.flightNew.segments[0].destCountryCode !== 'IN' ||
               item.data.flightNew.segments[0].originCountryCode !== 'IN';
-            console.log(item.data.flightNew.segments[0].destCountryCode)
             return (
               <View style={{ paddingHorizontal: responsiveHeight(1.5) }}>
                 <InputField
@@ -604,6 +669,145 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
       console.error('An error occurred', error);
     }
   }
+
+  const handleExpansePrice = (price) => {
+    setCost(price)
+  }
+  const requestCameraPermission = async () => {
+    if (Platform.OS === "android") {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          {
+            title: 'Camera Permission',
+            message: 'App needs access to your camera ',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          openCamera()
+        } else {
+          showSettingsAlert()
+        }
+      }
+      catch (err) {
+        console.warn(err)
+      }
+    }
+  }
+  const openCamera = () => {
+    launchCamera({
+      mediaType: 'photo',
+      maxWidth: 300,
+      maxHeight: 400,
+      quality: 0.8,
+    }, (response) => {
+
+      let imageUri = response.uri || response.assets?.[0]?.uri;
+      setReceipt(imageUri);
+    })
+  }
+
+  const showSettingsAlert = () => {
+    Alert.alert(
+      "Camera Permission Denied",
+      "Please grant camera permission in app settings to enable this feature .",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        {
+          text: "Open Settings", onPress: () => openSettings()
+        }
+      ],
+      { cancelable: false }
+    )
+  }
+
+  const openSettings = () => {
+    Linking.openSettings()
+  }
+  const handleOpenCamera = async () => {
+    if (Platform.OS = "android") {
+      const granted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA)
+      if (!granted) {
+        requestCameraPermission()
+        return
+      }
+    }
+    openCamera()
+  }
+
+  const requestGalleryPermission = async () => {
+    if (Platform.OS === "android") {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+          {
+            title: 'Gallery Permission',
+            message: 'App needs access to your gallery',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          openGallery();
+        } else {
+          showSettingsAlertGallery();
+        }
+      } catch (err) {
+        console.warn(err);
+      }
+    }
+  };
+
+  const openGallery = () => {
+    launchImageLibrary( {
+      mediaType: 'photo',
+      maxWidth: 300,
+      maxHeight: 400,
+      quality: 0.8,
+    }, (response) => {
+      let imageUri = response.uri || response.assets?.[0]?.uri;
+      setReceipt(imageUri); 
+    });
+  };
+
+  const showSettingsAlertGallery = () => {
+    Alert.alert(
+      "Gallery Permission Denied",
+      "Please grant gallery permission in app settings to enable this feature.",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        {
+          text: "Open Settings",
+          onPress: () => openSettings()
+        }
+      ],
+      { cancelable: false }
+    );
+  };
+
+  const handleOpenGallery = async () => {
+    if (Platform.OS === "android") {
+      const granted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE);
+      if (!granted) {
+        await requestGalleryPermission();
+        return;
+      }
+    }
+    openGallery();
+  };
+
   return tripDataLoading ? (
     <View style={styles.LoaderContainer}>
       <View style={styles.Loader}>
@@ -711,6 +915,14 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
                           var hotelTimeStamp = new Date(
                             hotelData[0]?.date?.seconds * 1000,
                           );
+console.log(hotelTimeStamp,"poipoio")
+                          const updatedAt=hotelData[0]?.updatedAt
+                          var hotelUpdatedDate=""
+                          if(updatedAt)
+                          {
+                            hotelUpdatedDate = moment(Number(updatedAt)).format('MMM DD, YYYY HH:mm:ss')
+                          }
+
                           var hotelPrice = 0;
                           var hotelStatus = tripData?.data?.hotels?.filter(
                             f => f.id === hotel.id,
@@ -1045,10 +1257,10 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
                                   style={styles.addedHotelTimeAndDateContainer}>
                                   <View style={styles.addedHotelTitleContainer}>
                                     <Text style={styles.bookingStatusTitles}>
-                                      {`Added Date: `}
+                                      {hotelUpdatedDate?`Updated Date: `:`Added Date: `}
                                       <Text
                                         style={styles.addedHotelTimeAndDate}>
-                                        {hotelTimeStamp.toString().slice(4, 24)}
+                                        {hotelUpdatedDate?hotelUpdatedDate:hotelTimeStamp.toString().slice(4, 24)}
                                       </Text>
                                     </Text>
                                   </View>
@@ -1120,6 +1332,14 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
                           var hotelTimeStamp = new Date(
                             flightStatus[0]?.date?.seconds * 1000,
                           );
+                          console.log(hotelTimeStamp,"hotelTimeStamp")
+                          const updatedAt=flightStatus[0]?.updatedAt
+                          var flightUpdatedDate=""
+                          if(updatedAt)
+                          {
+                           flightUpdatedDate = moment(Number(updatedAt)).format('MMM DD, YYYY HH:mm:ss')
+                          }
+                        
                           var flightReq = tripData.data.flights.filter(
                             hotelMain => {
                               return hotelMain.id === flight.id;
@@ -1142,6 +1362,7 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
                                 flightStatus={flightStatus[0]}
                                 flightReq={flightReq}
                                 timeStamp={hotelTimeStamp}
+                                updatedAt={flightUpdatedDate}
                                 reqColor={reqColor}
                                 tripId={id}
                                 flightId={flight.id}
@@ -1176,11 +1397,44 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
               </View>
             ) : null}
 
+{
+  tripData?.expenses ? 
+  <>
+  {tripData?.expenses?.map((expense, f) => {
+    
+    const date = new Date(expense.data.expenseDate.seconds * 1000);
+   const hours = String(date.getUTCHours()).padStart(2, '0');
+   const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+  const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+  const formattedDate = `${date.toDateString().slice(4, 10)} ${date.getFullYear()} ${hours}:${minutes}:${seconds}`;
+
+const expenseDate = new Date(expense.data.expenseDate.seconds * 1000);
+const month = expenseDate.toLocaleString('en-us', { month: 'short' });
+const day = expenseDate.getDate();
+    return(
+      <View style={styles.expenseCard}>
+<View>
+  <Text>{expense.data.type}</Text>
+  <View>
+    <Text>{`${month} ${day}`}</Text>
+    <Text>{date.toString()}</Text>
+  </View>
+</View>
+<Text></Text>
+<Text></Text>
+
+      </View>
+    )
+  })}
+  </>
+  :null
+}
             <>
               <Text style={styles.flightCardTitle}>Trip Expenses</Text>
               <View style={styles.addingHotelBtnContainer}>
                 <TouchableOpacity
                   style={styles.addingHotelBtn}
+                  onPress={() => setOpenExpense(true)}
                 >
                   <Text style={styles.addingHotelBtnTitle}>
                     Add Trip Expense{' '}
@@ -1209,13 +1463,13 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
             <>
               {
 
-                (!tripData?.data?.flights.every((flight) => {
+                (tripData?.data?.flights.every((flight) => {
                   var hotelData = tripData?.data?.flights.filter((hotels) => hotels.id === flight.id)
                   var hotelTimeStamp = hotelData[0]?.updatedAt ? new Date(hotelData[0].updatedAt) : new Date(hotelData[0]?.date?.seconds * 1000)
                   var originalDate = new Date(hotelTimeStamp);
                   var threeHoursAfter = new Date(originalDate.getTime() + (3 * 60 * 60 * 1000));
                   var currentTime = new Date();
-                  var isTimeReCheck = currentTime > threeHoursAfter
+                  var isTimeReCheck = currentTime < threeHoursAfter
                   return isTimeReCheck
                 }) && tripData?.data?.hotels.every((hotel) => {
                   var hotelData = tripData?.data?.hotels.filter((hotels) => hotels.id === hotel.id)
@@ -1223,7 +1477,7 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
                   var originalDate = new Date(hotelTimeStamp);
                   var threeHoursAfter = new Date(originalDate.getTime() + (3 * 60 * 60 * 1000));
                   var currentTime = new Date();
-                  var isTimeReCheck = currentTime > threeHoursAfter
+                  var isTimeReCheck = currentTime < threeHoursAfter
                   return isTimeReCheck
                 }))
                   ?
@@ -1902,7 +2156,7 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
                                               </Text>
                                             ) : null}
                                             <View style={styles.hotelCard}>
-                                              <HCard hotel={hotel} formattedDate1={formattedDate1} endDate={endDate} adults={adults} recheck={true}/>
+                                              <HCard hotel={hotel} formattedDate1={formattedDate1} endDate={endDate} adults={adults} recheck={true} />
                                             </View>
                                             <View style={styles.card}>
                                               <Text
@@ -2227,7 +2481,7 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
                                               </Text>
                                             ) : null}
                                             <View style={styles.hotelCard}>
-                                              <HCard hotel={hotel} formattedDate1={formattedDate1} endDate={endDate} adults={adults} recheck={true}/>
+                                              <HCard hotel={hotel} formattedDate1={formattedDate1} endDate={endDate} adults={adults} recheck={true} />
                                             </View>
                                             <View style={styles.card}>
                                               <Text
@@ -2518,7 +2772,7 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
 
 
           <View style={styles.recheckCard}>
-          <HCard hotel={hotelDetails} formattedDate1={formatDate} endDate={hotelEndDate} adults={hotelAdults} recheck={false}/>
+            <HCard hotel={hotelDetails} formattedDate1={formatDate} endDate={hotelEndDate} adults={hotelAdults} recheck={false} />
           </View>
 
           <View style={{ marginTop: responsiveHeight(2) }}>
@@ -2640,7 +2894,7 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
 
                       <View style={styles.recheckPriceSubContainer}>
                         <Text style={styles.hotelTitle}>Old Rates</Text>
-                        <View  style={styles.recheckPriceChildContainer}>
+                        <View style={styles.recheckPriceChildContainer}>
                           <Text style={styles.oldprices}>Old Rates:<Text style={styles.hotelRoomPrice}>&#8377;{oldSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPriceRoundedOff), 0).toLocaleString()}</Text></Text>
                           <Text style={styles.oldprices}>Service Charges:<Text style={styles.hotelRoomPrice}>&#8377;{Math.ceil(((oldSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPriceRoundedOff), 0)) * domesticHotel) / 100).toLocaleString()}</Text></Text>
                           <Text style={styles.oldprices}>Old Total Price:<Text style={styles.hotelRoomPrice}>&#8377;{Math.ceil(oldSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPriceRoundedOff), 0) + ((oldSelectedRoom.reduce((sum, arr) => sum + Number(arr.Price.OfferedPriceRoundedOff), 0)) * domesticHotel) / 100).toLocaleString()}</Text></Text>
@@ -2761,6 +3015,82 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
             </View>
           </View>
         </PopUp>
+        {/* Add Expenses */}
+
+        <PopUp value={openExpense} handlePopUpClose={() => {
+          setOpenExpense(false);
+        }}>
+          <Text style={styles.heading}>Add Expense</Text>
+          <View>
+            <Text style={styles.expenseSubTitle}>Expense Type</Text>
+            <View style={styles.ExpenseSubContainer}>
+              <CustomSelect data={expenseTypeData} renderData={(item, index) => expenseRenderItem(item, index)
+              } selectedItem={expenseType} handledropDown={handledropDown} viewAll={viewAll} />
+            </View>
+          </View>
+          <View>
+            <Text style={styles.expenseSubTitle}>Date:</Text>
+            <TouchableOpacity style={styles.expenseCard} onPress={() => setDatePicker(true)}>
+              <Text style={styles.placeholderTitle}>{expenseDate ? expenseDate : "Date"}</Text>
+            </TouchableOpacity>
+          </View>
+          {datePicker && <DateTimePicker
+            value={new Date()}
+            mode="date"
+            display="calendar"
+            onChange={handleSelectedDate}
+            minimumDate={new Date()}
+            is24Hour={true}
+          />}
+          <View>
+            <Text style={styles.expenseSubTitle}>Add Description:</Text>
+            <TextInput
+              editable
+              multiline
+              numberOfLines={4}
+              maxLength={40}
+              style={[styles.expenseCard, { textAlignVertical: "top" }, styles.placeholderTitle]}
+              placeholder='Enter the description of expense'
+              onChangeText={(e) => setExpenseDescription(e)}
+              value={expenseDescription}
+            />
+          </View>
+
+          <View>
+            <Text style={styles.expenseSubTitle}>Add Cost(INR):</Text>
+            <TextInput style={[styles.expenseCard, styles.placeholderTitle]} placeholder='Enter the cost of expense'
+              value={cost}
+              onChangeText={(e) => handleExpansePrice(e)}
+            />
+          </View>
+
+          <View>
+            <Text style={styles.expenseSubTitle}>Add Receipt:</Text>
+
+            <View style={styles.addReceiptContainer}>
+              {receipt && <Image
+                style={styles.receiptImage}
+                source={{ uri: receipt }}
+              />}
+              <TouchableOpacity style={[styles.addReceiptSubContainer, styles.expenseCard]} onPress={handleOpenCamera}>
+                <IconSwitcher componentName='MaterialIcons' iconName='photo-camera' color={colors.highlight} iconsize={3} />
+                <Text style={styles.hotelTitle}>Camera</Text>
+              </TouchableOpacity>
+              <Text style={styles.hotelTitle}>Or</Text>
+              <TouchableOpacity style={[styles.addReceiptSubContainer, styles.expenseCard]} onPress={handleOpenGallery}>
+                <IconSwitcher componentName='MaterialIcons' iconName='photo-library' color={colors.highlight} iconsize={3} />
+                <Text style={styles.hotelTitle}>Upload From Gallery</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+
+          <TouchableOpacity style={[styles.btn, { alignSelf: "center" }]}>
+            <Text style={styles.btnTitle}>Submit</Text>
+          </TouchableOpacity>
+
+        </PopUp>
+
       </View>
     )
   );

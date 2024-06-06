@@ -23,7 +23,8 @@ const TripDetailsFlightCard = ({
     tripId,
     flightId,
     tripsPage,
-    downloadUrl
+    downloadUrl,
+    updatedAt
 }) => {
     const [stopDtls, setStopDtls] = useState([]);
     const [showStopDtls, setShowStopDtls] = useState(false);
@@ -385,7 +386,7 @@ const TripDetailsFlightCard = ({
 
                 <View style={styles.addedFlightTimeAndDateContainer}>
                     <View style={styles.addedFlightTitleContainer}>
-                        <Text style={styles.bookingStatusTitles}>{`Added Date: `}<Text style={styles.addedHotelTimeAndDate}>{timeStamp.toString().slice(4, 24)}</Text></Text>
+                        <Text style={styles.bookingStatusTitles}>{updatedAt?"Updated Date:":`Added Date: `}<Text style={styles.addedHotelTimeAndDate}>{`${updatedAt?updatedAt:timeStamp.toString().slice(4, 24)}`}</Text></Text>
                     </View>
                     <>
                         <TouchableOpacity onPress={() => {
@@ -721,19 +722,19 @@ const TripDetailsFlightCard = ({
                                         } to {flightBooking.flightNew.segments[0].destCityName}</Text>
                                     </View>
                                     <View style={styles.recheckRatesContainer}>
-                                        <Text style={styles.recheckPriceTitles}>Old Rates</Text>
-                                        <Text style={styles.recheckPriceSubTitles}>Flight Price:<Text style={styles.recheckPrices}> &#8377;{` ${flightBooking.flight.Fare.OfferedFare
+                                        <Text style={styles.titles}>Old Rates</Text>
+                                        <Text style={styles.oldprices}>Flight Price:<Text style={styles.recheckPrices}> &#8377;{` ${flightBooking.flight.Fare.OfferedFare
                                             ? Math.ceil(flightBooking.flight.Fare.OfferedFare).toLocaleString("en-IN") : Math.ceil(flightBooking.flight.Fare.PublishedFare).toLocaleString("en-IN")}`}</Text> </Text>
-                                        {fareData?.totalBaggagePrice ? <Text style={styles.recheckPriceSubTitles}>Baggage:<Text style={styles.recheckPrices}>{` ${fareData?.totalBaggagePrice?.toLocaleString("en-IN")}`}</Text></Text> : null}
-                                        {fareData?.totalMealPrice ? <Text style={styles.recheckPriceSubTitles}>Meal:<Text style={styles.recheckPrices}>{` ${fareData?.totalMealPrice?.toLocaleString("en-IN")}`}</Text></Text> : null}
-                                        {fareData?.totalSeatCharges ? <Text style={styles.recheckPriceSubTitles}>Seat:<Text style={styles.recheckPrices}> {` ${fareData?.totalSeatCharges?.toLocaleString("en-IN")}`}</Text></Text> : null}
-                                        <Text style={styles.recheckPriceSubTitles}>Service Fee and Taxes :<Text style={styles.recheckPrices}> &#8377; {Math.ceil((fareData?.totalFareSum * domesticFlight) / 100)}</Text> </Text>
-                                        <Text style={styles.recheckPriceSubTitles}>Total Price :<Text style={styles.recheckPrices}> &#8377; {Math.ceil(fareData?.finalPrice).toLocaleString("en-IN")}</Text> </Text>
+                                        {fareData?.totalBaggagePrice ? <Text style={styles.oldprices}>Baggage:<Text style={styles.recheckPrices}>{` ${fareData?.totalBaggagePrice?.toLocaleString("en-IN")}`}</Text></Text> : null}
+                                        {fareData?.totalMealPrice ? <Text style={styles.oldprices}>Meal:<Text style={styles.recheckPrices}>{` ${fareData?.totalMealPrice?.toLocaleString("en-IN")}`}</Text></Text> : null}
+                                        {fareData?.totalSeatCharges ? <Text style={styles.oldprices}>Seat:<Text style={styles.recheckPrices}> {` ${fareData?.totalSeatCharges?.toLocaleString("en-IN")}`}</Text></Text> : null}
+                                        <Text style={styles.oldprices}>Service Fee and Taxes :<Text style={styles.recheckPrices}> &#8377; {Math.ceil((fareData?.totalFareSum * domesticFlight) / 100)}</Text> </Text>
+                                        <Text style={styles.oldprices}>Total Price :<Text style={styles.recheckPrices}> &#8377; {Math.ceil(fareData?.finalPrice).toLocaleString("en-IN")}</Text> </Text>
                                     </View>
 
                                     <View style={styles.recheckRatesContainer}>
-                                        <Text style={styles.recheckPriceTitles}>New Rates</Text>
-                                        <Text style={styles.recheckPriceSubTitles}>Flight Price:<Text style={styles.recheckPrices}>&#8377;{` ${reCheckData?.flightData?.Fare?.OfferedFare
+                                        <Text style={styles.titles}>New Rates</Text>
+                                        <Text style={styles.newPrice}>Flight Price:<Text style={styles.recheckPrices}>&#8377;{` ${reCheckData?.flightData?.Fare?.OfferedFare
                                             ? Math.ceil(
                                                 reCheckData?.flightData?.Fare?.OfferedFare
                                             ).toLocaleString("en-IN")
@@ -741,11 +742,11 @@ const TripDetailsFlightCard = ({
                                                 reCheckData?.flightData?.Fare?.PublishedFare
                                             ).toLocaleString("en-IN")
                                             }`}</Text> </Text>
-                                        {fareData?.totalBaggagePrice ? <Text style={styles.recheckPriceSubTitles}>Baggage:<Text style={styles.recheckPrices}> {Math.ceil(reCheckBaggage).toLocaleString("en-IN")}</Text></Text> : null}
-                                        {fareData?.totalMealPrice ? <Text style={styles.recheckPriceSubTitles}>Meal:<Text style={styles.recheckPrices}> {Math.ceil(reCheckMeals).toLocaleString("en-IN")}</Text></Text> : null}
-                                        {fareData?.totalSeatCharges ? <Text style={styles.recheckPriceSubTitles}>Seat:<Text style={styles.recheckPrices}> {Math.ceil(reCheckSeats).toLocaleString("en-IN")}</Text></Text> : null}
-                                        <Text style={styles.recheckPriceSubTitles}>Service Fee and Taxes :<Text style={styles.recheckPrices}> &#8377;{` ${Math.ceil(((reCheckData?.flightData?.Fare?.OfferedFare + reCheckBaggage + reCheckSeats + reCheckMeals) * domesticFlight) / 100)?.toLocaleString("en-IN")}`}</Text> </Text>
-                                        <Text style={styles.recheckPriceSubTitles}>Total Price :<Text style={styles.recheckPrices}> &#8377; {` ${Math.ceil((reCheckData?.flightData?.Fare?.OfferedFare + reCheckBaggage + reCheckSeats + reCheckMeals) + (((reCheckData?.flightData?.Fare?.OfferedFare + reCheckBaggage + reCheckSeats + reCheckMeals) * domesticFlight) / 100))?.toLocaleString("en-IN")}`}</Text> </Text>
+                                        {fareData?.totalBaggagePrice ? <Text style={styles.newPrice}>Baggage:<Text style={styles.recheckPrices}> {Math.ceil(reCheckBaggage).toLocaleString("en-IN")}</Text></Text> : null}
+                                        {fareData?.totalMealPrice ? <Text style={styles.newPrice}>Meal:<Text style={styles.recheckPrices}> {Math.ceil(reCheckMeals).toLocaleString("en-IN")}</Text></Text> : null}
+                                        {fareData?.totalSeatCharges ? <Text style={styles.newPrice}>Seat:<Text style={styles.recheckPrices}> {Math.ceil(reCheckSeats).toLocaleString("en-IN")}</Text></Text> : null}
+                                        <Text style={styles.newPrice}>Service Fee and Taxes :<Text style={styles.recheckPrices}> &#8377;{` ${Math.ceil(((reCheckData?.flightData?.Fare?.OfferedFare + reCheckBaggage + reCheckSeats + reCheckMeals) * domesticFlight) / 100)?.toLocaleString("en-IN")}`}</Text> </Text>
+                                        <Text style={styles.newPrice}>Total Price :<Text style={styles.recheckPrices}> &#8377; {` ${Math.ceil((reCheckData?.flightData?.Fare?.OfferedFare + reCheckBaggage + reCheckSeats + reCheckMeals) + (((reCheckData?.flightData?.Fare?.OfferedFare + reCheckBaggage + reCheckSeats + reCheckMeals) * domesticFlight) / 100))?.toLocaleString("en-IN")}`}</Text> </Text>
                                     </View>
                                     <View style={styles.recheckBtnContainers}>
                                         <TouchableOpacity style={styles.btn} onPress={async () => await actions.updateFlightBookingDetails(reCheckData?.flightData?.Fare?.OfferedFare, flightId, tripId)}>

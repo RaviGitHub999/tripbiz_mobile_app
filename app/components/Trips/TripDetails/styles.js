@@ -383,13 +383,13 @@ export const styles = StyleSheet.create({
     },
     travelDetailsFlightCard:
     {
-        borderColor:colors.primaryLite,
+        borderColor: colors.primaryLite,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         height: responsiveHeight(7),
         width: responsiveHeight(7),
-        marginBottom:2
+        marginBottom: 2
     },
     tripRouteCon: {
         flexDirection: 'row',
@@ -403,13 +403,13 @@ export const styles = StyleSheet.create({
         marginTop: responsiveHeight(1),
         alignItems: 'center',
         justifyContent: 'center',
-        paddingHorizontal:responsiveWidth(1)
+        paddingHorizontal: responsiveWidth(1)
     },
     tripDetailsTitle: {
         fontSize: responsiveHeight(1.5),
         fontFamily: fonts.textFont,
         color: colors.primary,
-        textAlign:'center'
+        textAlign: 'center'
     },
     btn:
     {
@@ -423,7 +423,7 @@ export const styles = StyleSheet.create({
     {
         fontSize: responsiveHeight(1.8),
         color: colors.white,
-        fontFamily: fonts.textInput
+        fontFamily: fonts.primary
     },
     title: {
         fontSize: responsiveHeight(1.5),
@@ -519,119 +519,188 @@ export const styles = StyleSheet.create({
     },
     statusContainer:
     {
-        flexDirection:'row',
-        alignItems:'center',
-        gap:responsiveWidth(1.5),
-        marginTop:responsiveHeight(1)
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: responsiveWidth(1.5),
+        marginTop: responsiveHeight(1)
     },
     statusTitle:
     {
-        color:colors.white,
-        paddingHorizontal:10,
-        borderRadius:responsiveHeight(2),
-        backgroundColor:'#ffa500' ,
-        fontSize:responsiveHeight(1.5),
-        fontFamily:fonts.textFont,
-        paddingVertical:responsiveHeight(.3)
+        color: colors.white,
+        paddingHorizontal: 10,
+        borderRadius: responsiveHeight(2),
+        backgroundColor: '#ffa500',
+        fontSize: responsiveHeight(1.5),
+        fontFamily: fonts.textFont,
+        paddingVertical: responsiveHeight(.3)
     },
     activeStatusTitle:
     {
-        color:colors.white,
-        paddingHorizontal:10,
-        borderRadius:responsiveHeight(2),
-        backgroundColor:'#008000' ,
-        fontSize:responsiveHeight(1.5),
-        fontFamily:fonts.textFont,
-        paddingVertical:responsiveHeight(.3)
+        color: colors.white,
+        paddingHorizontal: 10,
+        borderRadius: responsiveHeight(2),
+        backgroundColor: '#008000',
+        fontSize: responsiveHeight(1.5),
+        fontFamily: fonts.textFont,
+        paddingVertical: responsiveHeight(.3)
 
     },
     recheckPriceTitle:
     {
-        fontSize:responsiveHeight(2.5),
-        fontFamily:fonts.primary,
-        textAlign:'center',
-        color:colors.primary
+        fontSize: responsiveHeight(2.5),
+        fontFamily: fonts.primary,
+        textAlign: 'center',
+        color: colors.primary
     },
     recheckPriceContainer:
     {
-        gap:responsiveHeight(.8),
-        marginTop:responsiveHeight(2)
+        gap: responsiveHeight(.8),
+        marginTop: responsiveHeight(2)
     },
     recheckPriceSubContainer:
     {
-       gap:responsiveHeight(.8)
+        gap: responsiveHeight(.8)
     },
     recheckPriceChildContainer:
     {
-        gap:responsiveHeight(.5)
+        gap: responsiveHeight(.5)
     },
     oldprices:
     {
-        fontSize:responsiveHeight(1.8),
-        fontFamily:fonts.primary,
-        color:colors.gray,
-        textDecorationLine:'line-through',
+        fontSize: responsiveHeight(1.8),
+        fontFamily: fonts.primary,
+        color: colors.gray,
+        textDecorationLine: 'line-through',
     },
-    newPrice:{
-        fontSize:responsiveHeight(1.8),
-        fontFamily:fonts.primary,
-        color:colors.gray,
+    newPrice: {
+        fontSize: responsiveHeight(1.8),
+        fontFamily: fonts.primary,
+        color: colors.gray,
     },
     hotelRecheckBtnContainer:
     {
-        flexDirection:"row",
-        alignItems:'center',
-        justifyContent:'space-evenly',
-        marginTop:responsiveHeight(3)
+        flexDirection: "row",
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
+        marginTop: responsiveHeight(3)
     },
     recheckingDetails:
     {
-        gap:responsiveHeight(1),
-        marginTop:responsiveHeight(2)
+        gap: responsiveHeight(1),
+        marginTop: responsiveHeight(2)
     },
     eachRecheckingDetails:
     {
-        gap:responsiveHeight(1),
+        gap: responsiveHeight(1),
     },
     progressBarContainer:
     {
-        marginVertical:responsiveHeight(2),
-        gap:responsiveHeight(2)
+        marginVertical: responsiveHeight(2),
+        gap: responsiveHeight(2)
     },
-    LoaderContainer:{
+    LoaderContainer: {
         flex: 1,
-        alignItems: 'center', 
+        alignItems: 'center',
         justifyContent: 'center',
-        paddingHorizontal:responsiveWidth(4)
-      },
-      Loader:{
-    width:'100%'
-      },
-      voucherContainer:
-      {
-        flexDirection:"row",
-        alignItems:"center",
-        gap:responsiveHeight(1),
-        borderWidth:responsiveFontSize(0.18),
-        alignSelf:'flex-start',
-        padding:responsiveWidth(2),
-        borderColor:colors.primary,
-        borderRadius:responsiveHeight(1)
-      },
-      voucherTitle:
-      {
-        fontSize:responsiveHeight(1.8),
-        fontFamily:fonts.secondry,
-        textAlign:'center',
-        color:colors.primary
-      },
-      recheckCard:
-      {
-        backgroundColor:'white',
-        elevation:responsiveHeight(1),
-        margin:responsiveHeight(.4),
-        padding:responsiveHeight(1),
-        borderRadius:responsiveHeight(1)
-      }
+        paddingHorizontal: responsiveWidth(4)
+    },
+    Loader: {
+        width: '100%'
+    },
+    voucherContainer:
+    {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: responsiveHeight(1),
+        borderWidth: responsiveFontSize(0.18),
+        alignSelf: 'flex-start',
+        padding: responsiveWidth(2),
+        borderColor: colors.primary,
+        borderRadius: responsiveHeight(1)
+    },
+    voucherTitle:
+    {
+        fontSize: responsiveHeight(1.8),
+        fontFamily: fonts.secondry,
+        textAlign: 'center',
+        color: colors.primary
+    },
+    recheckCard:
+    {
+        backgroundColor: 'white',
+        elevation: responsiveHeight(1),
+        margin: responsiveHeight(.4),
+        padding: responsiveHeight(1),
+        borderRadius: responsiveHeight(1)
+    },
+    heading:
+    {
+        fontSize: responsiveHeight(2.5),
+        fontFamily: fonts.secondry,
+        textAlign: 'center',
+        color: colors.primary,
+        marginBottom: responsiveHeight(4)
+    },
+    item: {
+        paddingVertical: responsiveHeight(0.6),
+        paddingLeft: responsiveWidth(2),
+    },
+    itemHovered: {
+        backgroundColor: colors.facebook,
+    },
+    selectedItemTitle:
+    {
+        fontSize: responsiveHeight(2),
+        fontFamily: fonts.textInput,
+        color: colors.primary
+
+    },
+    activeSelectedItemTitle:
+    {
+        color: colors.white
+    },
+    ExpenseSubContainer:
+    {
+        margin: responsiveHeight(1)
+    },
+    expenseCard:
+    {
+        backgroundColor: colors.white,
+        elevation: responsiveHeight(0.5),
+        margin: responsiveHeight(1),
+        paddingVertical: responsiveHeight(1.5),
+        paddingHorizontal: responsiveWidth(2),
+        borderRadius: responsiveHeight(1)
+    },
+    expenseSubTitle:
+    {
+        fontSize: responsiveHeight(2),
+        fontFamily: fonts.primary,
+        color: colors.primary
+    },
+    placeholderTitle:
+    {
+        fontSize: responsiveHeight(1.6),
+        fontFamily: fonts.primary,
+        color: colors.primary
+    },
+    addReceiptContainer:
+    {
+        alignItems: 'center',
+        // gap: responsiveHeight(1),
+        marginVertical: responsiveHeight(1)
+    },
+    addReceiptSubContainer:
+    {
+        flexDirection: "row",
+        alignItems: 'center',
+        gap: responsiveWidth(2),
+    },
+    receiptImage:
+    {
+height:responsiveHeight(10),
+width:responsiveHeight(10),borderRadius:responsiveHeight(1)
+    }
+
 
 })

@@ -70,7 +70,7 @@ const BottomNavigation = () => {
       />
       <Tab.Screen
         name="Wallet"
-        component={Pdf}
+        component={Wallet}
         options={{
           tabBarLabel: 'Wallet',
           tabBarIcon: ({ color, size }) => (

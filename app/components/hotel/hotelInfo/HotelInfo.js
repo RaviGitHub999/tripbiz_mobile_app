@@ -11,6 +11,7 @@ import { TouchableWithoutFeedback } from 'react-native'
 import { Keyboard } from 'react-native'
 import HotelInfoRenderItems from './HotelInfoRenderItems'
 import PopUp from '../../common/popup/PopUp'
+import { BackHandler } from 'react-native'
 
 const HotelInfo = ({ route: { params }, navigation: { goBack, navigate } }) => {
     const [selectedRoom, setSelectedRoom] = useState(0);
@@ -150,6 +151,20 @@ const HotelInfo = ({ route: { params }, navigation: { goBack, navigate } }) => {
             </TouchableOpacity>
         )
     }
+    useEffect(() => {
+        const backAction = () => {
+          goBack()
+          actions.handleGoBack()
+          return true; 
+        };
+    
+        const backHandler = BackHandler.addEventListener(
+          'hardwareBackPress',
+          backAction
+        );
+    
+        return () => backHandler.remove();
+      }, []);
     if (fetchingHotelInfo || isLoading) {
         return <View style={styles.progressBarContainer}>
             <View style={styles.progressbar}>

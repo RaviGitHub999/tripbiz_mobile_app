@@ -11,7 +11,7 @@ const HotelInfoRenderItems = ({room,index,selectedRoom,}) => {
 
       return (
             <TouchableOpacity style={bookingHotel.selectedRoomType[selectedRoom] &&
-                ((bookingHotel.selectedRoomType[selectedRoom].RoomTypeCode === room?.RoomTypeCode) && (bookingHotel.selectedRoomType[selectedRoom].LastCancellationDate === room?.LastCancellationDate) && (bookingHotel.selectedRoomType[selectedRoom].Price.OfferedPriceRoundedOff === room?.Price.OfferedPriceRoundedOff))
+                ((bookingHotel.selectedRoomType[selectedRoom].RoomTypeCode === room?.RoomTypeCode) && (bookingHotel.selectedRoomType[selectedRoom].LastCancellationDate === room?.LastCancellationDate) && (bookingHotel.selectedRoomType[selectedRoom].Price.OfferedPriceRoundedOff === room?.Price.OfferedPriceRoundedOff)&&(bookingHotel.selectedRoomType[selectedRoom].SequenceNo === room?.SequenceNo))
                 ? [{...styles.card},{backgroundColor:colors.highlightTranslucent}]:styles.card} onPress={() => { actions.selectHotelRoomType(room, selectedRoom, index) }}>
                 <View style={styles.cardMainSubContainer}>
                     <View style={styles.cardSubContainer1}>
