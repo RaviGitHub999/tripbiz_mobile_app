@@ -7,6 +7,7 @@ import HotelsData from "../components/jsonData/Hotels.json"
 import axios from 'axios';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import storage from '@react-native-firebase/storage';
 import convert from "xml-js";
 import moment from 'moment';
 import { Alert } from 'react-native';
@@ -4346,6 +4347,108 @@ export default class MyProvider extends Component {
             console.error("Error updating flight booking details: ", error);
           }
         },
+        // addExpenseToTrip: async (
+        //   id,
+        //   type,
+        //   file,
+        //   cost,
+        //   description,
+        //   expenseDate
+        // ) => {
+        //   try {
+        //     const userId = this.state.userAccountDetails.userid;
+        //     const tripDocRef = firestore()
+        //       .collection("Accounts")
+        //       .doc(userId)
+        //       .collection("trips")
+        //       .doc(id);
+              
+        //     const expensesCollectionRef = tripDocRef.collection("expenses");
+        
+        //     // Add new expense document
+        //     const newExpenseDocRef = await expensesCollectionRef.add({
+        //       type,
+        //       cost,
+        //       description,
+        //       expenseDate,
+        //     });
+        
+        //     // Upload file to Firebase Storage
+        //     const storageRef = storage().ref(`trips/${userId}/${id}/expenses/${newExpenseDocRef.id}/${file}`);
+        //     await storageRef.putFile(file); // Assuming `file` contains the local URI of the image
+            
+        //     // Get the download URL
+        //     const downloadURL = await storageRef.getDownloadURL();
+        
+        //     // Update the expense document with the file URL
+        //     await newExpenseDocRef.update({ file: downloadURL });
+        
+        //     // Update the trip document with the new expense
+        //     await tripDocRef.update({
+        //       expenses: firestore.FieldValue.arrayUnion({
+        //         id: newExpenseDocRef.id,
+        //         date: new Date(),
+        //       }),
+        //     });
+        
+        //   } catch (error) {
+        //     console.error(error);
+        //   }
+        // },
+
+
+addExpenseToTrip: async (
+  id,
+  type,
+  file,
+  cost,
+  description,
+  expenseDate
+) => {
+  try {
+    const userId = this.state.userAccountDetails.userid;
+    const tripDocRef = firestore()
+      .collection("Accounts")
+      .doc(userId)
+      .collection("trips")
+      .doc(id);
+      
+    const expensesCollectionRef = tripDocRef.collection("expenses");
+
+    // Add new expense document
+    const newExpenseDocRef = await expensesCollectionRef.add({
+      type,
+      cost,
+      description,
+      expenseDate,
+    });
+
+    // Upload file to Firebase Storage
+    const fileUri = file; // Assuming `file` is the local URI as a string
+    const fileName = fileUri.substring(fileUri.lastIndexOf('/') + 1);
+    const storageRef = storage().ref(`trips/${userId}/${id}/expenses/${newExpenseDocRef.id}/${fileName}`);
+    
+    await storageRef.putFile(fileUri); // Upload the file using the local URI
+
+    // Get the download URL
+    const downloadURL = await storageRef.getDownloadURL();
+
+    // Update the expense document with the file URL
+    await newExpenseDocRef.update({ file: downloadURL });
+
+    // Update the trip document with the new expense
+    await tripDocRef.update({
+      expenses: firestore.FieldValue.arrayUnion({
+        id: newExpenseDocRef.id,
+        date: new Date(),
+      }),
+    });
+
+  } catch (error) {
+    console.error(error);
+  }
+},
+
 
       },
 

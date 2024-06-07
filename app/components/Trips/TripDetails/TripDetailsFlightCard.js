@@ -386,7 +386,7 @@ const TripDetailsFlightCard = ({
 
                 <View style={styles.addedFlightTimeAndDateContainer}>
                     <View style={styles.addedFlightTitleContainer}>
-                        <Text style={styles.bookingStatusTitles}>{updatedAt?"Updated Date:":`Added Date: `}<Text style={styles.addedHotelTimeAndDate}>{`${updatedAt?updatedAt:timeStamp.toString().slice(4, 24)}`}</Text></Text>
+                        <Text style={styles.bookingStatusTitles}>{updatedAt!==undefined?"Updated Date:":`Added Date: `}<Text style={styles.addedHotelTimeAndDate}>{`${updatedAt!==undefined?updatedAt.toString().slice(4, 24):timeStamp.toString().slice(4, 24)}`}</Text></Text>
                     </View>
                     <>
                         <TouchableOpacity onPress={() => {

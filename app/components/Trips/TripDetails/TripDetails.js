@@ -90,6 +90,7 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
   // const [date, setDate] = useState(dayjs());
   const [datePicker, setDatePicker] = useState(false)
   const [expenseDate, setExpenseDate] = useState("");
+  const [expenseShortDate, setExpenseShortDate] = useState("");
   const [expenseDescription, setExpenseDescription] = useState("");
   const [cost, setCost] = useState("0");
   const [receipt, setReceipt] = useState(null);
@@ -134,7 +135,8 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
         month: 'short',
         day: 'numeric',
       });
-      setExpenseDate(formattedDate)
+      setExpenseShortDate(formattedDate)
+      setExpenseDate(selectedDate)
     } else {
       setDatePicker(false)
     }
@@ -700,11 +702,8 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
   const openCamera = () => {
     launchCamera({
       mediaType: 'photo',
-      maxWidth: 300,
-      maxHeight: 400,
-      quality: 0.8,
+      quality: 1,
     }, (response) => {
-
       let imageUri = response.uri || response.assets?.[0]?.uri;
       setReceipt(imageUri);
     })
@@ -767,14 +766,12 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
   };
 
   const openGallery = () => {
-    launchImageLibrary( {
+    launchImageLibrary({
       mediaType: 'photo',
-      maxWidth: 300,
-      maxHeight: 400,
-      quality: 0.8,
+      quality: 1,
     }, (response) => {
       let imageUri = response.uri || response.assets?.[0]?.uri;
-      setReceipt(imageUri); 
+      setReceipt(imageUri);
     });
   };
 
@@ -807,7 +804,19 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
     }
     openGallery();
   };
+  var handleExpenseSubmit = async () => {
 
+    await actions.addExpenseToTrip(
+      id,
+      expenseType,
+      receipt,
+      cost,
+      expenseDescription,
+      expenseDate
+    );
+    await getTripData();
+    setOpenExpense(false);
+  };
   return tripDataLoading ? (
     <View style={styles.LoaderContainer}>
       <View style={styles.Loader}>
@@ -915,14 +924,9 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
                           var hotelTimeStamp = new Date(
                             hotelData[0]?.date?.seconds * 1000,
                           );
-console.log(hotelTimeStamp,"poipoio")
-                          const updatedAt=hotelData[0]?.updatedAt
-                          var hotelUpdatedDate=""
-                          if(updatedAt)
-                          {
-                            hotelUpdatedDate = moment(Number(updatedAt)).format('MMM DD, YYYY HH:mm:ss')
-                          }
 
+                          const updatedAt = hotelData[0]?.updatedAt?.seconds
+                          var hotelUpdatedDate = new Date(updatedAt * 1000)
                           var hotelPrice = 0;
                           var hotelStatus = tripData?.data?.hotels?.filter(
                             f => f.id === hotel.id,
@@ -1257,10 +1261,10 @@ console.log(hotelTimeStamp,"poipoio")
                                   style={styles.addedHotelTimeAndDateContainer}>
                                   <View style={styles.addedHotelTitleContainer}>
                                     <Text style={styles.bookingStatusTitles}>
-                                      {hotelUpdatedDate?`Updated Date: `:`Added Date: `}
+                                      {updatedAt !== undefined ? `Updated Date: ` : `Added Date: `}
                                       <Text
                                         style={styles.addedHotelTimeAndDate}>
-                                        {hotelUpdatedDate?hotelUpdatedDate:hotelTimeStamp.toString().slice(4, 24)}
+                                        {updatedAt !== undefined ? hotelUpdatedDate.toString().slice(4, 24) : hotelTimeStamp.toString().slice(4, 24)}
                                       </Text>
                                     </Text>
                                   </View>
@@ -1332,14 +1336,8 @@ console.log(hotelTimeStamp,"poipoio")
                           var hotelTimeStamp = new Date(
                             flightStatus[0]?.date?.seconds * 1000,
                           );
-                          console.log(hotelTimeStamp,"hotelTimeStamp")
-                          const updatedAt=flightStatus[0]?.updatedAt
-                          var flightUpdatedDate=""
-                          if(updatedAt)
-                          {
-                           flightUpdatedDate = moment(Number(updatedAt)).format('MMM DD, YYYY HH:mm:ss')
-                          }
-                        
+                          const updatedAt = flightStatus[0]?.updatedAt.seconds
+                          var flightUpdatedDate = new Date(updatedAt * 1000)
                           var flightReq = tripData.data.flights.filter(
                             hotelMain => {
                               return hotelMain.id === flight.id;
@@ -1397,40 +1395,38 @@ console.log(hotelTimeStamp,"poipoio")
               </View>
             ) : null}
 
-{
-  tripData?.expenses ? 
-  <>
-  {tripData?.expenses?.map((expense, f) => {
-    
-    const date = new Date(expense.data.expenseDate.seconds * 1000);
-   const hours = String(date.getUTCHours()).padStart(2, '0');
-   const minutes = String(date.getUTCMinutes()).padStart(2, '0');
-  const seconds = String(date.getUTCSeconds()).padStart(2, '0');
-  const formattedDate = `${date.toDateString().slice(4, 10)} ${date.getFullYear()} ${hours}:${minutes}:${seconds}`;
 
-const expenseDate = new Date(expense.data.expenseDate.seconds * 1000);
-const month = expenseDate.toLocaleString('en-us', { month: 'short' });
-const day = expenseDate.getDate();
-    return(
-      <View style={styles.expenseCard}>
-<View>
-  <Text>{expense.data.type}</Text>
-  <View>
-    <Text>{`${month} ${day}`}</Text>
-    <Text>{date.toString()}</Text>
-  </View>
-</View>
-<Text></Text>
-<Text></Text>
-
-      </View>
-    )
-  })}
-  </>
-  :null
-}
             <>
               <Text style={styles.flightCardTitle}>Trip Expenses</Text>
+
+              {
+                tripData?.expenses ?
+                  <>
+                    {tripData?.expenses?.map((expense, f) => {
+
+                      const expenseDate = new Date(expense.data.expenseDate.seconds * 1000);
+                      const month = expenseDate.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                      });
+                      return (
+                        <View style={styles.expenseCard}>
+                          <View>
+                            <Text>{expense.data.type}</Text>
+                            <View>
+                              <Text>{`${month}`}</Text>
+                            </View>
+                          </View>
+                          <Text></Text>
+                          <Text></Text>
+
+                        </View>
+                      )
+                    })}
+                  </>
+                  : null
+              }
+
               <View style={styles.addingHotelBtnContainer}>
                 <TouchableOpacity
                   style={styles.addingHotelBtn}
@@ -3031,7 +3027,7 @@ const day = expenseDate.getDate();
           <View>
             <Text style={styles.expenseSubTitle}>Date:</Text>
             <TouchableOpacity style={styles.expenseCard} onPress={() => setDatePicker(true)}>
-              <Text style={styles.placeholderTitle}>{expenseDate ? expenseDate : "Date"}</Text>
+              <Text style={styles.placeholderTitle}>{expenseShortDate ? expenseShortDate : "Date"}</Text>
             </TouchableOpacity>
           </View>
           {datePicker && <DateTimePicker
@@ -3085,7 +3081,7 @@ const day = expenseDate.getDate();
           </View>
 
 
-          <TouchableOpacity style={[styles.btn, { alignSelf: "center" }]}>
+          <TouchableOpacity style={[styles.btn, { alignSelf: "center" }]} onPress={handleExpenseSubmit}>
             <Text style={styles.btnTitle}>Submit</Text>
           </TouchableOpacity>
 
