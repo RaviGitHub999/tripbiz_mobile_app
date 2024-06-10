@@ -129,7 +129,6 @@ const FlightsSearchRes = (props) => {
                                             onPress={() =>
                                                 {
                                                 actions.fetchingFlightBookData(bookingFlight)
-                                                actions.setBookingPage()
                                             }
                                             }>
                                             <Text style={styles.selectedDomesticFlightsbookBtnTitle}>Book</Text>

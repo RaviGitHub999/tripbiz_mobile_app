@@ -10,6 +10,7 @@ import HotelSearch from '../hotel/HotelSearch';
 import { KeyboardAvoidingView } from 'react-native';
 import { Platform } from 'react-native';
 import MyContext from '../../context/Context';
+import CabSearch from '../cab/CabSearch';
 //'flights', 'hotel', 'bus', 'train'
 const components = [
   {
@@ -23,8 +24,8 @@ const components = [
     componentName: "FontAwesome"
   },
   {
-    categoryName: "bus",
-    iconName: "bus",
+    categoryName: "cab",
+    iconName: "taxi",
     componentName: "FontAwesome5"
   },
   {
@@ -44,8 +45,8 @@ const HomeScreen = (props: any) => {
           return <FlightsSearch {...props} />;
         case 'hotel':
           return <HotelSearch  {...props} />;
-        case 'bus':
-          return <HotelSearch  {...props} />;
+        case 'cab':
+          return <CabSearch  {...props} />;
         case 'train':
           return <HotelSearch  {...props} />;
         default:

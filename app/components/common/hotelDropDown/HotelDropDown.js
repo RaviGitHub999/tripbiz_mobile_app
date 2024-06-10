@@ -1,9 +1,10 @@
-import { View, Text, StyleSheet,TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet,TouchableOpacity, ScrollView, TouchableHighlight } from 'react-native'
 import React, { useState } from 'react'
 import { responsiveHeight, responsiveWidth } from '../../../utils/responsiveScale'
 import { colors, fonts } from '../../../config/theme'
 import IconSwitcher from '../icons/IconSwitcher'
-const HotelDropDown = ({length,starting,value,handleChangeValue,customStyles,placeHolder,disable}) => {
+import { FlatList } from 'react-native-gesture-handler'
+const HotelDropDown = ({length,starting,value,handleChangeValue,customStyles,placeHolder,disable,dropDownData}) => {
     const[toggleBtn,setToogleBtn]=useState(false)
 const handleSelectedValue=(val)=>
 {
@@ -18,6 +19,15 @@ const handleSelectedValue=(val)=>
          <Text>{start}</Text>
      </TouchableOpacity>
         )
+        })
+
+        const handleRenderData=(({item})=>
+        {
+            return(
+                <TouchableHighlight key={item} onPress={()=>handleSelectedValue(item)} style={[styles.item,value===item&&styles.activeItem]} underlayColor={styles.activeItem}>
+                <Text>{item}</Text>
+            </TouchableHighlight>
+            )
         })
     const handleToggle =()=>
     {
@@ -36,7 +46,7 @@ const handleSelectedValue=(val)=>
  </View>}
     </TouchableOpacity>
    { toggleBtn&&<View style={styles.hotelDropDownContainer}>
-     {list}
+     {dropDownData?<FlatList data={dropDownData} renderItem={handleRenderData} vertical/>:list}
     </View>}
    </View>
   )
@@ -57,8 +67,8 @@ const styles=StyleSheet.create({
     },
     title:{
         fontSize:responsiveHeight(2),
-        fontFamily:fonts.textFont,
-        color:colors.gray
+        fontFamily:fonts.secondry,
+        color:colors.lightGray
     },
     value:{
         fontSize:responsiveHeight(2),
@@ -75,7 +85,8 @@ borderWidth:responsiveHeight(0.3)
 borderWidth:1,
 // paddingHorizontal: responsiveWidth(2.5),
 rowGap:responsiveHeight(0.5),
-backgroundColor:colors.white
+backgroundColor:colors.white,
+maxHeight:responsiveHeight(20)
     },
     item:{
 

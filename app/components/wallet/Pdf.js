@@ -23,78 +23,96 @@
 
 
 
-import React, { useState, useRef, useEffect } from 'react';
-import {
-  TextInput,
-  Text,
-  StyleSheet,
-  Pressable,
-} from 'react-native';
-import { responsiveHeight, responsiveWidth } from '../../utils/responsiveScale';
-import { colors, fonts } from '../../config/theme';
+// import React, { useState, useRef, useEffect } from 'react';
+// import {
+//   TextInput,
+//   Text,
+//   StyleSheet,
+//   Pressable,
+// } from 'react-native';
+// import { responsiveHeight, responsiveWidth } from '../../utils/responsiveScale';
+// import { colors, fonts } from '../../config/theme';
 
-const ToggleButtonInput = () => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [inputValue, setInputValue] = useState('');
-  const inputRef = useRef(null);
+// const ToggleButtonInput = () => {
+//   const [isEditing, setIsEditing] = useState(false);
+//   const [inputValue, setInputValue] = useState('');
+//   const inputRef = useRef(null);
 
-  const handleButtonClick = () => {
-    setIsEditing(true);
-  };
+//   const handleButtonClick = () => {
+//     setIsEditing(true);
+//   };
 
-  const handleInputBlur = () => {
-    setIsEditing(false);
-  };
+//   const handleInputBlur = () => {
+//     setIsEditing(false);
+//   };
 
-  const handleInputChange = (text) => {
-    setInputValue(text);
-  };
+//   const handleInputChange = (text) => {
+//     setInputValue(text);
+//   };
 
-  useEffect(() => {
-    if (isEditing) {
-      inputRef.current.focus();
-    }
-  }, [isEditing]);
+//   useEffect(() => {
+//     if (isEditing) {
+//       inputRef.current.focus();
+//     }
+//   }, [isEditing]);
 
-  return (
-    <Pressable style={[styles.button,isEditing&&styles.buttonEditing]} onPress={handleButtonClick}>
-      {isEditing ? (
-        <TextInput
-          ref={inputRef}
-          value={inputValue}
-          onChangeText={handleInputChange}
-          onBlur={handleInputBlur}
-          style={styles.input}
-        />
-      ) : (
-        <Text style={styles.title}>Origin</Text>
-      )}
-    </Pressable>
-  );
-};
+//   return (
+//     <Pressable style={[styles.button,isEditing&&styles.buttonEditing]} onPress={handleButtonClick}>
+//       {isEditing ? (
+//         <TextInput
+//           ref={inputRef}
+//           value={inputValue}
+//           onChangeText={handleInputChange}
+//           onBlur={handleInputBlur}
+//           style={styles.input}
+//           placeholder='Destination'
+//         />
+//       ) : (
+//         <Text style={styles.buttonText}>Origin</Text>
+//       )}
+//     </Pressable>
+//   );
+// };
 
-const styles = StyleSheet.create({
-  button: {
-      paddingHorizontal:responsiveWidth(4),
-      paddingVertical:responsiveHeight(1),
-      height:responsiveHeight(7),
-      justifyContent:'center',
-      borderRadius:responsiveHeight(2),
-      backgroundColor:colors.white,
+// const styles = StyleSheet.create({
+//   button: {
+//       paddingHorizontal:responsiveWidth(4),
+//       paddingVertical:responsiveHeight(1),
+//       height:responsiveHeight(7),
+//       justifyContent:'center',
+//       borderRadius:responsiveHeight(2),
+//       backgroundColor:colors.whiteSmoke,
       
-  },
-  buttonText: {
-      fontSize:responsiveHeight(2),
-      fontFamily:fonts.secondry
-  },
-  input: {
-    height:responsiveHeight(7),
-  },
-  buttonEditing: {
-    borderColor: 'blue',
-    borderWidth: responsiveHeight(0.3),
-  },
+//   },
+//   buttonText: {
+//       fontSize:responsiveHeight(2),
+//       fontFamily:fonts.secondry
+//   },
+//   input: {
+//     height:responsiveHeight(7),
+//   },
+//   buttonEditing: {
+//     borderColor: colors.primary,
+//     borderWidth: responsiveHeight(0.3),
+//   },
+//   title:{
+//     fontSize:responsiveHeight(2),
+//     fontFamily:fonts.secondry
+//   }
 
-});
+// });
 
-export default ToggleButtonInput;
+// export default ToggleButtonInput;
+
+import { View, Text } from 'react-native'
+import React from 'react'
+
+const Pdf = () => {
+  return (
+    <View>
+      <Text>Pdf</Text>
+    </View>
+  )
+}
+
+export default Pdf

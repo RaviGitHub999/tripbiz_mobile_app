@@ -6,7 +6,8 @@ export const styles=StyleSheet.create({
     mainContainer:{
         marginTop:responsiveHeight(4),
         rowGap:responsiveHeight(1.5),
-        flex:1
+        flex:1,
+        paddingHorizontal: responsiveWidth(5),
     },
     aligningItemsInRow:{
         flexDirection:"row",

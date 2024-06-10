@@ -35,7 +35,7 @@ import TravDetails from './TravDetails';
 import HCard from './HCard';
 import { Modal } from 'react-native';
 import ReCheck from '../../common/recheck/ReCheck';
-import CustomSelect from '../../common/customSelect/CustomSelect';
+import CustomSelect from '../../common/mainComponents/customSelect/CustomSelect';
 import { TextInput } from 'react-native';
 // import DateTimePicker from 'react-native-ui-datepicker';
 // import dayjs from 'dayjs';
@@ -1336,8 +1336,13 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
                           var hotelTimeStamp = new Date(
                             flightStatus[0]?.date?.seconds * 1000,
                           );
-                          const updatedAt = flightStatus[0]?.updatedAt.seconds
-                          var flightUpdatedDate = new Date(updatedAt * 1000)
+                          const updatedAt = flightStatus[0]?.updatedAt?.seconds
+                          var flightUpdatedDate
+                          if(updatedAt)
+                            {
+                              flightUpdatedDate = new Date(updatedAt * 1000) 
+                            }
+                          // var flightUpdatedDate = new Date(updatedAt * 1000)
                           var flightReq = tripData.data.flights.filter(
                             hotelMain => {
                               return hotelMain.id === flight.id;

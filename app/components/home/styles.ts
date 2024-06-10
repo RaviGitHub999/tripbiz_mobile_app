@@ -38,7 +38,7 @@ export const styles = StyleSheet.create({
     section: {
         marginTop:responsiveHeight(3),
         flex:0.86,
-        paddingHorizontal: responsiveWidth(5),
+        // paddingHorizontal: responsiveWidth(5),
         backgroundColor:colors.white,
         borderRadius:responsiveHeight(2),
     },

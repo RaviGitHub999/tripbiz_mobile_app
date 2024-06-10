@@ -8,6 +8,7 @@ export const styles = StyleSheet.create({
     },
     subContainer: {
         flex:1,
+        paddingHorizontal: responsiveWidth(5),
     },
     btnsContainer: {
         marginRight:responsiveWidth(5),

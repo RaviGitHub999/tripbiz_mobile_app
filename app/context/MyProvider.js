@@ -95,8 +95,8 @@ const components = [
     componentName: "FontAwesome"
   },
   {
-    categoryName: "bus",
-    iconName: "bus",
+    categoryName: "cab",
+    iconName: "taxi",
     componentName: "FontAwesome5"
   },
   {
