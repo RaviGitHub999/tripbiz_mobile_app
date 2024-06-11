@@ -4,6 +4,7 @@ import MyContext from './Context';
 import Fuse from 'fuse.js';
 import AirportsData from "../components/jsonData/Airports.json"
 import HotelsData from "../components/jsonData/Hotels.json"
+import CabsData from "../components/jsonData/Cabs.json"
 import axios from 'axios';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
@@ -131,7 +132,23 @@ var hotelFuse = new Fuse(HotelsData, {
   includeScore: true,
   threshold: 0.2
 });
+// var cabFuse = new Fuse(CabsData, {
+//   keys: ["City"],
+//   includeScore: true,
+//   threshold: 0.2
+// });
+const cityNames = CabsData.flatMap(cityData => Object.keys(cityData));
+// console.log(cityNames)
+// const hyderabadKeys = Object.keys(CabsData[0]["Hyderabad"]);
 
+// console.log(hyderabadKeys);
+// const hyderabadAirportToHotel = CabsData[0]["Hyderabad"]["Airport to City center Hotel"];
+
+// console.log(hyderabadAirportToHotel);
+var cabFuse=new Fuse(cityNames, {
+  includeScore: true,
+  threshold: 0.3
+});
 export default class MyProvider extends Component {
   constructor(props) {
     super(props);
@@ -282,6 +299,7 @@ export default class MyProvider extends Component {
       isopen: false,
       emailNotFound: false,
       approveLoading: true,
+      cabSearchRes: [],
       actions: {
         handleBookinghotelquery: (query) => {
           this.setState({ bookinghotelquery: query })
@@ -4448,7 +4466,52 @@ addExpenseToTrip: async (
     console.error(error);
   }
 },
+changeCabCityKeyword : this.debounce((query) => {
+  var results = cabFuse.search(query);
+  this.setState({
+    cabSearchRes: results,
+  });
+}, 1000),
+ getCabOptionForCity:(data, cityName, optionName) =>{
+  for (let item of data) {
+    if (item[cityName] && item[cityName][optionName]) {
+      return item[cityName][optionName];
+    }
+  }
+  return null; // Return null if not found
+},
 
+// Example usage for Hyderabad and "12 hrs cab at disposal"
+// const result = getCabOptionForCity(data, "Hyderabad", "12 hrs cab at disposal");
+
+// console.log(result);
+
+fetchCabs: async (
+  city,
+  type,
+  startDate,
+  endDate,
+  noOfCabs,
+  nights,
+  time
+) => {
+  this.setState
+  ({
+    cabCity: city,
+    cabType: type,
+    cabStartDate: startDate,
+    cabEndDate: endDate,
+    searchingCabs: true,
+    cabCount: noOfCabs,
+    cabNights: nights,
+    selectedTime: time,
+  });
+
+
+  this.setState({
+    cabResList: []
+  });
+},
 
       },
 

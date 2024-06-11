@@ -28,4 +28,24 @@ export const styles=StyleSheet.create({
     {
         color: colors.white
     },
+    cityListContainer:
+    {
+        borderWidth:responsiveHeight(0.3),
+        maxHeight:responsiveHeight(20),
+        borderRadius:responsiveHeight(1),
+        
+    },
+    containerStyle:{
+        // paddingVertical:responsiveHeight(1),
+        paddingHorizontal:responsiveHeight(2),
+        justifyContent:'center'
+    },
+    customStyle:{
+        backgroundColor: colors.whiteSmoke, 
+        height: responsiveHeight(6.5), 
+        elevation: 0 
+    },
+    cityName:{
+        marginVertical:responsiveHeight(0.8)
+    }
 })

@@ -1,5 +1,5 @@
 import { TouchableHighlight, View, Text, KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback, ScrollView } from 'react-native'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { styles } from './styles'
 import ToggleButtonInput from '../common/mainComponents/toggleButtonInput/ToggleButtonInput'
 import CustomSelect from '../common/mainComponents/customSelect/CustomSelect'
@@ -9,20 +9,20 @@ import CalenderButton from '../common/mainComponents/calenderButton/CalenderButt
 import CustomButton from '../common/customButton/CustomButton'
 import HotelDropDown from '../common/hotelDropDown/HotelDropDown'
 import DateTimePicker from '@react-native-community/datetimepicker';
+import MyContext from '../../context/Context'
+import { FlatList } from 'react-native'
+import { TouchableOpacity } from 'react-native-gesture-handler'
+import CabsData from "../jsonData/Cabs.json"
 const cabTypes =
   [
-     "Airport to City center Hotel"
-    ,
-     "City center Hotel  to Airport"
-    ,
-     "8 hrs cab at disposal"
-    ,
-     "12 hrs cab at disposal"
-    ,
-
+    "8 hrs cab at disposal",
+    "12 hrs cab at disposal",
+    "4 hrs cab at disposal",
+    "10 hrs cab at disposal"
   ]
 const cabTimings = {
-  "Airport to City center Hotel": [
+  "Airport to City center Hotel": 
+  [
     "00:00",
     "00:15",
     "00:30",
@@ -120,7 +120,8 @@ const cabTimings = {
     "23:30",
     "23:45",
   ],
-  "City center hotel to Airport": [
+  "City center hotel to Airport": 
+  [
     "00:00",
     "00:15",
     "00:30",
@@ -218,7 +219,8 @@ const cabTimings = {
     "23:30",
     "23:45",
   ],
-  "City center hotel to airport": [
+  "City center hotel to airport": 
+  [
     "00:00",
     "00:15",
     "00:30",
@@ -316,7 +318,8 @@ const cabTimings = {
     "23:30",
     "23:45",
   ],
-  "4 hrs cab at disposal": [
+  "4 hrs cab at disposal": 
+  [
     "08:00",
     "08:15",
     "08:30",
@@ -351,7 +354,8 @@ const cabTimings = {
     "15:45",
     "16:00",
   ],
-  "8 hrs cab at disposal": [
+  "8 hrs cab at disposal": 
+  [
     "08:00",
     "08:15",
     "08:30",
@@ -371,7 +375,8 @@ const cabTimings = {
     "12:00",
   ],
   "12 hrs cab at disposal": ["08:00"],
-  "10 hrs cab at disposal": [
+  "10 hrs cab at disposal": 
+  [
     "08:00",
     "08:15",
     "08:30",
@@ -438,8 +443,8 @@ const defaultTimings = [
 const CabSearch = () => {
   const [cabCity, setCabCity] = useState("");
   const [cityCabResBox, setCityCabResBox] = useState(false);
-  const [cabType, setCabType] = useState("Select the City first");
-  const [cabCityItems, setCabCityItems] = useState(null);
+  const [cabType, setCabType] = useState("Select the Destination Above");
+  const [cabCityItem, setCabCityItem] = useState(null);
   const [viewAll, setViewAll] = useState(false);
   const [selectedItemIndex, setSelectedItemIndex] = useState(0);
   const [noOfCabs, setNoOfCabs] = useState("1");
@@ -452,13 +457,26 @@ const CabSearch = () => {
   const [cabEndDate, setCabEndDate] = useState(new Date());
   const [cabStartFormated, setCabStartFormated] = useState("")
   const [cabEndFormated, setCabEndFormated] = useState("")
+  const [btnEnable, setBtnEnable] = useState(true)
+  const { actions, cabSearchRes } = useContext(MyContext)
+  //  var cabTypes =Object.keys(CabsData[0]["Hyderabad"])
+  const getCabTypesForCity = (cityName) => {
+    return CabsData.reduce((acc, cityObj) => {
+      if (cityObj[cityName]) {
+        acc = acc.concat(Object.keys(cityObj[cityName]));
+      }
+      return acc;
+    }, []);
+  };
+
+
   const handleScreenPress = () => {
     Keyboard.dismiss();
   };
   const handleInputChange = (text) => {
     setCabCity(text);
-    // setCityCabResBox(true);
-    // actions.handleChangeCityCab(text);
+    setCityCabResBox(true);
+    actions.changeCabCityKeyword(text);
   };
   const handleSelectItem = (item, index) => {
     setCabType(item),
@@ -548,18 +566,41 @@ const CabSearch = () => {
       setCalenderOpen({ endDate: false })
     }
   }
-
+  const handleSelectCityName = (item) => {
+    setCabCityItem(item)
+    setCityCabResBox(false)
+    setBtnEnable(false)
+  }
+  const handleCabsCityNames = ({ item: { item } }) => {
+    return (
+      <TouchableOpacity style={styles.cityName} onPress={() => handleSelectCityName(item)}>
+        <Text style={[styles.selectedItemTitle]}>{item}</Text>
+      </TouchableOpacity>
+    )
+  }
+  const handleEmptyComponent = () => {
+    return (
+      <Text style={styles.selectedItemTitle}>No Data Found !!!</Text>
+    )
+  }
   return (
     <>
-      <KeyboardAvoidingView style={{ flex: 1 }}>
+      <KeyboardAvoidingView style={{ flex: 1 }} >
         <TouchableWithoutFeedback onPress={handleScreenPress}>
           <ScrollView>
             <View style={styles.mainContainer}>
-              <ToggleButtonInput placeHolder="Destination" inputValue={cabCity} handleInputChange={(e) => handleInputChange(e)} />
-              <CustomSelect data={cabTypes} renderData={(item, index) => cabCityRenderItem(item, index)
-              } selectedItem={cabType} handledropDown={handledropDown} viewAll={viewAll} CustomStyle={{ backgroundColor: colors.whiteSmoke, height: responsiveHeight(6.5), elevation: 0 }} />
-              <CalenderButton title={"Start Date"} handlePress={handleCalender_1} value={cabStartFormated}/>
-           {cabTypes.includes(cabType)?<CalenderButton title={"End Date"} handlePress={handleCalender_2} value={cabEndFormated}/>:null}
+              <ToggleButtonInput placeHolder="Destination" inputValue={cabCity} handleInputChange={(e) => handleInputChange(e)} selected={cabCityItem} />
+              {
+                cityCabResBox ?
+                  <>
+                    <FlatList data={cabSearchRes} renderItem={handleCabsCityNames} style={styles.cityListContainer} nestedScrollEnabled contentContainerStyle={styles.containerStyle} ListEmptyComponent={handleEmptyComponent} />
+                  </> :
+                  null
+              }
+              <CustomSelect data={getCabTypesForCity(cabCityItem)} renderData={(item, index) => cabCityRenderItem(item, index)
+              } selectedItem={cabType} handledropDown={handledropDown} viewAll={viewAll} CustomStyle={styles.customStyle} disable={btnEnable} />
+              <CalenderButton title={"Start Date"} handlePress={handleCalender_1} value={cabStartFormated} />
+              {cabTypes.includes(cabType) ? <CalenderButton title={"End Date"} handlePress={handleCalender_2} value={cabEndFormated} /> : null}
               <View style={{ flexDirection: 'row', gap: 30 }}>
                 <View style={{ flex: 1 }}>
                   <HotelDropDown length={4} starting={1} value={noOfCabs} handleChangeValue={handleCabs} placeHolder="No of Cabs" />

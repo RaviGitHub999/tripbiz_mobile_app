@@ -1,0 +1,1246 @@
+[ 
+    {
+        "Hyderabad": {
+            "Airport to City center Hotel": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "SUV (Innova/Ertiga)", "Max. number of passengers": 6, "Price": 2200 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "SUV (Innova/Ertiga)", "Max. number of passengers": 6, "Price": 2200 }
+            ],
+            "4 hrs cab at disposal": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 2400, "Notes": "80kms limit" },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2400, "Notes": "80kms limit" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 3200, "Notes": "80kms limit" },
+                { "Car": "Innova Crysta", "Max. number of passengers": 6, "Price": 3800, "Notes": "80kms limit" }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 2400, "Notes": "80kms limit" },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2400, "Notes": "80kms limit" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 3200, "Notes": "80kms limit" },
+                { "Car": "Innova Crysta", "Max. number of passengers": 6, "Price": 3800, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 3500, "Notes": "120kms limit" },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3500, "Notes": "120kms limit" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 4600, "Notes": "120kms limit" },
+                { "Car": "Innova Crysta", "Max. number of passengers": 6, "Price": 5400, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Bengaluru": {
+            "Airport to City center Hotel": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 1200 },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1200 },
+                { "Car": "SUV (Innova/Ertiga)", "Max. number of passengers": 6, "Price": 2500 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 1200 },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1200 },
+                { "Car": "SUV (Innova/Ertiga)", "Max. number of passengers": 6, "Price": 2500 }
+            ],
+            "4 hrs cab at disposal": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 2100, "Notes": "80kms limit" },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2100, "Notes": "80kms limit" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 3300, "Notes": "80kms limit" }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 2100, "Notes": "80kms limit" },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2100, "Notes": "80kms limit" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 3300, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 3500, "Notes": "120kms limit" },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3500, "Notes": "120kms limit" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 5000, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Chennai": {
+            "Airport to City center Hotel": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 1600, "Notes": "Parking" },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1600, "Notes": "Parking" },
+                { "Car": "SUV (Innova/Ertiga)", "Max. number of passengers": 6, "Price": 2000, "Notes": "Parking" }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 1600, "Notes": "Parking" },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1600, "Notes": "Parking" },
+                { "Car": "SUV (Innova/Ertiga)", "Max. number of passengers": 6, "Price": 2000, "Notes": "Parking" }
+            ],
+            "4 hrs cab at disposal": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 3500, "Notes": "100kms limit" },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3500, "Notes": "100kms limit" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 4000, "Notes": "100kms limit" }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 3500, "Notes": "100kms limit" },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3500, "Notes": "100kms limit" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 4000, "Notes": "100kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 4800, "Notes": "150kms limit" },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 4800, "Notes": "150kms limit" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 5800, "Notes": "150kms limit" }
+            ]
+        }
+    },
+    {
+        "Delhi": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1400 },
+                { "Car": "SUV (Innova/Ertiga)", "Max. number of passengers": 6, "Price": 2200 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1400 },
+                { "Car": "SUV (Innova/Ertiga)", "Max. number of passengers": 6, "Price": 2200 }
+            ],
+            "4 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2400, "Notes": "80kms limit" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 3500, "Notes": "80kms limit" },
+                { "Car": "Ertiga", "Max. number of passengers": 6, "Price": 2800, "Notes": "80kms limit" }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2400, "Notes": "80kms limit" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 3500, "Notes": "80kms limit" },
+                { "Car": "Ertiga", "Max. number of passengers": 6, "Price": 2800, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3500, "Notes": "120kms limit" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 5500, "Notes": "120kms limit" },
+                { "Car": "Ertiga", "Max. number of passengers": 6, "Price": 4800, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Mumbai": {
+            "Airport to City center Hotel": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "SUV (Innova/Ertiga)", "Max. number of passengers": 6, "Price": 2500 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "SUV (Innova/Ertiga)", "Max. number of passengers": 6, "Price": 2500 }
+            ],
+            "4 hrs cab at disposal": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 2500, "Notes": "80kms limit" },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2500, "Notes": "80kms limit" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 3500, "Notes": "80kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 4000, "Notes": "80kms limit" },
+                { "Car": "Ertiga", "Max. number of passengers": 6, "Price": 3000, "Notes": "80kms limit" }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 2500, "Notes": "80kms limit" },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2500, "Notes": "80kms limit" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 3500, "Notes": "80kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 4000, "Notes": "80kms limit" },
+                { "Car": "Ertiga", "Max. number of passengers": 6, "Price": 3000, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 3800, "Notes": "120kms limit" },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3800, "Notes": "120kms limit" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 4800, "Notes": "120kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 5300, "Notes": "120kms limit" },
+                { "Car": "Ertiga", "Max. number of passengers": 6, "Price": 4300, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Kolkata": {
+            "Airport to City center Hotel": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "SUV (Innova/Ertiga)", "Max. number of passengers": 6, "Price": 2500 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "SUV (Innova/Ertiga)", "Max. number of passengers": 6, "Price": 2500 }
+            ],
+            "4 hrs cab at disposal": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 2300, "Notes": "80kms limit" },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2300, "Notes": "80kms limit" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 2800, "Notes": "80kms limit" },
+                { "Car": "Innova Crysta", "Max. number of passengers": 6, "Price": 3200, "Notes": "80kms limit" }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 2300, "Notes": "80kms limit" },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2300, "Notes": "80kms limit" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 2800, "Notes": "80kms limit" },
+                { "Car": "Innova Crysta", "Max. number of passengers": 6, "Price": 3200, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 3900, "Notes": "120kms limit" },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3900, "Notes": "120kms limit" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 800, "Notes": "120kms limit" },
+                { "Car": "Innova Crysta", "Max. number of passengers": 6, "Price": 5600, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Kochi": {
+            "Airport to City center Hotel": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "SUV (Innova/Ertiga)", "Max. number of passengers": 6, "Price": 3200 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "SUV (Innova/Ertiga)", "Max. number of passengers": 6, "Price": 3200 }
+            ],
+            "4 hrs cab at disposal": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 2200, "Notes": "80kms limit" },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2200, "Notes": "80kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 3800, "Notes": "80kms limit" }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 2200, "Notes": "80kms limit" },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2200, "Notes": "80kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 3800, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 3700, "Notes": "120kms limit" },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3700, "Notes": "120kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 5800, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Pune": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1600 },
+                { "Car": "Ertiga", "Max. number of passengers": 6, "Price": 1900 },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 2300 },
+                { "Car": "Innova Crysta", "Max. number of passengers": 6, "Price": 2600 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1600 },
+                { "Car": "Etiga", "Max. number of passengers": 6, "Price": 1900 },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 2300 },
+                { "Car": "Innova Crysta", "Max. number of passengers": 6, "Price": 2600 }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2800, "Notes": "80kms limit" },
+                { "Car": "Ertiga", "Max. number of passengers": 6, "Price": 3200, "Notes": "80kms limit" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 3800, "Notes": "80kms limit" },
+                { "Car": "Innova Crysta", "Max. number of passengers": 6, "Price": 4200, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 4000, "Notes": "120kms limit" },
+                { "Car": "Ertiga", "Max. number of passengers": 6, "Price": 4800, "Notes": "120kms limit" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 5400, "Notes": "120kms limit" },
+                { "Car": "Innova Crysta", "Max. number of passengers": 6, "Price": 5800, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Lucknow": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1300, "Notes": "Parking" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 1800, "Notes": "Parking" },
+                { "Car": "Innova Crysta", "Max. number of passengers": 6, "Price": 2100, "Notes": "Parking" }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1300, "Notes": "Parking" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 1800, "Notes": "Parking" },
+                { "Car": "Innova Crysta", "Max. number of passengers": 6, "Price": 2100, "Notes": "Parking" }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2200, "Notes": "80kms limit" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 3300, "Notes": "80kms limit" },
+                { "Car": "Innova Crysta", "Max. number of passengers": 6, "Price": 3800, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3500, "Notes": "120kms limit" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 4800, "Notes": "120kms limit" },
+                { "Car": "Innova Crysta", "Max. number of passengers": 6, "Price": 5500, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Jaipur": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1000 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1500 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1000 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1500 }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2300, "Notes": "80kms limit" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 3300, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3500, "Notes": "120kms limit" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 4500, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Chandigarh": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2000 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2500 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2000 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2500 }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2500, "Notes": "80kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 3500, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3800, "Notes": "120kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 5500, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Srinagar": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1600 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2200 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1600 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2200 }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3500, "Notes": "Per day" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 5000, "Notes": "Per day" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3500, "Notes": "Per day" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 5000, "Notes": "Per day" }
+            ]
+        }
+    },
+    {
+        "Bhubaneshwar": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1200, "Notes": "15kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1700, "Notes": "15kms limit" }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1200, "Notes": "15kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1700, "Notes": "15kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3800, "Notes": "300kms limit" },
+                { "Car": "Innova", "Max. number of passengers": 6, "Price": 5200, "Notes": "300kms limit" },
+                { "Car": "Innova Crysta", "Max. number of passengers": 6, "Price": 5500, "Notes": "300kms limit" }
+            ]
+        }
+    },
+    {
+        "Guwahati": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1100 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2200 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1100 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2200 }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2500, "Notes": "80kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 3400, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3200, "Notes": "120kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 4800, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Patna": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2000 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2000 }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1950, "Notes": "80kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 3150, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2450, "Notes": "120kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 3950, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Trivandrum": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1000 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1800 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1000 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1800 }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3500, "Notes": "300kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 4800, "Notes": "300kms limit" }
+            ]
+        }
+    },
+    {
+        "Varanasi": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2000 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2000 }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2000, "Notes": "80kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 3200, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3400, "Notes": "120 kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 4500, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Dehradun": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1200 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1800 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1200 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1800 }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3800, "Notes": "120kms limit" },
+                { "Car": "Innova ", "Max. number of passengers": 6, "Price": 4800, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Indore": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1000 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2000 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1000 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2000 }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2400, "Notes": "80kms limit (Toll tax + Parking)" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 3500, "Notes": "80kms limit (Toll tax + Parking)" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3000, "Notes": "120 kms limit (Toll tax + Parking)" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 4500, "Notes": "120 kms limit (Toll tax + Parking)" }
+            ]
+        }
+    },
+    {
+        "Ahmedabad": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 900 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1200 },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 1600 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 900 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1200 },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 1600 }
+            ],
+            "4 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1500, "Notes": "40kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2200, "Notes": "40kms limit" }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1900, "Notes": "80kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2800, "Notes": "80kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 4500, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2700, "Notes": "120kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 3800, "Notes": "120kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 5500, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Raipur": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1250 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1650 },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 2050 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1250 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1650 },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 2050 }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2200, "Notes": "80kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2600, "Notes": "80kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 3300, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2800, "Notes": "120kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 3400, "Notes": "120kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 4100, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Puducherry": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3000 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 4500 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3000 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 4500 }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2800, "Notes": "80kms limit" },
+                { "Car": "Innova ", "Max. number of passengers": 6, "Price": 4000, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3800, "Notes": "120kms limit" },
+                { "Car": "Innova ", "Max. number of passengers": 6, "Price": 5000, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Mangalore": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 900 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1300 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 900 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1300 }
+            ],
+            "10 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3300, "Notes": "200kms limit" },
+                { "Car": "Innova ", "Max. number of passengers": 6, "Price": 4300, "Notes": "200kms limit" }
+            ]
+        }
+    },
+    {
+        "Hubli": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 800 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1200 },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 1500 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 800 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1200 },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 1500 }
+            ],
+            "4 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1200, "Notes": "40kms limit" },
+                { "Car": "Ertiga", "Max. number of passengers": 6, "Price": 1500, "Notes": "40kms limit" },
+                { "Car": "Innova ", "Max. number of passengers": 6, "Price": 1600, "Notes": "40kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 2800, "Notes": "40kms limit" }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1800, "Notes": "80kms limit" },
+                { "Car": "Ertiga", "Max. number of passengers": 6, "Price": 2200, "Notes": "80kms limit" },
+                { "Car": "Innova ", "Max. number of passengers": 6, "Price": 2800, "Notes": "80kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 3800, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2400, "Notes": "120kms limit" },
+                { "Car": "Ertiga", "Max. number of passengers": 6, "Price": 3000, "Notes": "120kms limit" },
+                { "Car": "Innova ", "Max. number of passengers": 6, "Price": 4100, "Notes": "120kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 4800, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Vijayawada": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 3000 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 3000 }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2500, "Notes": "80kms limit" },
+                { "Car": "Innova ", "Max. number of passengers": 6, "Price": 4500, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3500, "Notes": "120kms limit" },
+                { "Car": "Innova ", "Max. number of passengers": 6, "Price": 5500, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Visakhapatnam": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1200 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2000 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1200 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2000 }
+            ],
+            "10 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2500, "Notes": "100kms limit" },
+                { "Car": "Innova ", "Max. number of passengers": 6, "Price": 3800, "Notes": "100kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3500, "Notes": "120kms limit" },
+                { "Car": "Innova ", "Max. number of passengers": 6, "Price": 4800, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Coimbatore": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1000 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1200 },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 1800 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1000 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1200 },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 1800 }
+            ],
+            "4 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1500, "Notes": "40kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2200, "Notes": "40kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 2800, "Notes": "40kms limit" }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2600, "Notes": "80kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 3400, "Notes": "80kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 4600, "Notes": "80kms limit" }
+            ],
+            "10 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2800, "Notes": "100kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 3800, "Notes": "100kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 5200, "Notes": "100kms limit" }
+            ]
+        }
+    },
+    {
+        "Madurai": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1400 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2200 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1400 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2200 }
+            ],
+            "4 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1800, "Notes": "40kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2400, "Notes": "40kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 3000, "Notes": "40kms limit" }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2800, "Notes": "80kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 3600, "Notes": "80kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 4600, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3500, "Notes": "120kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 4500, "Notes": "120kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 5500, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Mysore": {
+            "Airport to City center Hotel": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 1100 },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1400 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2000 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 1100 },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1400 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2000 }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2800, "Notes": "80kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 3600, "Notes": "80kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 4600, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3500, "Notes": "100kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 5400, "Notes": "100kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 6000, "Notes": "100kms limit" }
+            ]
+        }
+    },
+    {
+        "Bagdogra": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1000 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1500 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1000 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1500 }
+            ],
+            "10 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3000, "Notes": "80kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 3500, "Notes": "80kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 4000, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 4000, "Notes": "120 kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 4800, "Notes": "120 kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 5200, "Notes": "120 kms limit" }
+            ],
+            "Darjeeling Up & Down": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3500, "Notes": "10 hrs" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 4500, "Notes": "10 hrs" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 5000, "Notes": "10 hrs" }
+            ],
+            "Darjeeling continue": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3500, "Notes": "10 hrs" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 4500, "Notes": "10 hrs" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 5000, "Notes": "10 hrs" }
+            ],
+            "Gangtok Up & down": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 5000, "Notes": "10 hrs" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 6000, "Notes": "10 hrs" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 7000, "Notes": "10 hrs" }
+            ],
+            "Gangtok continue": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 4000, "Notes": "10 hrs" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 5000, "Notes": "10 hrs" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 5500, "Notes": "10 hrs" }
+            ]
+        }
+    },
+    {
+        "Pune": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1800 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 3000 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1800 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 3000 }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2700, "Notes": "80kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 4000, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3700, "Notes": "120kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 5800, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Tuticorin": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 900 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1500 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 900 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1500 }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2500, "Notes": "100kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 4000, "Notes": "100kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3400, "Notes": "120kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 5500, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Agartal": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1000 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1600 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1000 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1600 }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 1800, "Notes": "80kms limit" },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2200, "Notes": "80kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 3000, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Indica or similar", "Max. number of passengers": 4, "Price": 2800, "Notes": "120kms limit" },
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3400, "Notes": "120kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 5000, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Dimapur": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2000 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2500 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2000 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2500 }
+            ],
+            "Day cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 4500 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 6000 }
+            ]
+        }
+    },
+    {
+        "Jabalpur": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1200 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1800 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1200 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1800 }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2000, "Notes": "80kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2800, "Notes": "80kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 3200, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3500, "Notes": "120kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 4500, "Notes": "120kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 5000, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "kozhikode": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2200 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2200 }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2500, "Notes": "80kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 3500, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 4200, "Notes": "120kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 5000, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Surat": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1000 },
+                { "Car": "SUV (Ertiga)", "Max. number of passengers": 6, "Price": 1800 },
+                { "Car": "Innova ", "Max. number of passengers": 6, "Price": 3000 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1000 },
+                { "Car": "SUV (Ertiga)", "Max. number of passengers": 6, "Price": 1800 },
+                { "Car": "Innova ", "Max. number of passengers": 6, "Price": 3000 }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2000, "Notes": "80kms limit" },
+                { "Car": "SUV (Ertiga)", "Max. number of passengers": 6, "Price": 3000, "Notes": "80kms limit" },
+                { "Car": "Innova ", "Max. number of passengers": 6, "Price": 3400, "Notes": "80kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 4200, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2500, "Notes": "100kms limit" },
+                { "Car": "SUV (Ertiga)", "Max. number of passengers": 6, "Price": 3400, "Notes": "100kms limit" },
+                { "Car": "Innova ", "Max. number of passengers": 6, "Price": 4200, "Notes": "100kms limit" },
+                { "Car": "Innova crysta", "Max. number of passengers": 6, "Price": 5200, "Notes": "100kms limit" }
+            ]
+        }
+    },
+    {
+        "Udaipur": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1000 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1500 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1000 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1500 }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2500, "Notes": "80kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 3500, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3800, "Notes": "120kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 4700, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Rajahmundry": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1000 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1600 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1000 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 1600 }
+            ],
+            "Day cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3800, "Notes": "300kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 5800, "Notes": "300kms limit" }
+            ]
+        }
+    },
+    {
+        "Nagpur": {
+            "Airport to City center Hotel": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2200 }
+            ],
+            "City center hotel to airport": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 1500 },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 2200 }
+            ],
+            "8 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 2500, "Notes": "80kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 3700, "Notes": "80kms limit" }
+            ],
+            "12 hrs cab at disposal": [
+                { "Car": "Sedan", "Max. number of passengers": 4, "Price": 3200, "Notes": "120kms limit" },
+                { "Car": "SUV (Innova\/Ertiga)", "Max. number of passengers": 6, "Price": 4700, "Notes": "120kms limit" }
+            ]
+        }
+    },
+    {
+        "Thirvanenthapuram": {
+            "Airport to City center Hotel": [
+                {
+                    "Car": "Sedan",
+                    "Max. number of passengers": 4,
+                    "Price": 1000
+                },
+                {
+                    "Car": "SUV (Innova\/Ertiga)",
+                    "Max. number of passengers": 6,
+                    "Price": 1400
+                }
+            ],
+            "City center hotel to airport": [
+                {
+                    "Car": "Sedan",
+                    "Max. number of passengers": 4,
+                    "Price": 1000
+                },
+                {
+                    "Car": "SUV (Innova\/Ertiga)",
+                    "Max. number of passengers": 6,
+                    "Price": 1400
+                }
+            ],
+            "8 hrs cab at disposal": [
+                {
+                    "Car": "Sedan",
+                    "Max. number of passengers": 4,
+                    "Price": 2300,
+                    "Notes": "80kms limit"
+                },
+                {
+                    "Car": "SUV (Innova\/Ertiga)",
+                    "Max. number of passengers": 6,
+                    "Price": 3200,
+                    "Notes": "80kms limit"
+                }
+            ],
+            "12 hrs cab at disposal": [
+                {
+                    "Car": "Sedan",
+                    "Max. number of passengers": 4,
+                    "Price": 3400,
+                    "Notes": "120kms limit"
+                },
+                {
+                    "Car": "SUV (Innova\/Ertiga)",
+                    "Max. number of passengers": 6,
+                    "Price": 4400,
+                    "Notes": "120kms limit"
+                }
+            ]
+        }
+    },
+    {
+        "Vadodara": {
+            "Airport to City center Hotel": [
+                {
+                    "Car": "Sedan",
+                    "Max. number of passengers": 4,
+                    "Price": 900
+                },
+                {
+                    "Car": "SUV (Innova\/Ertiga)",
+                    "Max. number of passengers": 6,
+                    "Price": 1600
+                }
+            ],
+            "City center hotel to airport": [
+                {
+                    "Car": "Sedan",
+                    "Max. number of passengers": 4,
+                    "Price": 900
+                },
+                {
+                    "Car": "SUV (Innova\/Ertiga)",
+                    "Max. number of passengers": 6,
+                    "Price": 1600
+                }
+            ],
+            "8 hrs cab at disposal": [
+                {
+                    "Car": "Sedan",
+                    "Max. number of passengers": 4,
+                    "Price": 2200,
+                    "Notes": "80kms limit"
+                },
+                {
+                    "Car": "SUV (Innova\/Ertiga)",
+                    "Max. number of passengers": 6,
+                    "Price": 3400,
+                    "Notes": "80kms limit"
+                }
+            ],
+            "12 hrs cab at disposal": [
+                {
+                    "Car": "Sedan",
+                    "Max. number of passengers": 4,
+                    "Price": 3200,
+                    "Notes": "120kms limit"
+                },
+                {
+                    "Car": "SUV (Innova\/Ertiga)",
+                    "Max. number of passengers": 6,
+                    "Price": 5000,
+                    "Notes": "120kms limit"
+                }
+            ]
+        }
+    },
+    {
+        "Amritsar": {
+            "Airport to City center Hotel": [
+                {
+                    "Car": "Sedan",
+                    "Max. number of passengers": 4,
+                    "Price": 900
+                },
+                {
+                    "Car": "SUV (Innova\/Ertiga)",
+                    "Max. number of passengers": 6,
+                    "Price": 1500
+                }
+            ],
+            "City center hotel to airport": [
+                {
+                    "Car": "Sedan",
+                    "Max. number of passengers": 4,
+                    "Price": 900
+                },
+                {
+                    "Car": "SUV (Innova\/Ertiga)",
+                    "Max. number of passengers": 6,
+                    "Price": 1500
+                }
+            ],
+            "8 hrs cab at disposal": [
+                {
+                    "Car": "Sedan",
+                    "Max. number of passengers": 4,
+                    "Price": 2200,
+                    "Notes": "80kms limit"
+                },
+                {
+                    "Car": "SUV (Innova\/Ertiga)",
+                    "Max. number of passengers": 6,
+                    "Price": 3500,
+                    "Notes": "80kms limit"
+                }
+            ],
+            "12 hrs cab at disposal": [
+                {
+                    "Car": "Sedan",
+                    "Max. number of passengers": 4,
+                    "Price": 3200,
+                    "Notes": "100kms limit"
+                },
+                {
+                    "Car": "SUV (Innova\/Ertiga)",
+                    "Max. number of passengers": 6,
+                    "Price": 5000,
+                    "Notes": "100kms limit"
+                }
+            ]
+        }
+    },
+    {
+        "Bhopal": {
+            "Airport to City center Hotel": [
+                {
+                    "Car": "Sedan",
+                    "Max. number of passengers": 4,
+                    "Price": 1800
+                },
+                {
+                    "Car": "SUV (Innova\/Ertiga)",
+                    "Max. number of passengers": 6,
+                    "Price": 2200
+                }
+            ],
+            "City center hotel to airport": [
+                {
+                    "Car": "Sedan",
+                    "Max. number of passengers": 4,
+                    "Price": 1800
+                },
+                {
+                    "Car": "SUV (Innova\/Ertiga)",
+                    "Max. number of passengers": 6,
+                    "Price": 2200
+                }
+            ],
+            "8 hrs cab at disposal": [
+                {
+                    "Car": "Indica or similar",
+                    "Max. number of passengers": 4,
+                    "Price": 2000,
+                    "Notes": "80kms limit"
+                },
+                {
+                    "Car": "Sedan",
+                    "Max. number of passengers": 4,
+                    "Price": 2500,
+                    "Notes": "80kms limit"
+                },
+                {
+                    "Car": "Innova ",
+                    "Max. number of passengers": 6,
+                    "Price": 3000,
+                    "Notes": "80kms limit"
+                },
+                {
+                    "Car": "Innova crysta",
+                    "Max. number of passengers": 6,
+                    "Price": 3500,
+                    "Notes": "80kms limit"
+                }
+            ],
+            "12 hrs cab at disposal": [
+                {
+                    "Car": "Indica or similar",
+                    "Max. number of passengers": 4,
+                    "Price": 2800,
+                    "Notes": "120kms limit"
+                },
+                {
+                    "Car": "Sedan",
+                    "Max. number of passengers": 4,
+                    "Price": 3400,
+                    "Notes": "120kms limit"
+                },
+                {
+                    "Car": "Innova ",
+                    "Max. number of passengers": 6,
+                    "Price": 4200,
+                    "Notes": "120kms limit"
+                },
+                {
+                    "Car": "Innova crysta",
+                    "Max. number of passengers": 6,
+                    "Price": 5000,
+                    "Notes": "120kms limit"
+                }
+            ]
+        }
+    },
+    {
+        "Jodpur": {
+            "Airport to City center Hotel": [
+                {
+                    "Car": "Sedan",
+                    "Max. number of passengers": 4,
+                    "Price": 1000
+                },
+                {
+                    "Car": "SUV (Innova/Ertiga)",
+                    "Max. number of passengers": 6,
+                    "Price": 1800
+                }
+            ],
+            "City center hotel to airport": [
+                {
+                    "Car": "Sedan",
+                    "Max. number of passengers": 4,
+                    "Price": 1000
+                },
+                {
+                    "Car": "SUV (Innova/Ertiga)",
+                    "Max. number of passengers": 6,
+                    "Price": 1800
+                }
+            ],
+            "8 hrs cab at disposal": [
+                {
+                    "Car": "Sedan",
+                    "Max. number of passengers": 4,
+                    "Price": 2500,
+                    "Notes": "80kms limit"
+                },
+                {
+                    "Car": "SUV (Innova/Ertiga)",
+                    "Max. number of passengers": 6,
+                    "Price": 3800,
+                    "Notes": "80kms limit"
+                }
+            ],
+            "12 hrs cab at disposal": [
+                {
+                    "Car": "Sedan",
+                    "Max. number of passengers": 4,
+                    "Price": 4000,
+                    "Notes": "120kms limit"
+                },
+                {
+                    "Car": "SUV (Innova/Ertiga)",
+                    "Max. number of passengers": 6,
+                    "Price": 5800,
+                    "Notes": "120kms limit"
+                }
+            ]
+        }
+    }
+    
+    ]
+    

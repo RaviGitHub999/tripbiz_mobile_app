@@ -5,11 +5,11 @@ import IconSwitcher from '../../icons/IconSwitcher';
 import { colors, fonts } from '../../../../config/theme';
 import {responsiveHeight, responsiveWidth } from '../../../../utils/responsiveScale';
 
-const CustomSelect = ({  data, renderData, selectedItem, handledropDown, viewAll,CustomStyle }) => {
+const CustomSelect = ({  data, renderData, selectedItem, handledropDown, viewAll,CustomStyle,disable }) => {
     const sendingData = ({ item, index }) => renderData(item, index)
     return (
         <>
-            <TouchableOpacity style={[styles.btnContainer,CustomStyle]} onPress={handledropDown}>
+            <TouchableOpacity style={[styles.btnContainer,CustomStyle]} onPress={handledropDown} disabled={disable}>
                 <Text style={styles.selectedText}>{ selectedItem }</Text>
                 <IconSwitcher componentName='Ionicons' iconName={viewAll ? "chevron-up" : 'chevron-down'} color={colors.black} iconsize={3} />
             </TouchableOpacity>

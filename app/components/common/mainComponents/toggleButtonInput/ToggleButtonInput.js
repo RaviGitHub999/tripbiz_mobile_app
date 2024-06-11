@@ -8,7 +8,7 @@ import {
 import { responsiveHeight, responsiveWidth } from '../../../../utils/responsiveScale';
 import { colors, fonts } from '../../../../config/theme';
 
-const ToggleButtonInput = ({placeHolder,inputValue,handleInputChange}) => {
+const ToggleButtonInput = ({placeHolder,inputValue,handleInputChange,selected}) => {
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef(null);
 
@@ -40,7 +40,7 @@ const ToggleButtonInput = ({placeHolder,inputValue,handleInputChange}) => {
           placeholder={placeHolder}
         />
       ) : (
-        <Text style={styles.buttonText}>Origin</Text>
+        <Text style={styles.buttonText}>{selected?selected:placeHolder}</Text>
       )}
     </Pressable>
   );
