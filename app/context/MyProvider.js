@@ -2562,12 +2562,12 @@ export default class MyProvider extends Component {
             // const docCollectionRef = firestore()
             //   .collection('Accounts')
             //   .doc(admin[0].userid);
-
             this.setState({
               domesticFlight: Number(admin[0].domesticFlights),
               internationalFlight: Number(admin[0].internationalFlights),
               domesticHotel: Number(admin[0].domesticHotels),
-              internationalHotel: Number(admin[0].internationalHotels)
+              internationalHotel: Number(admin[0].internationalHotels),
+              cabService: Number(admin[0].cabs),
             });
 
             await this.state.actions.getAllUsers();
@@ -4472,8 +4472,8 @@ changeCabCityKeyword : this.debounce((query) => {
     cabSearchRes: results,
   });
 }, 1000),
- getCabOptionForCity:(data, cityName, optionName) =>{
-  for (let item of data) {
+ getCabOptionForCity:( cityName, optionName) =>{
+  for (let item of CabsData) {
     if (item[cityName] && item[cityName][optionName]) {
       return item[cityName][optionName];
     }
@@ -4493,8 +4493,11 @@ fetchCabs: async (
   endDate,
   noOfCabs,
   nights,
-  time
-) => {
+  time,
+  cabSD,
+  cabED
+) => 
+  {
   this.setState
   ({
     cabCity: city,
@@ -4505,13 +4508,16 @@ fetchCabs: async (
     cabCount: noOfCabs,
     cabNights: nights,
     selectedTime: time,
+    cabSD,
+    cabED,
   });
 
-
+  const cabdata =this.state.actions.getCabOptionForCity(city,type)
   this.setState({
-    cabResList: []
+    cabResList:cabdata
   });
 },
+
 
       },
 

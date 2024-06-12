@@ -13,6 +13,7 @@ import MyContext from '../../context/Context'
 import { FlatList } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import CabsData from "../jsonData/Cabs.json"
+import { useNavigation } from '@react-navigation/native'
 const cabTypes =
   [
     "8 hrs cab at disposal",
@@ -458,8 +459,9 @@ const CabSearch = () => {
   const [cabStartFormated, setCabStartFormated] = useState("")
   const [cabEndFormated, setCabEndFormated] = useState("")
   const [btnEnable, setBtnEnable] = useState(true)
+  const [nights, setNights] = useState("0");
   const { actions, cabSearchRes } = useContext(MyContext)
-  //  var cabTypes =Object.keys(CabsData[0]["Hyderabad"])
+  const{navigate}=useNavigation()
   const getCabTypesForCity = (cityName) => {
     return CabsData.reduce((acc, cityObj) => {
       if (cityObj[cityName]) {
@@ -542,6 +544,11 @@ const CabSearch = () => {
         setCabStartFormated(formattedDate)
         setCabStartDate(selectedDate)
       }
+
+      if (cabStartDate) {
+        const nights = Number(actions.diffNights(selectedDate, cabEndDate))
+        setNights(nights)
+      }
     }
     else {
       setCalenderOpen({ startDate: false })
@@ -560,7 +567,10 @@ const CabSearch = () => {
         setCabEndDate(selectedDate)
 
       }
-
+      if (cabEndDate) {
+        const nights = Number(actions.diffNights(selectedDate, cabStartDate))
+        setNights(nights)
+      }
     }
     else {
       setCalenderOpen({ endDate: false })
@@ -583,6 +593,21 @@ const CabSearch = () => {
       <Text style={styles.selectedItemTitle}>No Data Found !!!</Text>
     )
   }
+  const searchCabs=()=>
+    {
+     actions.fetchCabs(
+        cabCityItem,
+        cabType,
+        cabStartFormated,
+        cabEndFormated,
+        noOfCabs,
+        nights+1,
+        selectedTime,
+        cabStartDate,
+        cabEndDate
+      )
+      navigate("CabResList")
+    }
   return (
     <>
       <KeyboardAvoidingView style={{ flex: 1 }} >
@@ -609,7 +634,7 @@ const CabSearch = () => {
                   <HotelDropDown value={selectedTime} handleChangeValue={handleselectTime} placeHolder="Time" dropDownData={handleCabTimings(cabType)} />
                 </View>
               </View>
-              <CustomButton title='Search Cabs' />
+              <CustomButton title='Search Cabs' handleSubmit={searchCabs}/>
 
             </View>
           </ScrollView>
