@@ -1,8 +1,8 @@
-import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
-import React, {useContext, useEffect, useState} from 'react';
-import {colors} from '../../../config/theme';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import { colors } from '../../../config/theme';
 import IconSwitcher from '../../common/icons/IconSwitcher';
-import {styles} from './mytripsStyles';
+import { styles } from './mytripsStyles';
 import MyContext from '../../../context/Context';
 import ProgressBar from '../../common/progressBar/ProgressBar';
 import {
@@ -11,8 +11,8 @@ import {
 } from '../../../utils/responsiveScale';
 import { RefreshControl } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
-const MyTrips = ({navigation:{navigate}}) => {
-  var {actions, userTripStatus, userId, noOfPages} = useContext(MyContext);
+const MyTrips = ({ navigation: { navigate } }) => {
+  var { actions, userTripStatus, userId, noOfPages } = useContext(MyContext);
   var [currentPage, setCurrentPage] = useState(1);
   var [trips, setTrips] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -26,27 +26,27 @@ const MyTrips = ({navigation:{navigate}}) => {
 
   useEffect(() => {
     if (isFocused) {
- actions.getLastDoc();
+      actions.getLastDoc();
     }
   }, [isFocused]);
   const getTime = seconds => {
     const timestampInSeconds = seconds;
     const date = new Date(timestampInSeconds * 1000);
     const dayOfWeek = date.getDate();
-    const month = date.toLocaleString('en-US', {month: 'long'});
+    const month = date.toLocaleString('en-US', { month: 'long' });
     var dateString = `${month} ${dayOfWeek}`;
     return dateString;
   };
   const handleClick = async () => {
     var newtripId = await actions.createTrip(userTripStatus);
     navigate("TripDetails", { id: newtripId });
-}
+  }
   if (userTripStatus.tripLoading) {
     return (
       <View style={styles.progressBarContainer}>
-       <View style={styles.progressbar}>
-       <ProgressBar />
-       </View>
+        <View style={styles.progressbar}>
+          <ProgressBar />
+        </View>
       </View>
     );
   }
@@ -67,8 +67,8 @@ const MyTrips = ({navigation:{navigate}}) => {
 
     for (let i = startPage; i <= endPage; i++) {
       pagination.push(
-        <TouchableOpacity onPress={() => handlePageChange(i)} style={currentPage === i ?[{...styles.pageBtn,backgroundColor:'#007bff'}]:styles.pageBtn}>
-          <Text style={currentPage === i ?[{...styles.pageTitle,color:colors.white}]:[styles.pageTitle]}>{`${i}`}</Text>
+        <TouchableOpacity onPress={() => handlePageChange(i)} style={currentPage === i ? [{ ...styles.pageBtn, backgroundColor: '#007bff' }] : styles.pageBtn}>
+          <Text style={currentPage === i ? [{ ...styles.pageTitle, color: colors.white }] : [styles.pageTitle]}>{`${i}`}</Text>
         </TouchableOpacity>,
       );
     }
@@ -101,52 +101,57 @@ const MyTrips = ({navigation:{navigate}}) => {
         />
       </TouchableOpacity>
       <ScrollView contentContainerStyle={styles.scrollViewContainer} showsVerticalScrollIndicator={false}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         {trips
           ? trips?.userTrips
-              ?.slice(0, 10)
-              .sort((a, b) => {
-                var aTime = new Date(a?.data?.date?.seconds * 1000);
-                var bTime = new Date(b?.data?.date?.seconds * 1000);
-                return bTime - aTime;
-              })
-              ?.map(trip => {
-                var date = getTime(trip?.data?.date?.seconds);
-                return (
-                  <TouchableOpacity style={styles.card} key={`${trip?.data?.date?.seconds}`} onPress={() => {
-                    navigate("TripDetails", { id:trip.id});
+            ?.slice(0, 10)
+            .sort((a, b) => {
+              var aTime = new Date(a?.data?.date?.seconds * 1000);
+              var bTime = new Date(b?.data?.date?.seconds * 1000);
+              return bTime - aTime;
+            })
+            ?.map(trip => {
+              var date = getTime(trip?.data?.date?.seconds);
+              return (
+                <TouchableOpacity style={styles.card} key={`${trip?.data?.date?.seconds}`} onPress={() => {
+                  navigate("TripDetails", { id: trip.id });
                 }}>
-                    <Text style={styles.tripName}>{trip?.data?.name}</Text>
-                    <Text style={styles.tripDatetitle}>{`created on: `}<Text style={styles.tripDate}>{`${date}`}</Text></Text>
-                    <View style={{flexDirection:"row",gap:responsiveHeight(1)}}>
-                      {trip?.hotels?.length > 0 ? (
-                        <View style={styles.btn}>
-                          <Text style={styles.btnTitle}>Hotels - {trip.hotels.length}</Text>
-                        </View>
-                      ) : null}
-                      {trip?.flights?.length > 0 ? (
-                        <View style={styles.btn}>
-                          <Text style={styles.btnTitle}>Flights - {trip?.flights?.length}</Text>
-                        </View>
-                      ) : null}
-                    </View>
-                  </TouchableOpacity>
-                );
-              })
+                  <Text style={styles.tripName}>{trip?.data?.name}</Text>
+                  <Text style={styles.tripDatetitle}>{`created on: `}<Text style={styles.tripDate}>{`${date}`}</Text></Text>
+                  <View style={{ flexDirection: "row", gap: responsiveHeight(1) }}>
+                    {trip?.hotels?.length > 0 ? (
+                      <View style={styles.btn}>
+                        <Text style={styles.btnTitle}>Hotels - {trip.hotels.length}</Text>
+                      </View>
+                    ) : null}
+                    {trip?.flights?.length > 0 ? (
+                      <View style={styles.btn}>
+                        <Text style={styles.btnTitle}>Flights - {trip?.flights?.length}</Text>
+                      </View>
+                    ) : null}
+                    {trip?.cabs?.length > 0 ? (
+                      <View style={styles.btn}>
+                        <Text style={styles.btnTitle}>Cabs - {trip?.cabs?.length}</Text>
+                      </View>
+                    ) : null}
+                  </View>
+                </TouchableOpacity>
+              );
+            })
           : null}
 
         <View
           style={styles.pageBtnsContainer}>
           {currentPage > 1 && (
             <TouchableOpacity onPress={() => handlePageChange(currentPage - 1)} style={styles.pageBtn}>
-              <IconSwitcher componentName='Feather' iconName='chevrons-left' color='black' iconsize={2}/>
+              <IconSwitcher componentName='Feather' iconName='chevrons-left' color='black' iconsize={2} />
             </TouchableOpacity>
           )}
           {renderPagination()}
           {currentPage < noOfPages && (
             <TouchableOpacity onPress={() => handlePageChange(currentPage + 1)} style={styles.pageBtn}>
-              <IconSwitcher componentName='Feather' iconName='chevrons-right' color='black' iconsize={2}/>
+              <IconSwitcher componentName='Feather' iconName='chevrons-right' color='black' iconsize={2} />
             </TouchableOpacity>
           )}
         </View>

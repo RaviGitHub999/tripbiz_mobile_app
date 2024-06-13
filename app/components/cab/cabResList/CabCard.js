@@ -1,12 +1,12 @@
-import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, Modal, ActivityIndicator, Keyboard } from 'react-native'
+import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Modal, ActivityIndicator, Keyboard } from 'react-native'
 import React, { useContext, useState } from 'react'
 import MyContext from '../../../context/Context'
 import { responsiveHeight, responsiveWidth } from '../../../utils/responsiveScale';
 import { colors, fonts } from '../../../config/theme';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import IconSwitcher from '../../common/icons/IconSwitcher';
 import PopUp from '../../common/popup/PopUp';
 import { TextInput } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 var imgs = [
     {
         passenger: 4,
@@ -60,24 +60,30 @@ const cabTypes =
     ]
 
 const CabCard = ({ item }) => {
+    const { navigate } = useNavigation()
     var [submitIsOpen, setSubmitIsOpen] = useState(false);
     var [isloading, setIsLoading] = useState(false);
     const [activeTab, setActiveTab] = useState("tab1");
-    const { actions, cabNights, cabStartDate, cabEndDate, cabCount, cabCity, cabType, cabService, cabSD, selectedTime, userTripStatus } = useContext(MyContext)
-    var cabImg = imgs.filter((img) => img.type.trim() === item.Car.trim());
+    const { actions, cabNights, cabStartDate, cabEndDate, cabCount, cabCity, cabType, cabService,selectedTime, userTripStatus } = useContext(MyContext)
+    var myStr = cabCity + "_trip";
+    const formattedDate = `${cabStartDate?.toLocaleString("default", {
+        month: "long",
+    })} ${cabStartDate?.getDate()}`;
+    const combinedString = `${myStr}_${formattedDate}`;
+    var [defaultInput, setDefaultInput] = useState(combinedString);
+
+    var cabImg = imgs.filter((img) => img.type.trim() === item.carType.trim());
 
     var cabFinalPrice;
     if (cabNights > 0) {
-        cabFinalPrice = item.Price * Number(cabCount) * cabNights;
+        cabFinalPrice = item.price * Number(cabCount) * cabNights;
     } else {
-        cabFinalPrice = item.Price * Number(cabCount);
+        cabFinalPrice = item.price * Number(cabCount);
     }
 
-    var myStr = cabCity + "_trip";
-    const formattedDate = `${cabSD?.toLocaleString("default", {
-        month: "long",
-    })} ${cabSD?.getDate()}`;
-    const combinedString = `${myStr}_${formattedDate}`;
+
+
+
 
     const sortedTrips = userTripStatus.userTrips.slice().sort((a, b) => {
         var aTime = new Date(a?.data?.date?.seconds * 1000);
@@ -98,8 +104,8 @@ const CabCard = ({ item }) => {
 
         return (
             <TouchableOpacity style={styles.tripCard} onPress={() => {
-                // addtoTrip(item.id)
-                // navigate("TripDetails", { id: item.id });
+                addtoTrip(item.id)
+                navigate("TripDetails", { id: item.id });
             }}>
                 <Text style={styles.tripTitle}>{item.data.name}</Text>
                 <Text style={styles.tripDate}>{dateStr}</Text>
@@ -111,10 +117,10 @@ const CabCard = ({ item }) => {
     const handleAddToTrip = async () => {
         setIsLoading(true);
         var cabTotalPrice = (cabFinalPrice * cabService) / 100 + cabFinalPrice;
-        let newtripid = await actions.editTripBtn(combinedString, "cabs", {
+        let newtripid = await actions.editTripBtn(defaultInput, "cabs", {
             cabCity,
             cabType,
-            item,
+            cab: item,
             cabStartDate,
             cabEndDate,
             cabCount,
@@ -124,10 +130,32 @@ const CabCard = ({ item }) => {
             selectedTime,
         });
         setIsLoading(false);
-        setSubmitIsOpen(true);
-        // navigate("TripDetails", { id: newtripid });
+        navigate("TripDetails", { id: newtripid });
         await actions.getLastDoc();
 
+    };
+    const handleInputChange = (e) => {
+        setDefaultInput(e)
+    }
+    const addtoTrip = async (id) => {
+
+        var cabTotalPrice = (cabFinalPrice * cabService) / 100 + cabFinalPrice;
+        await actions.editTripById(
+            id,
+            {
+                cabCity,
+                cabType,
+                cab: item,
+                cabStartDate,
+                cabEndDate,
+                cabCount,
+                cabTotalPrice,
+                cabFinalPrice,
+                selectedTime,
+            },
+            "cabs"
+        );
+        await actions.getLastDoc();
     };
     return (
         <>
@@ -139,11 +167,13 @@ const CabCard = ({ item }) => {
                     <View style={styles.subContainer}>
                         <View style={styles.headerMainContainer}>
                             <View style={styles.headerSubContainer_1}>
-                                <Text style={styles.title}>{item.Car}</Text>
-                                <Text style={styles.subTitle}>{`(${item["Max. number of passengers"]} Seater)`}</Text>
+                                <Text style={styles.title}>{item.carType}</Text>
+                                <Text style={styles.subTitle}>{`(${item["passenger"]} Seater)`}</Text>
                             </View>
                             <View style={styles.headerSubContainer_2}>
-                                <Text style={styles.subTitle}>{`${cabStartDate} ${cabEndDate ? "-" : ""} ${cabEndDate} `}{`(${cabNights > 0 ? cabNights : ''} days)`}</Text>
+                                <Text style={styles.subTitle}>{`${cabStartDate?.toString()?.slice(4, 10)} ${cabEndDate ? "-" : ""
+                                    } ${cabEndDate ? cabEndDate?.toString()?.slice(4, 10) : ""
+                                    } `}{`(${cabNights > 0 ? cabNights : ''} days)`}</Text>
                             </View>
                         </View>
                         <View style={styles.detailsContainer}>
@@ -154,7 +184,7 @@ const CabCard = ({ item }) => {
                             </View> : null}
                             <View style={styles.headerSubContainer_1}>
                                 <Text style={styles.title}>Cost : </Text>
-                                <Text style={[styles.title, { color: colors.secondary }]}>&#8377;{` ${item.Price} ${!cabTypes.includes(cabType) ? "per trip" : "per day"}`}</Text>
+                                <Text style={[styles.title, { color: colors.secondary }]}>&#8377;{` ${item.price} ${!cabTypes.includes(cabType) ? "per trip" : "per day"}`}</Text>
                             </View>
                             <View style={styles.headerSubContainer_1}>
                                 <Text style={styles.title}>{`Total Cost for ${cabNights} ${cabNights > 1 ? "nights" : "night"} : `}</Text>
@@ -168,63 +198,65 @@ const CabCard = ({ item }) => {
                         </View>
                     </View>
                 </View>
-                <TouchableOpacity style={styles.btn} onPress={handleAddToTrip}>
+                <TouchableOpacity style={styles.btn} onPress={() => {
+                    setSubmitIsOpen(true);
+                }}>
                     <Text style={styles.btnTitle}>Add to trip</Text>
                 </TouchableOpacity>
-            </View>       
+            </View>
             <PopUp value={submitIsOpen} handlePopUpClose={() => setSubmitIsOpen(false)}>
-               <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()}>
-               {activeTab === 'tab1' ? <View style={styles.tripsContainer}>
-                    <TouchableOpacity style={styles.createNewTripBtn} onPress={() => setActiveTab('tab2')}>
-                        <Text style={styles.createNewTripBtnTitle}>Create New Trip</Text>
-                        <IconSwitcher componentName='Entypo' iconName='plus' color={colors.black} iconsize={3} />
-                    </TouchableOpacity>
-                    {
-                        sortedTrips.length > 0 ?
-                            <FlatList
-                                data={sortedTrips}
-                                renderItem={bookingrenderItem}
-                                keyExtractor={(item) => item.id}
-                                ListHeaderComponent={() => {
-                                    return (
-                                        <View >
-                                            <Text style={styles.triptitles}>Or</Text>
-                                            <Text style={styles.triptitles}>Select an existing trip</Text>
-                                        </View>
-                                    )
-                                }}
-                                ListHeaderComponentStyle={{ marginTop: responsiveHeight(1) }}
-
-                                style={{ height: responsiveHeight(50) }}
-                                contentContainerStyle={{ paddingHorizontal: responsiveWidth(3) }} 
-                                nestedScrollEnabled/> :
-                            <View>
-                                <ActivityIndicator size={"large"} color={"blue"} />
-
-                            </View>
-                    }
-                </View> :
-                    <View style={styles.addingNewTripContainer}>
-                        <TouchableOpacity onPress={() => setActiveTab('tab1')}>
-                            <IconSwitcher componentName='MaterialCommunityIcons' iconName='arrow-left-thin' color={colors.primary} iconsize={4} />
+                <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+                    {activeTab === 'tab1' ? <View style={styles.tripsContainer}>
+                        <TouchableOpacity style={styles.createNewTripBtn} onPress={() => setActiveTab('tab2')}>
+                            <Text style={styles.createNewTripBtnTitle}>Create New Trip</Text>
+                            <IconSwitcher componentName='Entypo' iconName='plus' color={colors.black} iconsize={3} />
                         </TouchableOpacity>
-                        <View style={styles.addingNewTripSubContainer}>
-                            <Text style={styles.newtriptitle}>Enter new trip Name</Text>
-                            <TextInput
-                                editable
-                                multiline
-                                numberOfLines={3}
-                                placeholder='Enter name of your trip'
-                                style={styles.multiTextContainer}
-                                value={defaultInput}
-                                onChangeText={handleInputChange} />
-                            <TouchableOpacity style={styles.addingNewTripBtn} onPress={handleAddToTrip}>
-                                <Text style={styles.addingNewTripBtnText}>Add to trip</Text>
+                        {
+                            !isloading ?
+                                <FlatList
+                                    data={sortedTrips}
+                                    renderItem={bookingrenderItem}
+                                    keyExtractor={(item) => item.id}
+                                    ListHeaderComponent={() => {
+                                        return (
+                                            <View >
+                                                <Text style={styles.triptitles}>Or</Text>
+                                                <Text style={styles.triptitles}>Select an existing trip</Text>
+                                            </View>
+                                        )
+                                    }}
+                                    ListHeaderComponentStyle={{ marginTop: responsiveHeight(1) }}
+
+                                    style={{ height: responsiveHeight(50) }}
+                                    contentContainerStyle={{ paddingHorizontal: responsiveWidth(3) }}
+                                    nestedScrollEnabled /> :
+                                <View>
+                                    <ActivityIndicator size={"large"} color={"blue"} />
+
+                                </View>
+                        }
+                    </View> :
+                        <View style={styles.addingNewTripContainer}>
+                            <TouchableOpacity onPress={() => setActiveTab('tab1')}>
+                                <IconSwitcher componentName='MaterialCommunityIcons' iconName='arrow-left-thin' color={colors.primary} iconsize={4} />
                             </TouchableOpacity>
+                            <View style={styles.addingNewTripSubContainer}>
+                                <Text style={styles.newtriptitle}>Enter new trip Name</Text>
+                                <TextInput
+                                    editable
+                                    multiline
+                                    numberOfLines={3}
+                                    placeholder='Enter name of your trip'
+                                    style={styles.multiTextContainer}
+                                    value={defaultInput}
+                                    onChangeText={handleInputChange} />
+                                <TouchableOpacity style={styles.addingNewTripBtn} onPress={handleAddToTrip}>
+                                    <Text style={styles.addingNewTripBtnText}>Add to trip</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                    </View>
-                }
-               </TouchableWithoutFeedback>
+                    }
+                </TouchableWithoutFeedback>
             </PopUp>
         </>
     )
@@ -322,8 +354,8 @@ const styles = StyleSheet.create(
         },
         tripsContainer: {
             alignItems: 'center',
-          },
-          createNewTripBtn: {
+        },
+        createNewTripBtn: {
             borderWidth: responsiveHeight(0.2),
             flexDirection: 'row',
             gap: responsiveHeight(1),
@@ -335,19 +367,19 @@ const styles = StyleSheet.create(
             borderRadius: responsiveHeight(0.8),
             width: '90%',
             justifyContent: 'center'
-          },
-          createNewTripBtnTitle: {
+        },
+        createNewTripBtnTitle: {
             fontSize: responsiveHeight(2),
             fontFamily: fonts.primary,
             color: colors.primary
-          },
-          triptitles: {
+        },
+        triptitles: {
             fontSize: responsiveHeight(2),
             fontFamily: fonts.primary,
             color: colors.primary,
             textAlign: 'center'
-          },
-          tripCard: {
+        },
+        tripCard: {
             marginVertical: responsiveHeight(0.5),
             paddingHorizontal: responsiveWidth(4),
             paddingVertical: responsiveHeight(2),
@@ -359,24 +391,24 @@ const styles = StyleSheet.create(
             shadowRadius: responsiveHeight(3),
             elevation: responsiveHeight(0.4),
             width: "100%"
-          },
-          tripTitle: {
+        },
+        tripTitle: {
             fontSize: responsiveHeight(2),
             fontFamily: fonts.primary,
             color: colors.primary
-          },
-          tripDate: {
+        },
+        tripDate: {
             fontSize: responsiveHeight(1.7),
             fontFamily: fonts.textFont,
             color: colors.highlight
-          },
-          addingNewTripContainer: {
+        },
+        addingNewTripContainer: {
             gap: responsiveHeight(1.5)
-          },
-          addingNewTripSubContainer: {
+        },
+        addingNewTripSubContainer: {
             gap: responsiveHeight(1)
-          },
-          addingNewTripBtn: {
+        },
+        addingNewTripBtn: {
             borderWidth: 1,
             padding: responsiveHeight(1),
             paddingHorizontal: responsiveWidth(3),
@@ -386,25 +418,25 @@ const styles = StyleSheet.create(
             alignItems: 'center',
             alignSelf: 'center',
             width: "60%"
-          },
-          addingNewTripBtnText: {
+        },
+        addingNewTripBtnText: {
             color: colors.white,
             fontSize: responsiveHeight(2),
             fontFamily: fonts.primary
-          },
-          multiTextContainer: {
+        },
+        multiTextContainer: {
             borderWidth: 1,
             textAlignVertical: "top",
             borderRadius: responsiveHeight(1.3),
             paddingHorizontal: responsiveWidth(3),
             fontSize: responsiveHeight(2.3)
-          },
-          newtriptitle: {
+        },
+        newtriptitle: {
             fontSize: responsiveHeight(2.5),
             fontFamily: fonts.primary,
             color: colors.primary,
             // textAlign: 'center'
-          },
+        },
 
     }
 )

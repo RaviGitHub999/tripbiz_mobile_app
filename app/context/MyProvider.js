@@ -145,7 +145,7 @@ const cityNames = CabsData.flatMap(cityData => Object.keys(cityData));
 // const hyderabadAirportToHotel = CabsData[0]["Hyderabad"]["Airport to City center Hotel"];
 
 // console.log(hyderabadAirportToHotel);
-var cabFuse=new Fuse(cityNames, {
+var cabFuse = new Fuse(cityNames, {
   includeScore: true,
   threshold: 0.3
 });
@@ -176,7 +176,7 @@ export default class MyProvider extends Component {
       outbound: "",
       inbound: "",
       airportOriginData: [],
-      bookingFlight:[],
+      bookingFlight: [],
       airportOriginLoading: false,
       originselected: false,
       destinationselected: false,
@@ -300,6 +300,16 @@ export default class MyProvider extends Component {
       emailNotFound: false,
       approveLoading: true,
       cabSearchRes: [],
+      cabCity: "",
+      cabType: "Select the Destination Above",
+      cabStartDate: "",
+      cabEndDate: "",
+      searchingCabs: false,
+      cabCount: "1",
+      cabNights: "0",
+      selectedTime: "00:15",
+      cabSD: "",
+      cabED: "",
       actions: {
         handleBookinghotelquery: (query) => {
           this.setState({ bookinghotelquery: query })
@@ -990,7 +1000,7 @@ export default class MyProvider extends Component {
             flightBookPage: false,
             flightSessionExpired: false,
             bookingFlight: [],
-            flightResJType:0,
+            flightResJType: 0,
           });
           this.state.actions.setDestStartTime(null);
           this.state.actions.setDestEndTime(null);
@@ -1594,7 +1604,7 @@ export default class MyProvider extends Component {
           //   flightTraceId: flightRes.flightResult.Response.TraceId,
           //   flightResult: flightRes.flightResult.Response,
           // });
-            var flightSessionTimeout = setTimeout(() => {
+          var flightSessionTimeout = setTimeout(() => {
             this.setState(
               {
                 flightSessionStarted: false,
@@ -2773,7 +2783,24 @@ export default class MyProvider extends Component {
             return []; // or handle the error accordingly
           }
         },
-      getAllExpenses : async (tripId, userId) => {
+        getAllCabs: async (id, userid) => {
+          var cabCollectionRef = firestore()
+          .collection("Accounts")
+          .doc(userid)
+          .collection("trips")
+          .doc(id)
+          .collection("cabs");
+          const querysnapshot = await cabCollectionRef.get();
+          var cabsArray = [];
+          querysnapshot.forEach((doc) => {
+            cabsArray.push({
+              id: doc.id,
+              data: doc.data(),
+            });
+          });
+          return cabsArray;
+        },
+        getAllExpenses: async (tripId, userId) => {
           try {
             const cabCollectionRef = firestore()
               .collection('Accounts')
@@ -2781,7 +2808,7 @@ export default class MyProvider extends Component {
               .collection('trips')
               .doc(tripId)
               .collection('expenses');
-            
+
             const querySnapshot = await cabCollectionRef.get();
             const expenseArray = [];
             querySnapshot.forEach(doc => {
@@ -2818,11 +2845,14 @@ export default class MyProvider extends Component {
                 promises.push(new Promise(async (resolve) => {
                   const hotels = await this.state.actions.getAllHotels(doc.id, this.state.userId);
                   const flights = await this.state.actions.getAllFlights(doc.id, this.state.userId);
+                  const cabs = await this.state.actions.getAllCabs(doc.id,this.state.userId
+                  );
                   docs.push({
                     id: doc.id,
                     data: doc.data(),
                     hotels: hotels,
-                    flights: flights
+                    flights: flights,
+                    cabs: cabs,
                   });
                   resolve();
                 }));
@@ -2992,7 +3022,7 @@ export default class MyProvider extends Component {
               hotels: hotels,
               flights: flights,
               // cabs: cabs,
-               expenses,
+              expenses,
               requestData: requestData
             });
 
@@ -3284,7 +3314,7 @@ export default class MyProvider extends Component {
 
             console.log(requestData, "requestData");
 
-            const [flights, hotels, requestData,expenses] = await Promise.all([
+            const [flights, hotels, requestData, expenses] = await Promise.all([
               this.state.actions.getAllFlights(docCollectionRef.id, userid),
               this.state.actions.getAllHotels(docCollectionRef.id, userid),
               sendData.requestId ? this.state.actions.getRequests(sendData.requestId, userid) : '',
@@ -3347,6 +3377,8 @@ export default class MyProvider extends Component {
           const newtripdocRef = await tripcollectionRef.add({
             flights: [],
             hotels: [],
+            cabs: [],
+            bus: [],
             date: new Date(),
             name: newTripCompleteString,
             status: "Not Submitted"
@@ -3391,20 +3423,6 @@ export default class MyProvider extends Component {
             this.setState({
               bookingFlight: changedObj,
             });
-
-            // fd.map(async (flight) => {
-            //   const flightDocRef = await hotelDocRef.add(flight);
-            //   await firestore().collection("Accounts").doc(this.state.userId)
-            //     .collection("trips").doc(tripDocRef.id).update({
-            //       flights: firestore.FieldValue.arrayUnion({
-            //         id: flightDocRef.id,
-            //         status: "Not Submitted",
-            //         date: new Date(),
-            //         requestStatus: "Not Requested"
-            //       })
-            //     });
-            // });
-
             await Promise.all(await fd.map(async (flight) => {
               var docRef = await hotelDocRef.add(
                 flight
@@ -3417,12 +3435,20 @@ export default class MyProvider extends Component {
                   flights: firestore.FieldValue.arrayUnion({ id: docRef.id, status: "Not Submitted", date: new Date(), requestStatus: "Not Requested" })
                 });
             }))
-
-            // this.setState({
-            //   bookingFlight: data
-            // })
           }
-
+          if (type === "cabs") {
+            const cabDocRef = tripDocRef.collection("cabs");
+            const newDocRef = await cabDocRef.add(data);
+            await firestore().collection("Accounts").doc(this.state.userId)
+              .collection("trips").doc(tripDocRef.id).update({
+                cabs: firestore.FieldValue.arrayUnion({
+                  id: newDocRef.id,
+                  status: "Not Submitted",
+                  date: new Date(),
+                  requestStatus: "Not Requested"
+                })
+              });
+          }
           await this.state.actions.getTripDocById(newtripdocRef.id, this.state.userId)
           //await this.state.actions.getAllTrips(this.state.userAccountDetails.userid);
           return newtripdocRef.id;
@@ -3482,6 +3508,20 @@ export default class MyProvider extends Component {
                 })
               );
             }
+
+            if (type === "cabs") {
+              const cabDocRef = tripDocRef.collection("cabs");
+              const newDocRef = await cabDocRef.add(data);
+              await tripDocRef.update({
+                cabs: firestore.FieldValue.arrayUnion({
+                  id: newDocRef.id,
+                  status: "Not Submitted",
+                  date: new Date(),
+                  requestStatus: "Not Requested",
+                }),
+              });
+            }
+
             await this.state.actions.getTripDocById(id, this.state.userId);
           } catch (error) {
             console.log(error, "klkjjjj");
@@ -3566,9 +3606,9 @@ export default class MyProvider extends Component {
             infants: 0,
             directflight: false,
             oneStopFlight: false,
-            journeyWay:"1",
-            flightResJType:0,
-            
+            journeyWay: "1",
+            flightResJType: 0,
+
           })
           this.state.actions.setFlightBookPage(false)
         },
@@ -3917,52 +3957,51 @@ export default class MyProvider extends Component {
           });
           const requestData = [];
 
-         
-            try {
-             if(approvalRequests!==undefined)
-              {
-                await Promise.all(
-                  approvalRequests.map(async (req) => {
-                    const userDataRef = firestore().collection("Accounts").doc(req.userId);
-                    const userData = await userDataRef.get();
-                    const tripRef = userDataRef.collection("trips").doc(req.tripId);
-  
-                    const [flights, hotels, cabs] = await Promise.all([
-                      await this.state.actions.getTripsFlights(req.flights, req.tripId, req.userId),
-                      await this.state.actions.getTripsHotels(req.hotels, req.tripId, req.userId),
-                      // await this.state.actions.getTripsCabs(req.cabs, req.tripId, req.userId),
-                    ]);
-  
-                    const tripDoc = await tripRef.get();
-                    const tripReqRef = userDataRef.collection("tripRequests").doc(req.requestId);
-                    const reqDoc = await tripReqRef.get();
-  
-                    const tripDetails = {
-                      userDetails: userData.data(),
-                      tripDetails: {
-                        id: tripDoc.id,
-                        data: tripDoc.data(),
-                        hotels: hotels,
-                        flights: flights,
-                        // cabs: cabs,
-                      },
-                      requestDetails: reqDoc.data(),
-                      approvalRequest: req,
-                    };
-  
-                    requestData.push(tripDetails);
-                  })
-                );
-              }
-              this.setState({
-                approveLoading: false,
-              });
-              console.log("second")
-              return requestData;
-            } catch (error) {
-              console.error('Error getting trips for approval: ', error);
+
+          try {
+            if (approvalRequests !== undefined) {
+              await Promise.all(
+                approvalRequests.map(async (req) => {
+                  const userDataRef = firestore().collection("Accounts").doc(req.userId);
+                  const userData = await userDataRef.get();
+                  const tripRef = userDataRef.collection("trips").doc(req.tripId);
+
+                  const [flights, hotels, cabs] = await Promise.all([
+                    await this.state.actions.getTripsFlights(req.flights, req.tripId, req.userId),
+                    await this.state.actions.getTripsHotels(req.hotels, req.tripId, req.userId),
+                    // await this.state.actions.getTripsCabs(req.cabs, req.tripId, req.userId),
+                  ]);
+
+                  const tripDoc = await tripRef.get();
+                  const tripReqRef = userDataRef.collection("tripRequests").doc(req.requestId);
+                  const reqDoc = await tripReqRef.get();
+
+                  const tripDetails = {
+                    userDetails: userData.data(),
+                    tripDetails: {
+                      id: tripDoc.id,
+                      data: tripDoc.data(),
+                      hotels: hotels,
+                      flights: flights,
+                      // cabs: cabs,
+                    },
+                    requestDetails: reqDoc.data(),
+                    approvalRequest: req,
+                  };
+
+                  requestData.push(tripDetails);
+                })
+              );
             }
-          
+            this.setState({
+              approveLoading: false,
+            });
+            console.log("second")
+            return requestData;
+          } catch (error) {
+            console.error('Error getting trips for approval: ', error);
+          }
+
         },
         sendBookingApprovedEmail: async (userData) => {
           try {
@@ -4127,7 +4166,7 @@ export default class MyProvider extends Component {
         // ) => {
         //   var checkInDate = new Date(searchReq.checkInDate.seconds * 1000);
         //   let roomGuests = [];
-  
+
         //   searchReq.hotelRoomArr.forEach((room, r) => {
         //     roomGuests.push({
         //       NoOfAdults: Number(room.adults),
@@ -4135,7 +4174,7 @@ export default class MyProvider extends Component {
         //       ChildAge: room.childAge.map((child, c) => Number(child.age)),
         //     });
         //   });
-  
+
         //   var request = {
         //     checkInDate: this.state.actions.convertTboDateFormat(checkInDate),
         //     nights: searchReq.hotelNights,
@@ -4145,7 +4184,7 @@ export default class MyProvider extends Component {
         //     noOfRooms: searchReq.hotelRooms,
         //     roomGuests: roomGuests,
         //   };
-  
+
         //   var reqs = await fetch(
         //     "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/hotelResults",
         //     {
@@ -4174,7 +4213,7 @@ export default class MyProvider extends Component {
         //       }
         //     );
         //   }
-  
+
         //   return selectedRooms;
         // },
         getHotelUpdatedDetails: async (
@@ -4185,7 +4224,7 @@ export default class MyProvider extends Component {
         ) => {
           var checkInDate = new Date(searchReq.checkInDate.seconds * 1000);
           let roomGuests = [];
-  
+
           searchReq.hotelRoomArr.forEach((room, r) => {
             roomGuests.push({
               NoOfAdults: Number(room.adults),
@@ -4193,7 +4232,7 @@ export default class MyProvider extends Component {
               ChildAge: room.childAge.map((child, c) => Number(child.age)),
             });
           });
-  
+
           var request = {
             checkInDate: this.state.actions.convertTboDateFormat(checkInDate),
             nights: searchReq.hotelNights,
@@ -4203,7 +4242,7 @@ export default class MyProvider extends Component {
             roomGuests: roomGuests,
             HotelId: hotelRes.HotelCode,
           };
-  
+
           var hotelStatic = await fetch(
             "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/hotelSearchRes",
             {
@@ -4225,7 +4264,7 @@ export default class MyProvider extends Component {
           var data = hotelResults.filter((hotel) => {
             return hotel.HotelCode === hotelRes.HotelCode;
           });
-  
+
           if (!data && data.length === 0) {
             return [];
           }
@@ -4239,7 +4278,7 @@ export default class MyProvider extends Component {
                 ? data[0].SupplierHotelCodes[0].CategoryId
                 : "",
           };
-  
+
           var hotelInfoRes = await fetch(
             "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/hotelInfoRes",
             {
@@ -4270,95 +4309,95 @@ export default class MyProvider extends Component {
           console.log(selectedRooms);
           return selectedRooms;
         },
-        updateHotelBookingDetails : async (newPrice, hotelId, tripId) => {
+        updateHotelBookingDetails: async (newPrice, hotelId, tripId) => {
           try {
             const tripsRef = firestore()
               .collection("Accounts")
               .doc(this.state.userId)
               .collection("trips")
               .doc(tripId);
-      
+
             const tripSnap = await tripsRef.get();
             const tripData = tripSnap.data();
-      
+
             if (!tripData || !tripData.hotels) {
               console.log('No trip data or hotels found');
               return;
             }
-      
+
             const tripItem = tripData.hotels.find((hotel) => hotel.id === hotelId);
             if (!tripItem) {
               console.log('No hotel found with the given ID');
               return;
             }
-      
+
             await tripsRef.update({
               hotels: firestore.FieldValue.arrayRemove(tripItem)
             });
-      
+
             await tripsRef.update({
               hotels: firestore.FieldValue.arrayUnion({ ...tripItem, updatedAt: Date.now() })
             });
-      
+
             const itemRef = tripsRef.collection("hotels").doc(hotelId);
             const itemSnap = await itemRef.get();
             const itemData = itemSnap.data();
-      
+
             if (!itemData) {
               console.log('No item data found');
               return;
             }
-      
+
             const totPrice = itemData.hotelTotalPrice - itemData.hotelFinalPrice + newPrice;
             itemData.hotelTotalPrice = totPrice;
             itemData.hotelFinalPrice = newPrice;
-      
+
             await itemRef.update(itemData);
-      
+
             // Assuming getTripDocById is defined and properly updates the state
             await this.state.actions.getTripDocById(tripId, this.state.userId);
           } catch (error) {
             console.error('Error updating hotel booking details:', error);
           }
         },
- updateFlightBookingDetails : async (newPrice, flightId, tripId, ) => {
+        updateFlightBookingDetails: async (newPrice, flightId, tripId,) => {
           try {
             const tripsRef = firestore().collection("Accounts").doc(this.state.userId).collection("trips").doc(tripId);
             const tripSnap = await tripsRef.get();
             const tripData = tripSnap.data();
-        
+
             const tripItem = tripData.flights.filter((flight) => flight.id === flightId);
             if (tripItem.length === 0) {
               throw new Error("Flight not found in the trip data");
             }
-        
+
             console.log(tripItem);
-        
+
             await tripsRef.update({
               flights: firestore.FieldValue.arrayRemove(tripItem[0])
             });
-        
+
             await tripsRef.update({
-              flights: firestore.FieldValue.arrayUnion({ ...tripItem[0], updatedAt:Date.now() })
+              flights: firestore.FieldValue.arrayUnion({ ...tripItem[0], updatedAt: Date.now() })
             });
-        
+
             const itemRef = tripsRef.collection("flights").doc(flightId);
             const itemSnap = await itemRef.get();
             const itemData = itemSnap.data();
-        
+
             if (!itemData["0"]) {
               throw new Error("Flight data not found in the item data");
             }
-        
+
             const updatedItemData = { ...itemData };
             updatedItemData["0"].finalPrice = updatedItemData["0"].finalPrice - updatedItemData["0"].flight.Fare.OfferedFare + newPrice;
             updatedItemData["0"].totalFare = updatedItemData["0"].totalFare - updatedItemData["0"].flight.Fare.OfferedFare + newPrice;
             updatedItemData["0"].flightNew.fare = updatedItemData["0"].flightNew.fare - updatedItemData["0"].flight.Fare.OfferedFare + newPrice;
             updatedItemData["0"].flight.Fare.OfferedFare = newPrice;
             updatedItemData["0"].flight.Fare.PublishedFare = newPrice;
-        
+
             await itemRef.update(updatedItemData);
-        
+
             // Assuming getTripDocById is a function imported from your actions file
             await this.state.actions.getTripDocById(tripId, this.state.userId);
           } catch (error) {
@@ -4380,9 +4419,9 @@ export default class MyProvider extends Component {
         //       .doc(userId)
         //       .collection("trips")
         //       .doc(id);
-              
+
         //     const expensesCollectionRef = tripDocRef.collection("expenses");
-        
+
         //     // Add new expense document
         //     const newExpenseDocRef = await expensesCollectionRef.add({
         //       type,
@@ -4390,17 +4429,17 @@ export default class MyProvider extends Component {
         //       description,
         //       expenseDate,
         //     });
-        
+
         //     // Upload file to Firebase Storage
         //     const storageRef = storage().ref(`trips/${userId}/${id}/expenses/${newExpenseDocRef.id}/${file}`);
         //     await storageRef.putFile(file); // Assuming `file` contains the local URI of the image
-            
+
         //     // Get the download URL
         //     const downloadURL = await storageRef.getDownloadURL();
-        
+
         //     // Update the expense document with the file URL
         //     await newExpenseDocRef.update({ file: downloadURL });
-        
+
         //     // Update the trip document with the new expense
         //     await tripDocRef.update({
         //       expenses: firestore.FieldValue.arrayUnion({
@@ -4408,115 +4447,116 @@ export default class MyProvider extends Component {
         //         date: new Date(),
         //       }),
         //     });
-        
+
         //   } catch (error) {
         //     console.error(error);
         //   }
         // },
 
 
-addExpenseToTrip: async (
-  id,
-  type,
-  file,
-  cost,
-  description,
-  expenseDate
-) => {
-  try {
-    const userId = this.state.userAccountDetails.userid;
-    const tripDocRef = firestore()
-      .collection("Accounts")
-      .doc(userId)
-      .collection("trips")
-      .doc(id);
-      
-    const expensesCollectionRef = tripDocRef.collection("expenses");
+        addExpenseToTrip: async (
+          id,
+          type,
+          file,
+          cost,
+          description,
+          expenseDate
+        ) => {
+          try {
+            const userId = this.state.userAccountDetails.userid;
+            const tripDocRef = firestore()
+              .collection("Accounts")
+              .doc(userId)
+              .collection("trips")
+              .doc(id);
 
-    // Add new expense document
-    const newExpenseDocRef = await expensesCollectionRef.add({
-      type,
-      cost,
-      description,
-      expenseDate,
-    });
+            const expensesCollectionRef = tripDocRef.collection("expenses");
 
-    // Upload file to Firebase Storage
-    const fileUri = file; // Assuming `file` is the local URI as a string
-    const fileName = fileUri.substring(fileUri.lastIndexOf('/') + 1);
-    const storageRef = storage().ref(`trips/${userId}/${id}/expenses/${newExpenseDocRef.id}/${fileName}`);
-    
-    await storageRef.putFile(fileUri); // Upload the file using the local URI
+            // Add new expense document
+            const newExpenseDocRef = await expensesCollectionRef.add({
+              type,
+              cost,
+              description,
+              expenseDate,
+            });
 
-    // Get the download URL
-    const downloadURL = await storageRef.getDownloadURL();
+            // Upload file to Firebase Storage
+            const fileUri = file; // Assuming `file` is the local URI as a string
+            const fileName = fileUri.substring(fileUri.lastIndexOf('/') + 1);
+            const storageRef = storage().ref(`trips/${userId}/${id}/expenses/${newExpenseDocRef.id}/${fileName}`);
 
-    // Update the expense document with the file URL
-    await newExpenseDocRef.update({ file: downloadURL });
+            await storageRef.putFile(fileUri); // Upload the file using the local URI
 
-    // Update the trip document with the new expense
-    await tripDocRef.update({
-      expenses: firestore.FieldValue.arrayUnion({
-        id: newExpenseDocRef.id,
-        date: new Date(),
-      }),
-    });
+            // Get the download URL
+            const downloadURL = await storageRef.getDownloadURL();
 
-  } catch (error) {
-    console.error(error);
-  }
-},
-changeCabCityKeyword : this.debounce((query) => {
-  var results = cabFuse.search(query);
-  this.setState({
-    cabSearchRes: results,
-  });
-}, 1000),
- getCabOptionForCity:( cityName, optionName) =>{
-  for (let item of CabsData) {
-    if (item[cityName] && item[cityName][optionName]) {
-      return item[cityName][optionName];
-    }
-  }
-  return null; // Return null if not found
-},
+            // Update the expense document with the file URL
+            await newExpenseDocRef.update({ file: downloadURL });
 
-// Example usage for Hyderabad and "12 hrs cab at disposal"
-// const result = getCabOptionForCity(data, "Hyderabad", "12 hrs cab at disposal");
+            // Update the trip document with the new expense
+            await tripDocRef.update({
+              expenses: firestore.FieldValue.arrayUnion({
+                id: newExpenseDocRef.id,
+                date: new Date(),
+              }),
+            });
 
-// console.log(result);
+          } catch (error) {
+            console.error(error);
+          }
+        },
+        changeCabCityKeyword: this.debounce((query) => {
+          var results = cabFuse.search(query);
+          this.setState({
+            cabSearchRes: results,
+          });
+        }, 1000),
+        getCabOptionForCity: (cityName, optionName) => {
+          for (let item of CabsData) {
+            if (item[cityName] && item[cityName][optionName]) {
+              return item[cityName][optionName];
+            }
+          }
+          return null; // Return null if not found
+        },
 
-fetchCabs: async (
-  city,
-  type,
-  startDate,
-  endDate,
-  noOfCabs,
-  nights,
-  time,
-  cabSD,
-  cabED
-) => 
-  {
-  this.setState
-  ({
-    cabCity: city,
-    cabType: type,
-    cabStartDate: startDate,
-    cabEndDate: endDate,
-    searchingCabs: true,
-    cabCount: noOfCabs,
-    cabNights: nights,
-    selectedTime: time,
-    cabSD,
-    cabED,
-  });
+        // Example usage for Hyderabad and "12 hrs cab at disposal"
+        // const result = getCabOptionForCity(data, "Hyderabad", "12 hrs cab at disposal");
 
-  const cabdata =this.state.actions.getCabOptionForCity(city,type)
-  this.setState({
-    cabResList:cabdata
-  });
-},
+        // console.log(result);
+
+        fetchCabs: async (
+          city,
+          type,
+          startDate,
+          endDate,
+          noOfCabs,
+          nights,
+          time,
+        ) => {
+          this.setState
+            ({
+              cabCity: city,
+              cabType: type,
+              cabStartDate: startDate,
+              cabEndDate: endDate,
+              searchingCabs: true,
+              cabCount: noOfCabs,
+              cabNights: nights,
+              selectedTime: time,
+            });
+
+          const cabdata = this.state.actions.getCabOptionForCity(city, type)
+          this.setState({
+            cabResList: cabdata
+          });
+        },
+        backToCabSearchPage: () => {
+          this.setState({
+            cabResList: [],
+            searchingCabs: false,
+          });
+        },
 
 
       },

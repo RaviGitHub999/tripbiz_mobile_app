@@ -1,5 +1,5 @@
 import { TouchableHighlight, View, Text, KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback, ScrollView } from 'react-native'
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { styles } from './styles'
 import ToggleButtonInput from '../common/mainComponents/toggleButtonInput/ToggleButtonInput'
 import CustomSelect from '../common/mainComponents/customSelect/CustomSelect'
@@ -13,7 +13,7 @@ import MyContext from '../../context/Context'
 import { FlatList } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import CabsData from "../jsonData/Cabs.json"
-import { useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 const cabTypes =
   [
     "8 hrs cab at disposal",
@@ -545,9 +545,9 @@ const CabSearch = () => {
         setCabStartDate(selectedDate)
       }
 
-      if (cabStartDate) {
-        const nights = Number(actions.diffNights(selectedDate, cabEndDate))
-        setNights(nights)
+      if (cabStartFormated) {
+        // const nights = Number(actions.diffNights(selectedDate, cabEndDate))
+        setNights(0)
       }
     }
     else {
@@ -567,7 +567,7 @@ const CabSearch = () => {
         setCabEndDate(selectedDate)
 
       }
-      if (cabEndDate) {
+      if (cabStartDate) {
         const nights = Number(actions.diffNights(selectedDate, cabStartDate))
         setNights(nights)
       }
@@ -598,16 +598,27 @@ const CabSearch = () => {
      actions.fetchCabs(
         cabCityItem,
         cabType,
-        cabStartFormated,
-        cabEndFormated,
-        noOfCabs,
-        nights+1,
-        selectedTime,
         cabStartDate,
-        cabEndDate
+        cabEndDate,
+        noOfCabs,
+        Number(nights) + 1,
+        selectedTime,
       )
       navigate("CabResList")
     }
+    useFocusEffect(
+      React.useCallback(() => {
+    setNights("0")
+    setCabStartDate(new Date())
+    setCabEndDate(new Date())
+    setCabStartFormated(""),
+    setCabEndFormated("")
+    setSelectedItemIndex(0),
+    setNoOfCabs("1")
+    setSelectedTime("00:15")
+
+      }, [])
+    );
   return (
     <>
       <KeyboardAvoidingView style={{ flex: 1 }} >

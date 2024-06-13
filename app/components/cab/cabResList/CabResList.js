@@ -9,11 +9,12 @@ import CabCard from './CabCard'
 
 const CabResList = () => {
     const { goBack } = useNavigation()
-    const { cabResList, cabNights, cabCity, cabStartDate, cabEndDate, selectedTime, cabType, cabCount } = useContext(MyContext)
+    const { actions,cabResList, cabNights, cabCity, cabStartDate, cabEndDate, selectedTime, cabType, cabCount } = useContext(MyContext)
 
     const handleEditButton = () => {
-        console.log("first")
+        // console.log("first")
         goBack()
+        actions.backToCabSearchPage()
     }
 const handleRenderItems=({item})=>
     {
@@ -29,8 +30,10 @@ const handleRenderItems=({item})=>
                     </TouchableOpacity>
                 </View>
                 <Text style={styles.subTitle}>
-                    {`${cabStartDate} ${cabEndDate ? '-' : ''} ${cabEndDate ? cabEndDate : ''} | Time: ${selectedTime ? selectedTime : ''} | ${cabType} | ${cabCount} ${cabCount > 1 ? "Cabs" : "Cab"
-                        }`}
+                {`${cabStartDate
+              .toString()
+              .slice(4, 10)} ${cabEndDate ? '-' : ''} ${cabEndDate ? cabEndDate.toString().slice(4, 10) : ''} | Time: ${selectedTime ? selectedTime : ''} | ${cabType} | ${cabCount} ${cabCount > 1 ? "Cabs" : "Cab"
+              }`}
                 </Text>
             </View>
             <FlatList data={cabResList} renderItem={handleRenderItems}/>
