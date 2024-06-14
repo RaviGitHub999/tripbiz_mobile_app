@@ -42,6 +42,7 @@ import { TextInput } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
+import CabCard from '../../cab/cabResList/CabCard';
 const TripDetails = ({ navigation: { navigate, goBack } }) => {
   const [mounted, setMounted] = useState(true);
   const [popup, setPopUp] = useState({
@@ -303,6 +304,12 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
     actions.setSelectedTripId(id);
     await actions.setRes();
     actions.switchComponent('hotel');
+  };
+  const handleCabs = async () => {
+    navigate('Home');
+    actions.setSelectedTripId(id);
+    await actions.setRes();
+    actions.switchComponent('cab');
   };
 
   var onBtnClick = async () => {
@@ -671,7 +678,14 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
       console.error('An error occurred', error);
     }
   }
-
+  const downloadExpense = async (hotelStatus) => {
+    try {
+      await Linking.openURL(hotelStatus);
+    } catch (error) {
+      Alert.alert('Error', 'An error occurred while trying to open the URL');
+      console.error('An error occurred', error);
+    }
+  }
   const handleExpansePrice = (price) => {
     setCost(price)
   }
@@ -1338,10 +1352,9 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
                           );
                           const updatedAt = flightStatus[0]?.updatedAt?.seconds
                           var flightUpdatedDate
-                          if(updatedAt)
-                            {
-                              flightUpdatedDate = new Date(updatedAt * 1000) 
-                            }
+                          if (updatedAt) {
+                            flightUpdatedDate = new Date(updatedAt * 1000)
+                          }
                           // var flightUpdatedDate = new Date(updatedAt * 1000)
                           var flightReq = tripData.data.flights.filter(
                             hotelMain => {
@@ -1399,7 +1412,65 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
                 </View>
               </View>
             ) : null}
+            {/* add cabs Button */}
+            {
+              tripData?.cabs?(
+                <>
+                <Text style={styles.flightCardTitle}>Cabs</Text>
+                {tripData?.cabs?.map((cab, f) => {
+                      var cabReq = tripData?.data?.cabs?.filter((hotelMain) => {
+                        return hotelMain.id === cab.id;
+                      });
+                      console.log(cab)
+                      price = price + Number(cab.data.cabTotalPrice);
+                      return (
+                        <>
+                          {/* <Cab
+                            cab={cab.data.cab}
+                            tripsPage={true}
+                            startDate={cab.data.cabStartDate}
+                            endDate={cab.data.cabEndDate}
+                            cabData={cabReq[0]}
+                            tripsCabType={cab.data.cabType}
+                            cabTotal={cab.data}
+                            tripId={id}
+                            countCab={cab?.data?.cabCount}
+                          /> */}
 
+                       <CabCard
+                       item={cab.data.cab}
+                       tripsPage={true}
+                       startDate={cab.data.cabStartDate}
+                       endDate={cab.data.cabEndDate}
+                       cabData={cabReq[0]}
+                       tripsCabType={cab.data.cabType}
+                       cabTotal={cab.data}
+                       tripId={id}
+                       countCab={cab?.data?.cabCount}
+                       />
+                       
+                        </>
+                      );
+                    })}
+                <View style={styles.addingHotelBtnContainer}>
+                  <TouchableOpacity
+                    style={styles.addingHotelBtn}
+                    onPress={handleCabs}>
+                    <Text style={styles.addingHotelBtnTitle}>
+                      Add Cab{' '}
+                    </Text>
+                    <IconSwitcher
+                      componentName="Feather"
+                      iconName="plus"
+                      color={colors.primary}
+                      iconsize={3}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </>
+              ):null
+            }
+         
 
             <>
               <Text style={styles.flightCardTitle}>Trip Expenses</Text>
@@ -1416,15 +1487,26 @@ const TripDetails = ({ navigation: { navigate, goBack } }) => {
                       });
                       return (
                         <View style={styles.expenseCard}>
-                          <View>
-                            <Text>{expense.data.type}</Text>
-                            <View>
-                              <Text>{`${month}`}</Text>
+                          <View style={styles.expenseHeaderContainer}>
+                            <Text style={[styles.title,{fontSize:responsiveHeight(2)}]}>{expense.data.type}</Text>
+                            <View style={styles.expenseDateContainer}>
+                              <Text style={styles.title}>{`${month}`}</Text>
                             </View>
                           </View>
-                          <Text></Text>
-                          <Text></Text>
+                        <View style={styles.subContainer}>
+                        <Text style={[styles.title,{fontSize:responsiveHeight(2)}]}>Description:</Text>
+                        <Text style={styles.subTitle}>{expense.data.description}</Text>
+                        </View>
 
+                        <View style={[styles.expenseHeaderContainer]}>
+                          <Text style={styles.totalPrice}>Cost: &#8377; {`${Math.ceil(expense.data.cost).toLocaleString(
+                                  "en-IN"
+                                )}`}</Text>
+                          <TouchableOpacity style={styles.voucherContainer} onPress={()=> downloadExpense(expense.data.file)}>
+                                    <Text style={styles.voucherTitle}>Voucher</Text>
+                                    <IconSwitcher componentName='FontAwesome' iconName='download' iconsize={2} color={colors.primary} />
+                                  </TouchableOpacity>
+                        </View>
                         </View>
                       )
                     })}

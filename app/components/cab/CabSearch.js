@@ -599,7 +599,7 @@ const CabSearch = () => {
         cabCityItem,
         cabType,
         cabStartDate,
-        cabEndDate,
+        cabEndDate>new Date()?cabEndDate:"",
         noOfCabs,
         Number(nights) + 1,
         selectedTime,

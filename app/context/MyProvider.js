@@ -300,16 +300,7 @@ export default class MyProvider extends Component {
       emailNotFound: false,
       approveLoading: true,
       cabSearchRes: [],
-      cabCity: "",
-      cabType: "Select the Destination Above",
-      cabStartDate: "",
-      cabEndDate: "",
-      searchingCabs: false,
-      cabCount: "1",
-      cabNights: "0",
-      selectedTime: "00:15",
-      cabSD: "",
-      cabED: "",
+   
       actions: {
         handleBookinghotelquery: (query) => {
           this.setState({ bookinghotelquery: query })
@@ -3012,7 +3003,7 @@ export default class MyProvider extends Component {
               this.state.actions.getAllHotels(doc.id, userid),
               sendData?.requestId ? this.state.actions.getRequests(sendData?.requestId, userid) : '',
               this.state.actions.getAllExpenses(doc.id, userid),
-              // this.state.actions.getAllCabs(doc.id, userid),
+              this.state.actions.getAllCabs(doc.id, userid),
               // this.state.actions.getAllExpenses(doc.id, userid)
             ]);
 
@@ -3021,7 +3012,7 @@ export default class MyProvider extends Component {
               data: sendData,
               hotels: hotels,
               flights: flights,
-              // cabs: cabs,
+              cabs: cabs,
               expenses,
               requestData: requestData
             });
@@ -3314,10 +3305,11 @@ export default class MyProvider extends Component {
 
             console.log(requestData, "requestData");
 
-            const [flights, hotels, requestData, expenses] = await Promise.all([
+            const [flights, hotels, requestData,cabs, expenses] = await Promise.all([
               this.state.actions.getAllFlights(docCollectionRef.id, userid),
               this.state.actions.getAllHotels(docCollectionRef.id, userid),
               sendData.requestId ? this.state.actions.getRequests(sendData.requestId, userid) : '',
+              this.state.actions.getAllCabs(docCollectionRef.id, userid),
               this.state.actions.getAllExpenses(docCollectionRef.id, userid),
             ]);
 
@@ -3326,6 +3318,7 @@ export default class MyProvider extends Component {
               data: sendData,
               hotels: hotels,
               flights: flights,
+              cabs: cabs,
               expenses,
               requestData: requestData
             });
@@ -3555,6 +3548,16 @@ export default class MyProvider extends Component {
               });
               var flightDoc = await docRef.collection("flights").doc(itemId).delete();
             }
+
+            if(itemType === "cabs")
+              {
+                const cabs = docData.cabs;
+              const deletedCabs = cabs.filter(cabs => cabs.id === itemId);
+              await docRef.update({
+                flights: firestore.FieldValue.arrayRemove(deletedCabs[0])
+              });
+              var cabDoc = await docRef.collection("cabs").doc(itemId).delete();
+              }
 
             this.setState({
               tripData: null,
@@ -4555,6 +4558,15 @@ export default class MyProvider extends Component {
           this.setState({
             cabResList: [],
             searchingCabs: false,
+            // cabCity: "",
+            // cabType: "Select the Destination Above",
+            // cabStartDate: "",
+            // cabEndDate: "grgr",
+            // searchingCabs: false,
+            // cabCount: "1",
+            // cabNights: "0",
+            // selectedTime: "00:15",
+
           });
         },
 

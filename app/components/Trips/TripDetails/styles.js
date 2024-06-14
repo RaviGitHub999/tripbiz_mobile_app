@@ -669,7 +669,7 @@ export const styles = StyleSheet.create({
         elevation: responsiveHeight(0.5),
         margin: responsiveHeight(1),
         paddingVertical: responsiveHeight(1.5),
-        paddingHorizontal: responsiveWidth(2),
+        // paddingHorizontal: responsiveWidth(2),
         borderRadius: responsiveHeight(1)
     },
     expenseSubTitle:
@@ -700,7 +700,20 @@ export const styles = StyleSheet.create({
     {
 height:responsiveHeight(10),
 width:responsiveHeight(10),borderRadius:responsiveHeight(1)
-    }
+    },
+    expenseHeaderContainer:{
+        flexDirection:"row",
+        justifyContent:'space-between',
+        marginLeft:responsiveWidth(3),
+        alignItems:"center"
+    },
+    expenseDateContainer:
+    {
+        backgroundColor:colors.highlight,
+        padding:responsiveHeight(1),
+        borderTopLeftRadius:responsiveHeight(1),
+        borderBottomLeftRadius:responsiveHeight(1)
+    },
 
 
 })
