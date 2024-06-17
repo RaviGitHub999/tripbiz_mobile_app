@@ -13,6 +13,7 @@ import ChangePassword from '../../user/changePassword/ChangePassword';
 import Role from '../../user/role/Role';
 import ReCheck from '../recheck/ReCheck';
 import Pdf from '../../wallet/Pdf';
+import Transactions from '../../wallet/Transactions';
 const Stack = createStackNavigator();
 const ProfileStack = () => {
   return (
@@ -24,6 +25,17 @@ const ProfileStack = () => {
     </Stack.Navigator>
   )
 }
+
+const WalletStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName='Wallet'>
+      <Stack.Screen name="Wallet" component={Wallet} />
+      <Stack.Screen name="Transactions" component={Transactions} />
+    </Stack.Navigator>
+  )
+}
+
+
 const Tab = createBottomTabNavigator();
 const BottomNavigation = () => {
   return (
@@ -69,8 +81,8 @@ const BottomNavigation = () => {
         }}
       />
       <Tab.Screen
-        name="Wallet"
-        component={Wallet}
+        name="WalletStack"
+        component={WalletStack}
         options={{
           tabBarLabel: 'Wallet',
           tabBarIcon: ({ color, size }) => (
