@@ -1,2 +1,3 @@
  const splashimg = require("./splashimg.jpg")
-export{splashimg}
+ const filter=require("./filter.png")
+export{splashimg,filter}

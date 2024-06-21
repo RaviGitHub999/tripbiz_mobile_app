@@ -1,13 +1,21 @@
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList } from 'react-native';
-import React, { useContext } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  FlatList,
+} from 'react-native';
+import React, {cloneElement, useContext} from 'react';
 import IconSwitcher from '../common/icons/IconSwitcher';
-import { colors } from '../../config/theme';
+import {colors, fonts} from '../../config/theme';
 import MyContext from '../../context/Context';
+import {responsiveHeight, responsiveWidth} from '../../utils/responsiveScale';
 
 const Transactions = () => {
-  const { userAccountDetails } = useContext(MyContext);
+  const {userAccountDetails} = useContext(MyContext);
   const sortedTransactions = userAccountDetails?.transactions?.sort(
-    (a, b) => new Date(b.Date) - new Date(a.Date)
+    (a, b) => new Date(b.Date) - new Date(a.Date),
   );
 
   const renderHeader = () => {
@@ -15,10 +23,12 @@ const Transactions = () => {
       <>
         <View style={styles.headerContainer}>
           <Text style={styles.title}>Transactions</Text>
-          <TouchableOpacity style={styles.balanceContainer}>
-            <Text style={styles.balanceLabel}>Current Balance</Text>
-            <Text style={styles.balanceValue}>&#8377;354247</Text>
-          </TouchableOpacity>
+          <View style={styles.balanceContainer}>
+            <Text style={styles.balanceLabel}>Current Balance :</Text>
+            <Text style={styles.balanceValue}>
+              &#8377; {Math.ceil(userAccountDetails?.balance).toLocaleString()}
+            </Text>
+          </View>
         </View>
 
         <View style={styles.header}>
@@ -32,21 +42,34 @@ const Transactions = () => {
     );
   };
 
-  const renderItem = ({ item }) => (
-    <View style={styles.row}>
-      <Text style={[styles.cell, styles.dateCell]}>{new Date(item.Date).toLocaleString('en-In')}</Text>
+  const renderItem = ({item, index}) => (
+    <View style={index % 2 == 0 ? styles.rowEven : styles.rowOdd}>
+      <Text style={[styles.cell, styles.dateCell]}>
+        {new Date(item.Date).toLocaleString('en-In')}
+      </Text>
       <Text style={styles.cell}>{item.application}</Text>
       <Text style={styles.cell}>{item.type}</Text>
       <Text style={styles.cell}>
         {item.type === 'Debit' ? (
-          <IconSwitcher componentName='Feather' iconName='minus' color={colors.primary} iconsize={2} />
+          <IconSwitcher
+            componentName="Feather"
+            iconName="minus"
+            color={colors.primary}
+            iconsize={2}
+          />
         ) : (
-          <IconSwitcher componentName='Feather' iconName='plus' color={colors.primary} iconsize={2} />
-        )}
-        {' '}
+          <IconSwitcher
+            componentName="Feather"
+            iconName="plus"
+            color={colors.primary}
+            iconsize={2}
+          />
+        )}{' '}
         &#8377; {Math.round(item.amount).toLocaleString()}
       </Text>
-      <Text style={styles.cell}>&#8377;{Math.round(item.balance).toLocaleString()}</Text>
+      <Text style={styles.cell}>
+        &#8377;{Math.round(item.balance).toLocaleString()}
+      </Text>
     </View>
   );
 
@@ -67,54 +90,72 @@ const Transactions = () => {
 const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 10,
+    // justifyContent: 'space-between',
+    gap: responsiveWidth(5),
+    padding: responsiveHeight(2),
     backgroundColor: '#f0f0f0',
+    alignItems: 'center',
+    backgroundColor: colors.white,
   },
   title: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: responsiveHeight(2.5),
+    fontFamily: fonts.secondry,
+    color: colors.primary,
   },
   balanceContainer: {
-    alignItems: 'flex-end',
+    borderWidth: responsiveHeight(0.2),
+    paddingHorizontal: responsiveHeight(2),
+    paddingVertical: responsiveHeight(0.5),
+    borderStyle: 'dashed',
+    borderColor: colors.highlight,
+    borderRadius: responsiveHeight(1),
   },
   balanceLabel: {
-    fontSize: 14,
-    color: '#888',
+    fontSize: responsiveHeight(1.8),
+    color: colors.lightGray,
   },
   balanceValue: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: responsiveHeight(2),
+    fontFamily: fonts.primary,
+    color: colors.primary,
   },
   header: {
     flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-    backgroundColor: '#eee',
-    padding: 10,
+    // borderBottomWidth: responsiveHeight(0.3),
+    // borderColor: colors.primary,
+    backgroundColor: colors.highlight,
+    padding: responsiveHeight(2),
   },
-  row: {
+  rowEven: {
     flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
+    padding: responsiveHeight(2),
+    backgroundColor: '#e1e2e6',
+  },
+  rowOdd: {
+    flexDirection: 'row',
+    backgroundColor: colors.white,
+    padding: responsiveHeight(2),
   },
   cell: {
     flex: 1,
     textAlign: 'center',
-    width: 100,
-    paddingHorizontal: 5,  
+    width: responsiveWidth(28),
+    paddingHorizontal: responsiveWidth(1),
+    fontSize:responsiveHeight(1.5),
+    fontFamily:fonts.textFont,
+    color:colors.primary
   },
   dateCell: {
-    width: 150,
-    paddingHorizontal: 5,  
+    width: responsiveWidth(28),
+    paddingHorizontal: responsiveWidth(1),
   },
   headerCell: {
     flex: 1,
     textAlign: 'center',
     fontWeight: 'bold',
-    width: 100,
-    paddingHorizontal: 5,  // Add gap between columns
+    width: responsiveWidth(28),
+    paddingHorizontal: responsiveWidth(1),
+    color: colors.primary,
   },
 });
 

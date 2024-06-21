@@ -13,6 +13,7 @@ const Wallet = ({navigation:{navigate}}) => {
       if(click===0)
         {
           setIsClicked(click)
+          navigate("LoadWallet")
         }
         else{
           setIsClicked(click)

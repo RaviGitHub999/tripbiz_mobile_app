@@ -46,7 +46,8 @@ const handleSelectedValue=(val)=>
  </View>}
     </TouchableOpacity>
    { toggleBtn&&<View style={styles.hotelDropDownContainer}>
-     {dropDownData?<FlatList data={dropDownData} renderItem={handleRenderData} vertical/>:list}
+     {dropDownData?<FlatList data={dropDownData} renderItem={handleRenderData} />:<ScrollView nestedScrollEnabled>
+     {list}</ScrollView>}
     </View>}
    </View>
   )

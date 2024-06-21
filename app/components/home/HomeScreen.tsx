@@ -11,6 +11,7 @@ import { KeyboardAvoidingView } from 'react-native';
 import { Platform } from 'react-native';
 import MyContext from '../../context/Context';
 import CabSearch from '../cab/CabSearch';
+import BusSearch from '../bus/BusSearch';
 //'flights', 'hotel', 'bus', 'train'
 const components = [
   {
@@ -29,9 +30,9 @@ const components = [
     componentName: "FontAwesome5"
   },
   {
-    categoryName: "train",
-    iconName: "train",
-    componentName: "MaterialIcons"
+    categoryName: "bus",
+    iconName: "bus-alt",
+    componentName: "FontAwesome5"
   },
 ];
 
@@ -47,8 +48,8 @@ const HomeScreen = (props: any) => {
           return <HotelSearch  {...props} />;
         case 'cab':
           return <CabSearch  {...props} />;
-        case 'train':
-          return <HotelSearch  {...props} />;
+        case 'bus':
+          return <BusSearch  {...props} />;
         default:
           return 'Default content goes here';
       }

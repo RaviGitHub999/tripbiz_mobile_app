@@ -101,9 +101,9 @@ const components = [
     componentName: "FontAwesome5"
   },
   {
-    categoryName: "train",
-    iconName: "train",
-    componentName: "MaterialIcons"
+    categoryName: "bus",
+    iconName: "bus-alt",
+    componentName: "FontAwesome5"
   },
 ];
 var dateObject = new Date();
@@ -300,7 +300,12 @@ export default class MyProvider extends Component {
       emailNotFound: false,
       approveLoading: true,
       cabSearchRes: [],
-   
+      NoofBusPassengers: 1,
+      busOriginData: [],
+      busOriginLoading: false,
+      busDestData: [],
+      busDestLoading: false,
+      busResList: [],
       actions: {
         handleBookinghotelquery: (query) => {
           this.setState({ bookinghotelquery: query })
@@ -1698,121 +1703,6 @@ export default class MyProvider extends Component {
           return hotelObject;
         },
 
-        // hotelSearch: async () => {
-        //   await this.state.actions.getRecommondedHotelList()
-        //   this.setState({
-        //     hotelSearchQuery: this.state.selectedHotel,
-        //     hotelSessionStarted: false,
-        //     hotelSessionEnded: false,
-        //   });
-
-        //   let roomGuests = [];
-
-        //   this.state.hotelRoomArr.forEach((room, r) => {
-        //     roomGuests.push({
-        //       NoOfAdults: Number(room.adults),
-        //       NoOfChild: Number(room.child),
-        //       ChildAge: room.childAge.map((child, c) => Number(child.age))
-        //     });
-        //   });
-        //   var request = {
-        //     checkInDate: this.state.actions.convertTboDateFormat(this.state.selectedHotelCheckInDate),
-        //     cityId: this.state.cityHotel,
-        //     nights: this.state.hotelNights,
-        //     countryCode: this.state.countryCode,
-        //     noOfRooms: this.state.hotelRooms,
-        //     roomGuests: [...roomGuests]
-        //   };
-        //   var hotelStatic = await Promise.all([
-        //     fetch(
-        //       "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/hotelSearchRes",
-        //       {
-        //         method: "POST",
-        //         headers: {
-        //           "Content-Type": "application/json"
-        //         },
-        //         body: JSON.stringify(request)
-        //       }
-        //     )
-        //       .then((res) => res.json())
-        //       .catch((err) => console.log(err)),
-        //     this.state.actions.convertXmlToJson(request.cityId),
-        //     //this.state.actions.convertXmlToJsonHotel({ cityId: "145710", hotelId: "00193836" })
-        //     this.state.actions.getHotelImages(request.cityId)
-        //   ]);
-
-        //   console.log("Result", hotelStatic);
-
-        //   var hotelRes = hotelStatic[0];
-        //   var staticdata = hotelStatic[1];
-        //   // var size = Object.keys(staticdata).length;
-        //   // console.log( size,"myProviderererer")
-        //   // console.log("Hotel result", hotelRes);
-        //   const HotelListData = hotelRes.hotelResult?.HotelSearchResult?.HotelResults
-        //   const hotelIdsInObject = this.state.recommondedHotels ? Object.keys(this.state.recommondedHotels).map(ele => { return { HotelCode: ele } }) : []
-        //   const idToIndex = hotelIdsInObject.reduce((acc, item, index) => {
-        //     acc[item.HotelCode] = index;
-        //     return acc;
-        //   }, {});
-        //   this.setState({ idToIndex: idToIndex })
-
-        //   const filteredHotels = HotelListData.filter(hotel => {
-        //     const staticData = staticdata[hotel.HotelCode];
-        //     const hotelName = hotel.HotelName ? hotel.HotelName : staticData?.HotelName;
-        //     return hotelName?.length > 0;
-        //   })
-        //   const finalData = this.state.actions.filterHotels(filteredHotels).sort((a, b) => {
-        //     const indexA = idToIndex[a.HotelCode];
-        //     const indexB = idToIndex[b.HotelCode];
-
-        //     if (indexA === undefined && indexB === undefined) {
-        //       return 0;
-        //     } else if (indexA === undefined) {
-        //       return 1;
-        //     } else if (indexB === undefined) {
-        //       return -1;
-        //     }
-        //     return indexA - indexB;
-        //   });
-        //   // console.log(HotelListData.length,"==========1=======")
-        //   // console.log(finalData.length,"============2============")
-        //   if (hotelRes?.error) {
-        //     console.log('error');
-        //     this.setState({
-        //       hotelResList: [],
-        //       hotelErrorMessage: hotelRes?.error,
-        //       searchingHotels: false,
-        //       hotelSessionStarted: true,
-        //       hotelResList1: [],
-        //     })
-        //   }
-        //   else {
-        //     this.setState({
-        //       hotelResList: hotelRes.hotelResult?.HotelSearchResult?.HotelResults,
-        //       hotelTraceId: hotelRes.hotelResult?.HotelSearchResult?.TraceId,
-        //       hotelStaticData: staticdata,
-        //       hotelTokenId: hotelRes.tokenId,
-        //       searchingHotels: false,
-        //       hotelSessionStarted: true,
-        //       hotelResList1: finalData,
-        //     });
-        //   }
-
-
-        //   var hotelSessionTimeout = setTimeout(() => {
-        //     this.setState(
-        //       {
-        //         hotelSessionStarted: false,
-        //         hotelSessionExpired: true
-        //       },
-        //       () => {
-        //         console.log("Session expired");
-        //       }
-        //     );
-        //   }, 840000);
-        //   clearTimeout(hotelSessionTimeout);
-        // },
-
         hotelSearch: async (query) => {
           //Fields needed:  city or hotel name, check-in, nights, check-out, nationality, rooms, adults, children, star-rating
           await this.state.actions.getRecommondedHotelList()
@@ -2791,6 +2681,24 @@ export default class MyProvider extends Component {
           });
           return cabsArray;
         },
+        getAllBus: async (id, userid) => {
+          var busCollectionRef = firestore()
+          .collection("Accounts")
+          .doc(userid)
+          .collection("trips")
+          .doc(id)
+          .collection("bus");
+          const querysnapshot = await busCollectionRef.get();
+          var busArray = [];
+          querysnapshot.forEach(async(doc) => {
+            var modifiedBusObj = await this.state.actions.objToArr(doc.data());
+            busArray.push({
+              id: doc.id,
+              data:modifiedBusObj,
+            });
+          });
+          return busArray ;
+        },
         getAllExpenses: async (tripId, userId) => {
           try {
             const cabCollectionRef = firestore()
@@ -2836,14 +2744,15 @@ export default class MyProvider extends Component {
                 promises.push(new Promise(async (resolve) => {
                   const hotels = await this.state.actions.getAllHotels(doc.id, this.state.userId);
                   const flights = await this.state.actions.getAllFlights(doc.id, this.state.userId);
-                  const cabs = await this.state.actions.getAllCabs(doc.id,this.state.userId
-                  );
+                  const cabs = await this.state.actions.getAllCabs(doc.id,this.state.userId);
+                  const bus = await this.state.actions.getAllCabs(doc.id,this.state.userId);
                   docs.push({
                     id: doc.id,
                     data: doc.data(),
                     hotels: hotels,
                     flights: flights,
                     cabs: cabs,
+                    bus
                   });
                   resolve();
                 }));
@@ -3579,10 +3488,14 @@ export default class MyProvider extends Component {
             hotelResList: [],
             bookingFlight: [],
             bookingHotel: [],
+            busResList: [],
             outbound: "",
             inbound: "",
             cabinClassId: "2",
             journeyWay: "1",
+            searchingBus: false,
+            fetchingBusSeat: false,
+            NoofBusPassengers: 1,
             // originSelectedAirport: {
             //   name: "",
             //   iataCode: "",
@@ -3902,7 +3815,7 @@ export default class MyProvider extends Component {
             return [];
           }
         },
-        //  getTripsForApproval : async (approvalRequests) => {
+  
         //   const requestData = [];
         //           this.setState({
         //             approveLoading: true,
@@ -4159,10 +4072,10 @@ export default class MyProvider extends Component {
             .catch((err) => console.log(err));
           console.log(data2);
           var flightData = data2.fareQuoteResult.Response.Results;
-          var ssrData = data2.ssrResult.Response;
+          var ssrData = data2?.ssrResult?.Response;
           return { flightData, ssrData };
         },
-        // getHotelUpdatedDetails: async (
+     
         //   cityIds,
         //   searchReq,
         //   selectedRoom
@@ -4407,7 +4320,7 @@ export default class MyProvider extends Component {
             console.error("Error updating flight booking details: ", error);
           }
         },
-        // addExpenseToTrip: async (
+       
         //   id,
         //   type,
         //   file,
@@ -4569,8 +4482,256 @@ export default class MyProvider extends Component {
 
           });
         },
+        changeBusPassengers: (value) => {
+          this.setState({ NoofBusPassengers: value });
+        },
+        busKeywordReq : (keyword) => {
+          try {
+            return axios.post(
+              "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/getBusCityList"
+            );
+          } catch (error) {
+            console.log(error);
+          }
+        },
+        changeOriginBusKeyword : this.debounce(async (keyword) => {
+          if (keyword !== "") {
+            try {
+              var results = [];
+              //var results = this.state.busFuse.search(keyword);
+              if (results.length > 0) {
+                var data = results.map((res, r) => {
+                  var item = res.item;
+                  return {
+                    cityName: item.CityName,
+                    id: item.CityId,
+                  };
+                });
+                this.setState({
+                  busOriginData: data,
+                  busOriginLoading: false,
+                });
+              } else {
+                var data = await this.state.actions.busKeywordReq(keyword);
+                var fuse = new Fuse(data.data.BusCities, {
+                  keys: ["CityName"],
+                  includeScore: true,
+                  threshold: 0.2,
+                });
+                var res = fuse.search(keyword);
+                var resData = res.map((res, r) => {
+                  var item = res.item;
+                  return {
+                    cityName: item.CityName,
+                    id: item.CityId,
+                  };
+                });
+                this.setState({
+                  busOriginData: resData,
+                  busOriginLoading: false,
+                });
+              }
+            } catch (err) {
+              console.log(err);
+            }
+          } else {
+            this.setState({
+              airportOriginData: [],
+              airportOriginLoading: false,
+            });
+          }
+        }, 500),
 
+        changeDestBusKeyword : this.debounce(async (keyword) => {
+          if (keyword !== "") {
+            try {
+              var results = [];
+              //var results = this.state?.busFuse?.search(keyword);
+              if (results?.length > 0) {
+                var data = results.map((res, r) => {
+                  var item = res.item;
+                  return {
+                    cityName: item.CityName,
+                    id: item.CityId,
+                  };
+                });
+                this.setState({
+                  busDestData: data,
+                  busDestLoading: false,
+                });
+              } else {
+                var data = await this.state.actions.busKeywordReq(keyword);
+      
+                var fuse = new Fuse(data.data.BusCities, {
+                  keys: ["CityName"],
+                  includeScore: true,
+                  threshold: 0.2,
+                });
+                var res = fuse.search(keyword);
+                var resData = res.map((res, r) => {
+                  var item = res.item;
+                  return {
+                    cityName: item.CityName,
+                    id: item.CityId,
+                  };
+                });
+                this.setState({
+                  busDestData: resData,
+                  busDestLoading: false,
+                });
+              }
+            } catch (err) {
+              console.log(err);
+            }
+          } else {
+            this.setState({
+              airportOriginData: [],
+              airportOriginLoading: false,
+            });
+          }
+        }, 500),
 
+        handleChangeBusKeyword: (keyword, type) => {
+          if (type === "origin") {
+            this.setState({
+              busOriginLoading: true,
+            });
+  
+            this.state.actions.changeOriginBusKeyword(keyword);
+          } else if (type === "destination") {
+            this.setState({
+              busDestLoading: true,
+            });
+            this.state.actions.changeDestBusKeyword(keyword);
+          }
+        },
+        busSearch: async (originDetails, destDetails, outboundDate) => {
+          try {
+            this.setState({
+              busResList: [],
+              searchingBus: true,
+              busSessionStarted: false,
+              busSessionExpired: false,
+              busDate: outboundDate,
+              originDetails,
+              destDetails,
+            });
+            var busReq = {
+              DateOfJourney:
+                this.state.actions.convertTboDateFormat(outboundDate),
+              DestinationId: destDetails.id,
+              OriginId: originDetails.id,
+            };
+            this.setState({
+              busReq,
+              originDetails,
+              destDetails,
+            });
+  
+            var busRes = await fetch(
+              "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/busSearchRes",
+              {
+                method: "POST",
+                // credentials: "include",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(busReq),
+              }
+            )
+              .then((res) => res.json())
+              .catch((err) => console.log(err));
+            console.log(busRes);
+            if (busRes?.response?.error) {
+              this.setState({
+                busResList: [],
+                busErrorMessage: busRes?.error,
+                searchingBus: false,
+                busSessionStarted: true,
+              });
+            } else {
+              this.setState({
+                busResList:
+                  busRes?.response?.busResult?.BusSearchResult?.BusResults,
+                busTraceId: busRes?.response?.busResult?.BusSearchResult?.TraceId,
+                busTokenId: busRes.tokenId,
+                searchingBus: false,
+                busSessionStarted: true,
+              });
+              // this.setState({
+              //   resetBusDetails:
+              //     busRes?.response?.busResult?.BusSearchResult?.BusResults,
+              //   busTraceId: busRes?.response?.busResult?.BusSearchResult?.TraceId,
+              //   busTokenId: busRes.tokenId,
+              //   searchingBus: false,
+              //   busSessionStarted: true,
+              // });
+            }
+          } catch (error) {}
+        },
+        backToBusSearchPage: () => {
+          this.setState({
+            busResList: [],
+            busTraceId: "",
+            busTokenId: "",
+          });
+        }, 
+
+        fetchBusSeatLayout: async (bus) => {
+          this.setState({
+            fetchingBusSeat: true,
+            bookingBus: {},
+            BusOperatorName: bus?.TravelName,
+          });
+          var request = {
+            traceId: this.state.busTraceId,
+            ResultIndex: bus.ResultIndex,
+          };
+          var busRes = await Promise.all([
+            fetch(
+              "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/busSeatLayout",
+              {
+                method: "POST",
+                // credentials: "include",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(request),
+              }
+            )
+              .then((res) => res.json())
+              .catch((err) => console.log(err)),
+            fetch(
+              "https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/busBoardingPoint",
+              {
+                method: "POST",
+                // credentials: "include",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(request),
+              }
+            )
+              .then((res) => res.json())
+              .catch((err) => console.log(err)),
+          ]);
+  
+          var busSeatLayout = busRes[0].response;
+          var busBoardingDetails = busRes[1].response;
+  
+          this.setState({
+            fetchingBusSeat: false,
+            bookingBus: {
+              bus,
+              busBoardingDetails,
+              busSeatLayout,
+              busRequest: this.state.busReq,
+              origin: this.state.originDetails,
+              destination: this.state.destDetails,
+            },
+            busRes,
+          });
+        },
       },
 
 

@@ -14,6 +14,7 @@ import Role from '../../user/role/Role';
 import ReCheck from '../recheck/ReCheck';
 import Pdf from '../../wallet/Pdf';
 import Transactions from '../../wallet/Transactions';
+import LoadWallet from '../../wallet/LoadWallet';
 const Stack = createStackNavigator();
 const ProfileStack = () => {
   return (
@@ -30,6 +31,7 @@ const WalletStack = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName='Wallet'>
       <Stack.Screen name="Wallet" component={Wallet} />
+      <Stack.Screen name="LoadWallet" component={LoadWallet} />
       <Stack.Screen name="Transactions" component={Transactions} />
     </Stack.Navigator>
   )

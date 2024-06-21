@@ -27,7 +27,7 @@ filterTitle:{
 childrenContainer:
 {
 paddingHorizontal:responsiveWidth(2),
-paddingBottom:responsiveHeight(15)
+// paddingBottom:responsiveHeight(15)
 },
 filtersCountContainer:{
     position: 'absolute', 

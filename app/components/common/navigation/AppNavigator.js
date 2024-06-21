@@ -16,6 +16,8 @@ import MyContext from '../../../context/Context';
 import { ActivityIndicator, View } from 'react-native';
 import ChangePassword from '../../user/changePassword/ChangePassword';
 import CabResList from '../../cab/cabResList/CabResList';
+import BusResList from '../../bus/busResList/BusResList';
+import BusInfo from '../../bus/busInfo/BusInfo';
 const Stack = createStackNavigator();
 
 
@@ -41,6 +43,8 @@ const MainNavigation=()=>
           <Stack.Screen name="HotelInfo" component={HotelInfo} />
           <Stack.Screen name="TripDetails" component={TripDetails} />
           <Stack.Screen name='CabResList' component={CabResList} />
+          <Stack.Screen name='BusResList' component={BusResList} />
+          <Stack.Screen name='BusInfo' component={BusInfo} />
           <Stack.Screen name="Login" component={Login} />
     </Stack.Navigator>
   )
