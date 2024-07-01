@@ -2745,7 +2745,7 @@ export default class MyProvider extends Component {
                   const hotels = await this.state.actions.getAllHotels(doc.id, this.state.userId);
                   const flights = await this.state.actions.getAllFlights(doc.id, this.state.userId);
                   const cabs = await this.state.actions.getAllCabs(doc.id,this.state.userId);
-                  const bus = await this.state.actions.getAllCabs(doc.id,this.state.userId);
+                  const bus = await this.state.actions.getAllBus(doc.id,this.state.userId);
                   docs.push({
                     id: doc.id,
                     data: doc.data(),
@@ -2778,11 +2778,15 @@ export default class MyProvider extends Component {
                 promises.push(new Promise(async (resolve) => {
                   const hotels = await this.state.actions.getAllHotels(doc.id, this.state.userId);
                   const flights = await this.state.actions.getAllFlights(doc.id, this.state.userId);
+                  const cabs    =await this.state.actions.getAllCabs(doc.id, this.state.userId);
+                  const bus      =await this.state.actions.getAllBus(doc.id, this.state.userId);
                   docs.push({
                     id: doc.id,
                     data: doc.data(),
                     hotels: hotels,
-                    flights: flights
+                    flights: flights,
+                    cabs,
+                    bus
                   });
                   resolve();
                 }));
@@ -2823,12 +2827,12 @@ export default class MyProvider extends Component {
               teamMembers: userData?.teamMembers,
               noOfPages: Math.ceil(userData?.trips?.length / 10) - 1
             })
-            if (userData.role === "admin") {
-              this.setState({
-                role: "admin"
-              });
-              this.state.actions.getAllUserTrips();
-            }
+            // if (userData.role === "admin") {
+            //   this.setState({
+            //     role: "admin"
+            //   });
+            //   this.state.actions.getAllUserTrips();
+            // }
 
             return userData.role;
           } catch (error) {
@@ -2907,13 +2911,13 @@ export default class MyProvider extends Component {
             const doc = await docCollectionRef.get();
             const sendData = doc.data();
 
-            const [flights, hotels, requestData, cabs, expenses] = await Promise.all([
+            const [flights, hotels, requestData, cabs, expenses,bus] = await Promise.all([
               this.state.actions.getAllFlights(doc.id, userid),
               this.state.actions.getAllHotels(doc.id, userid),
               sendData?.requestId ? this.state.actions.getRequests(sendData?.requestId, userid) : '',
-              this.state.actions.getAllExpenses(doc.id, userid),
               this.state.actions.getAllCabs(doc.id, userid),
-              // this.state.actions.getAllExpenses(doc.id, userid)
+              this.state.actions.getAllExpenses(doc.id, userid),
+              this.state.actions.getAllBus(doc.id, userid),
             ]);
 
             this.state.actions.setTripData({
@@ -2923,7 +2927,8 @@ export default class MyProvider extends Component {
               flights: flights,
               cabs: cabs,
               expenses,
-              requestData: requestData
+              requestData: requestData,
+              bus,
             });
 
             return sendData;
@@ -3214,12 +3219,13 @@ export default class MyProvider extends Component {
 
             console.log(requestData, "requestData");
 
-            const [flights, hotels, requestData,cabs, expenses] = await Promise.all([
+            const [flights, hotels, requestData,cabs, expenses,bus] = await Promise.all([
               this.state.actions.getAllFlights(docCollectionRef.id, userid),
               this.state.actions.getAllHotels(docCollectionRef.id, userid),
               sendData.requestId ? this.state.actions.getRequests(sendData.requestId, userid) : '',
               this.state.actions.getAllCabs(docCollectionRef.id, userid),
               this.state.actions.getAllExpenses(docCollectionRef.id, userid),
+              this.state.actions.getAllBus(docCollectionRef.id, userid),
             ]);
 
             this.state.actions.setTripData({
@@ -3228,8 +3234,9 @@ export default class MyProvider extends Component {
               hotels: hotels,
               flights: flights,
               cabs: cabs,
-              expenses,
-              requestData: requestData
+              requestData: requestData,
+              expenses:expenses,
+              bus: bus.length > 0 ? bus : [],
             });
 
             this.setState({
@@ -3351,8 +3358,28 @@ export default class MyProvider extends Component {
                 })
               });
           }
-          await this.state.actions.getTripDocById(newtripdocRef.id, this.state.userId)
+
+          if (type === "bus") {
+            const busDocRef = tripDocRef.collection("bus");
+            var busObjData = this.state.actions.arrToObj(data);
+            const newDocRef = await busDocRef.add(busObjData);
+            await tripDocRef.update({
+              bus: firestore.FieldValue.arrayUnion({
+                id: newDocRef.id,
+                status: "Not Submitted",
+                date: new Date(),
+                requestStatus: "Not Requested",
+              }),
+            });
+          }
+
+          // await this.state.actions.getTripDocById(newtripdocRef.id, this.state.userId)
           //await this.state.actions.getAllTrips(this.state.userAccountDetails.userid);
+          await this.state.actions.getTripDoc(
+            newtripdocRef.id,
+            this.state.userId
+          );
+         
           return newtripdocRef.id;
         },
 
@@ -3424,9 +3451,24 @@ export default class MyProvider extends Component {
               });
             }
 
-            await this.state.actions.getTripDocById(id, this.state.userId);
+            if (type === "bus") {
+              const busDocRef = tripDocRef.collection("bus");
+              var busObjData = this.state.actions.arrToObj(data);
+              const newDocRef = await busDocRef.add(busObjData);
+              await tripDocRef.update({
+                bus: firestore.FieldValue.arrayUnion({
+                  id: newDocRef.id,
+                  status: "Not Submitted",
+                  date: new Date(),
+                  requestStatus: "Not Requested",
+                }),
+              });
+            }
+
+            // await this.state.actions.getTripDocById(id, this.state.userId);
+            await this.state.actions.getTripDoc(id, this.state.userId);
           } catch (error) {
-            console.log(error, "klkjjjj");
+            console.log(error,);
           }
         },
 
@@ -3468,6 +3510,15 @@ export default class MyProvider extends Component {
               var cabDoc = await docRef.collection("cabs").doc(itemId).delete();
               }
 
+              if(itemType === "bus")
+                {
+                  const buses = docData.bus;
+                const deletedBus = buses.filter(bus => bus.id === itemId);
+                await docRef.update({
+                  flights: firestore.FieldValue.arrayRemove(deletedBus[0])
+                });
+                var busDoc = await docRef.collection("bus").doc(itemId).delete();
+                }
             this.setState({
               tripData: null,
               tripDataLoading: false
@@ -3488,6 +3539,7 @@ export default class MyProvider extends Component {
             hotelResList: [],
             bookingFlight: [],
             bookingHotel: [],
+            cabResList: [],
             busResList: [],
             outbound: "",
             inbound: "",
@@ -3496,6 +3548,9 @@ export default class MyProvider extends Component {
             searchingBus: false,
             fetchingBusSeat: false,
             NoofBusPassengers: 1,
+            searchingCabs: false,
+            busErrorMessage: false,
+            bookingBus: false,
             // originSelectedAirport: {
             //   name: "",
             //   iataCode: "",
@@ -4252,7 +4307,7 @@ export default class MyProvider extends Component {
             });
 
             await tripsRef.update({
-              hotels: firestore.FieldValue.arrayUnion({ ...tripItem, updatedAt: Date.now() })
+              hotels: firestore.FieldValue.arrayUnion({ ...tripItem, updatedAt: new Date() })
             });
 
             const itemRef = tripsRef.collection("hotels").doc(hotelId);
@@ -4287,14 +4342,14 @@ export default class MyProvider extends Component {
               throw new Error("Flight not found in the trip data");
             }
 
-            console.log(tripItem);
+            console.log("added");
 
             await tripsRef.update({
               flights: firestore.FieldValue.arrayRemove(tripItem[0])
             });
 
             await tripsRef.update({
-              flights: firestore.FieldValue.arrayUnion({ ...tripItem[0], updatedAt: Date.now() })
+              flights: firestore.FieldValue.arrayUnion({ ...tripItem[0], updatedAt: new Date() })
             });
 
             const itemRef = tripsRef.collection("flights").doc(flightId);
@@ -4730,6 +4785,30 @@ export default class MyProvider extends Component {
               destination: this.state.destDetails,
             },
             busRes,
+          });
+        },
+        setBusBookDetails:  (data, type) => {
+          var bookingBus = { ...this.state.bookingBus };
+          if (type === "seat") {
+            const totPrice = data.reduce((total, seat) => {
+              return (
+                total +
+                seat.Price.OfferedPriceRoundedOff +
+                Math.ceil((seat.Price.OfferedPriceRoundedOff * 3) / 100)
+              );
+            }, 0);
+            bookingBus.passengers = this.state.NoofBusPassengers;
+            bookingBus.selectedSeat = data;
+            bookingBus.busTotalPrice = totPrice;
+          }
+          if (type === "boardingPoint") {
+            bookingBus.boardingPointDetails = data;
+          }
+          if (type === "droppingPoint") {
+            bookingBus.droppingPointDetails = data;
+          }
+          this.setState({
+            bookingBus,
           });
         },
       },

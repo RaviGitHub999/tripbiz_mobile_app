@@ -6,10 +6,10 @@ export const styles = StyleSheet.create({
   mainContainer:
   {
     flex: 1,
-    paddingVertical: responsiveHeight(4),
+    paddingVertical: responsiveHeight(2),
     paddingHorizontal: responsiveWidth(4),
     gap: responsiveHeight(2)
-    // alignItems:'center'
+
   },
   title: {
     textAlign: 'center',
@@ -100,6 +100,28 @@ borderRadius:responsiveHeight(0.5)
     color: colors.facebook,
     fontSize: responsiveHeight(1.7),
     fontFamily: fonts.textInput
+  },
+  back:{
+    alignSelf:'flex-start'
+  },
+  headerContainer:
+  {
+flexDirection:'row',
+alignItems:'center',
+justifyContent:'center',
+gap:responsiveWidth(5)
+  },
+  profileType:
+  {
+padding:responsiveWidth(2),
+borderRadius:responsiveHeight(1),
+backgroundColor:"#4caf50"
+  },
+  approvalTypeContainer:
+  {
+flexDirection:"row",
+alignItems:'center',
+justifyContent:'center'
   }
 
 

@@ -10,7 +10,7 @@ import {
   ActivityIndicator,
   Keyboard,
 } from 'react-native';
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import MyContext from '../../../context/Context';
 import {
   responsiveHeight,
@@ -87,8 +87,6 @@ const CabCard = ({
   endDate,
   tripsPage,
   cabData,
-  adminBooking,
-  adminTripid,
   adminPage,
   cabTotal,
   tripsCabType,
@@ -113,6 +111,10 @@ const CabCard = ({
     selectedTime,
     userTripStatus,
   } = useContext(MyContext);
+  useEffect(()=>
+  {
+actions.getLastDoc()
+  },[])
   const [openPriceInfo, setOpenPriceInfo] = useState(false);
   var myStr = cabCity + '_trip';
   let formattedDate;
@@ -179,14 +181,16 @@ const CabCard = ({
       selectedTime,
     });
     setIsLoading(false);
+    setSubmitIsOpen(false);
     navigate('TripDetails', {id: newtripid});
-    await actions.getLastDoc();
+    // await actions.getLastDoc();
   };
   const handleInputChange = e => {
     setDefaultInput(e);
   };
   const addtoTrip = async id => {
     var cabTotalPrice = (cabFinalPrice * cabService) / 100 + cabFinalPrice;
+    setSubmitIsOpen(false)
     await actions.editTripById(
       id,
       {
@@ -198,11 +202,12 @@ const CabCard = ({
         cabCount,
         cabTotalPrice,
         cabFinalPrice,
+        cabNights,
         selectedTime,
       },
       'cabs',
     );
-    await actions.getLastDoc();
+    // await actions.getLastDoc();
   };
   var color = statuses.filter(status => {
     return status?.status === cabData?.status;
@@ -461,7 +466,7 @@ const CabCard = ({
                   iconsize={3}
                 />
               </TouchableOpacity>
-              {!isloading ? (
+              {userTripStatus.userTrips.length>0 ? (
                 <FlatList
                   data={sortedTrips}
                   renderItem={bookingrenderItem}
@@ -484,7 +489,7 @@ const CabCard = ({
                   nestedScrollEnabled
                 />
               ) : (
-                <View>
+                <View style={{marginTop:responsiveHeight(1)}}>
                   <ActivityIndicator size={'large'} color={'blue'} />
                 </View>
               )}

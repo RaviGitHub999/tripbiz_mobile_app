@@ -102,12 +102,6 @@ const HotelInfo = ({ route: { params }, navigation: { goBack, navigate } }) => {
         )
     }, [])
     const toggleHeight = () => {
-        const toValue = isExpanded ? initialHeight : increasedHeight;
-        Animated.timing(heightAnim, {
-            toValue,
-            duration: 500,
-            useNativeDriver: false,
-        }).start();
         setIsExpanded(!isExpanded);
     };
     const generatePattern = (itemCount) => {

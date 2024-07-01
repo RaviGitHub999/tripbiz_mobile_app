@@ -1,6 +1,6 @@
 
 import React, { useContext, useMemo, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, Image } from 'react-native';
 import IconSwitcher from '../common/icons/IconSwitcher';
 import { colors, fonts } from '../../config/theme';
 import { responsiveFontSize, responsiveHeight } from '../../utils/responsiveScale';
@@ -12,6 +12,7 @@ import { Platform } from 'react-native';
 import MyContext from '../../context/Context';
 import CabSearch from '../cab/CabSearch';
 import BusSearch from '../bus/BusSearch';
+import { logo } from './assets';
 //'flights', 'hotel', 'bus', 'train'
 const components = [
   {
@@ -61,7 +62,8 @@ const HomeScreen = (props: any) => {
         
       </View>
       <View style={styles.headersContainer}>
-      <Text style={styles.headerText}>Search {activeComponent} for your business travels</Text>
+      {/* <Text style={styles.headerText}>Search {activeComponent} for your business travels</Text> */}
+      <Image source={logo} style={styles.appLogo} />
         <View style={styles.nav} >
           <FlatList ref={flatListRef} data={components} renderItem={({ item }) => {
             return (

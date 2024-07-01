@@ -16,6 +16,7 @@ import Octicons from "react-native-vector-icons/Octicons"
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons"
 import Zocial from "react-native-vector-icons/Zocial"
 import { responsiveHeight } from '../../../utils/responsiveScale';
+import { colors } from '../../../config/theme';
 interface IProps{
     componentName:string,
     iconName:string,
@@ -25,35 +26,35 @@ interface IProps{
 const IconSwitcher:React.FC<IProps>= ({componentName,iconName,color,iconsize}) => {
  switch (componentName) {
     case "AntDesign":
-    return <AntDesign name={iconName} color={color} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
+    return <AntDesign name={iconName} color={color?color:colors.primary} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
     case "Entypo":
-    return <Entypo name={iconName} color={color} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
+    return <Entypo name={iconName} color={color?color:colors.primary} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
     case "EvilIcons":
-    return <EvilIcons name={iconName} color={color} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
+    return <EvilIcons name={iconName} color={color?color:colors.primary} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
     case "Feather":
-    return <Feather name={iconName} color={color} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
+    return <Feather name={iconName} color={color?color:colors.primary} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
     case "FontAwesome":
-    return <FontAwesome name={iconName} color={color} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
+    return <FontAwesome name={iconName} color={color?color:colors.primary} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
     case "FontAwesome5":
-    return <FontAwesome5 name={iconName} color={color} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
+    return <FontAwesome5 name={iconName} color={color?color:colors.primary} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
     case "Fontisto":
-    return <Fontisto name={iconName} color={color} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
+    return <Fontisto name={iconName} color={color?color:colors.primary} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
     case "Foundation":
-    return <Foundation name={iconName} color={color} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
+    return <Foundation name={iconName} color={color?color:colors.primary} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
     case "Ionicons":
-    return <Ionicons name={iconName} color={color} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
+    return <Ionicons name={iconName} color={color?color:colors.primary} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
     case "MaterialCommunityIcons":
-    return <MaterialCommunityIcons name={iconName} color={color} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
+    return <MaterialCommunityIcons name={iconName} color={color?color:colors.primary} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
     case "MaterialIcons":
-    return <MaterialIcons name={iconName} color={color} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
+    return <MaterialIcons name={iconName} color={color?color:colors.primary} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
     case "Octicons":
-    return <Octicons name={iconName} color={color} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
+    return <Octicons name={iconName} color={color?color:colors.primary} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
     case "SimpleLineIcons":
-    return <SimpleLineIcons name={iconName} color={color} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
+    return <SimpleLineIcons name={iconName} color={color?color:colors.primary} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
     case "Zocial":
-    return <Zocial name={iconName} color={color} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
+    return <Zocial name={iconName} color={color?color:colors.primary} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
     case "FontAwesome6":
-        return <FontAwesome6 name={iconName} color={color} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
+        return <FontAwesome6 name={iconName} color={color?color:colors.primary} size={iconsize?responsiveHeight(iconsize):responsiveHeight(5)}/>
     default:
         console.warn(`Unknown Component Name ${componentName}`)
       return null

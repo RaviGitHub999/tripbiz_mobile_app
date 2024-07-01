@@ -214,7 +214,11 @@ export const styles = StyleSheet.create(
             fontSize: responsiveHeight(2),
             color: colors.primary,
             fontFamily: fonts.primary
-        }
+        },
+        back:{
+            alignSelf:'flex-start',
+           marginLeft:responsiveWidth(-3)
+          }
 
     }
 )

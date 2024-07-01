@@ -4,23 +4,19 @@ import { styles } from './profileStyles'
 import TripDetailsInput from '../../Trips/TripDetails/TripDetailsInput'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import IconSwitcher from '../../common/icons/IconSwitcher'
-import { colors } from '../../../config/theme'
+import { colors, fonts } from '../../../config/theme'
 import MyContext from '../../../context/Context'
+import { useNavigation } from '@react-navigation/native'
 
 const Profile = () => {
   var { actions, userAccountDetails } = useContext(MyContext)
   var [edit, setEdit] = useState(true)
-  // const [file, setFile] = useState({
-  //   passport: "",
-  //   aadharCard: ""
-  // })
+  const{goBack}=useNavigation()
   var [userData, setUserData] = useState({
     firstName: userAccountDetails?.firstName,
     lastName: userAccountDetails?.lastName,
     mobileNumber: userAccountDetails?.mobileNumber,
     passportNumber: userAccountDetails?.passportNumber,
-    // aadharCard: userAccountDetails?.aadharCard,
-    // passport: userAccountDetails?.passport,
     GSTNo: userAccountDetails?.GSTNo,
     PANNo: userAccountDetails?.PANNo,
     companyName: userAccountDetails?.companyName,
@@ -32,27 +28,6 @@ const Profile = () => {
     });
   }
 
-  // const handlePickFile = async (name) => {
-  //   try {
-  //     const res = await DocumentPicker.pick({
-  //       type: [DocumentPicker.types.allFiles],
-  //     });
-      
-  //     if (name === "passport") {
-  //       setData("passport", res[0].uri)
-  //       setFile({ ...file, passport: res[0].name })
-  //     }
-  //     else {
-  //       setData("aadharCard", res[0].uri)
-  //       setFile({ ...file, aadharCard: res[0].name })
-  //     }
-  //   } catch (err) {
-  //     if (DocumentPicker.isCancel(err)) {
-  //     } else {
-  //       console.log(err);
-  //     }
-  //   }
-  // };
  const  updateData = async () => {
     var data = await actions.updateUserProfile(userAccountDetails.userid, userData)
     setUserData({
@@ -60,8 +35,6 @@ const Profile = () => {
         lastName: data?.lastName,
         mobileNumber: data?.mobileNumber,
         passportNumber: data?.passportNumber,
-        // aadharCard: data?.aadharCard,
-        // passport: data?.passport,
         GSTNo: data?.GSTNo,
         PANNo: data?.PANNo,
         companyName: data?.companyName,
@@ -75,7 +48,20 @@ const Profile = () => {
       contentContainerStyle={styles.container}
     >
       <View style={styles.mainContainer}>
-        <Text style={styles.title}>Profile</Text>
+        <TouchableOpacity style={styles.back} onPress={goBack}>
+          <IconSwitcher componentName='AntDesign' iconName='arrowleft'  iconsize={3.5}/>
+        </TouchableOpacity>
+       
+       <View style={styles.headerContainer}>
+       <Text style={styles.title}>Profile</Text>
+       <View style={userAccountDetails.accountType === "PrePaid"?styles.profileType:[styles.profileType,{backgroundColor:"#9c27b0"}]}>
+        <Text style={styles.btnTitle}>{userAccountDetails.accountType}</Text>
+       </View>
+       </View>
+       <View style={styles.approvalTypeContainer}>
+          <Text style={styles.profiledetailsTitle}>Approval Type : </Text>
+          <Text style={[styles.profiledetailsTitle,{fontFamily:fonts.secondry}]}>{`${userAccountDetails.approvalType} `}<Text style={styles.profiledetailssubTitle}>for submission</Text></Text>
+        </View>
         <TouchableOpacity style={styles.updateBtn} onPress={() => {
           setEdit(!edit)
         }}>

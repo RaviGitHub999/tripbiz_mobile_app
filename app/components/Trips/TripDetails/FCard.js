@@ -23,8 +23,8 @@ const FCard = props => {
               <View style={styles.flightCard}>
                 <View style={styles.flightCardHeader}>
                     {
-                         airline[0] ?<Image source={{uri:airline[0]?.url}} style={{height:20,width:20}}/>:
-                         <IconSwitcher componentName='MaterialIcons' iconName='flight-takeoff' color={colors.gray} iconsize={2}/>
+                         airline[0]?.url?<Image source={{uri:airline[0]?.url}} style={{height:20,width:20}}/>:
+                         <IconSwitcher componentName='MaterialIcons' iconName='flight-takeoff'  iconsize={2}/>
                     }
                     <Text style={styles.flightTimings}>{`${segment.airlineName}`}</Text>
                    <Text style={styles.flightTimings}>{`( ${flightCode} )`}</Text>

@@ -11,7 +11,7 @@ import {
 import IconSwitcher from '../../icons/IconSwitcher';
 import { colors, fonts } from '../../../../config/theme';
 import { responsiveHeight, responsiveWidth } from '../../../../utils/responsiveScale';
-  const CustomSelection = ({placeHolder, value,setValue}) => {
+  const CustomSelection = ({placeHolder, value,setValue,data,listKey}) => {
     const [toggle, setToggle] = useState(false);
     const [selectedItemIndex, setSelectedItemIndex] = useState(0);
     const expenseTypeData = [
@@ -41,8 +41,8 @@ import { responsiveHeight, responsiveWidth } from '../../../../utils/responsiveS
           selectedItemIndex === index && styles.itemHovered,
         ]}
         underlayColor={colors.whiteSmoke}
-          onPress={() => handleSelect(item,index)}>
-          <Text style={[styles.selectedItemTitle, selectedItemIndex === index && styles.activeSelectedItemTitle]}>{item}</Text>
+          onPress={() => handleSelect(listKey?item[listKey]:item,index)}>
+          <Text style={[styles.selectedItemTitle, selectedItemIndex === index && styles.activeSelectedItemTitle]}>{listKey?item[listKey]:item}</Text>
         </TouchableHighlight>
       );
     };
@@ -59,7 +59,7 @@ import { responsiveHeight, responsiveWidth } from '../../../../utils/responsiveS
         </Pressable>
         {toggle && (
           <FlatList
-            data={expenseTypeData}
+            data={data}
             renderItem={handleRenderData}
             style={styles.flatListContainer}
             nestedScrollEnabled

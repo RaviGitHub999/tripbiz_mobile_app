@@ -1,4 +1,10 @@
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Pressable,
+} from 'react-native';
 import React, {useCallback, useContext, useState} from 'react';
 import {
   responsiveHeight,
@@ -8,14 +14,31 @@ import IconSwitcher from '../../common/icons/IconSwitcher';
 import {colors, fonts} from '../../../config/theme';
 import PopUp from '../../common/popup/PopUp';
 import MyContext from '../../../context/Context';
-import { useNavigation } from '@react-navigation/native';
-import { ActivityIndicator } from 'react-native';
-
-const BusRenderData = ({item}) => {
+import {useNavigation} from '@react-navigation/native';
+import {ActivityIndicator} from 'react-native';
+var statuses = [
+  {status: 'Paid and Submitted', color: '#ffa500'},
+  {status: 'Need clarification', color: '#FFC107'},
+  {status: 'Price Revision', color: '#2196F3'},
+  {status: 'Booked', color: '#4CAF50'},
+  {status: 'Cancelled', color: '#FF0000'},
+  {status: 'Submitted,Payment Pending', color: '#ffa500'},
+  {status: 'Booked,Payment Pending', color: '#4CAF50'},
+  {status: 'Not Submitted', color: '#808080'},
+];
+var reqStatuses = [
+  {status: 'Approved', color: '#008000'},
+  {status: 'Pending', color: '#ffa500'},
+  {status: 'Not Requested', color: '#808080'},
+];
+const BusRenderData = ({item, tripsPage, bookingBus, busData,tripId}) => {
   const [openBusDetails, setOpenBusDetails] = useState(false);
-  const[loader,setLoader]=useState(false)
-  const {actions} = useContext(MyContext);
-  const{navigate}=useNavigation()
+  const[buspickupanddrop,setBusPickUpandDrop]=useState(false)
+  const [openDelete, setOpenDelete] = useState(false);
+  const [loader, setLoader] = useState(false);
+  var [openPriceInfo, setOpenPriceInfo] = useState(false);
+  const {actions, busTraceId} = useContext(MyContext);
+  const {navigate, push} = useNavigation();
   const depdate = new Date(item.DepartureTime);
   const depformattedDate = depdate.toLocaleDateString('en-US', {
     month: 'long',
@@ -27,10 +50,7 @@ const BusRenderData = ({item}) => {
     month: 'long',
     day: 'numeric',
   });
-const add=async (bus)=>
-  {
-    await console.log(bus,"ravi")
-  }
+
   const diffInMilliseconds = arrdate - depdate;
   const totalMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
   const hours = Math.floor(totalMinutes / 60);
@@ -40,14 +60,55 @@ const add=async (bus)=>
     minutes,
   ).padStart(2, '0')}mins`;
 
-  const handleSeatSelection =useCallback(( bus) => {
-    add(bus)
-    navigate('BusInfo');
-  },[]);
-console.log("first")
+  var color = statuses.filter(status => {
+    return status?.status === busData?.status;
+  });
+  var reqColor = reqStatuses.filter(status => {
+    return status?.status === busData?.requestStatus;
+  });
+
+  const handleSeatSelection = useCallback(async bus => {
+    setLoader(true);
+    await actions.fetchBusSeatLayout(bus);
+    setLoader(false);
+    push('BusInfo');
+  }, []);
+
+  const handleDelete = async () => {
+    await actions.deleteTripItem(tripId, busData?.id, "bus");
+    setOpenDelete(false);
+  };
   return (
     <>
       <View style={styles.busCard}>
+        {tripsPage?<>
+          <View style={styles.routeContainer}>
+          <Text style={styles.routeName}>{bookingBus?.origin?.cityName}</Text>
+          <IconSwitcher
+            componentName="Octicons"
+            iconName="arrow-right"
+            color={colors.primary}
+            iconsize={2.5}
+          />
+          <Text style={styles.routeName}>
+            {bookingBus?.destination?.cityName}
+          </Text>
+        </View>
+        <View style={styles.selectedSeatsContainer}>
+          <Text style={styles.travelName}>Selected Seats :</Text>
+          <View style={{flexDirection: 'row'}}>
+            {bookingBus?.selectedSeat &&
+              bookingBus.selectedSeat.map((e, i) => (
+                <Text
+                  key={i}
+                  style={[styles.travelName, {color: colors.highlight}]}>
+                  {e.SeatName}
+                  {i < bookingBus.selectedSeat.length - 1 && ','}
+                </Text>
+              ))}
+          </View>
+        </View>
+        </>:null}
         <View style={styles.travelNameContainer}>
           <IconSwitcher
             componentName="FontAwesome5"
@@ -89,19 +150,156 @@ console.log("first")
           <TouchableOpacity onPress={() => setOpenBusDetails(true)}>
             <Text style={styles.cancellationText}>Cancellation</Text>
           </TouchableOpacity>
-          <Text style={styles.time}>{item.AvailableSeats} Seats Left</Text>
-          <Text style={styles.price}>
-            &#8377;{' '}
-            {item.BusPrice.PublishedPriceRoundedOff
-              ? item.BusPrice.PublishedPriceRoundedOff
-              : item.BusPrice.OfferedPriceRoundedOff}
-          </Text>
+          {!tripsPage ? (
+            <Text style={styles.time}>{item.AvailableSeats} Seats Left</Text>
+          ) :<TouchableOpacity onPress={()=>setBusPickUpandDrop(true)}>
+            <IconSwitcher componentName='MaterialCommunityIcons' iconName='bus-stop'  iconsize={4}/>
+          </TouchableOpacity> }
+          {tripsPage ? (
+            <>
+              <Text style={styles.price}>
+                &#8377;{' '}
+                {bookingBus?.selectedSeat.length > 0
+                  ? bookingBus?.selectedSeat.reduce(
+                      (total, seat) =>
+                        total + seat.Price.OfferedPriceRoundedOff,
+                      0,
+                    )
+                  : 0}
+              </Text>
+            </>
+          ) : (
+            <Text style={styles.price}>
+              &#8377;{' '}
+              {item.BusPrice.PublishedPriceRoundedOff
+                ? item.BusPrice.PublishedPriceRoundedOff
+                : item.BusPrice.OfferedPriceRoundedOff}
+            </Text>
+          )}
         </View>
-        {loader?<ActivityIndicator color={colors.facebook} size={20}/>:<TouchableOpacity
-          style={styles.Btn}
-          onPress={() => handleSeatSelection(item)}>
-          <Text style={styles.btnText}>Select Seats</Text>
-        </TouchableOpacity>}
+        {!tripsPage ? (
+          <>
+            {loader ? (
+              <View style={styles.Btn}>
+                <ActivityIndicator color={colors.facebook} size={20} />
+              </View>
+            ) : (
+              <Pressable
+                style={styles.Btn}
+                onPress={() => handleSeatSelection(item)}>
+                <Text style={styles.btnText}>Select Seats</Text>
+              </Pressable>
+            )}
+          </>
+        ) : null}
+
+        {tripsPage ? (
+          <>
+            <View style={styles.hotelPriceMainContainer}>
+              <View style={styles.bookingStatusTitlesMainContainer}>
+                <Text
+                  style={
+                    styles.bookingStatusTitles
+                  }>{`Approval Status : `}</Text>
+                <View
+                  style={[
+                    styles.bookingStatusTextContainer,
+                    {
+                      backgroundColor: reqColor[0]
+                        ? reqColor[0].color
+                        : '#808080',
+                    },
+                  ]}>
+                  <Text style={styles.bookingStatusText}>
+                    {busData?.requestStatus}
+                  </Text>
+                </View>
+              </View>
+              <>
+                {busData?.status ? (
+                  <View style={styles.bookingStatusTitlesMainContainer}>
+                    <Text
+                      style={
+                        styles.bookingStatusTitles
+                      }>{`Booking Status : `}</Text>
+                    <View
+                      style={[
+                        styles.bookingStatusTextContainer,
+                        {
+                          backgroundColor: color[0]
+                            ? color[0].color
+                            : '#808080',
+                        },
+                      ]}>
+                      <Text style={styles.bookingStatusText}>
+                        {busData.status}
+                      </Text>
+                    </View>
+                  </View>
+                ) : null}
+              </>
+              {tripsPage ? (
+                <View style={styles.hotelTotalPriceContainer}>
+                  <Text
+                    style={
+                      styles.hotelTotalPrice
+                    }>{`Total Price : ₹ ${Math.ceil(
+                    bookingBus?.busTotalPrice,
+                  ).toLocaleString('en-IN')}`}</Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setOpenPriceInfo(true);
+                    }}>
+                    <IconSwitcher
+                      componentName="Entypo"
+                      iconName="info-with-circle"
+                      color={colors.black}
+                      iconsize={1.8}
+                    />
+                  </TouchableOpacity>
+                </View>
+              ) : null}
+              {busData?.downloadURL && tripsPage ? (
+                <TouchableOpacity
+                  onPress={() => downloadDoc(cabData?.downloadURL)}>
+                  <Text>Voucher</Text>
+                  <IconSwitcher
+                    componentName="FontAwesome"
+                    iconName="download"
+                    iconsize={2}
+                    color={colors.primary}
+                  />
+                </TouchableOpacity>
+              ) : null}
+            </View>
+
+            <View style={styles.addedHotelTimeAndDateContainer}>
+              <View style={styles.addedHotelTitleContainer}>
+                <Text style={styles.bookingStatusTitles}>
+                  {`Added Date: `}
+                  <Text style={styles.addedHotelTimeAndDate}>
+                    {new Date(busData?.date?.seconds * 1000)
+                      .toString()
+                      .slice(4, 15)}
+                  </Text>
+                </Text>
+              </View>
+              <>
+                <TouchableOpacity
+                  onPress={() => {
+                    setOpenDelete(true);
+                  }}>
+                  <IconSwitcher
+                    componentName="MaterialIcons"
+                    iconName="delete"
+                    color={colors.red}
+                    iconsize={2.5}
+                  />
+                </TouchableOpacity>
+              </>
+            </View>
+          </>
+        ) : null}
       </View>
       <PopUp
         value={openBusDetails}
@@ -149,6 +347,91 @@ console.log("first")
               );
             })}
         </>
+      </PopUp>
+
+      <PopUp
+        value={openPriceInfo}
+        handlePopUpClose={() => {
+          setOpenPriceInfo(false);
+        }}>
+        <View style={styles.priceInfo}>
+          <View style={styles.priceDetailsContainer}>
+            <Text style={styles.priceDetailsTitle}>Bus Price</Text>
+            <Text style={[styles.priceDetails, {color: colors.highlight}]}>
+              &#8377;
+              {` ${
+                bookingBus?.selectedSeat?.length > 0
+                  ? bookingBus?.selectedSeat.reduce(
+                      (total, seat) =>
+                        total + seat.Price.OfferedPriceRoundedOff,
+                      0,
+                    )
+                  : 0
+              }`}
+            </Text>
+          </View>
+          <View style={styles.horizentalLine} />
+          <View style={styles.priceDetailsContainer}>
+            <Text style={styles.priceDetailsTitle}>Service Charges</Text>
+            <Text style={[styles.priceDetails, {color: colors.highlight}]}>
+              + &#8377;
+              {bookingBus?.selectedSeat?.length > 0
+                ? bookingBus.selectedSeat.reduce(
+                    (total, seat) =>
+                      total +
+                      Math.ceil((seat.Price.OfferedPriceRoundedOff * 3) / 100),
+                    0,
+                  )
+                : 0}
+            </Text>
+          </View>
+
+          <View
+            style={[
+              styles.priceDetailsContainer,
+              {marginTop: responsiveHeight(2)},
+            ]}>
+            <Text style={styles.priceDetails}>Total fare</Text>
+            <Text style={[styles.priceDetails, {color: colors.secondary}]}>
+              + &#8377;
+              {` ${Math.ceil(bookingBus?.busTotalPrice).toLocaleString(
+                'en-IN',
+              )}`}
+            </Text>
+          </View>
+        </View>
+      </PopUp>
+      <PopUp  value={buspickupanddrop}
+        handlePopUpClose={() => {
+          setBusPickUpandDrop(false);
+        }}>
+<View>
+  <Text style={styles.travelName}>Boarding Point : <Text style={{color:colors.highlight}}>{bookingBus?.boardingPointDetails}</Text></Text>
+  <Text style={styles.travelName}>Dropping Point : <Text style={{color:colors.highlight}}>{bookingBus?.droppingPointDetails}</Text></Text>
+</View>
+      </PopUp>
+      <PopUp
+        value={openDelete}
+        handlePopUpClose={() => {
+          setOpenDelete(false);
+        }}>
+        <Text style={styles.hotelDeleteMsg}>
+          Are you sure you want to delete the trip item
+        </Text>
+        <View style={styles.hotelDeletingBtnsContainer}>
+          <TouchableOpacity
+            style={styles.hotelDeleteBtn}
+            onPress={handleDelete}>
+            <Text style={styles.hotelDeleteBtnTitle}>Delete</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.hotelDeleteBtn}
+            onPress={() => {
+              setOpenDelete(false);
+            }}>
+            <Text style={styles.hotelDeleteBtnTitle}>Go Back</Text>
+          </TouchableOpacity>
+        </View>
       </PopUp>
     </>
   );
@@ -216,6 +499,9 @@ const styles = StyleSheet.create({
     borderRadius: responsiveHeight(1),
     backgroundColor: colors.black,
     marginTop: responsiveHeight(1),
+    width: responsiveWidth(30),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   btnText: {
     fontSize: responsiveHeight(1.7),
@@ -253,6 +539,133 @@ const styles = StyleSheet.create({
     fontSize: responsiveHeight(1.5),
     fontFamily: fonts.primary,
     color: colors.primary,
+  },
+  routeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: responsiveHeight(1),
+  },
+  routeName: {
+    fontSize: responsiveHeight(2),
+    fontFamily: fonts.primary,
+    color: colors.primaryLite,
+  },
+  selectedSeatsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: responsiveHeight(1),
+  },
+  hotelPriceMainContainer: {
+    borderTopWidth: responsiveHeight(0.1),
+    borderBottomWidth: responsiveHeight(0.1),
+    borderStyle: 'dotted',
+    marginTop: responsiveHeight(1.7),
+    paddingHorizontal: responsiveWidth(2),
+    paddingVertical: responsiveHeight(1),
+    gap: responsiveHeight(2),
+  },
+  bookingStatusTitlesMainContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+  },
+  bookingStatusTextContainer: {
+    paddingHorizontal: responsiveWidth(2),
+    alignItems: 'center',
+    borderRadius: responsiveHeight(1),
+    paddingVertical: responsiveHeight(0.3),
+    justifyContent: 'center',
+  },
+  bookingStatusText: {
+    color: colors.white,
+    fontSize: responsiveHeight(1.3),
+    fontFamily: fonts.primary,
+  },
+  bookingStatusTitles: {
+    fontSize: responsiveHeight(1.7),
+    fontFamily: fonts.primary,
+    color: colors.lightGray,
+  },
+  hotelTotalPriceContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    gap: responsiveHeight(1),
+  },
+  hotelTotalPrice: {
+    fontSize: responsiveHeight(2.2),
+    fontFamily: fonts.textFont,
+    color: colors.secondary,
+  },
+  addedHotelTimeAndDateContainer: {
+    paddingTop: responsiveHeight(0.5),
+    paddingHorizontal: responsiveWidth(2),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  addedHotelTitleContainer: {
+    width: '90%',
+  },
+  bookingStatusTitles: {
+    fontSize: responsiveHeight(1.7),
+    fontFamily: fonts.primary,
+    color: colors.lightGray,
+  },
+  addedHotelTimeAndDate: {
+    color: colors.primary,
+    fontSize: responsiveHeight(1.7),
+    fontFamily: fonts.primary,
+  },
+  priceDetailsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  priceDetailsTitle: {
+    fontSize: responsiveHeight(2),
+    fontFamily: fonts.primary,
+    color: colors.lightGray,
+  },
+  priceDetails: {
+    fontSize: responsiveHeight(2.3),
+    fontFamily: fonts.secondry,
+    color: colors.primary,
+  },
+  horizentalLine: {
+    borderTopWidth: responsiveHeight(0.2),
+    color: colors.lightGray,
+    borderStyle: 'dashed',
+    marginVertical: responsiveHeight(1),
+  },
+  priceInfo: {
+    alignSelf: 'center',
+    width: '80%',
+  },
+  hotelDeleteMsg: {
+    fontSize: responsiveHeight(2),
+    fontFamily: fonts.textInput,
+    color: colors.primary,
+  },
+  hotelDeletingBtnsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: responsiveHeight(1.8),
+    paddingHorizontal: responsiveWidth(6),
+  },
+  hotelDeleteBtn: {
+    borderWidth: 1,
+    paddingHorizontal: responsiveWidth(3),
+    paddingVertical: responsiveHeight(0.8),
+    borderRadius: responsiveHeight(1),
+    backgroundColor: colors.primary,
+  },
+  hotelDeleteBtnTitle: {
+    fontSize: responsiveHeight(2),
+    fontFamily: fonts.textInput,
+    color: colors.white,
   },
 });
 

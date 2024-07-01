@@ -88,6 +88,7 @@ const MyTrips = ({ navigation: { navigate } }) => {
       setRefreshing(false);
     }, 2000);
   };
+
   return (
     <View style={styles.mainContainer}>
       <Text style={styles.title}>My Trips</Text>
@@ -119,7 +120,7 @@ const MyTrips = ({ navigation: { navigate } }) => {
                 }}>
                   <Text style={styles.tripName}>{trip?.data?.name}</Text>
                   <Text style={styles.tripDatetitle}>{`created on: `}<Text style={styles.tripDate}>{`${date}`}</Text></Text>
-                  <View style={{ flexDirection: "row", gap: responsiveHeight(1) }}>
+                  <View style={styles.itemsContainer}>
                     {trip?.hotels?.length > 0 ? (
                       <View style={styles.btn}>
                         <Text style={styles.btnTitle}>Hotels - {trip.hotels.length}</Text>
@@ -133,6 +134,11 @@ const MyTrips = ({ navigation: { navigate } }) => {
                     {trip?.cabs?.length > 0 ? (
                       <View style={styles.btn}>
                         <Text style={styles.btnTitle}>Cabs - {trip?.cabs?.length}</Text>
+                      </View>
+                    ) : null}
+                    {trip?.bus?.length>0 ? (
+                      <View style={styles.btn}>
+                        <Text style={styles.btnTitle}>Buses - {trip.bus.length}</Text>
                       </View>
                     ) : null}
                   </View>

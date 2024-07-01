@@ -11,7 +11,8 @@ export const styles = StyleSheet.create({
         backgroundColor: colors.primary,
         paddingHorizontal:responsiveWidth(2),
         paddingTop:responsiveHeight(5),
-        flex: 1 / 2
+        // flex: 1 / 2,
+        height:responsiveHeight(40)
     },
     headerText: {
         color: 'white',
@@ -37,7 +38,7 @@ export const styles = StyleSheet.create({
     },
     section: {
         marginTop:responsiveHeight(3),
-        flex:0.86,
+        flex:0.9,
         // paddingHorizontal: responsiveWidth(5),
         backgroundColor:colors.white,
         borderRadius:responsiveHeight(2),
@@ -52,7 +53,7 @@ export const styles = StyleSheet.create({
         position: 'absolute',
         height: "100%",
         width: '100%',
-        marginTop: "10%",
+        marginTop: "6%",
         // alignItems:'center',
         // justifyContent:'center',
         paddingHorizontal: "2%"
@@ -61,5 +62,9 @@ export const styles = StyleSheet.create({
         flexDirection: 'row' ,
         alignItems:'center',
         gap:responsiveWidth(3)  
+    },
+    appLogo:{
+        height:responsiveHeight(5),
+        width:responsiveHeight(15)
     }
 });

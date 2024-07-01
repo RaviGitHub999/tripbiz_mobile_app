@@ -10,8 +10,9 @@ export const styles=StyleSheet.create(
             alignItems:'center',
             // justifyContent:'center' 
             backgroundColor:colors.whiteSmoke,
-            paddingTop:responsiveHeight(5),
-            gap:responsiveHeight(1)
+            paddingTop:responsiveHeight(3),
+            gap:responsiveHeight(1),
+           
         },
         maintitle:{
             fontSize:responsiveHeight(3),
@@ -45,6 +46,10 @@ export const styles=StyleSheet.create(
             fontSize:responsiveHeight(1.6),
             fontFamily:fonts.textFont,
             color:colors.red
-        }
+        },
+        back:{
+            alignSelf:'flex-start',
+            paddingLeft:responsiveWidth(3)
+          }
     }
 )

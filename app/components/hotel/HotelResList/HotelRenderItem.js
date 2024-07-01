@@ -34,7 +34,7 @@ console.log("star")
             </View>
             <View style={styles.hotelDetailsContainer}>
                 <View style={styles.hotelNameContainer}>
-                    <Text style={styles.hotelName}>{hotel.HotelName ? hotel.HotelName : staticData?.HotelName}({hotel.HotelCode})</Text>
+                    <Text style={styles.hotelName}>{hotel.HotelName ? hotel.HotelName : staticData?.HotelName}</Text>
                     {ind !== undefined ? <View style={styles.recommendedTitleContainer}><Text style={styles.recommendedTitle}>Recommended</Text></View> : null}
                 </View>
                 <View style={styles.hotelDetailsBox}>

@@ -106,5 +106,10 @@ color:colors.highlight
   },
   progressbar:{
 width:'100%'
+  },
+  itemsContainer:{
+    flexDirection: "row",
+     gap: responsiveHeight(1) ,
+     flexWrap:'wrap'
   }
 });

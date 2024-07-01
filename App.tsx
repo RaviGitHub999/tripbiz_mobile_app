@@ -17,7 +17,7 @@ const App = () => {
   )
 }
 
-export default App
+export default React.memo(App)
 
 // import { View, Text } from 'react-native'
 // import React, { useState } from 'react'
