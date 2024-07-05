@@ -11,7 +11,7 @@ import {
 import IconSwitcher from '../../icons/IconSwitcher';
 import { colors, fonts } from '../../../../config/theme';
 import { responsiveHeight, responsiveWidth } from '../../../../utils/responsiveScale';
-  const CustomSelection = ({placeHolder, value,setValue,data,listKey}) => {
+  const CustomSelection = ({placeHolder, value,setValue,data,listKey,customStyles,isEditable}) => {
     const [toggle, setToggle] = useState(false);
     const [selectedItemIndex, setSelectedItemIndex] = useState(0);
     const expenseTypeData = [
@@ -48,7 +48,7 @@ import { responsiveHeight, responsiveWidth } from '../../../../utils/responsiveS
     };
     return (
       <>
-        <Pressable style={styles.mainContainer} onPress={handleToggle}>
+        <Pressable style={[styles.mainContainer,customStyles]} onPress={handleToggle} disabled={!isEditable?false:true}>
           <Text style={styles.title}>{value ?? placeHolder}</Text>
           <IconSwitcher
             componentName="Feather"

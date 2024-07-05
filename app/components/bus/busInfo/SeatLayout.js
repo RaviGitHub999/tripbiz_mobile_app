@@ -16,8 +16,7 @@ import MyContext from "../../../context/Context";
 
 const SeatLayout = ({seatData,boardingPoint,droppingPoint}) => {
   const [selectedSeats, setSelectedSeats] = useState([]);
-  const{actions}=useContext(MyContext)
-  console.log(selectedSeats,"selectedSeats")
+  const{actions,NoofBusPassengers}=useContext(MyContext)
   useEffect(()=>
   {
     actions.setBusBookDetails(selectedSeats,"seat")
@@ -43,8 +42,15 @@ const SeatLayout = ({seatData,boardingPoint,droppingPoint}) => {
           )
           
         );
-      } else {
-        setSelectedSeats([...selectedSeats, seat]);
+      }  else {
+        if (selectedSeats.length >= NoofBusPassengers) {
+          setSelectedSeats((prevSelectedSeats) => [
+            ...prevSelectedSeats.slice(1),
+            seat,
+          ]);
+        } else {
+          setSelectedSeats([...selectedSeats, seat]);
+        }
       }
       
     }
@@ -97,7 +103,7 @@ const Deck = ({
     <View style={[styles.deck, addMarginAfterRow && styles.deckWithMargin]}>
       {/* <Text style={styles.deckTitle}>{title}</Text> */}
       {data.map((row, rowIndex) => (
-        <View key={rowIndex}>
+        <ScrollView key={rowIndex}>
           <SeatRow
             row={row}
             rowIndex={rowIndex}
@@ -108,7 +114,7 @@ const Deck = ({
           {addMarginAfterRow === rowIndex && (
             <View style={styles.rowSeparator} />
           )}
-        </View>
+        </ScrollView>
       ))}
     </View>
   </>

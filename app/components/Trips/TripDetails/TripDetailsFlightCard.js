@@ -985,7 +985,7 @@ const TripDetailsFlightCard = ({
           }}>
           {tripsPage ? (
             <>
-              <FCard airline={flightLogo} flightArr={flightArr} />
+              <FCard airline={flightLogo} flightArr={flightArr} flightData={{ data: flightBooking }}/>
               {checkingDate ? (
                 <>
                   {reCheckLoading ? (

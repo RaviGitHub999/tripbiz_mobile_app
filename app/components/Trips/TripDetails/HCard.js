@@ -9,7 +9,7 @@ const HCard = (props) => {
   const { hotel, formattedDate1, endDate, adults, recheck } = props
   const { actions } = useContext(MyContext)
   return (
-    <View>
+    <View style={styles.hotelCard}>
       <View>
         <Text style={[styles.title, { textAlign: 'center' }]}>{hotel.data.hotelInfo.HotelInfoResult.HotelDetails.HotelName}</Text>
         <Text style={[styles.subTitle, { textAlign: 'center' }]}>Adults-{adults.adults} Child-{adults.child}</Text>
@@ -32,7 +32,7 @@ const HCard = (props) => {
                   <Text style={[styles.roomType, { fontSize: responsiveHeight(1.5) }]}>
                     {room.RoomTypeName}
                   </Text>
-                  {recheck ? <Text
+                  {/* {recheck ? <Text
                     style={
                       [styles.hotelRoomPrice, { fontSize: responsiveHeight(1.5) }]
                     }>{`₹ ${room.Price.OfferedPriceRoundedOff
@@ -43,7 +43,7 @@ const HCard = (props) => {
                           'en-IN',
                         )
                       }`}
-                  </Text> : null}
+                  </Text> : null} */}
                 </View>
                 <View
                   style={
@@ -112,9 +112,9 @@ const HCard = (props) => {
             );
           },
         )}
-      {!recheck?<View style={styles.tripDetailsHeader}>
-        <Text style={styles.hotelRoomPrice}>Total Price: <Text>&#8377; {`${Math.ceil(hotel?.data?.hotelTotalPrice)?.toLocaleString("en-IN")}`}</Text></Text>
-      </View>:null}
+      <View style={styles.tripDetailsHeader}>
+        <Text style={styles.hotelRoomPrice}>&#8377; {`${Math.ceil(hotel?.data?.hotelTotalPrice)?.toLocaleString("en-IN")}`}</Text>
+      </View>
     </View>
   )
 }

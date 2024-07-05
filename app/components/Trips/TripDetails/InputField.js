@@ -6,12 +6,33 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { styles } from './styles'
 import { responsiveHeight } from '../../../utils/responsiveScale'
 import SearchInputs from '../../common/searchInputs/SearchInputs'
-const InputField = ({ flight, userDetails, s, travIndex, tripData, travellerDetails, handleInputChange, isEdit, travellerType, isInternational }) => {
+import CustomSelection from '../../common/mainComponents/customSelect/CustomSelection'
+import { colors } from '../../../config/theme'
+const InputField = ({ flight, userDetails, s, travIndex, tripData, travellerDetails, handleInputChange, isEdit, travellerType, isInternational,}) => {
   const { userAccountDetails } = useContext(MyContext)
+  const gender=["Mr","Ms","Mrs"]
   return (
 
       <View style={{ gap: 10 ,marginBottom:responsiveHeight(2)}}>
         <Text style={[styles.subTitle,{marginTop:responsiveHeight(1)}]}>{travellerType} {travIndex + 1}</Text>
+        <CustomSelection data={gender} value={ tripData?.data?.travellerDetails &&
+              tripData?.data?.travellerDetails[flight.id]
+                ? tripData?.data?.travellerDetails[flight.id][s]?.gender
+                : travellerDetails[flight.id]
+                ? travellerDetails[flight.id][s]?.gender
+                : userDetails[s]?.gender
+                ? userDetails[s].gender
+                : "Title"}
+                setValue={(e)=>handleInputChange(s, "gender", e, travellerType)}
+                // placeHolder={"Titles"}
+                customStyles={{ backgroundColor:colors.white,elevation:4}}
+                isEditable={
+              tripData?.data?.travellerDetails &&
+              tripData?.data?.travellerDetails[flight.id]
+                ? tripData?.data?.travellerDetails[flight.id][s]?.gender
+                : isEdit[flight.id]
+            }
+                />
         <TripDetailsInput placeholderName={'First name'} stateValue={(tripData?.data?.travellerDetails && tripData?.data?.travellerDetails[flight.id]) ? tripData?.data?.travellerDetails[flight.id][s]?.firstName : (
           userDetails[s]?.firstName ?
             userDetails[s].firstName :

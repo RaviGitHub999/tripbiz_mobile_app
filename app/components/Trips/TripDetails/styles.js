@@ -17,16 +17,15 @@ export const styles = StyleSheet.create({
     },
     hotelCardTitle:
     {
-        marginTop: responsiveHeight(1.3),
         fontSize: responsiveHeight(2.1),
         fontFamily: fonts.primary,
         color: colors.primary,
-        marginBottom: responsiveHeight(1.3)
     },
     tripDetailsHeader:
     {
         marginTop: responsiveHeight(1.2),
-        gap: responsiveHeight(0.5)
+        // gap: responsiveHeight(0.5),
+        // alignSelf:"flex-end"
     },
     tripName: {
         fontSize: responsiveHeight(2.3),
@@ -51,7 +50,8 @@ export const styles = StyleSheet.create({
         elevation: responsiveHeight(0.4),
         borderRadius: responsiveHeight(1.5),
         marginHorizontal: responsiveWidth(1),
-        marginBottom: responsiveHeight(1.5)
+        marginBottom: responsiveHeight(1.5),
+        backgroundColor:colors.white
     },
     hotelImgContainer: {
         width: "35%",
@@ -158,8 +158,10 @@ export const styles = StyleSheet.create({
         fontFamily: fonts.primary
     },
     addingHotelBtnContainer: {
-        alignSelf: 'center',
-        width: '80%',
+        flexDirection:"row",
+        gap:responsiveHeight(2),
+        alignItems:'center',
+        paddingVertical:responsiveHeight(2)
     },
     addingHotelBtn:
     {
@@ -169,7 +171,7 @@ export const styles = StyleSheet.create({
         borderWidth: responsiveHeight(0.18),
         justifyContent: 'center',
         paddingVertical: responsiveHeight(0.5),
-        marginTop: responsiveHeight(1.7),
+        paddingHorizontal: responsiveHeight(2),
         borderStyle: "dashed",
         borderRadius: responsiveHeight(1),
         backgroundColor: colors.highlightLite
@@ -227,8 +229,22 @@ export const styles = StyleSheet.create({
         color: colors.secondary,
         fontFamily: fonts.primary
     },
-    bookingStatusContainer: {
-        marginTop: responsiveHeight(0.5)
+    bookingStatusMainContainer: {
+        flexDirection:'row',
+        justifyContent:'space-between',
+        alignItems:'center',
+        flexWrap:'wrap',
+        paddingHorizontal:responsiveWidth(3),
+        paddingVertical:responsiveHeight(1.5),
+        borderRadius:responsiveHeight(1),
+        marginTop:responsiveHeight(.5),
+        backgroundColor:colors.white,
+        elevation:4
+    },
+    bookingStatusContainer:
+    {
+padding:responsiveHeight(0.8),
+borderRadius:responsiveHeight(1)
     },
     bookingStatus: {
         fontFamily: fonts.textFont,
@@ -280,7 +296,7 @@ export const styles = StyleSheet.create({
         color: colors.secondary
     },
     hotelRoomPrice: {
-        fontSize: responsiveHeight(1.8),
+        fontSize: responsiveHeight(1.5),
         fontFamily: fonts.primary,
         color: colors.secondary
     },
@@ -417,7 +433,7 @@ export const styles = StyleSheet.create({
         paddingHorizontal: responsiveHeight(2),
         paddingVertical: responsiveHeight(1),
         borderRadius: responsiveHeight(1),
-        backgroundColor: colors.primary
+        backgroundColor: colors.primary,
     },
     btnTitle:
     {
@@ -616,7 +632,8 @@ export const styles = StyleSheet.create({
         alignSelf: 'flex-start',
         padding: responsiveWidth(2),
         borderColor: colors.primary,
-        borderRadius: responsiveHeight(1)
+        borderRadius: responsiveHeight(1),
+        marginRight:responsiveHeight(2)
     },
     voucherTitle:
     {
@@ -714,6 +731,25 @@ width:responsiveHeight(10),borderRadius:responsiveHeight(1)
         borderTopLeftRadius:responsiveHeight(1),
         borderBottomLeftRadius:responsiveHeight(1)
     },
+    travellerDetailsMainContainer:{
+        flex: 1
+    },
+    travellerDetailsSubContainer:{
+        marginTop: responsiveHeight(2),
+        flexDirection: 'row',
+    },
+    travellerDetailsSeperator:{
+        borderRightWidth: responsiveHeight(0.2) 
+    },
+    approvalMainContainer:{
+        height: '75%',
+        flexDirection: 'row',
+        marginTop: responsiveHeight(3),
+    },
+    approvalSubContainer:{
+        borderRightWidth: 1, 
+        width: '20%' 
+    }
 
 
 })

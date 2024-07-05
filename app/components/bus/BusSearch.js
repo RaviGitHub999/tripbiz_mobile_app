@@ -202,7 +202,7 @@ const searchBus=()=>
             />
             <View style={{width: '50%'}}>
               <HotelDropDown
-                length={9}
+                length={6}
                 starting={1}
                 placeHolder="Adults"
                 value={NoofBusPassengers}

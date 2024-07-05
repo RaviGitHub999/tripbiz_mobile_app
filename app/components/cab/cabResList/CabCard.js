@@ -6,7 +6,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  Modal,
   ActivityIndicator,
   Keyboard,
 } from 'react-native';
@@ -111,10 +110,13 @@ const CabCard = ({
     selectedTime,
     userTripStatus,
   } = useContext(MyContext);
-  useEffect(()=>
-  {
-actions.getLastDoc()
-  },[])
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     await actions.getLastDoc();
+  //   };
+
+  //   fetchData();
+  // }, []);
   const [openPriceInfo, setOpenPriceInfo] = useState(false);
   var myStr = cabCity + '_trip';
   let formattedDate;
@@ -190,7 +192,7 @@ actions.getLastDoc()
   };
   const addtoTrip = async id => {
     var cabTotalPrice = (cabFinalPrice * cabService) / 100 + cabFinalPrice;
-    setSubmitIsOpen(false)
+    setSubmitIsOpen(false);
     await actions.editTripById(
       id,
       {
@@ -234,100 +236,87 @@ actions.getLastDoc()
     <>
       <View style={styles.mainContainer}>
         <View style={styles.container}>
-          <View style={styles.imaContainer}>
-            <Image
-              source={{uri: cabImg[0]?.image}}
-              style={styles.img}
-              resizeMode="stretch"
-            />
+          <Image
+            source={{uri: cabImg[0]?.image}}
+            style={styles.img}
+            resizeMode="contain"
+          />
+          <View style={styles.cabTitleContainer}>
+            <Text style={styles.title}>{item.carType}</Text>
+            <Text
+              style={styles.subTitle}>{`(${item['passenger']} Seater)`}</Text>
+            {tripsPage ? (
+              <>
+                <Text style={styles.subTitle}>{tripsCabType}</Text>
+                <Text style={styles.title}>{cabTotal?.cabCity}</Text>
+              </>
+            ) : null}
           </View>
-          <View style={styles.subContainer}>
-            <View style={styles.headerMainContainer}>
-              <View style={styles.headerSubContainer_1}>
-                <Text style={styles.title}>{item.carType}</Text>
-                <Text
-                  style={
-                    styles.subTitle
-                  }>{`(${item['passenger']} Seater)`}</Text>
-                {adminPage || tripsPage ? (
-                  <>
-                    <Text style={styles.subTitle}>{tripsCabType}</Text>
-                    <Text style={styles.subTitle}>{cabTotal?.cabCity}</Text>
-                  </>
-                ) : null}
-              </View>
-              <View style={styles.headerSubContainer_2}>
-                {tripsPage || adminPage || approvePage ? (
-                  <Text style={styles.subTitle}>
-                    {`${new Date(startDate.seconds * 1000)
-                      ?.toString()
-                      ?.slice(4, 10)} ${endDate ? '-' : ''} ${
-                      endDate
-                        ? new Date(endDate.seconds * 1000)
-                            ?.toString()
-                            ?.slice(4, 10)
-                        : ''
-                    } `}
-                    {`(${
-                      cabTotal?.cabNights > 0 ? cabTotal?.cabNights : ''
-                    } days)`}
-                  </Text>
-                ) : (
-                  <Text style={styles.subTitle}>
-                    {`${cabStartDate?.toString()?.slice(4, 10)} ${
-                      cabEndDate ? '-' : ''
-                    } ${
-                      cabEndDate ? cabEndDate?.toString()?.slice(4, 10) : ''
-                    } `}
-                    {`(${cabNights > 0 ? cabNights : ''} days)`}
-                  </Text>
-                )}
-              </View>
-            </View>
-            <View style={styles.detailsContainer}>
-              <Text style={styles.title}>{`No of Cabs-${
-                tripsPage ? countCab : cabCount
-              }`}</Text>
-              {item.Notes && !tripsPage ? (
-                <View style={styles.headerSubContainer_1}>
-                  <Text style={styles.title}>Limit : </Text>
-                  <Text style={styles.subTitle}>{item?.Notes}</Text>
-                </View>
-              ) : null}
-              <View style={styles.headerSubContainer_1}>
-                <Text style={styles.title}>Cost : </Text>
-                <Text style={[styles.title, {color: colors.secondary}]}>
-                  &#8377;
-                  {` ${item.price} ${
-                    !cabTypes.includes(tripsPage ? tripsCabType : cabType)
-                      ? 'per trip'
-                      : 'per day'
-                  }`}
-                </Text>
-              </View>
-              {!tripsPage && (
-                <View style={styles.headerSubContainer_1}>
-                  <Text style={styles.title}>{`Total Cost for ${cabNights} ${
-                    cabNights > 1 ? 'nights' : 'night'
-                  } : `}</Text>
-                  <Text style={styles.price}>
-                    &#8377; {`${cabFinalPrice.toLocaleString()}`}
-                  </Text>
-                </View>
-              )}
-              {!tripsPage && (
-                <View style={styles.headerSubContainer_1}>
-                  <Text style={styles.title}>Service Fees:</Text>
-                  {/* <Text style={styles.price}>{`${cabFinalPrice.toLocaleString()} (${item?.Price} * ${cabCount} cab * ${cabNights} days) ${cabService}% service fee`}</Text> */}
-                  <Text style={styles.price}>
-                    {' '}
-                    &#8377; {(cabService / 100) * cabFinalPrice}
-                  </Text>
-                </View>
-              )}
-            </View>
+
+          <View style={styles.dateContainer}>
+            {tripsPage || approvePage ? (
+              <Text style={styles.subTitle}>
+                {`${new Date(startDate.seconds * 1000)
+                  ?.toString()
+                  ?.slice(4, 10)} ${endDate ? '-' : ''} ${
+                  endDate
+                    ? new Date(endDate.seconds * 1000)?.toString()?.slice(4, 10)
+                    : ''
+                } `}
+               {`(${
+                      cabTotal?.cabNights > 0 && cabTotal?.cabNights === 1
+                        ? cabTotal?.cabNights + " Trip"
+                        : cabTotal?.cabNights + " days"
+                    })`}
+              </Text>
+            ) : (
+              <Text style={styles.subTitle}>
+                {`${cabStartDate?.toString()?.slice(4, 10)} ${
+                  cabEndDate ? '-' : ''
+                }${cabEndDate ? cabEndDate?.toString()?.slice(4, 10) : ''}  `}
+                {`(${
+                  cabNights > 0 && cabEndDate ? cabNights + 'days' : 'Trip'
+                })`}
+              </Text>
+            )}
           </View>
         </View>
+
+        <View style={styles.detailsContainer}>
+          <Text style={styles.title}>{`No of Cabs-${
+            tripsPage ? countCab : cabCount
+          }`}</Text>
+          {item.Notes && !tripsPage ? (
+            <View style={styles.headerSubContainer_1}>
+              <Text style={styles.title}>{item?.Notes}</Text>
+            </View>
+          ) : null}
+          <View style={styles.headerSubContainer_1}>
+            <Text style={[styles.title, {color: colors.secondary}]}>
+              &#8377;
+              {` ${item.price} ${
+                !cabTypes.includes(tripsPage ? tripsCabType : cabType)
+                  ? 'per trip'
+                  : 'per day'
+              }`}
+            </Text>
+          </View>
+          {!tripsPage && (
+            <View style={styles.headerSubContainer_1}>
+              <Text style={styles.title}>{`Total : `}</Text>
+              <Text style={styles.price}>
+                &#8377;{' '}
+                {`${cabFinalPrice.toLocaleString()} ( + ${cabService}% service fee)`}
+              </Text>
+            </View>
+          )}
+
+        {tripsPage &&<View style={styles.headerSubContainer_1}>
+            <Text style={styles.subTitle}>{`Pick up Time : `}</Text>
+            <Text style={styles.title}>{cabTotal.selectedTime}</Text>
+          </View>}
+        </View>
+
         {!tripsPage && (
           <TouchableOpacity
             style={styles.btn}
@@ -466,7 +455,7 @@ actions.getLastDoc()
                   iconsize={3}
                 />
               </TouchableOpacity>
-              {userTripStatus.userTrips.length>0 ? (
+              {userTripStatus.userTrips.length > 0 ? (
                 <FlatList
                   data={sortedTrips}
                   renderItem={bookingrenderItem}
@@ -489,7 +478,7 @@ actions.getLastDoc()
                   nestedScrollEnabled
                 />
               ) : (
-                <View style={{marginTop:responsiveHeight(1)}}>
+                <View style={{marginTop: responsiveHeight(1)}}>
                   <ActivityIndicator size={'large'} color={'blue'} />
                 </View>
               )}
@@ -553,23 +542,35 @@ actions.getLastDoc()
         handlePopUpClose={() => {
           setOpenPriceInfo(false);
         }}>
-            <View style={styles.priceInfo}>
-            <View style={styles.priceDetailsContainer}>
-                <Text style={styles.priceDetailsTitle}>Cab Price</Text>
-                <Text style={[styles.priceDetails,{color:colors.highlight}]}>&#8377;{` ${cabTotal?.cabFinalPrice}`}</Text>
-            </View>
-            <View style={styles.horizentalLine}/>
-            <View style={styles.priceDetailsContainer}>
+        <View style={styles.priceInfo}>
+          <View style={styles.priceDetailsContainer}>
+            <Text style={styles.priceDetailsTitle}>Cab Price</Text>
+            <Text style={[styles.priceDetails, {color: colors.highlight}]}>
+              &#8377;{` ${cabTotal?.cabFinalPrice}`}
+            </Text>
+          </View>
+          <View style={styles.horizentalLine} />
+          <View style={styles.priceDetailsContainer}>
             <Text style={styles.priceDetailsTitle}>Service Charges</Text>
-            <Text style={[styles.priceDetails,{color:colors.highlight}]}>+ &#8377; {Math.ceil((cabTotal?.cabFinalPrice * cabService) / 100)}</Text> 
-            </View>
+            <Text style={[styles.priceDetails, {color: colors.highlight}]}>
+              + &#8377;{' '}
+              {Math.ceil((cabTotal?.cabFinalPrice * cabService) / 100)}
+            </Text>
+          </View>
 
-            <View style={[styles.priceDetailsContainer,{marginTop:responsiveHeight(2)}]}>
+          <View
+            style={[
+              styles.priceDetailsContainer,
+              {marginTop: responsiveHeight(2)},
+            ]}>
             <Text style={styles.priceDetails}>Total fare</Text>
-            <Text style={[styles.priceDetails,{color:colors.secondary}]}>+ &#8377;{` ${Math.ceil(cabTotal?.cabTotalPrice).toLocaleString("en-IN")}`}</Text> 
-            </View>
-            </View>
-        </PopUp>
+            <Text style={[styles.priceDetails, {color: colors.secondary}]}>
+              + &#8377;
+              {` ${Math.ceil(cabTotal?.cabTotalPrice).toLocaleString('en-IN')}`}
+            </Text>
+          </View>
+        </View>
+      </PopUp>
     </>
   );
 };
@@ -587,23 +588,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: responsiveWidth(2),
   },
-  imaContainer: {
-    height: responsiveHeight(12),
-    width: responsiveHeight(12),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   img: {
-    height: responsiveHeight(10),
-    width: responsiveHeight(10),
+    height: responsiveHeight(6),
+    width: responsiveHeight(8),
   },
-  subContainer: {
-    flex: 1,
-  },
-  headerMainContainer: {
+  cabTitleContainer: {
     flexDirection: 'row',
-    flex: 1,
-    gap: responsiveHeight(0.5),
+    flexWrap: 'wrap',
+    width: '47%',
+    alignItems: 'center',
   },
   headerSubContainer_1: {
     flexDirection: 'row',
@@ -611,23 +604,25 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     alignItems: 'center',
   },
-  headerSubContainer_2: {
-    flex: 1,
+  dateContainer: {
     backgroundColor: colors.highlight,
     justifyContent: 'center',
     padding: responsiveHeight(0.8),
     borderTopLeftRadius: responsiveHeight(1.5),
     borderBottomLeftRadius: responsiveHeight(1.5),
-    height: responsiveHeight(7),
+    position: 'absolute',
+    right: responsiveWidth(-2),
+    width: '28%',
+    alignItems: 'center',
   },
   title: {
-    fontSize: responsiveHeight(1.8),
+    fontSize: responsiveHeight(1.6),
     fontFamily: fonts.primary,
     color: colors.primary,
   },
   subTitle: {
-    fontSize: responsiveHeight(1.8),
-    fontFamily: fonts.textInput,
+    fontSize: responsiveHeight(1.3),
+    fontFamily: fonts.primary,
     color: colors.primary,
   },
   detailsContainer: {
@@ -643,14 +638,13 @@ const styles = StyleSheet.create({
   btn: {
     borderWidth: 1,
     alignSelf: 'flex-end',
-    marginRight: responsiveWidth(5),
     padding: responsiveHeight(1),
     marginTop: responsiveHeight(1),
     borderRadius: responsiveHeight(1),
     backgroundColor: colors.primary,
   },
   btnTitle: {
-    fontSize: responsiveHeight(1.8),
+    fontSize: responsiveHeight(1.5),
     fontFamily: fonts.primary,
     color: colors.white,
   },
@@ -819,35 +813,30 @@ const styles = StyleSheet.create({
     fontFamily: fonts.textInput,
     color: colors.white,
   },
-  priceDetailsContainer:
-  {
-flexDirection:'row',
-justifyContent:"space-between",
-alignItems:'center'
+  priceDetailsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
-  priceDetailsTitle:
-  {
-    fontSize:responsiveHeight(2),
-    fontFamily:fonts.primary,
-    color:colors.lightGray
+  priceDetailsTitle: {
+    fontSize: responsiveHeight(2),
+    fontFamily: fonts.primary,
+    color: colors.lightGray,
   },
-  priceDetails:
-  {
-    fontSize:responsiveHeight(2.3),
-    fontFamily:fonts.secondry,
-    color:colors.primary
+  priceDetails: {
+    fontSize: responsiveHeight(2.3),
+    fontFamily: fonts.secondry,
+    color: colors.primary,
   },
-  horizentalLine:{
-    borderTopWidth:responsiveHeight(0.2),
-    color:colors.lightGray,
-    borderStyle:'dashed',
-    marginVertical:responsiveHeight(1)  
+  horizentalLine: {
+    borderTopWidth: responsiveHeight(0.2),
+    color: colors.lightGray,
+    borderStyle: 'dashed',
+    marginVertical: responsiveHeight(1),
   },
-  priceInfo:
-  {
-
-alignSelf:'center',
-width:"80%"
-  }
+  priceInfo: {
+    alignSelf: 'center',
+    width: '80%',
+  },
 });
 export default CabCard;

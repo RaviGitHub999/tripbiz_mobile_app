@@ -545,6 +545,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: responsiveHeight(1),
+    flexWrap:'wrap'
   },
   routeName: {
     fontSize: responsiveHeight(2),

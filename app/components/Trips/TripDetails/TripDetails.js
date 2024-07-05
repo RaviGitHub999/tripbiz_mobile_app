@@ -37,13 +37,12 @@ import {Modal} from 'react-native';
 import ReCheck from '../../common/recheck/ReCheck';
 import CustomSelect from '../../common/mainComponents/customSelect/CustomSelect';
 import {TextInput} from 'react-native';
-// import DateTimePicker from 'react-native-ui-datepicker';
-// import dayjs from 'dayjs';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import moment from 'moment';
 import CabCard from '../../cab/cabResList/CabCard';
 import BusRenderData from '../../bus/busResList/BusRenderData';
+import CCard from './CCard';
+import BCard from './BCard';
 const TripDetails = ({navigation: {navigate, goBack}}) => {
   const [mounted, setMounted] = useState(true);
   const [popup, setPopUp] = useState({
@@ -85,18 +84,18 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
   const [reCheck, setReCheck] = useState(false);
   const [openExpense, setOpenExpense] = useState(false);
   const [selectedCard, setSelectedCard] = useState({index: 0, list: 'a'});
-  // const [selectedItem, setSelectedItem] = useState("Select Expense");
   const [expenseType, setExpenseType] = useState('Select Expense');
   const [viewAll, setViewAll] = useState(false);
   const [selectedItemIndex, setSelectedItemIndex] = useState(0);
-  // const [date, setDate] = useState(dayjs());
   const [datePicker, setDatePicker] = useState(false);
   const [expenseDate, setExpenseDate] = useState('');
   const [expenseShortDate, setExpenseShortDate] = useState('');
   const [expenseDescription, setExpenseDescription] = useState('');
   const [cost, setCost] = useState('0');
   const [receipt, setReceipt] = useState(null);
-
+  const [allTravellerCounts, setAllTravellerCounts] = useState();
+  const [approvalLoading, setApporvalLoading] = useState(false);
+  const [approvalError, setApprovalError] = useState(false);
   const expenseTypeData = [
     {
       name: 'Select Expense',
@@ -159,41 +158,42 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
     userAccountDetails,
     domesticHotel,
   } = useContext(MyContext);
+  console.log(tripData, 'fghf');
   var handleClick = async () => {
     setPaymentLoading(true);
-    var flights = tripData.requestData
-      ? tripData.requestData
-          .filter(req => requestIds.includes(req.id))
-          .map(data => data.data.flights)
-      : [];
-    var flightsIds1 = flights.length > 0 ? [].concat(...flights) : [];
-    var hotels = tripData.requestData
-      ? tripData.requestData
-          .filter(req => requestIds.includes(req.id))
-          .map(data => data.data.hotels)
-      : [];
-    var hotelsIds1 = hotels.length > 0 ? [].concat(...hotels) : [];
-    // var cabs = tripData.requestData ? tripData.requestData.filter((req) => requestIds.includes(req.id)).map((data) => data.data.cabs) : []
-    // var cabsIds1 = cabs.length > 0 ? [].concat(...cabs) : []
+
     var notflights = checked
       ? tripData?.flights
-          ?.filter(hotel => !flightsIds.includes(hotel.id))
+          ?.filter(hotel => flightNotSubmittedIds.includes(hotel.id))
           .map(data => data.id)
       : [];
     var nothotels = checked
       ? tripData?.hotels
-          ?.filter(hotel => !hotelIds.includes(hotel.id))
+          ?.filter(hotel => hotelNotSubmittedIds.includes(hotel.id))
           .map(data => data.id)
       : [];
-    // var notcabs = checked ? tripData?.cabs?.filter((hotel) => !cabsIds.includes(hotel.id)).map((data) => data.id) : []
-    var submittedFlights = flightsIds1.concat(notflights);
-    var submittedHotels = hotelsIds1.concat(nothotels);
-    //  var submittedCabs = cabsIds1.concat(notcabs)
+    var notcabs = checked
+      ? tripData?.cabs
+          ?.filter(hotel => cabNotSubmittedIds.includes(hotel.id))
+          .map(data => data.id)
+      : [];
+    var notbus = checked
+      ? tripData?.bus
+          ?.filter(hotel => busNotSubmittedIds.includes(hotel.id))
+          .map(data => data.id)
+      : [];
+    var submittedFlights = notflights;
+    var submittedHotels = nothotels;
+    var submittedCabs = notcabs;
+    var submittedBus = notbus;
     var finalTravDetails = {
       ...travellerDetails,
       ...tripData.data.travellerDetails,
     };
-    await actions.makeTripPayment(tripData.data?.name, bookingPrice);
+    if (userAccountDetails.accountType !== 'PostPaid') {
+      await actions.makeTripPayment(tripData.data?.name, bookingPrice);
+    }
+
     await actions.editAdminTrips(
       id,
       tripData,
@@ -201,11 +201,15 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
       submittedHotels,
       submittedFlights,
       requestIds,
+      submittedCabs,
       tripData.data?.name,
+      submittedBus,
+      notbus,
     );
     setPaymentLoading(false);
   };
   var handleManagerClick = async () => {
+    setApporvalLoading(true);
     var req = await actions.sendApproval(
       userId,
       userAccountDetails?.manager?.userId,
@@ -218,11 +222,10 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
       userName: userAccountDetails.firstName + userAccountDetails.lastName,
       userEmail: userAccountDetails.email,
       managerEmail: userAccountDetails.manager.email,
-      managerName:
-        userAccountDetails.manager.firstName +
-        userAccountDetails.manager.lastName,
-      tripName: tripData.name,
+      managerName: userAccountDetails.manager.name,
+      tripName: tripData.data.name,
     });
+    setApporvalLoading(false);
     setTraveller(true);
     await getTripData();
     setRequestData(req.reqData);
@@ -241,6 +244,16 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
         .filter(flight => flight.status !== 'Not Submitted')
         .map(status => status.id)
     : [];
+  var cabSubmittedIds = tripData?.data
+    ? tripData?.data?.cabs
+        ?.filter(flight => flight.status !== 'Not Submitted')
+        .map(status => status.id)
+    : [];
+  var busSubmittedIds = tripData?.data
+    ? tripData?.data?.bus
+        ?.filter(flight => flight.status !== 'Not Submitted')
+        .map(status => status.id)
+    : [];
   var flightNotSubmittedIds = tripData?.data
     ? tripData?.data?.flights
         .filter(flight => flight.status === 'Not Submitted')
@@ -251,17 +264,36 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
         .filter(flight => flight.status === 'Not Submitted')
         .map(status => status.id)
     : [];
-
+  var cabNotSubmittedIds = tripData?.data?.cabs
+    ? tripData?.data?.cabs
+        ?.filter(flight => flight.status === 'Not Submitted')
+        ?.map(status => status.id)
+    : [];
+  var busNotSubmittedIds = tripData?.data?.bus
+    ? tripData?.data?.bus
+        ?.filter(flight => flight.status === 'Not Submitted')
+        ?.map(status => status.id)
+    : [];
   var flightArray = tripData?.requestData
     ? tripData?.requestData?.map(req => req.data.flights)
     : [];
   var hotelArray = tripData?.requestData
     ? tripData?.requestData?.map(req => req.data.hotels)
     : [];
-
+  var cabArray = tripData?.requestData
+    ? tripData?.requestData?.map(req => req.data.cabs)
+    : [];
+  console.log(cabArray);
+  var busArray = tripData?.requestData
+    ? tripData?.requestData?.map(req => req.data.bus)
+    : [];
+  var expensePrice = tripData?.expenses
+    ? tripData?.expenses?.reduce((sum, arr) => sum + Number(arr.data.cost), 0)
+    : 0;
   var flightsIds = flightArray.length > 0 ? [].concat(...flightArray) : [];
   var hotelIds = hotelArray.length > 0 ? [].concat(...hotelArray) : [];
-
+  var cabsIds = cabArray.length > 0 ? [].concat(...cabArray) : [];
+  var busIds = busArray.length > 0 ? [].concat(...busArray) : [];
   const onRefresh = () => {
     setRefreshing(true);
     setTimeout(async () => {
@@ -269,11 +301,6 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
       setRefreshing(false);
     }, 2000);
   };
-  //   const handleBackButtonPress = () => {
-  //     actions.setFlightBookPage(false);
-  //     actions.setBookingFlight([]);
-  //     actions.setFlightResJType(0)
-  // };
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
@@ -289,8 +316,6 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
   const handleDelete = async () => {
     await actions.deleteTripItem(id, deleteId, deleteType);
     setOpenDelete(false);
-    // setSelectedTab("approval")
-    //await getTripData()
   };
   const handlePopUps = arg => {
     if (arg === 'hotelPrice') {
@@ -350,7 +375,6 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
   const handleCabs = async () => {
     navigate('Home');
     actions.setSelectedTripId(id);
-    // await actions.setRes();
     actions.switchComponent('cab');
   };
   const handleBuses = async () => {
@@ -369,6 +393,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
         ? tripData.hotels[0].id
         : tripData?.cabs.length > 0
         ? tripData?.cabs[0].id
+        : tripData?.bus.length > 0
+        ? tripData?.bus[0].id
         : 0,
     );
     var adults =
@@ -381,6 +407,17 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
         {adults: 0, child: 0},
       );
 
+    // setTravellerCount(
+    //   tripData?.flights.length > 0
+    //     ? {
+    //         adults: Number(tripData?.flights[0]?.data?.adults),
+    //         child: Number(tripData?.flights[0]?.data?.child),
+    //         infant: Number(tripData?.flights[0]?.data?.infant),
+    //       }
+    //     : tripData?.hotels.length > 0
+    //     ? adults
+    //     : {child: 0, adults: 1},
+    // );
     setTravellerCount(
       tripData?.flights.length > 0
         ? {
@@ -390,34 +427,34 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
           }
         : tripData?.hotels.length > 0
         ? adults
-        : {child: 0, adults: 1},
+        : tripData?.bus?.length > 0
+        ? {
+            adults: Number(tripData?.bus[0]?.data.passengers),
+          }
+        : {},
     );
     setUserDetails([
       {
         firstName: userAccountDetails?.firstName,
         lastName: userAccountDetails?.lastName,
+        gender: userAccountDetails?.gender,
         mobileNumber: userAccountDetails?.mobileNumber,
         email: userAccountDetails?.email,
       },
     ]);
-    // var totprice =
-    //   tripData.requestData.length > 0
-    //     ? tripData?.requestData?.reduce((acc, item) => acc + item.data.price, 0)
-    //     : 0;
-    // var finprice = price - totprice;
-    // console.log(finprice);
-    // var reqIds =
-    //   tripData.requestData.length > 0
-    //     ? tripData?.requestData?.map(req => req.id)
-    //     : [];
     var mainprice =
       tripData.flights
         .filter(flight => flightNotSubmittedIds.includes(flight.id))
         .reduce((sum, obj) => sum + obj?.data?.finalPrice, 0) +
       tripData.hotels
         .filter(flight => hotelNotSubmittedIds.includes(flight.id))
-        .reduce((sum, obj) => sum + obj?.data?.hotelTotalPrice, 0);
-    // + tripData.cabs.filter((flight) => cabNotSubmittedIds.includes(flight.id)).reduce((sum, obj) => sum + obj?.data?.cabFinalPrice, 0);
+        .reduce((sum, obj) => sum + obj?.data?.hotelTotalPrice, 0) +
+      tripData.cabs
+        .filter(flight => cabNotSubmittedIds.includes(flight.id))
+        .reduce((sum, obj) => sum + obj?.data?.cabTotalPrice, 0) +
+      tripData.bus
+        .filter(flight => busNotSubmittedIds.includes(flight.id))
+        .reduce((sum, obj) => sum + obj?.data?.busTotalPrice, 0);
 
     var reqIds =
       tripData.requestData.length > 0
@@ -462,12 +499,26 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
     var dateString = `${month.slice(0, 3)} ${dayOfWeek} ${dayofyear}`;
     return dateString;
   };
-  const handleInputChange = (index, key, value) => {
+  const handleInputChange = (index, key, value, tripId) => {
     setUserDetails(prevUserDetails => {
       const updatedUserDetails = [...prevUserDetails];
       const traveler = updatedUserDetails[index] || {};
       traveler[key] = value;
       updatedUserDetails[index] = traveler;
+      return updatedUserDetails;
+    });
+    setAllTravellerCounts(prevUserDetails => {
+      const updatedUserDetails = {...prevUserDetails};
+      Object.keys(updatedUserDetails).forEach(id => {
+        const travelers = updatedUserDetails[id];
+        // Check if the sidebar ID matches the current iteration
+        if (id === tripId) {
+          const traveler = travelers[index] || {};
+          traveler[key] = value;
+          travelers[index] = traveler;
+          updatedUserDetails[id] = travelers;
+        }
+      });
       return updatedUserDetails;
     });
   };
@@ -476,8 +527,9 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
     const data = [];
     userDetails.forEach((userDetail, index) => {
       const mergedDetails = {
-        firstName: userAccountDetails?.firstName,
-        lastName: userAccountDetails?.lastName,
+        firstName: '',
+        lastName: '',
+        gender: userAccountDetails?.gender,
         mobileNumber: userAccountDetails?.mobileNumber,
         email: userAccountDetails?.email,
         ...userDetail,
@@ -488,18 +540,18 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
       ...travellerDetails,
       [id1]: data,
     });
+    await actions.updateTravDetails(
+      {
+        ...travellerDetails,
+        [id1]: data,
+      },
+      id,
+    );
   };
   const toggleUp = () => {
     setFareIsOpen(prev => !prev);
   };
   var newdate = getTime(tripData?.data?.date?.seconds);
-  // if (tripDataLoading) {
-  //   return (
-  //     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-  //       <ProgressBar />
-  //     </View>
-  //   );
-  // }
   const handleBack = () => {
     navigate('MyTrips');
     actions.setRes();
@@ -507,12 +559,17 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
 
   const handleSelectedTab = item => {
     setSelectedTab(item);
-    // setShowError(false)
   };
   const renderItem = ({item}) => {
     const date1 = new Date(item.data.flight.Segments[0][0].Origin.DepTime);
     const monthAbbreviation1 = date1.toLocaleString('default', {
       month: 'short',
+    });
+
+    var flightStatus = tripData.data.flights.filter(f => f.id === item.id)[0];
+    const userDet = tripData?.data?.travellerDetails[item.id];
+    var color = statuses.filter(status => {
+      return status?.status === flightStatus?.status;
     });
     const day1 = date1.getDate();
 
@@ -590,7 +647,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
           keyExtractor={(item, index) => index.toString()}
         />
 
-        {!(
+        {/* {!(
           tripData?.data?.travellerDetails &&
           tripData?.data?.travellerDetails[item.id]
         ) ? (
@@ -619,7 +676,24 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
               </TouchableOpacity>
             )}
           </View>
+        ) : null} */}
+
+        {
+          !userDet?
+          <>
+          {flightStatus?.requestStatus === 'Not Requested' ||
+        flightStatus?.status === 'Not Submitted' ? (
+          <View style={[styles.btn, {marginVertical: responsiveHeight(2)}]}>
+            <TouchableOpacity
+              onPress={async () => {
+                await setFinalDetails(item.id);
+              }}>
+              <Text style={[styles.btnTitle]}>Save Details</Text>
+            </TouchableOpacity>
+          </View>
         ) : null}
+          </>:null
+        }
       </View>
     );
   };
@@ -639,7 +713,13 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
       'Nov',
       'Dec',
     ];
-
+    var hotelStatus = tripData.data.hotels.filter(hotelMain => {
+      return hotelMain.id === item.id;
+    })[0];
+    const userDet = tripData?.data?.travellerDetails[item.id];
+    var color = statuses.filter(status => {
+      return status?.status === hotelStatus?.status;
+    });
     const checkInDate = new Date(
       item?.data?.hotelSearchQuery?.checkInDate.seconds * 1000,
     );
@@ -697,7 +777,26 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
           keyExtractor={(item, index) => index.toString()}
         />
 
-        {!(
+      {  
+        !userDet?
+        <>
+        {hotelStatus?.requestStatus === 'Not Requested' ||
+        hotelStatus?.status === 'Not Submitted' ? (
+          <>
+            <View style={styles.btn}>
+              <TouchableOpacity
+                onPress={async () => {
+                  await setFinalDetails(item.id);
+                }}>
+                <Text style={styles.btnTitle}>Save Details</Text>
+              </TouchableOpacity>
+            </View>
+          </>
+        ) : null}
+        </>
+        :null
+      }
+        {/* {!(
           tripData?.data?.travellerDetails &&
           tripData?.data?.travellerDetails[item.id]
         ) ? (
@@ -708,12 +807,13 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                 <View style={styles.btn}>
                   {isEdit[item.id] ? (
                     <TouchableOpacity
-                      onPress={() =>
+                      onPress={() => {
                         setIsEdit({
                           ...isEdit,
                           [item.id]: !isEdit[item.id],
-                        })
-                      }>
+                        });
+                        setUserDetails(travellerDetails[hotel.id]);
+                      }}>
                       <Text style={styles.btnTitle}>Edit</Text>
                     </TouchableOpacity>
                   ) : (
@@ -732,11 +832,265 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
               </>
             ) : null}
           </>
-        ) : null}
+        ) : null} */}
       </View>
     );
   };
 
+  const cabRenderItem = ({item}) => {
+    const monthNames = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    const cabStatus = tripData?.data?.cabs?.find(f => f.id === item.id);
+    const userDet = tripData?.data?.travellerDetails[item.id];
+   console.log(userDet,"sbdjsh")
+
+
+    const date = new Date(item?.data?.cabStartDate.seconds * 1000);
+    const formattedDate1 = `${monthNames[date.getMonth()]} ${date.getDate()}`;
+    const date2 = new Date(item?.data?.cabEndDate.seconds * 1000);
+    const formattedDate2 =
+      item.data.cabEndDate.length > 0
+        ? `${monthNames[date2.getMonth()]} ${date2.getDate()}`
+        : '';
+
+    const color =
+      statuses.find(status => status?.status === cabStatus?.status)?.color ||
+      '#808080';
+    return (
+      <>
+        <View>
+          <Text style={styles.tripDetailsTitle}>{cabStatus?.status}</Text>
+        </View>
+        <View>
+          <Text style={styles.tripDetailsTitle}>
+            Cab: {item.data.cabCity}, {formattedDate1}
+            {formattedDate2 ? ` - ${formattedDate2}` : ''}, {item.data.cabType}
+          </Text>
+        </View>
+        <FlatList
+          data={[...Array(travellerCount.adults)]}
+          renderItem={({_, index}) => {
+            return (
+              <View style={{paddingHorizontal: responsiveHeight(1.5)}}>
+                <InputField
+                  flight={item}
+                  userDetails={userDetails}
+                  s={index}
+                  travIndex={0}
+                  tripData={tripData}
+                  travellerDetails={travellerDetails}
+                  handleInputChange={handleInputChange}
+                  isEdit={isEdit}
+                  travellerType={'Adult'}
+                />
+              </View>
+            );
+          }}
+          keyExtractor={(item, index) => index.toString()}
+        />
+
+        {/* {!(
+          tripData?.data?.travellerDetails &&
+          tripData?.data?.travellerDetails[item.id]
+        ) ? (
+          <>
+            {userDetails.length ===
+            travellerCount.adults + travellerCount.child ? (
+              <>
+                <View style={styles.btn}>
+                  {isEdit[item.id] ? (
+                    <TouchableOpacity
+                      onPress={() => {
+                        setIsEdit({
+                          ...isEdit,
+                          [item.id]: !isEdit[item.id],
+                        });
+                        setUserDetails(travellerDetails[item.id]);
+                      }}>
+                      <Text style={styles.btnTitle}>Edit</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      onPress={async () => {
+                        setIsEdit({
+                          ...isEdit,
+                          [item.id]: true,
+                        });
+                        await setFinalDetails(
+                          item.id,
+                          travellerCount.adults,
+                          'cabs',
+                        );
+                      }}>
+                      <Text style={styles.btnTitle}>Save Details</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              </>
+            ) : null}
+          </>
+        ) : null} */}
+
+       {
+        !userDet?
+        <>
+         {cabStatus?.requestStatus === 'Not Requested' ||
+        cabStatus?.status === 'Not Submitted' ? (
+          <>
+            <View style={styles.btn}>
+              <TouchableOpacity
+                onPress={async () => {
+                  await setFinalDetails(item.id);
+                }}>
+                <Text style={styles.btnTitle}>Save Details</Text>
+              </TouchableOpacity>
+            </View>
+          </>
+        ) : null}
+        </>
+        :null
+       }
+      </>
+    );
+  };
+
+  const busRenderItem = ({item}) => {
+    const monthNames = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    var busStatus = tripData?.data?.bus?.filter(f => f.id === item.id)[0];
+    const userDet = tripData?.data?.travellerDetails[item.id];
+    const date = new Date(item?.data?.bus.DepartureTime);
+    const formattedDate1 = `${monthNames[date.getMonth()]} ${date.getDate()}`;
+
+    const date2 = new Date(item?.data?.bus.ArrivalTime);
+    const formattedDate2 = `${monthNames[date2.getMonth()]} ${date2.getDate()}`;
+    var color = statuses.filter(status => {
+      return status?.status === busStatus?.status;
+    });
+    return (
+      <>
+        <View>
+          <Text style={styles.tripDetailsTitle}>{busStatus?.status}</Text>
+        </View>
+        <View>
+          <Text style={styles.tripDetailsTitle}>
+            Bus: {item.data.origin.cityName} to {item.data.destination.cityName}
+            , {`${formattedDate1}-${formattedDate2}`}
+          </Text>
+        </View>
+        <FlatList
+          data={[...Array(travellerCount.adults)]}
+          renderItem={({_, index}) => {
+            var indexe =
+              index + 1 <= travellerCount.adults
+                ? index
+                : index - travellerCount.adults;
+            return (
+              <View style={{paddingHorizontal: responsiveHeight(1.5)}}>
+                <InputField
+                  flight={item}
+                  userDetails={userDetails}
+                  s={index}
+                  travIndex={indexe}
+                  tripData={tripData}
+                  travellerDetails={travellerDetails}
+                  handleInputChange={handleInputChange}
+                  isEdit={isEdit}
+                  travellerType={'Adult'}
+                />
+              </View>
+            );
+          }}
+          keyExtractor={(item, index) => index.toString()}
+        />
+        {/* {!(
+          tripData?.data?.travellerDetails &&
+          tripData?.data?.travellerDetails[item.id]
+        ) ? (
+          <>
+            {userDetails.length ===
+            travellerCount.adults + travellerCount.child ? (
+              <>
+                <View style={styles.btn}>
+                  {isEdit[item.id] ? (
+                    <TouchableOpacity
+                      onPress={() => {
+                        setIsEdit({
+                          ...isEdit,
+                          [item.id]: !isEdit[item.id],
+                        });
+                        setUserDetails(travellerDetails[item.id]);
+                      }}>
+                      <Text style={styles.btnTitle}>Edit</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      onPress={async () => {
+                        setIsEdit({
+                          ...isEdit,
+                          [item.id]: true,
+                        });
+                        await setFinalDetails(
+                          item.id,
+                          travellerCount.adults,
+                          'bus',
+                        );
+                      }}>
+                      <Text style={styles.btnTitle}>Save Details</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              </>
+            ) : null}
+          </>
+        ) : null} */}
+
+{
+  !userDet?
+  <>
+  {busStatus?.requestStatus === 'Not Requested' ||
+        busStatus?.status === 'Not Submitted' ? (
+          <>
+            <View style={styles.btn}>
+              <TouchableOpacity
+                onPress={async () => {
+                  await setFinalDetails(item.id);
+                }}>
+                <Text style={styles.btnTitle}>Save Details</Text>
+              </TouchableOpacity>
+            </View>
+          </>
+        ) : null}
+  </>
+  :null
+}
+      </>
+    );
+  };
   const handleDeleteRecheckHotel = id => {
     setOpenDelete(true);
     setDeleteType('hotels');
@@ -976,49 +1330,117 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
               </Text>
             </View>
             {/* bookingStatus */}
-            <View style={styles.bookingStatusContainer}>
-              {tripData?.data?.flights?.filter(
-                flight => flight.status === 'Not Submitted',
-              ).length > 0 ||
-              tripData?.data?.hotels?.filter(
-                flight => flight.status === 'Not Submitted',
-              ).length > 0 ? (
-                <Text style={styles.bookingStatus}>
-                  {tripData?.data?.flights?.filter(
-                    flight => flight.status === 'Not Submitted',
-                  ).length > 0 ? (
-                    <>
-                      {
-                        tripData?.data?.flights?.filter(
-                          flight => flight.status === 'Not Submitted',
-                        ).length
-                      }
-                      -Flights
-                    </>
-                  ) : null}
-                  {tripData?.data?.hotels?.filter(
-                    flight => flight.status === 'Not Submitted',
-                  ).length > 0 ? (
-                    <>
-                      ,
-                      {
-                        tripData?.data?.hotels?.filter(
-                          flight => flight.status === 'Not Submitted',
-                        ).length
-                      }
-                      -Hotels
-                    </>
-                  ) : null}
-                  &nbsp;not submitted for booking
-                </Text>
-              ) : null}
+
+            <View style={styles.bookingStatusMainContainer}>
+              {statuses.map(status => {
+                return (
+                  <>
+                    {tripData?.data?.flights?.filter(
+                      flight => flight.status === status.status,
+                    ).length > 0 ||
+                    tripData?.data?.hotels?.filter(
+                      flight => flight.status === status.status,
+                    ).length > 0 ||
+                    tripData?.data?.cabs?.filter(
+                      flight => flight.status === status.status,
+                    ).length > 0 ||
+                    tripData?.data?.bus?.filter(
+                      flight => flight.status === status.status,
+                    ).length > 0 ? (
+                      <>
+                        <Text style={styles.bookingStatus}>
+                          {tripData?.data?.flights?.filter(
+                            flight => flight.status === status.status,
+                          ).length > 0 ? (
+                            <>
+                              {
+                                tripData?.data?.flights?.filter(
+                                  flight => flight.status === status.status,
+                                ).length
+                              }
+                              -Flights,
+                            </>
+                          ) : null}
+                          {tripData?.data?.hotels?.filter(
+                            flight => flight.status === status.status,
+                          ).length > 0 ? (
+                            <>
+                              {
+                                tripData?.data?.hotels?.filter(
+                                  flight => flight.status === status.status,
+                                ).length
+                              }
+                              -Hotels,
+                            </>
+                          ) : null}
+                          {tripData?.data?.cabs?.filter(
+                            cabs => cabs.status === status.status,
+                          ).length > 0 ? (
+                            <>
+                              {
+                                tripData?.data?.cabs?.filter(
+                                  cabs => cabs.status === status.status,
+                                ).length
+                              }
+                              -Cab,
+                            </>
+                          ) : null}
+                          {tripData?.data?.bus?.filter(
+                            bus => bus.status === status.status,
+                          ).length > 0 ? (
+                            <>
+                              {
+                                tripData?.data?.bus?.filter(
+                                  bus => bus.status === status.status,
+                                ).length
+                              }
+                              -Bus
+                            </>
+                          ) : null}
+                        </Text>
+                        <View
+                          style={[
+                            styles.bookingStatusContainer,
+                            {backgroundColor: status.color},
+                          ]}>
+                          <Text
+                            style={[
+                              styles.bookingStatus,
+                              {color: colors.white},
+                            ]}>
+                            {status.status}
+                          </Text>
+                        </View>
+                      </>
+                    ) : null}
+                  </>
+                );
+              })}
             </View>
+
             {tripData ? (
               <View>
                 <View>
                   {tripData?.hotels ? (
                     <>
-                      <Text style={styles.hotelCardTitle}>Hotels</Text>
+                      <View style={styles.addingHotelBtnContainer}>
+                        <Text style={styles.hotelCardTitle}>Hotels</Text>
+
+                        <TouchableOpacity
+                          style={styles.addingHotelBtn}
+                          onPress={handleHotels}>
+                          <Text style={styles.addingHotelBtnTitle}>
+                            Add Hotel{' '}
+                          </Text>
+                          <IconSwitcher
+                            componentName="Feather"
+                            iconName="plus"
+                            color={colors.primary}
+                            iconsize={3}
+                          />
+                        </TouchableOpacity>
+                      </View>
+
                       {tripData?.hotels
                         ?.sort((a, b) => {
                           var atime = a?.data?.hotelSearchQuery?.checkInDate;
@@ -1096,7 +1518,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                             );
                           });
                           var originalDate = hotelData[0]?.updatedAt
-                            ? new Date(hotelData[0]?.updatedAt?.seconds*1000)
+                            ? new Date(hotelData[0]?.updatedAt?.seconds * 1000)
                             : new Date(hotelTimeStamp);
                           var threeHoursAfter = new Date(
                             originalDate.getTime() + 3 * 60 * 60 * 1000,
@@ -1474,12 +1896,20 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                             </View>
                           );
                         })}
+                    </>
+                  ) : null}
+                </View>
+                {/* flight */}
+                <View>
+                  {tripData?.flights ? (
+                    <>
                       <View style={styles.addingHotelBtnContainer}>
+                        <Text style={styles.flightCardTitle}>Flights</Text>
                         <TouchableOpacity
                           style={styles.addingHotelBtn}
-                          onPress={handleHotels}>
+                          onPress={handleFlights}>
                           <Text style={styles.addingHotelBtnTitle}>
-                            Add Hotel{' '}
+                            Add Flight{' '}
                           </Text>
                           <IconSwitcher
                             componentName="Feather"
@@ -1489,14 +1919,6 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                           />
                         </TouchableOpacity>
                       </View>
-                    </>
-                  ) : null}
-                </View>
-                {/* flight */}
-                <View>
-                  {tripData?.flights ? (
-                    <>
-                      <Text style={styles.flightCardTitle}>Flights</Text>
                       {tripData?.flights
                         ?.sort((a, b) => {
                           var aflightArr = [a.data.flight].map((flight, f) => {
@@ -1560,21 +1982,6 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                             </>
                           );
                         })}
-                      <View style={styles.addingHotelBtnContainer}>
-                        <TouchableOpacity
-                          style={styles.addingHotelBtn}
-                          onPress={handleFlights}>
-                          <Text style={styles.addingHotelBtnTitle}>
-                            Add Flight{' '}
-                          </Text>
-                          <IconSwitcher
-                            componentName="Feather"
-                            iconName="plus"
-                            color={colors.primary}
-                            iconsize={3}
-                          />
-                        </TouchableOpacity>
-                      </View>
                     </>
                   ) : null}
                 </View>
@@ -1583,7 +1990,21 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
             {/* add cabs Button */}
             {tripData?.cabs ? (
               <>
-                <Text style={styles.flightCardTitle}>Cabs</Text>
+                <View style={styles.addingHotelBtnContainer}>
+                  <Text style={styles.flightCardTitle}>Cabs</Text>
+                  <TouchableOpacity
+                    style={styles.addingHotelBtn}
+                    onPress={handleCabs}>
+                    <Text style={styles.addingHotelBtnTitle}>Add Cab </Text>
+                    <IconSwitcher
+                      componentName="Feather"
+                      iconName="plus"
+                      color={colors.primary}
+                      iconsize={3}
+                    />
+                  </TouchableOpacity>
+                </View>
+
                 {tripData?.cabs?.map((cab, f) => {
                   var cabReq = tripData?.data?.cabs?.filter(hotelMain => {
                     return hotelMain.id === cab.id;
@@ -1605,11 +2026,19 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                     </>
                   );
                 })}
+              </>
+            ) : null}
+
+            {/* { add Bus Button } */}
+
+            {tripData?.bus ? (
+              <>
                 <View style={styles.addingHotelBtnContainer}>
+                  <Text style={styles.flightCardTitle}>Buses</Text>
                   <TouchableOpacity
                     style={styles.addingHotelBtn}
-                    onPress={handleCabs}>
-                    <Text style={styles.addingHotelBtnTitle}>Add Cab </Text>
+                    onPress={handleBuses}>
+                    <Text style={styles.addingHotelBtnTitle}>Add Bus </Text>
                     <IconSwitcher
                       componentName="Feather"
                       iconName="plus"
@@ -1618,14 +2047,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                     />
                   </TouchableOpacity>
                 </View>
-              </>
-            ) : null}
 
-            {/* { add Bus Button } */}
-
-            {tripData?.bus ? (
-              <>
-                <Text style={styles.flightCardTitle}>Buses</Text>
                 {tripData?.bus?.map(busData => {
                   var bus = busData?.data?.bus;
                   var busDataa = tripData?.data?.bus?.filter(hotelMain => {
@@ -1650,36 +2072,35 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                     //   tripId={id}
                     //   selectedSeatsPrice={selectedSeatsPrice}
                     // />
-                    <BusRenderData 
-                    item={bus}
-                    tripsPage={true}
-                    bookingBus={busData.data}
-                    busData={busDataa && busDataa[0]}
-                    tripId={id}
+                    <BusRenderData
+                      item={bus}
+                      tripsPage={true}
+                      bookingBus={busData.data}
+                      busData={busDataa && busDataa[0]}
+                      tripId={id}
                     />
                   );
                 })}
-                <View style={styles.addingHotelBtnContainer}>
-                  <TouchableOpacity
-                    style={styles.addingHotelBtn}
-                    onPress={handleBuses}>
-                    <Text style={styles.addingHotelBtnTitle}>Add Bus </Text>
-                    <IconSwitcher
-                      componentName="Feather"
-                      iconName="plus"
-                      color={colors.primary}
-                      iconsize={3}
-                    />
-                  </TouchableOpacity>
-                </View>
               </>
             ) : null}
-           
-           
-            <>
-              <Text style={styles.flightCardTitle}>Trip Expenses</Text>
 
-              {tripData?.expenses? (
+            <>
+              <View style={styles.addingHotelBtnContainer}>
+                <Text style={styles.flightCardTitle}>Expenses</Text>
+                <TouchableOpacity
+                  style={styles.addingHotelBtn}
+                  onPress={() => setOpenExpense(true)}>
+                  <Text style={styles.addingHotelBtnTitle}>Add Expense </Text>
+                  <IconSwitcher
+                    componentName="Feather"
+                    iconName="plus"
+                    color={colors.primary}
+                    iconsize={3}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              {tripData?.expenses ? (
                 <>
                   {tripData?.expenses?.map((expense, f) => {
                     const expenseDate = new Date(
@@ -1723,39 +2144,27 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                               'en-IN',
                             )}`}
                           </Text>
-                      {expense.data.file &&<TouchableOpacity
-                        style={styles.voucherContainer}
-                        onPress={() => downloadExpense(expense.data.file)}>
-                        <Text style={styles.voucherTitle}>Voucher</Text>
-                        <IconSwitcher
-                          componentName="FontAwesome"
-                          iconName="download"
-                          iconsize={2}
-                          color={colors.primary}
-                        />
-                      </TouchableOpacity>}
+                          {expense.data.file && (
+                            <TouchableOpacity
+                              style={styles.voucherContainer}
+                              onPress={() =>
+                                downloadExpense(expense.data.file)
+                              }>
+                              <Text style={styles.voucherTitle}>Voucher</Text>
+                              <IconSwitcher
+                                componentName="FontAwesome"
+                                iconName="download"
+                                iconsize={2}
+                                color={colors.primary}
+                              />
+                            </TouchableOpacity>
+                          )}
                         </View>
                       </View>
                     );
                   })}
                 </>
               ) : null}
-
-              <View style={styles.addingHotelBtnContainer}>
-                <TouchableOpacity
-                  style={styles.addingHotelBtn}
-                  onPress={() => setOpenExpense(true)}>
-                  <Text style={styles.addingHotelBtnTitle}>
-                    Add Trip Expense{' '}
-                  </Text>
-                  <IconSwitcher
-                    componentName="Feather"
-                    iconName="plus"
-                    color={colors.primary}
-                    iconsize={3}
-                  />
-                </TouchableOpacity>
-              </View>
             </>
           </View>
         </ScrollView>
@@ -1772,21 +2181,19 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
             flight => flight.status === 'Not Submitted',
           )?.length > 0 ||
           tripData?.data?.cabs?.filter(
-            (flight) => flight.status === "Not Submitted"
+            flight => flight.status === 'Not Submitted',
           )?.length > 0 ||
-          tripData?.data?.bus?.filter((cab) => cab.status === "Not Submitted")
-            ?.length > 0 ? 
-          
-          (
+          tripData?.data?.bus?.filter(cab => cab.status === 'Not Submitted')
+            ?.length > 0 ? (
             <>
               {tripData?.data?.flights.every(flight => {
                 var hotelData = tripData?.data?.flights.filter(
                   hotels => hotels.id === flight.id,
                 );
                 var hotelTimeStamp =
-                    hotelData[0]?.updatedAt?.seconds * 1000
-                      ? new Date(hotelData[0].updatedAt?.seconds * 1000)
-                      : new Date(hotelData[0]?.date?.seconds * 1000);
+                  hotelData[0]?.updatedAt?.seconds * 1000
+                    ? new Date(hotelData[0].updatedAt?.seconds * 1000)
+                    : new Date(hotelData[0]?.date?.seconds * 1000);
                 var originalDate = new Date(hotelTimeStamp);
                 var threeHoursAfter = new Date(
                   originalDate.getTime() + 3 * 60 * 60 * 1000,
@@ -1800,9 +2207,9 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                   hotels => hotels.id === hotel.id,
                 );
                 var hotelTimeStamp =
-                hotelData[0]?.updatedAt?.seconds * 1000
-                  ? new Date(hotelData[0].updatedAt?.seconds * 1000)
-                  : new Date(hotelData[0]?.date?.seconds * 1000);
+                  hotelData[0]?.updatedAt?.seconds * 1000
+                    ? new Date(hotelData[0].updatedAt?.seconds * 1000)
+                    : new Date(hotelData[0]?.date?.seconds * 1000);
                 var originalDate = new Date(hotelTimeStamp);
                 var threeHoursAfter = new Date(
                   originalDate.getTime() + 3 * 60 * 60 * 1000,
@@ -1964,6 +2371,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
           visible={traveller}
           onRequestClose={() => {
             setTraveller(!traveller);
+            handleSelectedTab('travellers');
           }}>
           <View
             style={{
@@ -1994,7 +2402,10 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                   alignItems: 'flex-end',
                   marginVertical: responsiveHeight(1),
                 }}>
-                <TouchableOpacity onPress={() => setTraveller(!traveller)}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setTraveller(!traveller), handleSelectedTab('travellers');
+                  }}>
                   <IconSwitcher
                     componentName="MaterialCommunityIcons"
                     iconName="close"
@@ -2010,7 +2421,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                       ? styles.tripDetailsTravellerSelectedEachTab
                       : styles.tripDetailsTravellerEachTab
                   }
-                  onPress={() => handleSelectedTab('travellers')}>
+                  // onPress={() => handleSelectedTab('travellers')}
+                  disabled>
                   <Text
                     style={
                       selectedTab === 'travellers'
@@ -2026,7 +2438,9 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                       ? styles.tripDetailsTravellerSelectedEachTab
                       : styles.tripDetailsTravellerEachTab
                   }
-                  onPress={() => handleSelectedTab('approval')}>
+                  disabled
+                  // onPress={() => handleSelectedTab('approval')}
+                >
                   <Text
                     style={
                       selectedTab === 'approval'
@@ -2042,7 +2456,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                       ? styles.tripDetailsTravellerSelectedEachTab
                       : styles.tripDetailsTravellerEachTab
                   }
-                  onPress={() => handleSelectedTab('payment')}>
+                  // onPress={() => handleSelectedTab('payment')}
+                  disabled>
                   <Text
                     style={
                       selectedTab === 'payment'
@@ -2057,15 +2472,11 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
               {selectedTab === 'travellers' ? (
                 <>
                   <KeyboardAwareScrollView>
-                    <View style={{flex: 1}}>
-                      <View
-                        style={{
-                          // borderWidth: 2,
-                          // borderColor: 'green',
-                          marginTop: responsiveHeight(2),
-                          flexDirection: 'row',
-                        }}>
-                        <View style={{borderRightWidth: responsiveHeight(0.2)}}>
+                    <View style={styles.travellerDetailsMainContainer}>
+                      <View style={styles.travellerDetailsSubContainer}>
+                        {/* travellerDetails */}
+
+                        <View style={styles.travellerDetailsSeperator}>
                           {tripData?.flights?.map((flight, ind) => {
                             const date1 = new Date(
                               flight.data.flight.Segments[0][0].Origin.DepTime,
@@ -2140,6 +2551,152 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                             );
                           })}
 
+                          {tripData?.cabs?.map((cab, ind) => {
+                            const monthNames = [
+                              'Jan',
+                              'Feb',
+                              'Mar',
+                              'Apr',
+                              'May',
+                              'Jun',
+                              'Jul',
+                              'Aug',
+                              'Sep',
+                              'Oct',
+                              'Nov',
+                              'Dec',
+                            ];
+                            var flightStatus = tripData?.data?.cabs?.filter(
+                              f => f.id === cab.id,
+                            );
+                            var color = statuses?.filter(status => {
+                              return (
+                                status?.status ===
+                                (flightStatus ? flightStatus[0]?.status : '')
+                              );
+                            });
+                            const date = new Date(
+                              cab?.data?.cabStartDate.seconds * 1000,
+                            );
+                            const formattedDate1 = `${
+                              monthNames[date.getMonth()]
+                            } ${date.getDate()}`;
+                            const isSelected =
+                              selectedCard.index === ind &&
+                              selectedCard.list === 'b';
+                            return (
+                              <TouchableOpacity
+                                style={[
+                                  styles.travelDetailsFlightCard,
+                                  {
+                                    backgroundColor: !isEdit[cab.id]
+                                      ? 'white'
+                                      : color[0]
+                                      ? color[0].color
+                                      : '#808080',
+                                  },
+                                  {
+                                    borderBottomWidth: isSelected
+                                      ? responsiveHeight(0.5)
+                                      : 0,
+                                  },
+                                ]}
+                                onPress={() => {
+                                  setTravellerCount({adults: 1});
+                                  setTripId(cab.id);
+                                  handlePress(ind, 'b');
+                                }}>
+                                <IconSwitcher
+                                  componentName="FontAwesome6"
+                                  iconName="taxi"
+                                  iconsize={2.5}
+                                />
+                                <View
+                                  style={{
+                                    position: 'absolute',
+                                    right: responsiveWidth(1),
+                                    top: responsiveHeight(0),
+                                  }}>
+                                  <Text>{ind + 1}</Text>
+                                </View>
+                              </TouchableOpacity>
+                            );
+                          })}
+
+                          {tripData?.bus?.map((bus, ind) => {
+                            const monthNames = [
+                              'Jan',
+                              'Feb',
+                              'Mar',
+                              'Apr',
+                              'May',
+                              'Jun',
+                              'Jul',
+                              'Aug',
+                              'Sep',
+                              'Oct',
+                              'Nov',
+                              'Dec',
+                            ];
+                            var flightStatus = tripData?.data?.bus?.filter(
+                              f => f.id === bus.id,
+                            );
+
+                            var color = statuses?.filter(status => {
+                              return (
+                                status?.status ===
+                                (flightStatus ? flightStatus[0]?.status : '')
+                              );
+                            });
+
+                            const date = new Date(bus?.data?.bus.DepartureTime);
+                            const formattedDate1 = `${
+                              monthNames[date.getMonth()]
+                            } ${date.getDate()}`;
+                            const isSelected =
+                              selectedCard.index === ind &&
+                              selectedCard.list === 'd';
+                            return (
+                              <TouchableOpacity
+                                style={[
+                                  styles.travelDetailsFlightCard,
+                                  {
+                                    backgroundColor: !isEdit[bus.id]
+                                      ? 'white'
+                                      : color[0]
+                                      ? color[0].color
+                                      : '#808080',
+                                  },
+                                  {
+                                    borderBottomWidth: isSelected
+                                      ? responsiveHeight(0.5)
+                                      : 0,
+                                  },
+                                ]}
+                                onPress={() => {
+                                  setTravellerCount({
+                                    adults: Number(bus?.data?.passengers),
+                                  });
+                                  setTripId(bus.id);
+                                  handlePress(ind, 'd');
+                                }}>
+                                <IconSwitcher
+                                  componentName="FontAwesome6"
+                                  iconName="bus"
+                                  iconsize={2.5}
+                                />
+                                <View
+                                  style={{
+                                    position: 'absolute',
+                                    right: responsiveWidth(1),
+                                    top: responsiveHeight(0),
+                                  }}>
+                                  <Text>{ind + 1}</Text>
+                                </View>
+                              </TouchableOpacity>
+                            );
+                          })}
+
                           {tripData?.hotels?.map((hotel, ind) => {
                             const monthNames = [
                               'Jan',
@@ -2188,7 +2745,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                             });
                             const isSelected =
                               selectedCard.index === ind &&
-                              selectedCard.list === 'b';
+                              selectedCard.list === 'c';
                             return (
                               <TouchableOpacity
                                 style={[
@@ -2218,7 +2775,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                     );
                                   setTravellerCount(adults);
                                   setTripId(hotel.id);
-                                  handlePress(ind, 'b');
+                                  handlePress(ind, 'c');
                                 }}>
                                 <IconSwitcher
                                   componentName="FontAwesome6"
@@ -2238,6 +2795,9 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                             );
                           })}
                         </View>
+
+                        {/* each traveller Details */}
+
                         <View
                           style={{
                             // borderWidth: 2,
@@ -2255,6 +2815,22 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                               hotel => hotel.id === tripId,
                             )}
                             renderItem={hotelrenderItem}
+                            keyExtractor={(item, index) => index.toString()}
+                          />
+
+                          <FlatList
+                            data={tripData?.cabs?.filter(
+                              cab => cab.id === tripId,
+                            )}
+                            renderItem={cabRenderItem}
+                            keyExtractor={(item, index) => index.toString()}
+                          />
+
+                          <FlatList
+                            data={tripData?.bus?.filter(
+                              bus => bus.id === tripId,
+                            )}
+                            renderItem={busRenderItem}
                             keyExtractor={(item, index) => index.toString()}
                           />
                         </View>
@@ -2290,12 +2866,35 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                         onPress={() => {
                           if (
                             flightNotSubmittedIds?.every(item =>
-                              Object.keys(travellerDetails).includes(item),
+                              Object.keys(
+                                tripData?.data?.travellerDetails
+                                  ? tripData?.data?.travellerDetails
+                                  : travellerDetails,
+                              ).includes(item),
                             ) &&
                             hotelNotSubmittedIds?.every(item =>
-                              Object.keys(travellerDetails).includes(item),
+                              Object.keys(
+                                tripData?.data?.travellerDetails
+                                  ? tripData?.data?.travellerDetails
+                                  : travellerDetails,
+                              ).includes(item),
+                            ) &&
+                            cabNotSubmittedIds?.every(item =>
+                              Object.keys(
+                                tripData?.data?.travellerDetails
+                                  ? tripData?.data?.travellerDetails
+                                  : travellerDetails,
+                              ).includes(item),
+                            ) &&
+                            busNotSubmittedIds?.every(item =>
+                              Object.keys(
+                                tripData?.data?.travellerDetails
+                                  ? tripData?.data?.travellerDetails
+                                  : travellerDetails,
+                              ).includes(item),
                             )
                           ) {
+                            setShowError(false);
                             setSelectedTab('approval');
                           } else {
                             setShowError(true);
@@ -2310,13 +2909,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
 
               {selectedTab === 'approval' ? (
                 <>
-                  <View
-                    style={{
-                      height: '75%',
-                      flexDirection: 'row',
-                      marginTop: responsiveHeight(3),
-                    }}>
-                    <View style={{borderRightWidth: 1, width: '20%'}}>
+                  <View style={styles.approvalMainContainer}>
+                    <View style={styles.approvalSubContainer}>
                       {/* approval details sidebar- */}
                       {/* two times mapping-first one for req data second one for not requested data */}
                       {tripData?.requestData?.length > 0 ? (
@@ -2354,6 +2948,28 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                       {request.data.hotels.length}&nbsp;Hotels
                                     </Text>
                                   ) : null}
+                                  {request.data.cabs?.length > 0 ? (
+                                    <Text
+                                      style={
+                                        requestId === request.id
+                                          ? styles.activeApprovalRequestDataTitle
+                                          : styles.approvalRequestDataTitle
+                                      }>
+                                      {request.data.cabs.length}&nbsp;Cabs
+                                    </Text>
+                                  ) : null}
+
+                                  {request.data.bus?.length > 0 ? (
+                                    <Text
+                                      style={
+                                        requestId === request.id
+                                          ? styles.activeApprovalRequestDataTitle
+                                          : styles.approvalRequestDataTitle
+                                      }>
+                                      {request.data.bus.length}&nbsp;Bus
+                                    </Text>
+                                  ) : null}
+
                                   <Text
                                     style={
                                       requestId === request.id
@@ -2369,71 +2985,140 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                         </>
                       ) : null}
 
-                      {tripData?.hotels?.filter(
-                        hotel => !hotelIds.includes(hotel.id),
-                      )?.length > 0 ||
-                      tripData?.flights?.filter(
-                        hotel => !flightsIds.includes(hotel.id),
-                      )?.length > 0 ? (
-                        <TouchableOpacity
-                          style={
-                            !requestData && !requestId
-                              ? styles.activeApprovalRequestDataContainer
-                              : styles.approvalRequestDataContainer
-                          }
-                          onPress={() => {
-                            setRequestData(null);
-                            setRequestId(null);
-                          }}>
-                          {tripData?.flights?.filter(
-                            hotel => !flightsIds.includes(hotel.id),
-                          )?.length > 0 ? (
-                            <Text
-                              style={
-                                !requestData && !requestId
-                                  ? styles.activeApprovalRequestDataTitle
-                                  : styles.approvalRequestDataTitle
-                              }>
-                              <>
-                                {
-                                  tripData?.flights?.filter(
-                                    hotel => !flightsIds.includes(hotel.id),
-                                  )?.length
-                                }
-                                &nbsp;Flights
-                              </>
-                            </Text>
-                          ) : null}
-
-                          {tripData?.hotels?.filter(
-                            hotel => !hotelIds.includes(hotel.id),
-                          )?.length > 0 ? (
-                            <>
+                      <>
+                        {tripData?.hotels?.filter(
+                          hotel => !hotelIds.includes(hotel.id),
+                        )?.length > 0 ||
+                        tripData?.flights?.filter(
+                          hotel => !flightsIds.includes(hotel.id),
+                        )?.length > 0 ||
+                        tripData?.cabs?.filter(
+                          hotel => !cabsIds.includes(hotel.id)?.length > 0,
+                        ) ||
+                        tripData?.bus?.filter(
+                          hotel => !busIds.includes(hotel.id),
+                        )?.length > 0 ? (
+                          <TouchableOpacity
+                            style={
+                              !requestData && !requestId
+                                ? styles.activeApprovalRequestDataContainer
+                                : styles.approvalRequestDataContainer
+                            }
+                            onPress={() => {
+                              setRequestData(null);
+                              setRequestId(null);
+                            }}>
+                            {tripData?.flights?.filter(
+                              hotel => !flightsIds.includes(hotel.id),
+                            )?.length > 0 ? (
                               <Text
                                 style={
                                   !requestData && !requestId
                                     ? styles.activeApprovalRequestDataTitle
                                     : styles.approvalRequestDataTitle
                                 }>
-                                {
-                                  tripData?.hotels?.filter(
-                                    hotel => !hotelIds.includes(hotel.id),
-                                  )?.length
-                                }
-                                &nbsp;Hotels
+                                <>
+                                  {
+                                    tripData?.flights?.filter(
+                                      hotel => !flightsIds.includes(hotel.id),
+                                    )?.length
+                                  }
+                                  &nbsp;
+                                  {tripData?.flights?.filter(
+                                    hotel => !flightsIds.includes(hotel.id),
+                                  )?.length > 1
+                                    ? 'Flights'
+                                    : 'Flight'}
+                                </>
                               </Text>
-                            </>
-                          ) : null}
-                          <Text
-                            style={
-                              !requestData && !requestId
-                                ? styles.activeReqTitle
-                                : styles.reqTitle
-                            }>
-                            Not Requested
-                          </Text>
-                        </TouchableOpacity>
-                      ) : null}
+                            ) : null}
+
+                            {tripData?.hotels?.filter(
+                              hotel => !hotelIds.includes(hotel.id),
+                            )?.length > 0 ? (
+                              <>
+                                <Text
+                                  style={
+                                    !requestData && !requestId
+                                      ? styles.activeApprovalRequestDataTitle
+                                      : styles.approvalRequestDataTitle
+                                  }>
+                                  {
+                                    tripData?.hotels?.filter(
+                                      hotel => !hotelIds.includes(hotel.id),
+                                    )?.length
+                                  }
+                                  &nbsp;
+                                  {tripData?.hotels?.filter(
+                                    hotel => !hotelIds.includes(hotel.id),
+                                  )?.length > 1
+                                    ? 'Hotels'
+                                    : 'Hotel'}
+                                </Text>
+                              </>
+                            ) : null}
+
+                            {tripData?.cabs?.filter(
+                              cab => !cabsIds.includes(cab.id),
+                            )?.length > 0 ? (
+                              <>
+                                <Text
+                                  style={
+                                    !requestData && !requestId
+                                      ? styles.activeApprovalRequestDataTitle
+                                      : styles.approvalRequestDataTitle
+                                  }>
+                                  {
+                                    tripData?.cabs?.filter(
+                                      cab => !cabsIds.includes(cab.id),
+                                    )?.length
+                                  }
+                                  &nbsp;
+                                  {tripData?.cabs?.filter(
+                                    cab => !cabsIds.includes(cab.id),
+                                  )?.length > 1
+                                    ? 'Cabs'
+                                    : 'Cab'}
+                                </Text>
+                              </>
+                            ) : null}
+
+                            {tripData?.bus?.filter(
+                              bus => !busIds.includes(bus.id),
+                            )?.length > 0 ? (
+                              <>
+                                <Text
+                                  style={
+                                    !requestData && !requestId
+                                      ? styles.activeApprovalRequestDataTitle
+                                      : styles.approvalRequestDataTitle
+                                  }>
+                                  {
+                                    tripData?.bus?.filter(
+                                      bus => !busIds.includes(bus.id),
+                                    )?.length
+                                  }
+                                  &nbsp;
+                                  {tripData?.bus?.filter(
+                                    bus => !busIds.includes(bus.id),
+                                  )?.length > 1
+                                    ? 'Buses'
+                                    : 'Bus'}
+                                </Text>
+                              </>
+                            ) : null}
+
+                            <Text
+                              style={
+                                !requestData && !requestId
+                                  ? styles.activeReqTitle
+                                  : styles.reqTitle
+                              }>
+                              Not Requested
+                            </Text>
+                          </TouchableOpacity>
+                        ) : null}
+                      </>
                     </View>
 
                     <View style={{flex: 1}}>
@@ -2540,9 +3225,26 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                           </Text>
                                         </TouchableOpacity>
                                         <Text style={styles.title}>OR</Text>
-                                        <Text style={styles.subTitle}>
-                                          Continue booking without Approval
-                                        </Text>
+                                        <>
+                                          {userAccountDetails.approvalType ===
+                                          'Mandatory' ? (
+                                            <>
+                                              <Text>
+                                                Approval is mandatory.Please
+                                                send the trip for approval.
+                                              </Text>
+                                              <Text>Note: </Text>
+                                              <Text>
+                                                Trip will be booked only after
+                                                approval from your manager
+                                              </Text>
+                                            </>
+                                          ) : (
+                                            <Text style={styles.subTitle}>
+                                              Continue booking without Approval
+                                            </Text>
+                                          )}
+                                        </>
                                       </>
                                     )}
                                   </>
@@ -2554,15 +3256,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                               )}
                             </View>
 
-                            <View
-                              style={{
-                                padding: responsiveHeight(1),
-                                borderRadius: responsiveHeight(1),
-                                backgroundColor: colors.white,
-                                elevation: responsiveHeight(1),
-                                gap: responsiveHeight(0.5),
-                                marginVertical: responsiveHeight(1),
-                              }}>
+                            <View style={styles.card}>
                               <Text style={styles.title}>
                                 {userAccountDetails?.firstName} (
                                 {userAccountDetails?.email})
@@ -2603,6 +3297,36 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                           requestData?.flights.includes(
                                             hotel.id,
                                           ),
+                                        )?.length
+                                      }
+                                    </Text>
+                                  </View>
+                                ) : null}
+
+                                {tripData?.cabs?.filter(cab =>
+                                  requestData?.cabs.includes(cab.id),
+                                )?.length > 0 ? (
+                                  <View style={styles.btn}>
+                                    <Text style={styles.btnTitle}>
+                                      Cabs -{' '}
+                                      {
+                                        tripData?.cabs?.filter(cab =>
+                                          requestData?.cabs.includes(cab.id),
+                                        )?.length
+                                      }
+                                    </Text>
+                                  </View>
+                                ) : null}
+
+                                {tripData?.bus?.filter(bus =>
+                                  requestData?.bus.includes(bus.id),
+                                )?.length > 0 ? (
+                                  <View style={styles.btn}>
+                                    <Text style={styles.btnTitle}>
+                                      Buses -{' '}
+                                      {
+                                        tripData?.bus?.filter(bus =>
+                                          requestData?.bus.includes(bus.id),
                                         )?.length
                                       }
                                     </Text>
@@ -2657,7 +3381,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                               </TouchableOpacity>
                               {fareIsOpen ? (
                                 <>
-                                  <View>
+                                  <>
                                     {tripData?.hotels
                                       ?.filter(hotel =>
                                         requestData?.hotels.includes(hotel.id),
@@ -2714,16 +3438,16 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                                 Hotels
                                               </Text>
                                             ) : null}
-                                            <View style={styles.hotelCard}>
-                                              <HCard
-                                                hotel={hotel}
-                                                formattedDate1={formattedDate1}
-                                                endDate={endDate}
-                                                adults={adults}
-                                                recheck={true}
-                                              />
-                                            </View>
-                                            <View style={styles.card}>
+
+                                            <HCard
+                                              hotel={hotel}
+                                              formattedDate1={formattedDate1}
+                                              endDate={endDate}
+                                              adults={adults}
+                                              recheck={true}
+                                            />
+
+                                            <>
                                               <Text
                                                 style={[
                                                   styles.title,
@@ -2789,13 +3513,13 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                                   )}
                                                 </>
                                               </View>
-                                            </View>
+                                            </>
                                           </>
                                         );
                                       })}
-                                  </View>
+                                  </>
 
-                                  <View>
+                                  <>
                                     {tripData?.flights
                                       ?.filter(hotel =>
                                         requestData?.flights.includes(hotel.id),
@@ -2835,30 +3559,14 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                                 Flights
                                               </Text>
                                             ) : null}
-                                            <View style={styles.card}>
+                                            <>
                                               <FCard
                                                 airline={airline}
                                                 flightArr={flightArr}
+                                                flightData={flight}
                                               />
-                                              <View
-                                                style={{
-                                                  alignSelf: 'flex-end',
-                                                  marginTop:
-                                                    responsiveHeight(1),
-                                                }}>
-                                                <Text
-                                                  style={[
-                                                    styles.totalPrice,
-                                                    {
-                                                      fontSize:
-                                                        responsiveHeight(1.5),
-                                                    },
-                                                  ]}>{`${flightArr[0].fare.toLocaleString(
-                                                  'en-IN',
-                                                )}`}</Text>
-                                              </View>
-                                            </View>
-                                            <View style={styles.card}>
+                                            </>
+                                            <>
                                               <Text
                                                 style={[
                                                   styles.title,
@@ -2932,11 +3640,190 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                                   )}
                                                 </>
                                               </View>
-                                            </View>
+                                            </>
                                           </>
                                         );
                                       })}
-                                  </View>
+                                  </>
+
+                                  <>
+                                    {tripData?.cabs
+                                      ?.filter(cab =>
+                                        requestData?.cabs.includes(cab.id),
+                                      )
+                                      ?.map((cab, s) => {
+                                        var cabSDate = new Date(
+                                          cab.data.cabStartDate.seconds * 1000,
+                                        )
+                                          ?.toString()
+                                          ?.slice(4, 10);
+
+                                        var cabEDate = cab.data.cabEndDate
+                                          ? new Date(
+                                              cab.data.cabEndDate.seconds *
+                                                1000,
+                                            )
+                                              ?.toString()
+                                              ?.slice(4, 10)
+                                          : '';
+
+                                        return (
+                                          <>
+                                            {s === 0 ? (
+                                              <Text
+                                                style={[
+                                                  styles.title,
+                                                  {textAlign: 'center'},
+                                                ]}>
+                                                Cab
+                                              </Text>
+                                            ) : null}
+                                            <View>
+                                              <CCard
+                                                item={cab.data.cab}
+                                                startDate={cabSDate}
+                                                endDate={cabEDate}
+                                                data={cab.data}
+                                              />
+                                            </View>
+                                            <>
+                                              <Text
+                                                style={[
+                                                  styles.title,
+                                                  {textAlign: 'center'},
+                                                ]}>
+                                                Traveller Details
+                                              </Text>
+                                              <View>
+                                                <>
+                                                  {tripData?.data
+                                                    ?.travellerDetails ? (
+                                                    <>
+                                                      {tripData.data.travellerDetails[
+                                                        cab.id
+                                                      ]?.map((trav, i) => {
+                                                        return (
+                                                          <TravDetails
+                                                            trav={trav}
+                                                            type={'Adults'}
+                                                            index={i + 1}
+                                                          />
+                                                        );
+                                                      })}
+                                                    </>
+                                                  ) : (
+                                                    <>
+                                                      {travellerDetails[
+                                                        cab.id
+                                                      ]?.map((trav, i) => {
+                                                        return (
+                                                          <TravDetails
+                                                            trav={trav}
+                                                            type={'Adults'}
+                                                            index={i + 1}
+                                                          />
+                                                        );
+                                                      })}
+                                                    </>
+                                                  )}
+                                                </>
+                                              </View>
+                                            </>
+                                          </>
+                                        );
+                                      })}
+                                  </>
+
+                                  <>
+                                    {tripData?.bus
+                                      ?.filter(bus =>
+                                        requestData?.bus.includes(bus.id),
+                                      )
+                                      ?.map((bus, s) => {
+                                        var cabReq =
+                                          tripData?.data?.bus?.filter(
+                                            hotelMain => {
+                                              return hotelMain.id === bus.id;
+                                            },
+                                          );
+                                        var cabSDate = bus.data.bus
+                                          .DepartureTime
+                                          ? new Date(bus.data.bus.DepartureTime)
+                                              ?.toString()
+                                              ?.slice(4, 10)
+                                          : '';
+                                        var cabEDate = bus.data.bus.ArrivalTime
+                                          ? new Date(bus.data.bus.ArrivalTime)
+                                              ?.toString()
+                                              ?.slice(4, 10)
+                                          : '';
+
+                                        return (
+                                          <>
+                                            {s === 0 ? (
+                                              <Text
+                                                style={[
+                                                  styles.title,
+                                                  {textAlign: 'center'},
+                                                ]}>
+                                                Bus
+                                              </Text>
+                                            ) : null}
+                                            <View>
+                                              <BCard
+                                                item={bus.data.bus}
+                                                startDate={cabSDate}
+                                                endDate={cabEDate}
+                                                bookingBus={bus.data}
+                                              />
+                                            </View>
+                                            <>
+                                              <Text
+                                                style={[
+                                                  styles.title,
+                                                  {textAlign: 'center'},
+                                                ]}>
+                                                Traveller Details
+                                              </Text>
+                                              <View>
+                                                <>
+                                                  {tripData?.data
+                                                    ?.travellerDetails ? (
+                                                    <>
+                                                      {tripData.data.travellerDetails[
+                                                        bus.id
+                                                      ]?.map((trav, i) => {
+                                                        return (
+                                                          <TravDetails
+                                                            trav={trav}
+                                                            type={'Adults'}
+                                                            index={i + 1}
+                                                          />
+                                                        );
+                                                      })}
+                                                    </>
+                                                  ) : (
+                                                    <>
+                                                      {travellerDetails[
+                                                        bus.id
+                                                      ]?.map((trav, i) => {
+                                                        return (
+                                                          <TravDetails
+                                                            trav={trav}
+                                                            type={'Adults'}
+                                                            index={i + 1}
+                                                          />
+                                                        );
+                                                      })}
+                                                    </>
+                                                  )}
+                                                </>
+                                              </View>
+                                            </>
+                                          </>
+                                        );
+                                      })}
+                                  </>
                                 </>
                               ) : null}
                             </View>
@@ -3069,6 +3956,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                 style={{
                                   flexDirection: 'row',
                                   gap: responsiveHeight(2),
+                                  flexWrap: 'wrap',
                                 }}>
                                 {tripData?.hotels?.filter(
                                   hotel => !hotelIds.includes(hotel.id),
@@ -3099,6 +3987,35 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                     </Text>
                                   </View>
                                 ) : null}
+
+                                {tripData?.cabs?.filter(
+                                  cab => !cabsIds.includes(cab.id),
+                                )?.length > 0 ? (
+                                  <View style={styles.btn}>
+                                    <Text style={styles.btnTitle}>
+                                      Cabs -{' '}
+                                      {
+                                        tripData?.cabs?.filter(
+                                          cab => !cabsIds.includes(cab.id),
+                                        )?.length
+                                      }
+                                    </Text>
+                                  </View>
+                                ) : null}
+                                {tripData?.bus?.filter(
+                                  bus => !busIds.includes(bus.id),
+                                )?.length > 0 ? (
+                                  <View style={styles.btn}>
+                                    <Text style={styles.btnTitle}>
+                                      Bus -{' '}
+                                      {
+                                        tripData?.bus?.filter(
+                                          bus => !busIds.includes(bus.id),
+                                        )?.length
+                                      }
+                                    </Text>
+                                  </View>
+                                ) : null}
                               </View>
                               <Text style={styles.title}>
                                 Total price:
@@ -3115,7 +4032,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                 </Text>
                               </Text>
                               <Text style={styles.subTitle}>
-                                Requested on:
+                                Created on:
                                 <Text
                                   style={[
                                     styles.subTitle,
@@ -3143,7 +4060,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                               </TouchableOpacity>
                               {fareIsOpen ? (
                                 <>
-                                  <View>
+                                  <>
                                     {tripData?.hotels
                                       ?.filter(
                                         hotel => !hotelIds.includes(hotel.id),
@@ -3200,16 +4117,16 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                                 Hotels
                                               </Text>
                                             ) : null}
-                                            <View style={styles.hotelCard}>
-                                              <HCard
-                                                hotel={hotel}
-                                                formattedDate1={formattedDate1}
-                                                endDate={endDate}
-                                                adults={adults}
-                                                recheck={true}
-                                              />
-                                            </View>
-                                            <View style={styles.card}>
+
+                                            <HCard
+                                              hotel={hotel}
+                                              formattedDate1={formattedDate1}
+                                              endDate={endDate}
+                                              adults={adults}
+                                              recheck={true}
+                                            />
+
+                                            <>
                                               <Text
                                                 style={[
                                                   styles.title,
@@ -3275,13 +4192,13 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                                   )}
                                                 </>
                                               </View>
-                                            </View>
+                                            </>
                                           </>
                                         );
                                       })}
-                                  </View>
+                                  </>
 
-                                  <View>
+                                  <>
                                     {tripData?.flights
                                       ?.filter(
                                         hotel => !flightsIds.includes(hotel.id),
@@ -3321,30 +4238,14 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                                 Flights
                                               </Text>
                                             ) : null}
-                                            <View style={styles.card}>
+                                            <View>
                                               <FCard
                                                 airline={airline}
                                                 flightArr={flightArr}
+                                                flightData={flight}
                                               />
-                                              <View
-                                                style={{
-                                                  alignSelf: 'flex-end',
-                                                  marginTop:
-                                                    responsiveHeight(1),
-                                                }}>
-                                                <Text
-                                                  style={[
-                                                    styles.totalPrice,
-                                                    {
-                                                      fontSize:
-                                                        responsiveHeight(1.5),
-                                                    },
-                                                  ]}>{`${flightArr[0].fare.toLocaleString(
-                                                  'en-IN',
-                                                )}`}</Text>
-                                              </View>
                                             </View>
-                                            <View style={styles.card}>
+                                            <>
                                               <Text
                                                 style={[
                                                   styles.title,
@@ -3418,11 +4319,186 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                                   )}
                                                 </>
                                               </View>
-                                            </View>
+                                            </>
                                           </>
                                         );
                                       })}
-                                  </View>
+                                  </>
+
+                                  <>
+                                    {tripData?.cabs
+                                      ?.filter(cab => !cabsIds.includes(cab.id))
+                                      ?.map((cab, s) => {
+                                        var cabSDate = new Date(
+                                          cab.data.cabStartDate.seconds * 1000,
+                                        )
+                                          ?.toString()
+                                          ?.slice(4, 10);
+
+                                        var cabEDate = cab.data.cabEndDate
+                                          ? new Date(
+                                              cab.data.cabEndDate.seconds *
+                                                1000,
+                                            )
+                                              ?.toString()
+                                              ?.slice(4, 10)
+                                          : '';
+
+                                        return (
+                                          <>
+                                            {s === 0 ? (
+                                              <Text
+                                                style={[
+                                                  styles.title,
+                                                  {textAlign: 'center'},
+                                                ]}>
+                                                Cab
+                                              </Text>
+                                            ) : null}
+                                            <View>
+                                              <CCard
+                                                item={cab.data.cab}
+                                                startDate={cabSDate}
+                                                endDate={cabEDate}
+                                                data={cab.data}
+                                              />
+                                            </View>
+                                            <>
+                                              <Text
+                                                style={[
+                                                  styles.title,
+                                                  {textAlign: 'center'},
+                                                ]}>
+                                                Traveller Details
+                                              </Text>
+                                              <View>
+                                                <>
+                                                  {tripData?.data
+                                                    ?.travellerDetails ? (
+                                                    <>
+                                                      {tripData.data.travellerDetails[
+                                                        cab.id
+                                                      ]?.map((trav, i) => {
+                                                        return (
+                                                          <TravDetails
+                                                            trav={trav}
+                                                            type={'Adults'}
+                                                            index={i + 1}
+                                                          />
+                                                        );
+                                                      })}
+                                                    </>
+                                                  ) : (
+                                                    <>
+                                                      {travellerDetails[
+                                                        cab.id
+                                                      ]?.map((trav, i) => {
+                                                        return (
+                                                          <TravDetails
+                                                            trav={trav}
+                                                            type={'Adults'}
+                                                            index={i + 1}
+                                                          />
+                                                        );
+                                                      })}
+                                                    </>
+                                                  )}
+                                                </>
+                                              </View>
+                                            </>
+                                          </>
+                                        );
+                                      })}
+                                  </>
+
+                                  <>
+                                    {tripData?.bus
+                                      ?.filter(bus => !busIds.includes(bus.id))
+                                      ?.map((bus, s) => {
+                                        var cabReq =
+                                          tripData?.data?.bus?.filter(
+                                            hotelMain => {
+                                              return hotelMain.id === bus.id;
+                                            },
+                                          );
+                                        var cabSDate = bus.data.bus
+                                          .DepartureTime
+                                          ? new Date(bus.data.bus.DepartureTime)
+                                              ?.toString()
+                                              ?.slice(4, 10)
+                                          : '';
+                                        var cabEDate = bus.data.bus.ArrivalTime
+                                          ? new Date(bus.data.bus.ArrivalTime)
+                                              ?.toString()
+                                              ?.slice(4, 10)
+                                          : '';
+                                        console.log(cabSDate, cabEDate);
+                                        return (
+                                          <>
+                                            {s === 0 ? (
+                                              <Text
+                                                style={[
+                                                  styles.title,
+                                                  {textAlign: 'center'},
+                                                ]}>
+                                                Bus
+                                              </Text>
+                                            ) : null}
+                                            <View>
+                                              <BCard
+                                                item={bus.data.bus}
+                                                startDate={cabSDate}
+                                                endDate={cabEDate}
+                                                bookingBus={bus.data}
+                                              />
+                                            </View>
+                                            <>
+                                              <Text
+                                                style={[
+                                                  styles.title,
+                                                  {textAlign: 'center'},
+                                                ]}>
+                                                Traveller Details
+                                              </Text>
+                                              <View>
+                                                <>
+                                                  {tripData?.data
+                                                    ?.travellerDetails ? (
+                                                    <>
+                                                      {tripData.data.travellerDetails[
+                                                        bus.id
+                                                      ]?.map((trav, i) => {
+                                                        return (
+                                                          <TravDetails
+                                                            trav={trav}
+                                                            type={'Adults'}
+                                                            index={i + 1}
+                                                          />
+                                                        );
+                                                      })}
+                                                    </>
+                                                  ) : (
+                                                    <>
+                                                      {travellerDetails[
+                                                        bus.id
+                                                      ]?.map((trav, i) => {
+                                                        return (
+                                                          <TravDetails
+                                                            trav={trav}
+                                                            type={'Adults'}
+                                                            index={i + 1}
+                                                          />
+                                                        );
+                                                      })}
+                                                    </>
+                                                  )}
+                                                </>
+                                              </View>
+                                            </>
+                                          </>
+                                        );
+                                      })}
+                                  </>
                                 </>
                               ) : null}
                             </View>
@@ -3444,7 +4520,13 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                         flexDirection: 'row',
                         justifyContent: 'flex-end',
                         gap: responsiveHeight(1),
+                        alignItems: 'center',
                       }}>
+                      {approvalError && (
+                        <Text style={[styles.title, {color: colors.red}]}>
+                          Approval is Mandatory
+                        </Text>
+                      )}
                       <TouchableOpacity
                         style={[styles.btn]}
                         onPress={() => {
@@ -3457,7 +4539,16 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                       <TouchableOpacity
                         style={[styles.btn]}
                         onPress={() => {
-                          setSelectedTab('payment');
+                          if (userAccountDetails.approvalType !== 'Mandatory') {
+                            setSelectedTab('payment');
+                          } else if (
+                            requestData?.status === 'Approved' &&
+                            userAccountDetails.approvalType === 'Mandatory'
+                          ) {
+                            setSelectedTab('payment');
+                          } else {
+                            setApprovalError(true);
+                          }
                         }}>
                         <Text style={[styles.subTitle, {color: colors.white}]}>
                           Next
@@ -3474,6 +4565,12 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                   )?.length !== 0 ||
                   tripData?.flights?.filter(
                     hotel => !flightSubmittedIds.includes(hotel.id),
+                  )?.length !== 0 ||
+                  tripData?.cabs?.filter(
+                    hotel => !cabSubmittedIds.includes(hotel.id),
+                  )?.length !== 0 ||
+                  tripData?.bus?.filter(
+                    hotel => !busSubmittedIds.includes(hotel.id),
                   )?.length !== 0 ? (
                     <View style={styles.paymentMainConatainer}>
                       <View style={styles.paymentTitleContainer}>
@@ -3492,91 +4589,141 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                           Select the trips you want to complete the payment
                         </Text>
                       </View>
-                      <View
-                        style={[
-                          styles.card,
-                          {width: '100%', gap: responsiveHeight(2)},
-                        ]}>
-                        <View style={styles.paymentCheckBoxContainer}>
-                          <TouchableOpacity
-                            onPress={() => {
-                              if (!checked) {
-                                setChecked(true);
-                                setBookingPrice(prev => prev + finalPrice);
-                              } else {
-                                setChecked(false);
-                                setBookingPrice(prev => prev - finalPrice);
-                              }
-                            }}>
-                            <IconSwitcher
-                              componentName="MaterialIcons"
-                              iconName={
-                                checked
-                                  ? 'check-box'
-                                  : 'check-box-outline-blank'
-                              }
-                              color={checked ? colors.facebook : colors.gray}
-                              iconsize={3}
-                            />
-                          </TouchableOpacity>
-                          <View style={styles.notSubmitedContainer}>
-                            <Text style={styles.notSubmitedTitle}>
-                              Not Submitted
-                            </Text>
-                          </View>
-                        </View>
+                      {tripData?.hotels?.filter(hotel =>
+                        hotelNotSubmittedIds.includes(hotel.id),
+                      )?.length > 0 ||
+                      tripData?.flights?.filter(hotel =>
+                        flightNotSubmittedIds.includes(hotel.id),
+                      )?.length > 0 ||
+                      tripData?.cabs?.filter(
+                        hotel => !cabNotSubmittedIds.includes(hotel.id),
+                      )?.length > 0 ||
+                      tripData?.bus?.filter(
+                        hotel => !busNotSubmittedIds.includes(hotel.id),
+                      )?.length > 0 ? (
                         <View
-                          style={{flexDirection: 'row', alignItems: 'center'}}>
+                          style={[
+                            styles.card,
+                            {width: '100%', gap: responsiveHeight(2)},
+                          ]}>
+                          <View style={styles.paymentCheckBoxContainer}>
+                            <TouchableOpacity
+                              onPress={() => {
+                                if (!checked) {
+                                  setChecked(true);
+                                  setBookingPrice(prev => prev + finalPrice);
+                                } else {
+                                  setChecked(false);
+                                  setBookingPrice(prev => prev - finalPrice);
+                                }
+                              }}>
+                              <IconSwitcher
+                                componentName="MaterialIcons"
+                                iconName={
+                                  checked
+                                    ? 'check-box'
+                                    : 'check-box-outline-blank'
+                                }
+                                color={checked ? colors.facebook : colors.gray}
+                                iconsize={3}
+                              />
+                            </TouchableOpacity>
+                            <View style={styles.notSubmitedContainer}>
+                              <Text style={styles.notSubmitedTitle}>
+                                Not Submitted
+                              </Text>
+                            </View>
+                          </View>
                           <View
                             style={{
-                              flex: 1,
                               flexDirection: 'row',
-                              flexWrap: 'wrap',
+                              alignItems: 'center',
                             }}>
-                            <Text style={styles.title}>
-                              {tripData?.flights?.filter(hotel =>
-                                flightNotSubmittedIds.includes(hotel.id),
-                              ).length > 0 ? (
-                                <>
-                                  {
-                                    tripData?.flights?.filter(hotel =>
-                                      flightNotSubmittedIds.includes(hotel.id),
-                                    ).length
-                                  }
-                                  -Flights&nbsp;,{' '}
-                                </>
-                              ) : null}
-                            </Text>
-                            <Text style={styles.title}>
-                              {tripData?.hotels?.filter(hotel =>
-                                hotelNotSubmittedIds.includes(hotel.id),
-                              ).length > 0 ? (
-                                <>
-                                  {
-                                    tripData?.hotels?.filter(hotel =>
-                                      hotelNotSubmittedIds.includes(hotel.id),
-                                    ).length
-                                  }
-                                  -Hotels&nbsp;
-                                </>
-                              ) : null}
-                            </Text>
-                          </View>
-                          <View>
-                            <Text style={styles.title}>
-                              Price:&nbsp;
-                              <Text
-                                style={[
-                                  styles.title,
-                                  {color: colors.secondary},
-                                ]}>
-                                &#8377;
-                                {Math.ceil(finalPrice).toLocaleString('en-IN')}
+                            <View
+                              style={{
+                                flex: 1,
+                                flexDirection: 'row',
+                                flexWrap: 'wrap',
+                              }}>
+                              <Text style={styles.title}>
+                                {tripData?.flights?.filter(hotel =>
+                                  flightNotSubmittedIds.includes(hotel.id),
+                                ).length > 0 ? (
+                                  <>
+                                    {
+                                      tripData?.flights?.filter(hotel =>
+                                        flightNotSubmittedIds.includes(
+                                          hotel.id,
+                                        ),
+                                      ).length
+                                    }
+                                    -Flights&nbsp;,{' '}
+                                  </>
+                                ) : null}
                               </Text>
-                            </Text>
+                              <Text style={styles.title}>
+                                {tripData?.hotels?.filter(hotel =>
+                                  hotelNotSubmittedIds.includes(hotel.id),
+                                ).length > 0 ? (
+                                  <>
+                                    {
+                                      tripData?.hotels?.filter(hotel =>
+                                        hotelNotSubmittedIds.includes(hotel.id),
+                                      ).length
+                                    }
+                                    -Hotels&nbsp;
+                                  </>
+                                ) : null}
+                              </Text>
+
+                              <Text style={styles.title}>
+                                {tripData?.cabs?.filter(hotel =>
+                                  cabNotSubmittedIds.includes(hotel.id),
+                                ).length > 0 ? (
+                                  <>
+                                    {
+                                      tripData?.cabs?.filter(hotel =>
+                                        cabNotSubmittedIds.includes(hotel.id),
+                                      ).length
+                                    }
+                                    -Cabs&nbsp;
+                                  </>
+                                ) : null}
+                              </Text>
+
+                              <Text style={styles.title}>
+                                {tripData?.bus?.filter(hotel =>
+                                  busNotSubmittedIds.includes(hotel.id),
+                                ).length > 0 ? (
+                                  <>
+                                    {
+                                      tripData?.bus?.filter(hotel =>
+                                        busNotSubmittedIds.includes(hotel.id),
+                                      ).length
+                                    }
+                                    -Bus&nbsp;
+                                  </>
+                                ) : null}
+                              </Text>
+                            </View>
+                            <View>
+                              <Text style={styles.title}>
+                                Price:&nbsp;
+                                <Text
+                                  style={[
+                                    styles.title,
+                                    {color: colors.secondary},
+                                  ]}>
+                                  &#8377;
+                                  {Math.ceil(finalPrice).toLocaleString(
+                                    'en-IN',
+                                  )}
+                                </Text>
+                              </Text>
+                            </View>
                           </View>
                         </View>
-                      </View>
+                      ) : null}
                       <View
                         style={{
                           alignItems: 'center',
@@ -3598,65 +4745,98 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                         </Text>
                         {bookingPrice > 0 ? (
                           <>
-                            {userAccountDetails.balance < bookingPrice ? (
-                              <View
-                                style={{
-                                  alignItems: 'center',
-                                  gap: responsiveHeight(2),
-                                }}>
-                                <Text style={[styles.subTitle]}>
-                                  You dont have enough money to complete
-                                  payment.Add money to the wallet
-                                </Text>
-                                <TouchableOpacity
-                                  style={[
-                                    styles.btn,
-                                    {paddingVertical: responsiveHeight(1)},
-                                  ]}
-                                  onPress={() => navigate('Wallet')}>
-                                  <Text style={styles.btnTitle}>Add money</Text>
-                                </TouchableOpacity>
-                              </View>
+                            {userAccountDetails.accountType === 'PostPaid' ? (
+                              <TouchableOpacity
+                                style={[
+                                  styles.btn,
+                                  {
+                                    paddingVertical: responsiveHeight(1),
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    width: responsiveHeight(18),
+                                  },
+                                ]}
+                                onPress={handleClick}>
+                                {!paymentLoading ? (
+                                  <Text
+                                    style={[
+                                      styles.btnTitle,
+                                      {width: responsiveHeight(15)},
+                                    ]}>
+                                    Submit for Booking
+                                  </Text>
+                                ) : (
+                                  <ActivityIndicator
+                                    size={'small'}
+                                    color={colors.facebook}
+                                  />
+                                )}
+                              </TouchableOpacity>
                             ) : (
-                              <View
-                                style={{
-                                  alignItems: 'center',
-                                  gap: responsiveHeight(2),
-                                }}>
-                                <Text
-                                  style={[
-                                    styles.subTitle,
-                                    {fontSize: responsiveHeight(1.8)},
-                                  ]}>
-                                  Complete the payment
-                                </Text>
-                                <TouchableOpacity
-                                  style={[
-                                    styles.btn,
-                                    {
-                                      paddingVertical: responsiveHeight(1),
+                              <>
+                                {userAccountDetails.balance < bookingPrice ? (
+                                  <View
+                                    style={{
                                       alignItems: 'center',
-                                      justifyContent: 'center',
-                                      width: responsiveHeight(18),
-                                    },
-                                  ]}
-                                  onPress={handleClick}>
-                                  {!paymentLoading ? (
+                                      gap: responsiveHeight(2),
+                                    }}>
+                                    <Text style={[styles.subTitle]}>
+                                      You dont have enough money to complete
+                                      payment.Add money to the wallet
+                                    </Text>
+                                    <TouchableOpacity
+                                      style={[
+                                        styles.btn,
+                                        {paddingVertical: responsiveHeight(1)},
+                                      ]}
+                                      onPress={() => navigate('Wallet')}>
+                                      <Text style={styles.btnTitle}>
+                                        Add money
+                                      </Text>
+                                    </TouchableOpacity>
+                                  </View>
+                                ) : (
+                                  <View
+                                    style={{
+                                      alignItems: 'center',
+                                      gap: responsiveHeight(2),
+                                    }}>
                                     <Text
                                       style={[
-                                        styles.btnTitle,
-                                        {width: responsiveHeight(15)},
+                                        styles.subTitle,
+                                        {fontSize: responsiveHeight(1.8)},
                                       ]}>
-                                      Make payment
+                                      Complete the payment
                                     </Text>
-                                  ) : (
-                                    <ActivityIndicator
-                                      size={'small'}
-                                      color={colors.facebook}
-                                    />
-                                  )}
-                                </TouchableOpacity>
-                              </View>
+                                    <TouchableOpacity
+                                      style={[
+                                        styles.btn,
+                                        {
+                                          paddingVertical: responsiveHeight(1),
+                                          alignItems: 'center',
+                                          justifyContent: 'center',
+                                          width: responsiveHeight(18),
+                                        },
+                                      ]}
+                                      onPress={handleClick}>
+                                      {!paymentLoading ? (
+                                        <Text
+                                          style={[
+                                            styles.btnTitle,
+                                            {width: responsiveHeight(15)},
+                                          ]}>
+                                          Make payment
+                                        </Text>
+                                      ) : (
+                                        <ActivityIndicator
+                                          size={'small'}
+                                          color={colors.facebook}
+                                        />
+                                      )}
+                                    </TouchableOpacity>
+                                  </View>
+                                )}
+                              </>
                             )}
                           </>
                         ) : (
@@ -3719,108 +4899,6 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                 <Text style={styles.recheckPriceTitle}>
                   Hotel Price Recheck
                 </Text>
-                {/* <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
-                      <Text style={[styles.subTitle, { fontSize: responsiveHeight(1.8) }]}>Hotel Name:</Text>
-                      <Text style={[styles.title, { flex: 1 }]} numberOfLines={1}>
-                        {reCheckHotelName}</Text>
-                    </View> */}
-                {/* <Text style={[styles.subTitle, { fontSize: responsiveHeight(1.8) }]}>Room Details</Text>
-                    {
-                      oldSelectedRoom.map((room, f) => {
-                        return (
-                          <View style={styles.hotelRoomFeatures}>
-                            <View
-                              style={
-                                styles.hotelRoomFeaturesContainer1
-                              }>
-                              <Text style={[styles.roomType, { fontSize: responsiveHeight(1.5) }]}>
-                                {room.RoomTypeName}
-                              </Text>
-
-                            </View>
-                            <View
-                              style={
-                                styles.hotelRoomFeaturesContainer2
-                              }>
-                              <View style={styles.mealsDeatils}>
-                                <IconSwitcher
-                                  componentName="MaterialIcons"
-                                  iconName="dinner-dining"
-                                  color={colors.primary}
-                                  iconsize={2}
-                                />
-                                <Text
-                                  style={
-                                    [styles.foodAndCancellationTitle]
-                                  }>
-                                  {room.Inclusion &&
-                                    room.Inclusion.length > 0
-                                    ? actions.checkForTboMeals(
-                                      room.Inclusion,
-                                    )
-                                    : 'No meals'}
-                                </Text>
-                              </View>
-                              <View style={styles.mealsDeatils}>
-                                {room.LastCancellationDate &&
-                                  actions.validCancelDate(
-                                    room.LastCancellationDate,
-                                  ) ? (
-                                  <>
-                                    <IconSwitcher
-                                      componentName="Ionicons"
-                                      iconName="checkmark-circle"
-                                      color={colors.primary}
-                                      iconsize={2}
-                                    />
-                                    <Text
-                                      style={
-                                        [styles.foodAndCancellationTitle, { fontSize: responsiveHeight(1.2) }]
-                                      }>{`Free cancellation upto ${new Date(
-                                        room.LastCancellationDate,
-                                      )
-                                        .toString()
-                                        .slice(4, 10)}`}</Text>
-                                  </>
-                                ) : (
-                                  <>
-                                    <IconSwitcher
-                                      componentName="MaterialCommunityIcons"
-                                      iconName="cancel"
-                                      color={colors.primary}
-                                      iconsize={1.5}
-                                    />
-                                    <Text
-                                      style={
-                                        styles.foodAndCancellationTitle
-                                      }>
-                                      {'Non-refundable'}
-                                    </Text>
-                                  </>
-                                )}
-                              </View>
-                            </View>
-                            <View>
-                              {
-                                room.Inclusion.length > 0 ? (
-                                  room.Inclusion.map((inclusion) => {
-                                    return (
-                                      <Text style={
-                                        styles.foodAndCancellationTitle
-                                      }>
-                                        {
-                                          inclusion
-                                        }
-                                      </Text>
-                                    )
-                                  })
-                                ) : (null)
-                              }
-                            </View>
-                          </View>
-                        );
-                      })
-                    } */}
 
                 <View style={styles.recheckPriceContainer}>
                   <View style={styles.recheckPriceSubContainer}>
@@ -3984,7 +5062,11 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
           handlePopUpClose={() => {
             setReCheck(false);
           }}>
-          <Text style={[styles.heading, {textAlign: 'center',marginBottom:responsiveHeight(1)}]}>
+          <Text
+            style={[
+              styles.heading,
+              {textAlign: 'center', marginBottom: responsiveHeight(1)},
+            ]}>
             Re-check Rates
           </Text>
           <Text style={[styles.title]}>
@@ -4009,7 +5091,9 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                   var currentTime = new Date();
                   var isTimeReCheck = currentTime > threeHoursAfter;
                   return isTimeReCheck;
-                }).length > 0 && <Text style={styles.hotelTitle}>Flights :</Text>}
+                }).length > 0 && (
+                  <Text style={styles.hotelTitle}>Flights :</Text>
+                )}
               </View>
               {tripData?.flights
                 ?.filter(flight => {
@@ -4027,10 +5111,12 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                   var isTimeReCheck = currentTime > threeHoursAfter;
                   return isTimeReCheck;
                 })
-                .map((flight,ind) => {
+                .map((flight, ind) => {
                   return (
                     <Text style={styles.title}>
-                      {`${ind+1} . ${flight.data.flightNew.segments[0].destCityName} to ${flight.data.flightNew.segments[0].originCityName}`}
+                      {`${ind + 1} . ${
+                        flight.data.flightNew.segments[0].destCityName
+                      } to ${flight.data.flightNew.segments[0].originCityName}`}
                     </Text>
                   );
                 })}
@@ -4067,10 +5153,10 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                   var isTimeReCheck = currentTime > threeHoursAfter;
                   return isTimeReCheck;
                 })
-                .map((hotel,ind) => {
+                .map((hotel, ind) => {
                   return (
                     <Text style={styles.title}>
-                     {`${ind + 1} . ${
+                      {`${ind + 1} . ${
                         hotel.data.hotelInfo.HotelInfoResult.HotelDetails
                           .HotelName
                       }`}

@@ -213,4 +213,16 @@ export const styles = StyleSheet.create({
     borderStyle: "dashed",
     borderColor: colors.gray
   },
+  errorContainer:{
+    flex:1,
+    alignItems:'center',
+    flexDirection:'row',
+    gap:responsiveHeight(1)
+  },
+  errorText:
+  {
+fontSize:responsiveHeight(1.5),
+fontFamily:fonts.primary,
+color:colors.red
+  }
 });

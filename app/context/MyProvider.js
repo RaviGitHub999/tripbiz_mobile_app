@@ -2880,6 +2880,7 @@ export default class MyProvider extends Component {
               balance: finalBalance,
               transactions: firestore.FieldValue.arrayUnion(data)
             });
+            await this.state.actions.getUserById(this.state.userId);
             console.log("Payment successful");
           } catch (error) {
             console.error("Error making trip payment:", error);
@@ -2967,7 +2968,7 @@ export default class MyProvider extends Component {
 
               if (status === "Booked" || status === "Booked,Payment Pending") {
                 await admintripCollectionRef.update({
-                  hotels: firestore.FieldValue.arrayUnion({ ...userCurrHotel[0], status: status, bookedAt: firestore.FieldValue.serverTimestamp() })
+                  hotels: firestore.FieldValue.arrayUnion({ ...userCurrHotel[0], status: status, bookedAt:  Date.now() })
                 });
               } else {
                 await admintripCollectionRef.update({
@@ -3010,7 +3011,7 @@ export default class MyProvider extends Component {
 
               if (status === "Booked" || status === "Booked,Payment Pending") {
                 await admintripCollectionRef.update({
-                  flights: firestore.FieldValue.arrayUnion({ ...userCurrFlight[0], status: status, bookedAt: firestore.FieldValue.serverTimestamp() })
+                  flights: firestore.FieldValue.arrayUnion({ ...userCurrFlight[0], status: status, bookedAt:  Date.now() })
                 });
               }
               else {
@@ -3021,12 +3022,100 @@ export default class MyProvider extends Component {
 
             }
 
+            if (type === "cabs") {
+              var accountCollectionRef = db.collection("Accounts").doc(userId);
+              var tripCollectionRef = accountCollectionRef
+                .collection("trips")
+                .doc(tripId);
+              var userCabDetails = await tripCollectionRef.get();
+              var userCabsArray = userCabDetails.data().cabs;
+              var userCurrCabs = userCabsArray.filter(cab => cab.id === hotelId);
+
+              await tripCollectionRef.update({
+                cabs: firestore.FieldValue.arrayRemove(userCurrCabs[0])
+              });
+
+              await tripCollectionRef.update({
+                cabs: firestore.FieldValue.arrayUnion({ ...userCurrCabs[0], status: status })
+              });
+              var adminCollectionRef = db
+                .collection("Accounts")
+                .doc(this.state.adminDetails.userid);
+              var admintripCollectionRef = adminCollectionRef
+                .collection("trips")
+                .doc(adminTripId);
+              var adminCabsDetails = await admintripCollectionRef.get();
+              var adminCabsArray = adminCabsDetails.data().cabs;
+              var admincurrCabs = adminCabsArray.filter((cabs) => {
+                return cabs.id === hotelId;
+              });
+              await admintripCollectionRef.update({
+                cabs: firestore.FieldValue.arrayRemove(admincurrCabs[0])
+              });
+
+              if (status === "Booked" || status === "Booked,Payment Pending") {
+                await admintripCollectionRef.update({
+                  cabs: firestore.FieldValue.arrayUnion({ ...userCurrCabs[0], status: status, bookedAt:  Date.now() })
+                });
+              }
+              else {
+                await admintripCollectionRef.update({
+                  cabs: firestore.FieldValue.arrayUnion({ ...userCurrCabs[0], status: status })
+                });
+              }
+
+            }
+
+            if (type === "bus") {
+              var accountCollectionRef = db.collection("Accounts").doc(userId);
+              var tripCollectionRef = accountCollectionRef
+                .collection("trips")
+                .doc(tripId);
+              var userBusDetails = await tripCollectionRef.get();
+              var userBussArray = userBusDetails.data().bus;
+              var userCurrBuss = userBussArray.filter(bus => bus.id === hotelId);
+
+              await tripCollectionRef.update({
+                bus: firestore.FieldValue.arrayRemove(userCurrBuss[0])
+              });
+
+              await tripCollectionRef.update({
+                bus: firestore.FieldValue.arrayUnion({ ...userCurrBuss[0], status: status })
+              });
+              var adminCollectionRef = db
+                .collection("Accounts")
+                .doc(this.state.adminDetails.userid);
+              var admintripCollectionRef = adminCollectionRef
+                .collection("trips")
+                .doc(adminTripId);
+              var adminBusDetails = await admintripCollectionRef.get();
+              var adminBusArray = adminBusDetails.data().bus;
+              var admincurrBus = adminBusArray.filter((bus) => {
+                return bus.id === hotelId;
+              });
+              await admintripCollectionRef.update({
+                bus: firestore.FieldValue.arrayRemove(admincurrBus[0])
+              });
+
+              if (status === "Booked" || status === "Booked,Payment Pending") {
+                await admintripCollectionRef.update({
+                  bus: firestore.FieldValue.arrayUnion({ ...userCurrBuss[0], status: status, bookedAt:  Date.now() })
+                });
+              }
+              else {
+                await admintripCollectionRef.update({
+                  bus: firestore.FieldValue.arrayUnion({ ...userCurrBuss[0], status: status })
+                });
+              }
+
+            }
+
             await this.state.actions.getTripDoc(tripId, this.state.userId);
           } catch (error) {
             console.error(error);
           }
         },
-        addTripsToAdmin: async (tripId, data, userDetails, submittedHotels, submittedFlights) => {
+        addTripsToAdmin: async (tripId, data, userDetails, submittedHotels, submittedFlights,submittedCabs,submittedBus) => {
           try {
 
             // Reference to the admin's document in the 'Accounts' collection
@@ -3044,9 +3133,14 @@ export default class MyProvider extends Component {
               return { status: "Not Submitted", id: flight };
             });
 
-            // const cabArray = submittedCabs?.map((cab) => {
-            //   return { status: "Not Submitted", id: cab };
-            // });
+            const cabArray = submittedCabs?.map((cab) => {
+              return { status: "Not Submitted", id: cab };
+            });
+
+            const busArray =submittedBus.length>0?
+            submittedBus?.map((bus) => {
+              return { status: "Not Submitted", id: bus };
+            }):[]
 
             // Add new trip document to admin's trips collection
             const newTripDocRef = await tripCollectionRef.add({
@@ -3055,10 +3149,11 @@ export default class MyProvider extends Component {
               tripName: data1?.name,
               hotels: hotelArray,
               flights: flightArray,
-              // cabs: cabArray,
+              cabs: cabArray,
               status: "Not Submitted",
               submittedDate: Date.now(),
-              travellerDetails: userDetails
+              travellerDetails: userDetails,
+              bus: busArray,
             });
 
             // Update admin's document with new trip ID
@@ -3087,11 +3182,17 @@ export default class MyProvider extends Component {
               });
             }
 
-            // if (cabArray) {
-            //   cabArray.forEach((cab) => {
-            //     actions.editTripStatus(userId, tripId, newTripDocRef.id, "Paid and Submitted", cab.id, "cabs");
-            //   });
-            // }
+            if (cabArray) {
+              cabArray.map((cab) => {
+                return this.state.actions.editTripStatus(this.state.userId, tripId, newTripDocRef.id, "Paid and Submitted", cab.id, "cabs");
+              });
+            }
+
+            if (busArray) {
+              busArray.map((bus) => {
+                return this.state.actions.editTripStatus(this.state.userId, tripId, newTripDocRef.id, "Paid and Submitted", bus.id, "bus");
+              });
+            }
 
             console.log("Trip added to admin successfully");
           } catch (error) {
@@ -3100,7 +3201,7 @@ export default class MyProvider extends Component {
         },
 
 
-        editAdminTrips: async (tripid, data, travellerDetails, submittedHotels, submittedFlights, requestIds, tripName) => {
+        editAdminTrips: async (tripid, data, travellerDetails, submittedHotels, submittedFlights, requestIds,submittedCabs, tripName, submittedBus) => {
           try {
             const accountDocRef = firestore().collection("Accounts").doc(this.state.adminDetails.userid);
             const tripCollectionRef = accountDocRef.collection("trips");
@@ -3142,20 +3243,27 @@ export default class MyProvider extends Component {
               tripName: tripName
             });
 
-            // const cabArray = submittedCabs?.map((cab) => {
-            //   return { status: "Not Submitted", id: cab };
-            // });
+            const cabArray = submittedCabs?.map((cab) => {
+              return { status: "Not Submitted", id: cab };
+            });
+
+            const busArray = submittedBus.length>0?
+            submittedBus?.map((bus) => {
+              return { status: "Not Submitted", id: bus };
+            }):[]
 
             if (!querySnapshot.empty) {
               const docRef = querySnapshot.docs[0].ref;
+              const admintripdata = querySnapshot.docs[0].data();
               await docRef.update({
-                hotels: hotelArray,
-                flights: flightArray,
+                hotels: [...admintripdata.hotels, ...hotelArray],
+                flights: [...admintripdata.flights, ...flightArray],
                 travellerDetails: travellerDetails,
-                // cabs: cabArray
+                cabs: [...admintripdata.cabs, ...cabArray],
+                bus: [...admintripdata.bus, ...busArray],
               });
             } else {
-              await this.state.actions.addTripsToAdmin(tripid, data, travellerDetails, submittedHotels, submittedFlights);
+              await this.state.actions.addTripsToAdmin(tripid, data, travellerDetails, submittedHotels, submittedFlights,submittedCabs,submittedBus);
               return;
             }
 
@@ -3177,13 +3285,18 @@ export default class MyProvider extends Component {
                   return this.state.actions.editTripStatus(this.state.userId, tripid, querySnapshot.docs[0].id, "Paid and Submitted", hotel.id, "add");
                 });
               }
-              // if (cabArray) {
-              //   cabArray.forEach((cab) => {
-              //     actions.editTripStatus(userId, tripid, querySnapshot.docs[0].id, "Paid and Submitted", cab.id, "cabs");
-              //   });
-              // }
+              if (cabArray) {
+                cabArray.map((cab) => {
+                  return this.state.actions.editTripStatus(this.state.userId, tripid, querySnapshot.docs[0].id, "Paid and Submitted", cab.id, "cabs");
+                });
+              }
+              if (busArray) {
+                busArray.map((bus) => {
+                  return this.state.actions.editTripStatus(this.state.userId, tripid, querySnapshot.docs[0].id, "Paid and Submitted", bus.id, "bus");
+                });
+              }
             }
-
+            await this.state.actions.getUserById(this.state.userId);
             console.log("Admin trip edited successfully");
           } catch (error) {
             console.error("Error editing admin trip:", error);
@@ -3627,11 +3740,13 @@ export default class MyProvider extends Component {
 
           const flightArray = tripData.data().flights.filter((flight) => flight.requestStatus === "Not Requested");
           const hotelArray = tripData.data().hotels.filter((hotel) => hotel.requestStatus === "Not Requested");
-          // const cabArray = tripData.data()?.cabs?.filter((cab) => cab.requestStatus === "Not Requested");
+          const cabArray = tripData.data()?.cabs?.filter((cab) => cab.requestStatus === "Not Requested");
+          const busArray = tripData.data()?.bus?.filter((bus) => bus.requestStatus === "Not Requested"??[]);
 
           const reqFlights = flightArray.map((flight) => flight.id);
           const reqHotels = hotelArray.map((hotel) => hotel.id);
-          // const reqCabs = cabArray?.length > 0 ? cabArray?.map((cab) => cab.id) : [];
+          const reqCabs = cabArray?.length > 0 ? cabArray?.map((cab) => cab.id) : [];
+          const reqBus = busArray?.length > 0 ? busArray?.map((bus) => bus.id) : [];
 
           const tripReqcollectionRef = userDocRef.collection("tripRequests");
           const newtripdocRef = await tripReqcollectionRef.add({
@@ -3642,7 +3757,8 @@ export default class MyProvider extends Component {
             price: price,
             flights: reqFlights,
             hotels: reqHotels,
-            // cabs: reqCabs,
+            cabs: reqCabs,
+            bus:reqBus,
             tripStatus: "Not Submitted"
           });
 
@@ -3657,7 +3773,8 @@ export default class MyProvider extends Component {
               totalPrice: price,
               flights: reqFlights,
               hotels: reqHotels,
-              // cabs: reqCabs
+              cabs: reqCabs,
+              bus: reqBus,
             })
           });
 
@@ -3688,37 +3805,27 @@ export default class MyProvider extends Component {
               });
             }),
 
-            await Promise.all([await this.state.actions.getTripDoc(tripId, this.state.userId)])
-          // await Promise.all([
-          //   ...flightArray.map(async (flight) => {
-          //     await tripCollecRef.update({
-          //       flights: firestore.FieldValue.arrayRemove(flight)
-          //     });
-          //     const newflight = { ...flight, requestStatus: "Pending" };
-          //     await tripCollecRef.update({
-          //       flights: firestore.FieldValue.arrayUnion(newflight)
-          //     });
-          //   }),
-          //   ...hotelArray.map(async (hotel) => {
-          //     await tripCollecRef.update({
-          //       hotels: firestore.FieldValue.arrayRemove(hotel)
-          //     });
-          //     const newhotel = { ...hotel, requestStatus: "Pending" };
-          //     await tripCollecRef.update({
-          //       hotels: firestore.FieldValue.arrayUnion(newhotel)
-          //     });
-          //   }),
-          //   // ...(cabArray || []).map(async (cab) => {
-          //   //   await tripCollecRef.update({
-          //   //     cabs: firestore.FieldValue.arrayRemove(cab)
-          //   //   });
-          //   //   const newCab = { ...cab, requestStatus: "Pending" };
-          //   //   await tripCollecRef.update({
-          //   //     cabs: firestore.FieldValue.arrayUnion(newCab)
-          //   //   });
-          //   // })
-          // ]);
+            await cabArray.map(async (cab) => {
+              await tripCollecRef.update({
+                cabs: firestore.FieldValue.arrayRemove(cab)
+              });
+              const newCab = { ...cab, requestStatus: "Pending" };
+              await tripCollecRef.update({
+                cabs: firestore.FieldValue.arrayUnion(newCab)
+              });
+            }),
 
+            await busArray?.map(async (bus) => {
+              await tripCollecRef.update({
+                bus: firestore.FieldValue.arrayRemove(bus)
+              });
+              const newBus = { ...bus, requestStatus: "Pending" };
+              await tripCollecRef.update({
+                bus: firestore.FieldValue.arrayUnion(newBus)
+              });
+            }),
+
+            await Promise.all([await this.state.actions.getTripDoc(tripId, this.state.userId)])
           const reqData = {
             createdAt: new Date(),
             status: "Pending",
@@ -3727,7 +3834,8 @@ export default class MyProvider extends Component {
             price: price,
             flights: reqFlights,
             hotels: reqHotels,
-            // cabs: cabArray || []
+            cabs: cabArray ,
+            bus: busArray,
           };
           const reqId = newtripdocRef.id;
 
@@ -3767,6 +3875,30 @@ export default class MyProvider extends Component {
 
           const accdata = await accountDocRef.get();
           return accdata.data();
+        },
+       updateTravDetails : async (travellerDetails, tripId) => {
+          try {
+            const tripDocRef = firestore()
+              .collection('Accounts')
+              .doc(this.state.userId)
+              .collection('trips')
+              .doc(tripId);
+      
+            const tripSnap = await tripDocRef.get();
+            const tripData = tripSnap.data();
+            const travDetails = tripData?.travellerDetails;
+            const newTravDetails = { ...travellerDetails, ...travDetails };
+            
+            console.log(newTravDetails);
+      
+            await tripDocRef.update({
+              travellerDetails: newTravDetails,
+            });
+      
+            await this.state.actions.getTripDoc(tripId, this.state.userId);
+          } catch (error) {
+            console.error("Error updating traveller details: ", error);
+          }
         },
         editManager: async (managerData) => {
           try {

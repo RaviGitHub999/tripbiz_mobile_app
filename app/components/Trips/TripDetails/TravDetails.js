@@ -10,8 +10,9 @@ const TravDetails = ({ trav, index, type }) => {
       <View>
         <Text style={styles.subTitle}>First Name: <Text style={styles.title1}>{trav.firstName}</Text></Text>
         <Text style={styles.subTitle}>Last Name: <Text style={styles.title1}>{trav.lastName}</Text></Text>
+       {index===1&&<>
         <Text style={styles.subTitle}>Email: <Text style={styles.title1}>{trav.email}</Text></Text>
-        <Text style={styles.subTitle}>Mobile Number: <Text style={styles.title1}>{trav.mobileNumber}</Text></Text>
+        <Text style={styles.subTitle}>Mobile Number: <Text style={styles.title1}>{trav.mobileNumber}</Text></Text></>}
       </View>
     </View>
   )

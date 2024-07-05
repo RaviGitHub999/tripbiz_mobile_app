@@ -38,9 +38,11 @@ const BusInfo = () => {
     actions,
     selectedTripId,
     selectedTrip,
-    destDetails,
     busDate,
     BusOperatorName,
+    originDetails,
+    destDetails,
+    NoofBusPassengers
   } = useContext(MyContext);
   const date = new Date(busDate);
   var myStr = destDetails?.cityName;
@@ -126,6 +128,7 @@ const BusInfo = () => {
         style={{backgroundColor: colors.white}}
         contentContainerStyle={{paddingBottom: responsiveHeight(10)}}>
         <View style={styles.mainContainer}>
+          <View style={{flexDirection:'row',alignItems:'center'}}>
           <TouchableOpacity
             style={styles.backIconContainer}
             onPress={handleGoBack}>
@@ -136,6 +139,12 @@ const BusInfo = () => {
               iconsize={3.2}
             />
           </TouchableOpacity>
+         <View style={{flex:1,alignItems:'center'}}>
+         <Text style={[styles.titles,{color:colors.highlight}]}>
+            {originDetails.cityName} to {destDetails.cityName}
+          </Text>
+         </View>
+          </View>
           <View>
             <Text style={styles.titles}>Select Pickup and Drop Points</Text>
             <View style={styles.boardingPoint_droppingPoint_Container}>
@@ -168,8 +177,11 @@ const BusInfo = () => {
               </View>
             </View>
           </View>
-          <Text style={styles.titles}>{`Number of Adults: ${1}`}</Text>
-          <Text style={styles.titles}>{`Select Seats`}</Text>
+          <Text style={styles.titles}>{`Number of Adults: ${NoofBusPassengers}`}</Text>
+<View style={styles.errorContainer}>
+<Text style={styles.titles}>{`Select Seats`}</Text>
+{bookingBus?.selectedSeat?.length < NoofBusPassengers && <Text style={styles.errorText}>(Please select {NoofBusPassengers} Seats)</Text>}
+</View>
           {(bookingBus?.busSeatLayout?.busResult?.GetBusSeatLayOutResult
             ?.SeatLayoutDetails?.SeatLayout.SeatDetails).length > 0 && (
             <SeatLayout
