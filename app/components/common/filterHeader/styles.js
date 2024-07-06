@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 import { responsiveHeight, responsiveWidth } from "../../../utils/responsiveScale";
 import { colors, fonts } from "../../../config/theme";
 
@@ -13,6 +13,7 @@ mainContainer:{
     flexDirection:'row',
     justifyContent:'space-between',
     alignItems:"center",
+    
 },
 filterTitleContainer:{
     flexDirection:'row',
@@ -27,7 +28,6 @@ filterTitle:{
 childrenContainer:
 {
 paddingHorizontal:responsiveWidth(2),
-// paddingBottom:responsiveHeight(15)
 },
 filtersCountContainer:{
     position: 'absolute', 

@@ -3,6 +3,7 @@ import React, { useContext } from 'react'
 import { styles } from './styles'
 import IconSwitcher from '../icons/IconSwitcher'
 import { colors } from '../../../config/theme'
+import { responsiveHeight } from '../../../utils/responsiveScale'
 const FilterHeader = ({ handlefiltersToggleActions,removeFilters, children, value, customStyle,filtersCount,handlefilters}) => {
     return (
       !value?  <TouchableOpacity style={styles.container} onPress={handlefiltersToggleActions}>
@@ -54,8 +55,10 @@ const FilterHeader = ({ handlefiltersToggleActions,removeFilters, children, valu
                }
             </View  >
             {value ? <View style={customStyle?customStyle:styles.childrenContainer}>
-                <ScrollView>
-                    {children}
+                <ScrollView contentContainerStyle={{paddingBottom:responsiveHeight(20)}} showsVerticalScrollIndicator={false}>
+                   <View style={{flex:1}}>
+                   {children}
+                   </View>
                 </ScrollView>
             </View> : null}
         </View>

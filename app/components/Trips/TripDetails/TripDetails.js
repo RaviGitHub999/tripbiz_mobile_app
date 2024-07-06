@@ -567,7 +567,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
     });
 
     var flightStatus = tripData.data.flights.filter(f => f.id === item.id)[0];
-    const userDet = tripData?.data?.travellerDetails[item.id];
+    const userDet = tripData?.data?.travellerDetails?tripData?.data?.travellerDetails[item.id]:null;
     var color = statuses.filter(status => {
       return status?.status === flightStatus?.status;
     });
@@ -716,7 +716,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
     var hotelStatus = tripData.data.hotels.filter(hotelMain => {
       return hotelMain.id === item.id;
     })[0];
-    const userDet = tripData?.data?.travellerDetails[item.id];
+    const userDet = tripData?.data?.travellerDetails?tripData?.data?.travellerDetails[item.id]:null;
     var color = statuses.filter(status => {
       return status?.status === hotelStatus?.status;
     });
@@ -853,7 +853,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
       'Dec',
     ];
     const cabStatus = tripData?.data?.cabs?.find(f => f.id === item.id);
-    const userDet = tripData?.data?.travellerDetails[item.id];
+    const userDet =tripData?.data?.travellerDetails? tripData?.data?.travellerDetails[item.id]:null;
    console.log(userDet,"sbdjsh")
 
 
@@ -982,7 +982,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
       'Dec',
     ];
     var busStatus = tripData?.data?.bus?.filter(f => f.id === item.id)[0];
-    const userDet = tripData?.data?.travellerDetails[item.id];
+    const userDet = tripData?.data?.travellerDetails?tripData?.data?.travellerDetails[item.id]:null;
     const date = new Date(item?.data?.bus.DepartureTime);
     const formattedDate1 = `${monthNames[date.getMonth()]} ${date.getDate()}`;
 
@@ -2017,7 +2017,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                         tripsPage={true}
                         startDate={cab.data.cabStartDate}
                         endDate={cab.data.cabEndDate}
-                        cabData={cabReq[0]}
+                        cabData={cabReq[0]?cabReq[0]:null}
                         tripsCabType={cab.data.cabType}
                         cabTotal={cab.data}
                         tripId={id}
@@ -4761,7 +4761,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                   <Text
                                     style={[
                                       styles.btnTitle,
-                                      {width: responsiveHeight(15)},
+                                
                                     ]}>
                                     Submit for Booking
                                   </Text>
