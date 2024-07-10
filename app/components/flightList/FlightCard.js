@@ -359,7 +359,7 @@ const FlightCard = ({
             <Text style={styles.bookingFlightText}>
               {`${bookingFlight[index].adults} ${bookingFlight[index].adults > 1 ? "Adults" : "Adults"
                 } ${bookingFlight[index].child > 0 ? `, ${bookingFlight[index].child} ${bookingFlight[index].child > 1 ? "children" : "child"
-                  }` : ''}   ${bookingFlight[index].infant > 0 ? `, ${bookingFlight[index].infant} ${bookingFlight[index].infant > 1 ? "infants" : "infant"
+                  }` : ''}${bookingFlight[index].infant > 0 ?` , ${bookingFlight[index].infant} ${bookingFlight[index].infant > 1 ? "infants" : "infant"
                     }` : ''}`}
             </Text>
             <Text style={styles.bookingFlightText}>

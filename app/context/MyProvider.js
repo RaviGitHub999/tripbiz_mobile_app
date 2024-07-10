@@ -4226,16 +4226,29 @@ export default class MyProvider extends Component {
             .catch((err) => console.log(err));
           var flightSearchToken = flightRes.tokenId
           var flightTraceId = flightRes?.flightResult?.Response?.TraceId
-          var data = flightRes?.flightResult?.Response?.Results[0].filter((fData) => {
-            if (fData[0].Segments.length > 1) {
-              return (
-                fData[0].flightCodeStr === flight.flightCodeStr && fData[0].Segments[fData[0].Segments.length - 1][fData[0].Segments[0].length - 1].Destination.ArrTime === flight.Segments[flight.Segments.length - 1][flight.Segments[0].length - 1].Destination.ArrTime)
+          var data = flightRes?.flightResult?.Response?.Results[0].filter(
+            (fData) => {
+              if (fData[0].Segments.length > 1) {
+                return (
+                  fData[0].flightCodeStr === flight.flightCodeStr &&
+                  fData[0].Segments[fData[0].Segments.length - 1][
+                    fData[0].Segments[0].length - 1
+                  ].Destination.ArrTime ===
+                    flight.Segments[flight.Segments.length - 1][
+                      flight.Segments[0].length - 1
+                    ].Destination.ArrTime
+                );
+              } else {
+                return (
+                  fData[0].flightCodeStr === flight.flightCodeStr &&
+                  fData[0].Segments[0][fData[0].Segments[0].length - 1]
+                    .Destination.ArrTime ===
+                    flight.Segments[0][flight.Segments[0].length - 1].Destination
+                      .ArrTime
+                );
+              }
             }
-            else {
-              return (
-                fData[0].flightCodeStr === flight.flightCodeStr && fData[0].Segments[0][fData[0].Segments[0].length - 1].Destination.ArrTime === flight.Segments[0][flight.Segments[0].length - 1].Destination.ArrTime)
-            }
-          });
+          );
           var resIndex = data[0][0].ResultIndex
 
           var request = {

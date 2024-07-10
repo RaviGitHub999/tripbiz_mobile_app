@@ -686,7 +686,7 @@ borderRadius:responsiveHeight(1)
         elevation: responsiveHeight(0.5),
         margin: responsiveHeight(1),
         paddingVertical: responsiveHeight(1.5),
-        // paddingHorizontal: responsiveWidth(2),
+        paddingHorizontal: responsiveWidth(2),
         borderRadius: responsiveHeight(1)
     },
     expenseSubTitle:

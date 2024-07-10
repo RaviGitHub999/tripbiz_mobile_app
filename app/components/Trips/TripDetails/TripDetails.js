@@ -43,6 +43,7 @@ import CabCard from '../../cab/cabResList/CabCard';
 import BusRenderData from '../../bus/busResList/BusRenderData';
 import CCard from './CCard';
 import BCard from './BCard';
+import RNFetchBlob from 'rn-fetch-blob';
 const TripDetails = ({navigation: {navigate, goBack}}) => {
   const [mounted, setMounted] = useState(true);
   const [popup, setPopUp] = useState({
@@ -158,7 +159,6 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
     userAccountDetails,
     domesticHotel,
   } = useContext(MyContext);
-  console.log(tripData, 'fghf');
   var handleClick = async () => {
     setPaymentLoading(true);
 
@@ -283,7 +283,6 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
   var cabArray = tripData?.requestData
     ? tripData?.requestData?.map(req => req.data.cabs)
     : [];
-  console.log(cabArray);
   var busArray = tripData?.requestData
     ? tripData?.requestData?.map(req => req.data.bus)
     : [];
@@ -854,9 +853,6 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
     ];
     const cabStatus = tripData?.data?.cabs?.find(f => f.id === item.id);
     const userDet =tripData?.data?.travellerDetails? tripData?.data?.travellerDetails[item.id]:null;
-   console.log(userDet,"sbdjsh")
-
-
     const date = new Date(item?.data?.cabStartDate.seconds * 1000);
     const formattedDate1 = `${monthNames[date.getMonth()]} ${date.getDate()}`;
     const date2 = new Date(item?.data?.cabEndDate.seconds * 1000);
@@ -1124,6 +1120,103 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
     setDeleteId(hotel.id);
   };
 
+  const getFileExtension = (contentType) => {
+    switch (contentType) {
+      case 'image/jpeg':
+        return '.jpg';
+      case 'image/png':
+        return '.png';
+      case 'application/pdf':
+        return '.pdf';
+      default:
+        return '';
+    }
+  };
+
+  const fetchContentType = async (url) => {
+    try {
+      const response = await fetch(url);
+      const contentType = response.headers.get('content-type');
+      return contentType;
+    } catch (error) {
+      console.error('Fetch error:', error);
+      return null;
+    }
+  };
+
+  const downloadFile = async (url) => {
+    // console.log(url,"first")
+    const { config, fs } = RNFetchBlob;
+    let DownloadDir = fs.dirs.DownloadDir; // this is the Downloads directory.
+    const expensesDir = `${DownloadDir}/expenses`;
+
+    const contentType = await fetchContentType(url);
+    const ext = getFileExtension(contentType);
+
+    try {
+      const exists = await fs.exists(expensesDir);
+      if (!exists) {
+        await fs.mkdir(expensesDir);
+      }
+    } catch (err) {
+      console.error('Error creating expenses directory:', err);
+      Alert.alert('Error', 'Failed to create expenses directory.');
+      return;
+    }
+
+    const options = {
+      fileCache: true,
+      addAndroidDownloads: {
+        useDownloadManager: true,
+        notification: true,
+        path: `${expensesDir}/expense_Receipt${ext}`, // Save to specific path with specific filename and extension
+        description: 'Downloading file.',
+        title: `Downloading Expense Receipt${ext}`,
+        mime: contentType,
+        mediaScannable: true,
+        notificationOpenOnClick: true,
+      },
+    };
+
+    try {
+      const response = await config(options).fetch('GET', url);
+
+      if (Platform.OS === 'android') {
+        // Open the downloaded file with appropriate mime type
+        RNFetchBlob.android.actionViewIntent(response.path(), contentType);
+      }
+
+      Alert.alert('Success', `File Downloaded Successfully`);
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Error', `File Download Failed: ${error.message}`);
+    }
+  };
+
+  const checkPermission = async (url) => {
+    if (Platform.OS === 'ios') {
+      downloadFile(url);
+    } else {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: 'Storage Permission Required',
+            message: 'App needs access to your storage to download files',
+          }
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          downloadFile(url);
+        } else {
+          Alert.alert('Error', 'Storage Permission Not Granted');
+        }
+      } catch (err) {
+        console.warn(err);
+      }
+    }
+  };
+
+
   const downloadDoc = async hotelStatus => {
     try {
       await Linking.openURL(hotelStatus[0].downloadURL);
@@ -1132,14 +1225,15 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
       console.error('An error occurred', error);
     }
   };
-  const downloadExpense = async hotelStatus => {
-    try {
-      await Linking.openURL(hotelStatus);
-    } catch (error) {
-      Alert.alert('Error', 'An error occurred while trying to open the URL');
-      console.error('An error occurred', error);
-    }
-  };
+  // const downloadExpense = async hotelStatus => {
+  //   console.log(hotelStatus)
+  //   try {
+  //     await Linking.openURL(hotelStatus);
+  //   } catch (error) {
+  //     Alert.alert('Error', 'An error occurred while trying to open the URL');
+  //     console.error('An error occurred', error);
+  //   }
+  // };
   const handleExpansePrice = price => {
     setCost(price);
   };
@@ -1237,7 +1331,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
       }
     }
   };
-
+  
   const openGallery = () => {
     launchImageLibrary(
       {
@@ -1245,12 +1339,18 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
         quality: 1,
       },
       response => {
-        let imageUri = response.uri || response.assets?.[0]?.uri;
-        setReceipt(imageUri);
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.error) {
+          console.log('ImagePicker Error: ', response.error);
+        } else {
+          let imageUri = response.uri || response.assets?.[0]?.uri;
+          setReceipt(imageUri);
+        }
       },
     );
   };
-
+  
   const showSettingsAlertGallery = () => {
     Alert.alert(
       'Gallery Permission Denied',
@@ -1266,10 +1366,10 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
           onPress: () => openSettings(),
         },
       ],
-      {cancelable: false},
+      { cancelable: false },
     );
   };
-
+  
   const handleOpenGallery = async () => {
     if (Platform.OS === 'android') {
       const granted = await PermissionsAndroid.check(
@@ -1331,92 +1431,94 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
             </View>
             {/* bookingStatus */}
 
-            <View style={styles.bookingStatusMainContainer}>
-              {statuses.map(status => {
-                return (
-                  <>
-                    {tripData?.data?.flights?.filter(
-                      flight => flight.status === status.status,
-                    ).length > 0 ||
-                    tripData?.data?.hotels?.filter(
-                      flight => flight.status === status.status,
-                    ).length > 0 ||
-                    tripData?.data?.cabs?.filter(
-                      flight => flight.status === status.status,
-                    ).length > 0 ||
-                    tripData?.data?.bus?.filter(
-                      flight => flight.status === status.status,
-                    ).length > 0 ? (
-                      <>
-                        <Text style={styles.bookingStatus}>
-                          {tripData?.data?.flights?.filter(
-                            flight => flight.status === status.status,
-                          ).length > 0 ? (
-                            <>
-                              {
-                                tripData?.data?.flights?.filter(
-                                  flight => flight.status === status.status,
-                                ).length
-                              }
-                              -Flights,
-                            </>
-                          ) : null}
-                          {tripData?.data?.hotels?.filter(
-                            flight => flight.status === status.status,
-                          ).length > 0 ? (
-                            <>
-                              {
-                                tripData?.data?.hotels?.filter(
-                                  flight => flight.status === status.status,
-                                ).length
-                              }
-                              -Hotels,
-                            </>
-                          ) : null}
-                          {tripData?.data?.cabs?.filter(
-                            cabs => cabs.status === status.status,
-                          ).length > 0 ? (
-                            <>
-                              {
-                                tripData?.data?.cabs?.filter(
-                                  cabs => cabs.status === status.status,
-                                ).length
-                              }
-                              -Cab,
-                            </>
-                          ) : null}
-                          {tripData?.data?.bus?.filter(
-                            bus => bus.status === status.status,
-                          ).length > 0 ? (
-                            <>
-                              {
-                                tripData?.data?.bus?.filter(
-                                  bus => bus.status === status.status,
-                                ).length
-                              }
-                              -Bus
-                            </>
-                          ) : null}
-                        </Text>
-                        <View
-                          style={[
-                            styles.bookingStatusContainer,
-                            {backgroundColor: status.color},
-                          ]}>
-                          <Text
-                            style={[
-                              styles.bookingStatus,
-                              {color: colors.white},
-                            ]}>
-                            {status.status}
-                          </Text>
-                        </View>
-                      </>
-                    ) : null}
-                  </>
-                );
-              })}
-            </View>
+           {
+           tripData?.data?.length>0&&  <View style={styles.bookingStatusMainContainer}>
+             {statuses.map(status => {
+               return (
+                 <>
+                   {tripData?.data?.flights?.filter(
+                     flight => flight.status === status.status,
+                   ).length > 0 ||
+                   tripData?.data?.hotels?.filter(
+                     flight => flight.status === status.status,
+                   ).length > 0 ||
+                   tripData?.data?.cabs?.filter(
+                     flight => flight.status === status.status,
+                   ).length > 0 ||
+                   tripData?.data?.bus?.filter(
+                     flight => flight.status === status.status,
+                   ).length > 0 ? (
+                     <>
+                       <Text style={styles.bookingStatus}>
+                         {tripData?.data?.flights?.filter(
+                           flight => flight.status === status.status,
+                         ).length > 0 ? (
+                           <>
+                             {
+                               tripData?.data?.flights?.filter(
+                                 flight => flight.status === status.status,
+                               ).length
+                             }
+                             -Flights,
+                           </>
+                         ) : null}
+                         {tripData?.data?.hotels?.filter(
+                           flight => flight.status === status.status,
+                         ).length > 0 ? (
+                           <>
+                             {
+                               tripData?.data?.hotels?.filter(
+                                 flight => flight.status === status.status,
+                               ).length
+                             }
+                             -Hotels,
+                           </>
+                         ) : null}
+                         {tripData?.data?.cabs?.filter(
+                           cabs => cabs.status === status.status,
+                         ).length > 0 ? (
+                           <>
+                             {
+                               tripData?.data?.cabs?.filter(
+                                 cabs => cabs.status === status.status,
+                               ).length
+                             }
+                             -Cab,
+                           </>
+                         ) : null}
+                         {tripData?.data?.bus?.filter(
+                           bus => bus.status === status.status,
+                         ).length > 0 ? (
+                           <>
+                             {
+                               tripData?.data?.bus?.filter(
+                                 bus => bus.status === status.status,
+                               ).length
+                             }
+                             -Bus
+                           </>
+                         ) : null}
+                       </Text>
+                       <View
+                         style={[
+                           styles.bookingStatusContainer,
+                           {backgroundColor: status.color},
+                         ]}>
+                         <Text
+                           style={[
+                             styles.bookingStatus,
+                             {color: colors.white},
+                           ]}>
+                           {status.status}
+                         </Text>
+                       </View>
+                     </>
+                   ) : null}
+                 </>
+               );
+             })}
+           </View>
+           }
 
             {tripData ? (
               <View>
@@ -2017,7 +2119,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                         tripsPage={true}
                         startDate={cab.data.cabStartDate}
                         endDate={cab.data.cabEndDate}
-                        cabData={cabReq[0]?cabReq[0]:null}
+                        cabData={cabReq[0] ? cabReq[0] : null}
                         tripsCabType={cab.data.cabType}
                         cabTotal={cab.data}
                         tripId={id}
@@ -2148,7 +2250,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                             <TouchableOpacity
                               style={styles.voucherContainer}
                               onPress={() =>
-                                downloadExpense(expense.data.file)
+                                checkPermission(expense.data.file)
                               }>
                               <Text style={styles.voucherTitle}>Voucher</Text>
                               <IconSwitcher
@@ -4432,7 +4534,6 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                               ?.toString()
                                               ?.slice(4, 10)
                                           : '';
-                                        console.log(cabSDate, cabEDate);
                                         return (
                                           <>
                                             {s === 0 ? (
@@ -4542,7 +4643,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                           if (userAccountDetails.approvalType !== 'Mandatory') {
                             setSelectedTab('payment');
                           } else if (
-                            requestData?.status === 'Approved' &&
+                            requestData?.status !== undefined &&
                             userAccountDetails.approvalType === 'Mandatory'
                           ) {
                             setSelectedTab('payment');
@@ -4589,6 +4690,21 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                           Select the trips you want to complete the payment
                         </Text>
                       </View>
+
+                      <View style={{marginTop:responsiveHeight(1)}}>
+                        {userAccountDetails.approvalType === 'Mandatory'&&  (
+                            <Text style={[
+                            styles.subTitle,
+                            {fontSize: responsiveHeight(1.7)},
+                          ]}>
+                            <Text style={{color:colors.red}}>Note: </Text>
+                              Trip will be booked only after approval from your
+                              manager
+                            </Text>
+                        )
+                        }
+                      </View>
+
                       {tripData?.hotels?.filter(hotel =>
                         hotelNotSubmittedIds.includes(hotel.id),
                       )?.length > 0 ||
@@ -4758,11 +4874,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                 ]}
                                 onPress={handleClick}>
                                 {!paymentLoading ? (
-                                  <Text
-                                    style={[
-                                      styles.btnTitle,
-                                
-                                    ]}>
+                                  <Text style={[styles.btnTitle]}>
                                     Submit for Booking
                                   </Text>
                                 ) : (

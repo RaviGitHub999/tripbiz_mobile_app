@@ -116,7 +116,7 @@ const BusRenderData = ({item, tripsPage, bookingBus, busData,tripId}) => {
             color={colors.black}
             iconsize={3}
           />
-          <Text style={styles.travelName}>{item.TravelName}</Text>
+          <Text style={[styles.travelName,{flex:1}]}>{item.TravelName}</Text>
         </View>
         <View style={styles.travelTimeContainer}>
           <View>
