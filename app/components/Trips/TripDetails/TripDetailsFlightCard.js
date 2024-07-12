@@ -11,6 +11,7 @@ import { styles } from './tripdetailsFlightCardstyles'
 import ReCheck from '../../common/recheck/ReCheck'
 import FCard from './FCard'
 import ProgressBar from '../../common/progressBar/ProgressBar'
+import TravellerDetailsBtn from '../../common/mainComponents/TravellerDetailsButton/TravellerDetailsBtn'
 const TripDetailsFlightCard = ({
     flightGrp,
     index,
@@ -24,7 +25,9 @@ const TripDetailsFlightCard = ({
     flightId,
     tripsPage,
     downloadUrl,
-    updatedAt
+    updatedAt,
+    flight,
+    isInternational
 }) => {
     const [stopDtls, setStopDtls] = useState([]);
     const [showStopDtls, setShowStopDtls] = useState(false);
@@ -546,7 +549,7 @@ const TripDetailsFlightCard = ({
                   setDeleteType('flights');
                   setDeleteId(flightId);
                 }}>
-                <IconSwitcher
+                <IconSwitcher 
                   componentName="MaterialIcons"
                   iconName="delete"
                   color={colors.red}
@@ -555,6 +558,7 @@ const TripDetailsFlightCard = ({
               </TouchableOpacity>
             </>
           </View>
+          <TravellerDetailsBtn adults={flight?.data?.adults} eachTripData={flight} tripId={tripId} child={flight?.data?.child} infant={flight?.data?.infant} isInternational={isInternational}/>
           {isTimeReCheck ? (
             <View
               style={{
@@ -569,6 +573,8 @@ const TripDetailsFlightCard = ({
               />
             </View>
           ) : null}
+
+ 
         </View>
 
         <PopUp value={showStopDtls} handlePopUpClose={handleStopsClose}>

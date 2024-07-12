@@ -20,6 +20,7 @@ import IconSwitcher from '../../common/icons/IconSwitcher';
 import PopUp from '../../common/popup/PopUp';
 import {TextInput} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import TravellerDetailsBtn from '../../common/mainComponents/TravellerDetailsButton/TravellerDetailsBtn';
 var imgs = [
   {
     passenger: 4,
@@ -92,6 +93,7 @@ const CabCard = ({
   approvePage,
   tripId,
   countCab,
+  totalCab
 }) => {
   const {navigate} = useNavigation();
   var [submitIsOpen, setSubmitIsOpen] = useState(false);
@@ -435,6 +437,7 @@ const CabCard = ({
             </View>
           </>
         ) : null}
+       {tripsPage ? <TravellerDetailsBtn adults={1} eachTripData={totalCab} tripId={tripId} />:null}
       </View>
       <PopUp
         value={submitIsOpen}

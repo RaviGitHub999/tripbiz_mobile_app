@@ -25,7 +25,7 @@ export const styles = StyleSheet.create({
     {
         marginTop: responsiveHeight(1.2),
         // gap: responsiveHeight(0.5),
-        // alignSelf:"flex-end"
+        alignSelf:"flex-end"
     },
     tripName: {
         fontSize: responsiveHeight(2.3),
@@ -387,14 +387,14 @@ borderRadius:responsiveHeight(1)
     },
     tabTitles:
     {
-        fontSize: responsiveHeight(1.8),
-        fontFamily: fonts.primary,
+        fontSize: responsiveHeight(1.5),
+        fontFamily: fonts.secondry,
         color: colors.primary
     },
     tabTitlesSelected:
     {
-        fontSize: responsiveHeight(1.8),
-        fontFamily: fonts.primary,
+        fontSize: responsiveHeight(1.5),
+        fontFamily: fonts.secondry,
         color: colors.white
     },
     travelDetailsFlightCard:
@@ -430,14 +430,14 @@ borderRadius:responsiveHeight(1)
     btn:
     {
         alignSelf: 'center',
-        paddingHorizontal: responsiveHeight(2),
-        paddingVertical: responsiveHeight(1),
+        paddingHorizontal: responsiveHeight(1),
+        paddingVertical: responsiveHeight(.5),
         borderRadius: responsiveHeight(1),
         backgroundColor: colors.primary,
     },
     btnTitle:
     {
-        fontSize: responsiveHeight(1.8),
+        fontSize: responsiveHeight(1.5),
         color: colors.white,
         fontFamily: fonts.primary
     },

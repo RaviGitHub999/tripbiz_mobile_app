@@ -16,6 +16,7 @@ import PopUp from '../../common/popup/PopUp';
 import MyContext from '../../../context/Context';
 import {useNavigation} from '@react-navigation/native';
 import {ActivityIndicator} from 'react-native';
+import TravellerDetailsBtn from '../../common/mainComponents/TravellerDetailsButton/TravellerDetailsBtn';
 var statuses = [
   {status: 'Paid and Submitted', color: '#ffa500'},
   {status: 'Need clarification', color: '#FFC107'},
@@ -31,7 +32,7 @@ var reqStatuses = [
   {status: 'Pending', color: '#ffa500'},
   {status: 'Not Requested', color: '#808080'},
 ];
-const BusRenderData = ({item, tripsPage, bookingBus, busData,tripId}) => {
+const BusRenderData = ({item, tripsPage, bookingBus, busData,tripId,totalBus}) => {
   const [openBusDetails, setOpenBusDetails] = useState(false);
   const[buspickupanddrop,setBusPickUpandDrop]=useState(false)
   const [openDelete, setOpenDelete] = useState(false);
@@ -300,6 +301,7 @@ const BusRenderData = ({item, tripsPage, bookingBus, busData,tripId}) => {
             </View>
           </>
         ) : null}
+         {tripsPage ? <TravellerDetailsBtn adults={bookingBus && bookingBus.passengers} eachTripData={totalBus} tripId={tripId}/>:null}
       </View>
       <PopUp
         value={openBusDetails}

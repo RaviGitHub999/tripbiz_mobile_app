@@ -9,6 +9,7 @@ export const styles=StyleSheet.create(
             alignItems:'center',
             justifyContent:"space-around",
             backgroundColor:'rgba(25, 39, 39, 0.95)',
+            // backgroundColor:colors.black,
             paddingVertical:responsiveHeight(2),
             borderRadius:responsiveHeight(1),
         } ,

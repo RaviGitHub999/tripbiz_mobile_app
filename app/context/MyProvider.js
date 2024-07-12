@@ -3887,7 +3887,7 @@ export default class MyProvider extends Component {
             const tripSnap = await tripDocRef.get();
             const tripData = tripSnap.data();
             const travDetails = tripData?.travellerDetails;
-            const newTravDetails = { ...travellerDetails, ...travDetails };
+            const newTravDetails = {  ...travDetails,...travellerDetails, };
             
             console.log(newTravDetails);
       
