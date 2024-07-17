@@ -12,6 +12,7 @@ import ReCheck from '../../common/recheck/ReCheck'
 import FCard from './FCard'
 import ProgressBar from '../../common/progressBar/ProgressBar'
 import TravellerDetailsBtn from '../../common/mainComponents/TravellerDetailsButton/TravellerDetailsBtn'
+import moment from 'moment'
 const TripDetailsFlightCard = ({
     flightGrp,
     index,
@@ -27,7 +28,8 @@ const TripDetailsFlightCard = ({
     downloadUrl,
     updatedAt,
     flight,
-    isInternational
+    isInternational,
+    totalFlight
 }) => {
     const [stopDtls, setStopDtls] = useState([]);
     const [showStopDtls, setShowStopDtls] = useState(false);
@@ -48,6 +50,7 @@ const TripDetailsFlightCard = ({
     const [reCheckSeats, setReCheckSeats] = useState(0)
     const [checkingDate, setCheckingDate] = useState(null)
     const [recheckSeatsAvailable, setRecheckSeatsAvailable] = useState(false);
+    const [alltimeStamp, setAllTimeStamp] = useState(false);
     const { actions, flightsLogosData, domesticFlight } = useContext(MyContext)
     const statuses = [
         { status: "Paid and Submitted", color: "#ffa500" },
@@ -306,9 +309,6 @@ const TripDetailsFlightCard = ({
         setRecheckSeatsAvailable(true); // All selected seats are available
       };
 
-
-
-
     const handleRecheckFlightPrice = async () => {
         setReCheckLoading(true)
         setOpenPriceReCheck(true)
@@ -346,6 +346,15 @@ const TripDetailsFlightCard = ({
             console.error('An error occurred', error);
         }
     }
+const openAllTimeStamps=()=>
+{
+setAllTimeStamp(true)
+}
+const closeAllTimeStamps=()=>
+{
+  setAllTimeStamp(false)
+}
+
     return (
       <View style={styles.mainConatiner}>
         <View
@@ -498,20 +507,34 @@ const TripDetailsFlightCard = ({
               </View>
             )}
 
-            <View style={styles.hotelTotalPriceContainer}>
-              <Text
-                style={styles.hotelTotalPrice}>{`Total Price : ₹ ${Math.ceil(
-                flightBooking?.finalPrice,
-              )?.toLocaleString('en-IN')}`}</Text>
-              <TouchableOpacity
-                onPress={() => {
-                  setOpenFlightPrice(prev => !prev);
-                }}>
+            <View
+              style={[
+                styles.hotelTotalPriceContainer,
+                {justifyContent: 'space-between'},
+              ]}>
+              <View style={styles.hotelTotalPriceContainer}>
+                <Text
+                  style={styles.hotelTotalPrice}>{`Total Price : ₹ ${Math.ceil(
+                  flightBooking?.finalPrice,
+                )?.toLocaleString('en-IN')}`}</Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    setOpenFlightPrice(prev => !prev);
+                  }}>
+                  <IconSwitcher
+                    componentName="Entypo"
+                    iconName="info-with-circle"
+                    color={colors.black}
+                    iconsize={1.8}
+                  />
+                </TouchableOpacity>
+              </View>
+              <TouchableOpacity onPress={openAllTimeStamps}>
                 <IconSwitcher
-                  componentName="Entypo"
-                  iconName="info-with-circle"
+                  componentName="MaterialIcons"
+                  iconName="access-alarm"
                   color={colors.black}
-                  iconsize={1.8}
+                  iconsize={3}
                 />
               </TouchableOpacity>
             </View>
@@ -542,23 +565,34 @@ const TripDetailsFlightCard = ({
                 }`}</Text>
               </Text>
             </View>
-            <>
+           {flightReq[0]?.requestStatus === "Pending" ||
+                flightStatus?.status === "Submitted" ||
+                flightStatus?.status === "Booked" ||
+                flightReq[0]?.requestStatus === "Approved" ? null : <>
               <TouchableOpacity
                 onPress={() => {
                   setOpenDelete(true);
                   setDeleteType('flights');
                   setDeleteId(flightId);
                 }}>
-                <IconSwitcher 
+                <IconSwitcher
                   componentName="MaterialIcons"
                   iconName="delete"
                   color={colors.red}
                   iconsize={2.5}
                 />
               </TouchableOpacity>
-            </>
+            </>}
           </View>
-          <TravellerDetailsBtn adults={flight?.data?.adults} eachTripData={flight} tripId={tripId} child={flight?.data?.child} infant={flight?.data?.infant} isInternational={isInternational}/>
+          <TravellerDetailsBtn
+            adults={flight?.data?.adults}
+            eachTripData={flight}
+            tripId={tripId}
+            child={flight?.data?.child}
+            infant={flight?.data?.infant}
+            isInternational={isInternational}
+            status={flightStatus?.status}
+          />
           {isTimeReCheck ? (
             <View
               style={{
@@ -573,8 +607,6 @@ const TripDetailsFlightCard = ({
               />
             </View>
           ) : null}
-
- 
         </View>
 
         <PopUp value={showStopDtls} handlePopUpClose={handleStopsClose}>
@@ -991,7 +1023,11 @@ const TripDetailsFlightCard = ({
           }}>
           {tripsPage ? (
             <>
-              <FCard airline={flightLogo} flightArr={flightArr} flightData={{ data: flightBooking }}/>
+              <FCard
+                airline={flightLogo}
+                flightArr={flightArr}
+                flightData={{data: flightBooking}}
+              />
               {checkingDate ? (
                 <>
                   {reCheckLoading ? (
@@ -1221,6 +1257,84 @@ const TripDetailsFlightCard = ({
               )}
             </>
           ) : null}
+        </PopUp>
+        {/* alltimeStamps */}
+        <PopUp value={alltimeStamp} handlePopUpClose={closeAllTimeStamps}>
+          <View style={styles.timeStampsContainer}>
+          <IconSwitcher
+                componentName="Octicons"
+                iconName="dot-fill"
+                iconsize={1.8}
+              />
+            <Text style={styles.timeStampsTitles}>Added Date :</Text>
+            <Text style={styles.timeStampsTitles}>
+              {totalFlight &&
+                totalFlight[0]?.date &&
+                moment(totalFlight[0]?.date?.seconds * 1000).format(
+                  'MMMM D, h:mm a',
+                )}
+            </Text>
+          </View>
+          <View style={styles.timeStampsContainer}>
+          <IconSwitcher
+                componentName="Octicons"
+                iconName="dot-fill"
+                iconsize={1.8}
+              />
+            <Text style={styles.timeStampsTitles}>Sent to Approval :</Text>
+            <Text style={styles.timeStampsTitles}>
+              {totalFlight &&
+                totalFlight[0]?.manager_request_time ?
+                moment(totalFlight[0]?.manager_request_time * 1000).format(
+                  'MMMM D, h:mm a',
+                ):'Not Requested for Approval'}
+            </Text>
+          </View>
+          <View style={styles.timeStampsContainer}>
+          <IconSwitcher
+                componentName="Octicons"
+                iconName="dot-fill"
+                iconsize={1.8}
+              />
+            <Text style={styles.timeStampsTitles}>Approved Date :</Text>
+            <Text style={styles.timeStampsTitles}>
+              {totalFlight &&
+                totalFlight[0]?.managerApprovedTime ?
+                moment(totalFlight[0]?.managerApprovedTime?.seconds * 1000).format(
+                  'MMMM D, h:mm a',
+                ):'Not Approved'}
+            </Text>
+          </View>
+          <View style={styles.timeStampsContainer}>
+          <IconSwitcher
+                componentName="Octicons"
+                iconName="dot-fill"
+                iconsize={1.8}
+              />
+            <Text style={styles.timeStampsTitles}>Submitted Date :</Text>
+            <Text style={styles.timeStampsTitles}>
+              {totalFlight &&
+                totalFlight[0]?.submitted_date ?
+                moment(totalFlight[0]?.submitted_date?.seconds * 1000).format(
+                  'MMMM D, h:mm a',
+                ):'Not Submitted'}
+            </Text>
+          </View>
+          <View style={styles.timeStampsContainer}>
+          <IconSwitcher
+                componentName="Octicons"
+                iconName="dot-fill"
+                iconsize={1.8}
+              />
+            <Text style={styles.timeStampsTitles}>Booked Date :</Text>
+            <Text style={styles.timeStampsTitles}>
+              {totalFlight &&
+                totalFlight[0]?.booked_date ?
+                moment(totalFlight[0]?.booked_date?.seconds * 1000).format(
+                  'MMMM D, h:mm a',
+                ):'Not Booked'}
+            </Text>
+          </View>
         </PopUp>
       </View>
     );

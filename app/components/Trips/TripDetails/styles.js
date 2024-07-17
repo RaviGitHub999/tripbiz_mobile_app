@@ -239,16 +239,17 @@ export const styles = StyleSheet.create({
         borderRadius:responsiveHeight(1),
         marginTop:responsiveHeight(.5),
         backgroundColor:colors.white,
-        elevation:4
+        elevation:4,
+        gap:responsiveHeight(0.5)
     },
     bookingStatusContainer:
     {
-padding:responsiveHeight(0.8),
+padding:responsiveHeight(0.6),
 borderRadius:responsiveHeight(1)
     },
     bookingStatus: {
         fontFamily: fonts.textFont,
-        fontSize: responsiveHeight(1.6),
+        fontSize: responsiveHeight(1.3),
         color: colors.lightGray
     },
     bookedHotelDatesContainer: {
@@ -749,6 +750,24 @@ width:responsiveHeight(10),borderRadius:responsiveHeight(1)
     approvalSubContainer:{
         borderRightWidth: 1, 
         width: '20%' 
+    },
+    notFilledDataContainer:
+    {
+        flexDirection:'row',
+        alignItems:'center',
+        gap:responsiveHeight(1)
+    },
+    timeStampsContainer:{
+        flexDirection:'row',
+        alignItems:'center',
+        gap:responsiveWidth(2),
+    },
+    timeStampsTitles:
+    {
+        fontSize: responsiveHeight(1.6),
+        fontFamily: fonts.primary,
+        color: colors.primary,
+        flex:1
     }
 
 

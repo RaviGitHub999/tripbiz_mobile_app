@@ -96,15 +96,16 @@ const components = [
     componentName: "FontAwesome"
   },
   {
-    categoryName: "cab",
-    iconName: "taxi",
-    componentName: "FontAwesome5"
-  },
-  {
     categoryName: "bus",
     iconName: "bus-alt",
     componentName: "FontAwesome5"
   },
+  {
+    categoryName: "cab",
+    iconName: "taxi",
+    componentName: "FontAwesome5"
+  },
+  
 ];
 var dateObject = new Date();
 var options = {
@@ -292,6 +293,8 @@ export default class MyProvider extends Component {
       trip: {
         flights: [],
         hotels: [],
+        cabs:[],
+        bus:[],
         date: new Date(),
         name: newTripCompleteString,
         status: ""
@@ -306,6 +309,7 @@ export default class MyProvider extends Component {
       busDestData: [],
       busDestLoading: false,
       busResList: [],
+      busService:null,
       actions: {
         handleBookinghotelquery: (query) => {
           this.setState({ bookinghotelquery: query })
@@ -2459,6 +2463,7 @@ export default class MyProvider extends Component {
               domesticHotel: Number(admin[0].domesticHotels),
               internationalHotel: Number(admin[0].internationalHotels),
               cabService: Number(admin[0].cabs),
+              busService:Number(admin[0].buses),
             });
 
             await this.state.actions.getAllUsers();
@@ -4002,7 +4007,68 @@ export default class MyProvider extends Component {
             return [];
           }
         },
-  
+        
+        getTripsCabs: async (hotelIds, tripId, userId) => {
+          try {
+            const hotelArray = [];
+
+            if (hotelIds.length > 0) {
+              for (const hotelId of hotelIds) {
+                const hotelDocRef = firestore()
+                  .collection("Accounts")
+                  .doc(userId)
+                  .collection("trips")
+                  .doc(tripId)
+                  .collection("cabs")
+                  .doc(hotelId);
+
+                const querySnapshot = await hotelDocRef.get();
+                const sendData = querySnapshot.data();
+
+                hotelArray.push({
+                  id: querySnapshot.id,
+                  data: sendData,
+                });
+              }
+            }
+
+            return hotelArray;
+          } catch (error) {
+            console.error("Error getting Cabs:", error);
+            return [];
+          }
+        },
+
+        getTripsBuses: async (BusIds, tripId, userId) => {
+          try {
+            const busArray = [];
+
+            if (BusIds.length > 0) {
+              for (const busId of BusIds) {
+                const hotelDocRef = firestore()
+                  .collection("Accounts")
+                  .doc(userId)
+                  .collection("trips")
+                  .doc(tripId)
+                  .collection("bus")
+                  .doc(busId);
+
+                const querySnapshot = await hotelDocRef.get();
+                const sendData = querySnapshot.data();
+
+                busArray.push({
+                  id: querySnapshot.id,
+                  data: sendData,
+                });
+              }
+            }
+
+            return busArray;
+          } catch (error) {
+            console.error("Error getting Buses:", error);
+            return [];
+          }
+        },
         //   const requestData = [];
         //           this.setState({
         //             approveLoading: true,
@@ -4055,6 +4121,13 @@ export default class MyProvider extends Component {
         //           }
         //         },
         getTripsForApproval: async (approvalRequests) => {
+
+          if (!approvalRequests) {
+            this.setState({
+              approveLoading: false,
+            });
+            return;
+          }
           this.setState({
             approveLoading: true,
           });
@@ -4064,15 +4137,16 @@ export default class MyProvider extends Component {
           try {
             if (approvalRequests !== undefined) {
               await Promise.all(
-                approvalRequests.map(async (req) => {
+                approvalRequests.slice(-10)?.map(async (req) => {
                   const userDataRef = firestore().collection("Accounts").doc(req.userId);
                   const userData = await userDataRef.get();
                   const tripRef = userDataRef.collection("trips").doc(req.tripId);
 
-                  const [flights, hotels, cabs] = await Promise.all([
+                  const [flights, hotels, cabs,bus] = await Promise.all([
                     await this.state.actions.getTripsFlights(req.flights, req.tripId, req.userId),
                     await this.state.actions.getTripsHotels(req.hotels, req.tripId, req.userId),
-                    // await this.state.actions.getTripsCabs(req.cabs, req.tripId, req.userId),
+                    await this.state.actions.getTripsCabs(req.cabs, req.tripId, req.userId),
+                    await this.state.actions.getTripsBuses(req.bus, req.tripId, req.userId),
                   ]);
 
                   const tripDoc = await tripRef.get();
@@ -4086,7 +4160,8 @@ export default class MyProvider extends Component {
                       data: tripDoc.data(),
                       hotels: hotels,
                       flights: flights,
-                      // cabs: cabs,
+                      cabs: cabs,
+                      bus: bus,
                     },
                     requestDetails: reqDoc.data(),
                     approvalRequest: req,
@@ -4939,7 +5014,7 @@ export default class MyProvider extends Component {
               return (
                 total +
                 seat.Price.OfferedPriceRoundedOff +
-                Math.ceil((seat.Price.OfferedPriceRoundedOff * 3) / 100)
+                Math.ceil((seat.Price.OfferedPriceRoundedOff *this.state.busService ) / 100)
               );
             }, 0);
             bookingBus.passengers = this.state.NoofBusPassengers;

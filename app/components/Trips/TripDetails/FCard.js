@@ -102,7 +102,7 @@ const FCard = props => {
           alignSelf: 'flex-end',
         }}>
         <Text style={styles.totalPrice}>{`${Math.ceil(
-          flightData?.data?.finalPrice,
+          flightData?.data[0]?.finalPrice??flightData?.data?.finalPrice,
         )?.toLocaleString('en-IN')}`}</Text>
       </View>
     </View>

@@ -67,23 +67,24 @@ const SeatLayout = ({seatData,boardingPoint,droppingPoint}) => {
     seat.ColumnNo === "009" ? false:true
   );
   return (
-    <ScrollView style={styles.appContainer}>
-            <Deck
+    <ScrollView style={styles.appContainer} horizontal>
+          { upperDeckData.length>0&& 
+          <Deck
         data={upperDeckData}
         title="Upper Deck"
         addMarginAfterRow={1}
         toggleSeatSelection={toggleSeatSelection}
         selectedSeats={selectedSeats}
         isUpperDeck
-      />
-      <Deck
+      />}
+      {lowerDeckData.length>0&&<Deck
         data={lowerDeckData}
         title="Lower Deck"
         addMarginAfterRow={shouldAddMarginAfterLowerDeckRow2 ? 1: null}
         toggleSeatSelection={toggleSeatSelection}
         selectedSeats={selectedSeats}
         isUpperDeck={false}
-      />
+      />}
   
     </ScrollView>
   );
@@ -99,9 +100,9 @@ const Deck = ({
 }) => {
   return (
   <>
-  <Text style={styles.deckTitle}>{title}</Text> 
+  {/* <Text style={styles.deckTitle}>{title}</Text>  */}
     <View style={[styles.deck, addMarginAfterRow && styles.deckWithMargin]}>
-      {/* <Text style={styles.deckTitle}>{title}</Text> */}
+      <Text style={styles.deckTitle}>{title}</Text>
       {data.map((row, rowIndex) => (
         <ScrollView key={rowIndex}>
           <SeatRow
@@ -226,7 +227,7 @@ const styles = StyleSheet.create({
   },
   deckTitle: {
     fontSize: responsiveHeight(1.8),
-    marginVertical: responsiveHeight(2),
+    marginBottom: responsiveHeight(1),
     textAlign: "center",
     fontFamily:fonts.primary,
     color:colors.primary

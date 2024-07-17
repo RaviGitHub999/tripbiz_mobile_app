@@ -33,7 +33,7 @@ const BusInfo = () => {
   var [isloading, setIsLoading] = useState(false);
   const {
     bookingBus,
-    fetchingBusSeat,
+    busService,
     userTripStatus,
     actions,
     selectedTripId,
@@ -293,7 +293,7 @@ const BusInfo = () => {
                         (total, seat) =>
                           total +
                           Math.ceil(
-                            (seat.Price.OfferedPriceRoundedOff * 3) / 100,
+                            (seat.Price.OfferedPriceRoundedOff * busService) / 100,
                           ),
                         0,
                       )

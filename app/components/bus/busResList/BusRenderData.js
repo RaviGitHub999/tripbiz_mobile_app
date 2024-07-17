@@ -17,11 +17,12 @@ import MyContext from '../../../context/Context';
 import {useNavigation} from '@react-navigation/native';
 import {ActivityIndicator} from 'react-native';
 import TravellerDetailsBtn from '../../common/mainComponents/TravellerDetailsButton/TravellerDetailsBtn';
+import moment from 'moment';
 var statuses = [
   {status: 'Paid and Submitted', color: '#ffa500'},
   {status: 'Need clarification', color: '#FFC107'},
   {status: 'Price Revision', color: '#2196F3'},
-  {status: 'Booked', color: '#4CAF50'},
+  {status: 'Booked', color: 'green'},
   {status: 'Cancelled', color: '#FF0000'},
   {status: 'Submitted,Payment Pending', color: '#ffa500'},
   {status: 'Booked,Payment Pending', color: '#4CAF50'},
@@ -32,13 +33,21 @@ var reqStatuses = [
   {status: 'Pending', color: '#ffa500'},
   {status: 'Not Requested', color: '#808080'},
 ];
-const BusRenderData = ({item, tripsPage, bookingBus, busData,tripId,totalBus}) => {
+const BusRenderData = ({
+  item,
+  tripsPage,
+  bookingBus,
+  busData,
+  tripId,
+  totalBus,
+}) => {
   const [openBusDetails, setOpenBusDetails] = useState(false);
-  const[buspickupanddrop,setBusPickUpandDrop]=useState(false)
+  const [buspickupanddrop, setBusPickUpandDrop] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [loader, setLoader] = useState(false);
   var [openPriceInfo, setOpenPriceInfo] = useState(false);
-  const {actions, busTraceId} = useContext(MyContext);
+  const [alltimeStamp, setAllTimeStamp] = useState(false);
+  const {actions, busService} = useContext(MyContext);
   const {navigate, push} = useNavigation();
   const depdate = new Date(item.DepartureTime);
   const depformattedDate = depdate.toLocaleDateString('en-US', {
@@ -76,40 +85,60 @@ const BusRenderData = ({item, tripsPage, bookingBus, busData,tripId,totalBus}) =
   }, []);
 
   const handleDelete = async () => {
-    await actions.deleteTripItem(tripId, busData?.id, "bus");
+    await actions.deleteTripItem(tripId, busData?.id, 'bus');
     setOpenDelete(false);
+  };
+  const openAllTimeStamps = () => {
+    setAllTimeStamp(true);
+  };
+  const closeAllTimeStamps = () => {
+    setAllTimeStamp(false);
   };
   return (
     <>
-      <View style={styles.busCard}>
-        {tripsPage?<>
-          <View style={styles.routeContainer}>
-          <Text style={styles.routeName}>{bookingBus?.origin?.cityName}</Text>
-          <IconSwitcher
-            componentName="Octicons"
-            iconName="arrow-right"
-            color={colors.primary}
-            iconsize={2.5}
-          />
-          <Text style={styles.routeName}>
-            {bookingBus?.destination?.cityName}
-          </Text>
-        </View>
-        <View style={styles.selectedSeatsContainer}>
-          <Text style={styles.travelName}>Selected Seats :</Text>
-          <View style={{flexDirection: 'row'}}>
-            {bookingBus?.selectedSeat &&
-              bookingBus.selectedSeat.map((e, i) => (
-                <Text
-                  key={i}
-                  style={[styles.travelName, {color: colors.highlight}]}>
-                  {e.SeatName}
-                  {i < bookingBus.selectedSeat.length - 1 && ','}
-                </Text>
-              ))}
-          </View>
-        </View>
-        </>:null}
+      <View
+        style={[
+          styles.busCard,
+          {
+            backgroundColor: busData?.status
+              ? busData?.status === 'Booked'
+                ? 'honeydew'
+                : 'white'
+              : 'white',
+          },
+        ]}>
+        {tripsPage ? (
+          <>
+            <View style={styles.routeContainer}>
+              <Text style={styles.routeName}>
+                {bookingBus?.origin?.cityName}
+              </Text>
+              <IconSwitcher
+                componentName="Octicons"
+                iconName="arrow-right"
+                color={colors.primary}
+                iconsize={2.5}
+              />
+              <Text style={styles.routeName}>
+                {bookingBus?.destination?.cityName}
+              </Text>
+            </View>
+            <View style={styles.selectedSeatsContainer}>
+              <Text style={styles.travelName}>Selected Seats :</Text>
+              <View style={{flexDirection: 'row'}}>
+                {bookingBus?.selectedSeat &&
+                  bookingBus.selectedSeat.map((e, i) => (
+                    <Text
+                      key={i}
+                      style={[styles.travelName, {color: colors.highlight}]}>
+                      {e.SeatName}
+                      {i < bookingBus.selectedSeat.length - 1 && ','}
+                    </Text>
+                  ))}
+              </View>
+            </View>
+          </>
+        ) : null}
         <View style={styles.travelNameContainer}>
           <IconSwitcher
             componentName="FontAwesome5"
@@ -117,7 +146,7 @@ const BusRenderData = ({item, tripsPage, bookingBus, busData,tripId,totalBus}) =
             color={colors.black}
             iconsize={3}
           />
-          <Text style={[styles.travelName,{flex:1}]}>{item.TravelName}</Text>
+          <Text style={[styles.travelName, {flex: 1}]}>{item.TravelName}</Text>
         </View>
         <View style={styles.travelTimeContainer}>
           <View>
@@ -153,9 +182,15 @@ const BusRenderData = ({item, tripsPage, bookingBus, busData,tripId,totalBus}) =
           </TouchableOpacity>
           {!tripsPage ? (
             <Text style={styles.time}>{item.AvailableSeats} Seats Left</Text>
-          ) :<TouchableOpacity onPress={()=>setBusPickUpandDrop(true)}>
-            <IconSwitcher componentName='MaterialCommunityIcons' iconName='bus-stop'  iconsize={4}/>
-          </TouchableOpacity> }
+          ) : (
+            <TouchableOpacity onPress={() => setBusPickUpandDrop(true)}>
+              <IconSwitcher
+                componentName="MaterialCommunityIcons"
+                iconName="bus-stop"
+                iconsize={4}
+              />
+            </TouchableOpacity>
+          )}
           {tripsPage ? (
             <>
               <Text style={styles.price}>
@@ -240,22 +275,36 @@ const BusRenderData = ({item, tripsPage, bookingBus, busData,tripId,totalBus}) =
                 ) : null}
               </>
               {tripsPage ? (
-                <View style={styles.hotelTotalPriceContainer}>
-                  <Text
-                    style={
-                      styles.hotelTotalPrice
-                    }>{`Total Price : ₹ ${Math.ceil(
-                    bookingBus?.busTotalPrice,
-                  ).toLocaleString('en-IN')}`}</Text>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setOpenPriceInfo(true);
-                    }}>
+                <View
+                  style={[
+                    styles.hotelTotalPriceContainer,
+                    {justifyContent: 'space-between'},
+                  ]}>
+                  <View style={styles.hotelTotalPriceContainer}>
+                    <Text
+                      style={
+                        styles.hotelTotalPrice
+                      }>{`Total Price : ₹ ${Math.ceil(
+                      bookingBus?.busTotalPrice,
+                    ).toLocaleString('en-IN')}`}</Text>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setOpenPriceInfo(true);
+                      }}>
+                      <IconSwitcher
+                        componentName="Entypo"
+                        iconName="info-with-circle"
+                        color={colors.black}
+                        iconsize={1.8}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  <TouchableOpacity onPress={openAllTimeStamps}>
                     <IconSwitcher
-                      componentName="Entypo"
-                      iconName="info-with-circle"
+                      componentName="MaterialIcons"
+                      iconName="access-alarm"
                       color={colors.black}
-                      iconsize={1.8}
+                      iconsize={3}
                     />
                   </TouchableOpacity>
                 </View>
@@ -285,23 +334,35 @@ const BusRenderData = ({item, tripsPage, bookingBus, busData,tripId,totalBus}) =
                   </Text>
                 </Text>
               </View>
-              <>
-                <TouchableOpacity
-                  onPress={() => {
-                    setOpenDelete(true);
-                  }}>
-                  <IconSwitcher
-                    componentName="MaterialIcons"
-                    iconName="delete"
-                    color={colors.red}
-                    iconsize={2.5}
-                  />
-                </TouchableOpacity>
-              </>
+              {busData?.requestStatus === 'Pending' ||
+              busData?.status === 'Submitted' ||
+              busData?.status === 'Booked' ||
+              busData?.requestStatus === 'Approved' ? null : (
+                <>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setOpenDelete(true);
+                    }}>
+                    <IconSwitcher
+                      componentName="MaterialIcons"
+                      iconName="delete"
+                      color={colors.red}
+                      iconsize={2.5}
+                    />
+                  </TouchableOpacity>
+                </>
+              )}
             </View>
           </>
         ) : null}
-         {tripsPage ? <TravellerDetailsBtn adults={bookingBus && bookingBus.passengers} eachTripData={totalBus} tripId={tripId}/>:null}
+        {tripsPage ? (
+          <TravellerDetailsBtn
+            adults={bookingBus && bookingBus.passengers}
+            eachTripData={totalBus}
+            tripId={tripId}
+            status={busData?.status}
+          />
+        ) : null}
       </View>
       <PopUp
         value={openBusDetails}
@@ -381,7 +442,9 @@ const BusRenderData = ({item, tripsPage, bookingBus, busData,tripId,totalBus}) =
                 ? bookingBus.selectedSeat.reduce(
                     (total, seat) =>
                       total +
-                      Math.ceil((seat.Price.OfferedPriceRoundedOff * 3) / 100),
+                      Math.ceil(
+                        (seat.Price.OfferedPriceRoundedOff * busService) / 100,
+                      ),
                     0,
                   )
                 : 0}
@@ -403,14 +466,25 @@ const BusRenderData = ({item, tripsPage, bookingBus, busData,tripId,totalBus}) =
           </View>
         </View>
       </PopUp>
-      <PopUp  value={buspickupanddrop}
+      <PopUp
+        value={buspickupanddrop}
         handlePopUpClose={() => {
           setBusPickUpandDrop(false);
         }}>
-<View>
-  <Text style={styles.travelName}>Boarding Point : <Text style={{color:colors.highlight}}>{bookingBus?.boardingPointDetails}</Text></Text>
-  <Text style={styles.travelName}>Dropping Point : <Text style={{color:colors.highlight}}>{bookingBus?.droppingPointDetails}</Text></Text>
-</View>
+        <View>
+          <Text style={styles.travelName}>
+            Boarding Point :{' '}
+            <Text style={{color: colors.highlight}}>
+              {bookingBus?.boardingPointDetails}
+            </Text>
+          </Text>
+          <Text style={styles.travelName}>
+            Dropping Point :{' '}
+            <Text style={{color: colors.highlight}}>
+              {bookingBus?.droppingPointDetails}
+            </Text>
+          </Text>
+        </View>
       </PopUp>
       <PopUp
         value={openDelete}
@@ -433,6 +507,81 @@ const BusRenderData = ({item, tripsPage, bookingBus, busData,tripId,totalBus}) =
             }}>
             <Text style={styles.hotelDeleteBtnTitle}>Go Back</Text>
           </TouchableOpacity>
+        </View>
+      </PopUp>
+      {/* alltimeStamps */}
+      <PopUp value={alltimeStamp} handlePopUpClose={closeAllTimeStamps}>
+        <View style={styles.timeStampsContainer}>
+          <IconSwitcher
+            componentName="Octicons"
+            iconName="dot-fill"
+            iconsize={1.8}
+          />
+          <Text style={styles.timeStampsTitles}>Added Date :</Text>
+          <Text style={styles.timeStampsTitles}>
+            {busData?.date &&
+              moment(busData?.date?.seconds * 1000).format('MMMM D, h:mm a')}
+          </Text>
+        </View>
+        <View style={styles.timeStampsContainer}>
+          <IconSwitcher
+            componentName="Octicons"
+            iconName="dot-fill"
+            iconsize={1.8}
+          />
+          <Text style={styles.timeStampsTitles}>Sent to Approval :</Text>
+          <Text style={styles.timeStampsTitles}>
+            {busData?.manager_request_time
+              ? moment(busData?.manager_request_time * 1000).format(
+                  'MMMM D, h:mm a',
+                )
+              : 'Not Requested for Approval'}
+          </Text>
+        </View>
+        <View style={styles.timeStampsContainer}>
+          <IconSwitcher
+            componentName="Octicons"
+            iconName="dot-fill"
+            iconsize={1.8}
+          />
+          <Text style={styles.timeStampsTitles}>Approved Date :</Text>
+          <Text style={styles.timeStampsTitles}>
+            {busData?.managerApprovedTime
+              ? moment(busData?.managerApprovedTime?.seconds * 1000).format(
+                  'MMMM D, h:mm a',
+                )
+              : 'Not Approved'}
+          </Text>
+        </View>
+        <View style={styles.timeStampsContainer}>
+          <IconSwitcher
+            componentName="Octicons"
+            iconName="dot-fill"
+            iconsize={1.8}
+          />
+          <Text style={styles.timeStampsTitles}>Submitted Date :</Text>
+          <Text style={styles.timeStampsTitles}>
+            {busData?.submitted_date
+              ? moment(busData?.submitted_date?.seconds * 1000).format(
+                  'MMMM D, h:mm a',
+                )
+              : 'Not Submitted'}
+          </Text>
+        </View>
+        <View style={styles.timeStampsContainer}>
+          <IconSwitcher
+            componentName="Octicons"
+            iconName="dot-fill"
+            iconsize={1.8}
+          />
+          <Text style={styles.timeStampsTitles}>Booked Date :</Text>
+          <Text style={styles.timeStampsTitles}>
+            {busData?.booked_date
+              ? moment(busData?.booked_date?.seconds * 1000).format(
+                  'MMMM D, h:mm a',
+                )
+              : 'Not Booked'}
+          </Text>
         </View>
       </PopUp>
     </>
@@ -547,7 +696,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: responsiveHeight(1),
-    flexWrap:'wrap'
+    flexWrap: 'wrap',
   },
   routeName: {
     fontSize: responsiveHeight(2),
@@ -669,6 +818,17 @@ const styles = StyleSheet.create({
     fontSize: responsiveHeight(2),
     fontFamily: fonts.textInput,
     color: colors.white,
+  },
+  timeStampsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: responsiveWidth(2),
+  },
+  timeStampsTitles: {
+    fontSize: responsiveHeight(1.6),
+    fontFamily: fonts.primary,
+    color: colors.primary,
+    flex: 1,
   },
 });
 

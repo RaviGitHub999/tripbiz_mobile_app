@@ -4,59 +4,96 @@ import { responsiveHeight } from '../../../utils/responsiveScale'
 import { colors, fonts } from '../../../config/theme'
 import MyContext from '../../../context/Context'
 
-const TravDetails = ({id}) => {
+const TravDetails = ({id,adults,child,infant}) => {
   const{tripData}=useContext(MyContext)
   return (
    <>
    <Text style={styles.header}>Traveller Details</Text>
    {
+ adults?adults?.map((e, i) =>{
+  return(
+    <View style={styles.mainContainer}>
+      <Text style={[styles.title,{marginBottom:responsiveHeight(1)}]}>{`Adult`}-{i+1}</Text>
+      <View>
+       <Text style={styles.subTitle}>Title: <Text style={styles.title1}>{e.gender}</Text></Text>
+        <Text style={styles.subTitle}>First Name: <Text style={styles.title1}>{e.firstName}</Text></Text>
+        <Text style={styles.subTitle}>Last Name: <Text style={styles.title1}>{e.lastName}</Text></Text>
+      </View>
+    </View>
+  )
+  
+  
+  }):
  tripData?.data?.travellerDetails[id]?.adults?.map((e, i) =>{
-return(
-  <View style={styles.mainContainer}>
-    <Text style={[styles.title,{marginBottom:responsiveHeight(1)}]}>{`Adult`}-{i+1}</Text>
-    <View>
-     <Text style={styles.subTitle}>Title: <Text style={styles.title1}>{e.gender}</Text></Text>
-      <Text style={styles.subTitle}>First Name: <Text style={styles.title1}>{e.firstName}</Text></Text>
-      <Text style={styles.subTitle}>Last Name: <Text style={styles.title1}>{e.lastName}</Text></Text>
+  return(
+    <View style={styles.mainContainer}>
+      <Text style={[styles.title,{marginBottom:responsiveHeight(1)}]}>{`Adult`}-{i+1}</Text>
+      <View>
+       <Text style={styles.title1}>{`${e.gender} ${e.firstName}${e.lastName}`}</Text>
+      </View>
     </View>
-  </View>
-)
-
-
-})
+  )
+  
+  
+  })
    }
 {
+ child?child.map((e, i) =>{
+  return(
+    <View style={styles.mainContainer}>
+      <Text style={[styles.title,{marginBottom:responsiveHeight(1)}]}>{`Children`}-{i+1}</Text>
+      <View>
+       <Text style={styles.subTitle}>Title: <Text style={styles.title1}>{e.gender}</Text></Text>
+        <Text style={styles.subTitle}>First Name: <Text style={styles.title1}>{e.firstName}</Text></Text>
+        <Text style={styles.subTitle}>Last Name: <Text style={styles.title1}>{e.lastName}</Text></Text>
+      </View>
+    </View>
+  )
+  
+  
+  }):
  tripData?.data?.travellerDetails[id]?.children?.map((e, i) =>{
-return(
-  <View style={styles.mainContainer}>
-    <Text style={[styles.title,{marginBottom:responsiveHeight(1)}]}>{`Children`}-{i+1}</Text>
-    <View>
-     <Text style={styles.subTitle}>Title: <Text style={styles.title1}>{e.gender}</Text></Text>
-      <Text style={styles.subTitle}>First Name: <Text style={styles.title1}>{e.firstName}</Text></Text>
-      <Text style={styles.subTitle}>Last Name: <Text style={styles.title1}>{e.lastName}</Text></Text>
+  return(
+    <View style={styles.mainContainer}>
+      <Text style={[styles.title,{marginBottom:responsiveHeight(1)}]}>{`Children`}-{i+1}</Text>
+      <View>
+       <Text style={styles.title1}>{`${e.gender} ${e.firstName}${e.lastName}`}</Text>
+      </View>
     </View>
-  </View>
-)
-
-
-})
+  )
+  
+  
+  })
    }
 
 {
- tripData?.data?.travellerDetails[id]?.infants?.map((e, i) =>{
-return(
-  <View style={styles.mainContainer}>
-    <Text style={[styles.title,{marginBottom:responsiveHeight(1)}]}>{`Infant`}-{i+1}</Text>
-    <View>
-     <Text style={styles.subTitle}>Title: <Text style={styles.title1}>{e.gender}</Text></Text>
-      <Text style={styles.subTitle}>First Name: <Text style={styles.title1}>{e.firstName}</Text></Text>
-      <Text style={styles.subTitle}>Last Name: <Text style={styles.title1}>{e.lastName}</Text></Text>
+infant?infant.map((e, i) =>{
+  return(
+    <View style={styles.mainContainer}>
+      <Text style={[styles.title,{marginBottom:responsiveHeight(1)}]}>{`Infant`}-{i+1}</Text>
+      <View>
+       <Text style={styles.subTitle}>Title: <Text style={styles.title1}>{e.gender}</Text></Text>
+        <Text style={styles.subTitle}>First Name: <Text style={styles.title1}>{e.firstName}</Text></Text>
+        <Text style={styles.subTitle}>Last Name: <Text style={styles.title1}>{e.lastName}</Text></Text>
+      </View>
     </View>
-  </View>
-)
-
-
-})
+  )
+  
+  
+  })
+:
+tripData?.data?.travellerDetails[id]?.infants?.map((e, i) =>{
+  return(
+    <View style={styles.mainContainer}>
+      <Text style={[styles.title,{marginBottom:responsiveHeight(0.5)}]}>{`Infant`}-{i+1}</Text>
+      <>
+       <Text style={styles.title1}>{`${e.gender} ${e.firstName}${e.lastName}`}</Text>
+      </>
+    </View>
+  )
+  
+  
+  })
    }
    </>
   )
@@ -85,7 +122,7 @@ const styles=StyleSheet.create(
             textAlign:'center'   
         },
         header:{
-          fontSize:responsiveHeight(2),
+          fontSize:responsiveHeight(1.8),
           fontFamily:fonts.secondry,
           color:colors.primary,
           textAlign:'center'

@@ -43,8 +43,8 @@ import CCard from './CCard';
 import BCard from './BCard';
 import RNFetchBlob from 'rn-fetch-blob';
 import TravellerDetailsBtn from '../../common/mainComponents/TravellerDetailsButton/TravellerDetailsBtn';
+import moment from 'moment';
 const TripDetails = ({navigation: {navigate, goBack}}) => {
-  
   const [mounted, setMounted] = useState(true);
   const [popup, setPopUp] = useState({
     hotelPrice: false,
@@ -98,6 +98,9 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
   const [approvalLoading, setApporvalLoading] = useState(false);
   const [approvalError, setApprovalError] = useState(false);
   const [isAddedAlltravellers, setIsAddedAlltravellers] = useState(false);
+  const [alltimeStamp, setAllTimeStamp] = useState(false);
+  const [timeStampDate, setTimeStampData] = useState();
+
   const expenseTypeData = [
     {
       name: 'Select Expense',
@@ -160,6 +163,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
     userAccountDetails,
     domesticHotel,
   } = useContext(MyContext);
+  // console.log(tripData,"ss")
+
   var handleClick = async () => {
     setPaymentLoading(true);
 
@@ -294,6 +299,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
   var hotelIds = hotelArray.length > 0 ? [].concat(...hotelArray) : [];
   var cabsIds = cabArray.length > 0 ? [].concat(...cabArray) : [];
   var busIds = busArray.length > 0 ? [].concat(...busArray) : [];
+
   const onRefresh = () => {
     setRefreshing(true);
     setTimeout(async () => {
@@ -386,54 +392,52 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
   const NotFilledData = () => {
     const notFlightsData = tripData?.data?.flights
       .filter(
-        (item) =>
+        item =>
           !(
             tripData?.data?.travellerDetails &&
             item.id in tripData.data.travellerDetails
-          )
+          ),
       )
-      ?.map((flight) => flight.id);
+      ?.map(flight => flight.id);
     const notHotelsData = tripData?.data?.hotels
       .filter(
-        (item) =>
+        item =>
           !(
             tripData?.data?.travellerDetails &&
             item.id in tripData.data.travellerDetails
-          )
+          ),
       )
-      ?.map((hotel) => hotel.id);
-    const notCabsData = tripData?.data?.cabs
-      .filter(
-        (item) =>
+      ?.map(hotel => hotel.id);
+    const notCabsData = tripData?.data?.cabs?.filter(
+        item =>
           !(
             tripData?.data?.travellerDetails &&
             item.id in tripData?.data?.travellerDetails
-          )
+          ),
       )
-      ?.map((cab) => cab.id);
+      ?.map(cab => cab.id);
     const notBusData = tripData?.data?.bus
       .filter(
-        (item) =>
+        item =>
           !(
             tripData?.data?.travellerDetails &&
             item.id in tripData?.data?.travellerDetails
-          )
+          ),
       )
-      ?.map((bus) => bus.id);
+      ?.map(bus => bus.id);
 
-    const filterdFlights = tripData?.flights?.filter((flight) =>
-      notFlightsData.includes(flight.id)
+    const filterdFlights = tripData?.flights?.filter(flight =>
+      notFlightsData.includes(flight.id),
     );
-    const filterdHotels = tripData?.hotels?.filter((hotel) =>
-      notHotelsData.includes(hotel.id)
+    const filterdHotels = tripData?.hotels?.filter(hotel =>
+      notHotelsData.includes(hotel.id),
     );
-    const filterdCabs = tripData?.cabs?.filter((cab) =>
-      notCabsData.includes(cab.id)
+    const filterdCabs = tripData?.cabs?.filter(cab =>
+      notCabsData.includes(cab.id),
     );
-    const filterdBuses = tripData?.bus?.filter((bus) =>
-      notBusData.includes(bus.id)
+    const filterdBuses = tripData?.bus?.filter(bus =>
+      notBusData.includes(bus.id),
     );
-    console.log(filterdBuses, filterdCabs, filterdFlights, filterdHotels);
     return (
       <>
         {filterdFlights?.map((flight, i) => {
@@ -441,38 +445,74 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
             flight?.data?.flightNew?.segments?.[0]?.airlineName;
 
           return (
-            <Text style={styles.subTitle}>
-              Traveller Details not Filled for this{" "}
-              <Text style={[styles.title,{fontSize:responsiveHeight(1.6)}]}>{flightName}</Text> Flight
-            </Text>
+            <View style={styles.notFilledDataContainer}>
+              <IconSwitcher
+                componentName="Octicons"
+                iconName="dot-fill"
+                iconsize={2}
+              />
+              <Text style={styles.subTitle}>
+                <Text style={[styles.title, {fontSize: responsiveHeight(1.6)}]}>
+                  {flightName}
+                </Text>{' '}
+                Flight
+              </Text>
+            </View>
           );
         })}
         {filterdHotels?.map((hotel, i) => {
           const hotelName =
             hotel?.data?.hotelInfo?.HotelInfoResult?.HotelDetails?.HotelName;
           return (
-            <Text style={[styles.subTitle]}>
-              Traveller Details not Filled for this{" "}
-              <Text style={[styles.title,{fontSize:responsiveHeight(1.6)}]}>{hotelName}</Text> Hotel
-            </Text>
+            <View style={styles.notFilledDataContainer}>
+              <IconSwitcher
+                componentName="Octicons"
+                iconName="dot-fill"
+                iconsize={2}
+              />
+              <Text style={[styles.subTitle]}>
+                <Text style={[styles.title, {fontSize: responsiveHeight(1.6)}]}>
+                  {hotelName}
+                </Text>{' '}
+                Hotel
+              </Text>
+            </View>
           );
         })}
         {filterdCabs?.map((cab, i) => {
           const cabName = cab?.data?.cabCity;
           return (
-            <Text style={styles.subTitle}>
-              Traveller Details not Filled for this{" "}
-              <Text style={[styles.title,{fontSize:responsiveHeight(1.6)}]}>{cabName}</Text> Cab
-            </Text>
+            <View style={styles.notFilledDataContainer}>
+              <IconSwitcher
+                componentName="Octicons"
+                iconName="dot-fill"
+                iconsize={2}
+              />
+              <Text style={styles.subTitle}>
+                <Text style={[styles.title, {fontSize: responsiveHeight(1.6)}]}>
+                  {cabName}
+                </Text>{' '}
+                Cab
+              </Text>
+            </View>
           );
         })}
         {filterdBuses?.map((bus, i) => {
           const TravelName = bus?.data?.bus?.TravelName;
           return (
-            <Text style={styles.subTitle}>
-              Traveller Details not Filled for this{" "}
-              <Text style={[styles.title,{fontSize:responsiveHeight(1.6)}]}>{TravelName}</Text> Bus
-            </Text>
+            <View style={styles.notFilledDataContainer}>
+              <IconSwitcher
+                componentName="Octicons"
+                iconName="dot-fill"
+                iconsize={2}
+              />
+              <Text style={styles.subTitle}>
+                <Text style={[styles.title, {fontSize: responsiveHeight(1.6)}]}>
+                  {TravelName}
+                </Text>{' '}
+                Bus
+              </Text>
+            </View>
           );
         })}
       </>
@@ -480,98 +520,98 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
   };
   var onBtnClick = async () => {
     const busTravellers = tripData?.data?.bus.every(
-      (bus) =>
+      bus =>
         tripData?.data?.travellerDetails &&
-        bus.id in tripData?.data?.travellerDetails
+        bus.id in tripData?.data?.travellerDetails,
     );
     const cabTravellers = tripData?.data?.cabs.every(
-      (cab) =>
+      cab =>
         tripData?.data?.travellerDetails &&
-        cab.id in tripData?.data?.travellerDetails
+        cab.id in tripData?.data?.travellerDetails,
     );
     const flightTravellers = tripData?.data?.flights.every(
-      (flight) =>
+      flight =>
         tripData?.data?.travellerDetails &&
-        flight.id in tripData?.data?.travellerDetails
+        flight.id in tripData?.data?.travellerDetails,
     );
     const hotelTravellers = tripData?.data?.hotels.every(
-      (hotel) =>
+      hotel =>
         tripData?.data?.travellerDetails &&
-        hotel.id in tripData?.data?.travellerDetails
+        hotel.id in tripData?.data?.travellerDetails,
     );
-if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
-  setTraveller(true);
-  setTripId(
-    tripData?.flights.length > 0
-      ? tripData?.flights[0]?.id
-      : tripData?.hotels.length > 0
-      ? tripData.hotels[0].id
-      : tripData?.cabs.length > 0
-      ? tripData?.cabs[0].id
-      : tripData?.bus.length > 0
-      ? tripData?.bus[0].id
-      : 0,
-  );
-  var adults =
-    tripData?.hotels[0]?.data?.hotelSearchQuery?.hotelRoomArr.reduce(
-      (acc, obj) => {
-        acc.adults += parseInt(obj.adults, 10);
-        acc.child += parseInt(obj.child, 10);
-        return acc;
-      },
-      {adults: 0, child: 0},
-    );
+    if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
+      setTraveller(true);
+      setTripId(
+        tripData?.flights.length > 0
+          ? tripData?.flights[0]?.id
+          : tripData?.hotels.length > 0
+          ? tripData.hotels[0].id
+          : tripData?.cabs.length > 0
+          ? tripData?.cabs[0].id
+          : tripData?.bus.length > 0
+          ? tripData?.bus[0].id
+          : 0,
+      );
+      var adults =
+        tripData?.hotels[0]?.data?.hotelSearchQuery?.hotelRoomArr.reduce(
+          (acc, obj) => {
+            acc.adults += parseInt(obj.adults, 10);
+            acc.child += parseInt(obj.child, 10);
+            return acc;
+          },
+          {adults: 0, child: 0},
+        );
 
-  setTravellerCount(
-    tripData?.flights.length > 0
-      ? {
-          adults: Number(tripData?.flights[0]?.data?.adults),
-          child: Number(tripData?.flights[0]?.data?.child),
-          infant: Number(tripData?.flights[0]?.data?.infant),
-        }
-      : tripData?.hotels.length > 0
-      ? adults
-      : tripData?.bus?.length > 0
-      ? {
-          adults: Number(tripData?.bus[0]?.data.passengers),
-        }
-      : {},
-  );
-  setUserDetails([
-    {
-      firstName: userAccountDetails?.firstName,
-      lastName: userAccountDetails?.lastName,
-      gender: userAccountDetails?.gender,
-      mobileNumber: userAccountDetails?.mobileNumber,
-      email: userAccountDetails?.email,
-    },
-  ]);
-  var mainprice =
-    tripData.flights
-      .filter(flight => flightNotSubmittedIds.includes(flight.id))
-      .reduce((sum, obj) => sum + obj?.data?.finalPrice, 0) +
-    tripData.hotels
-      .filter(flight => hotelNotSubmittedIds.includes(flight.id))
-      .reduce((sum, obj) => sum + obj?.data?.hotelTotalPrice, 0) +
-    tripData.cabs
-      .filter(flight => cabNotSubmittedIds.includes(flight.id))
-      .reduce((sum, obj) => sum + obj?.data?.cabTotalPrice, 0) +
-    tripData.bus
-      .filter(flight => busNotSubmittedIds.includes(flight.id))
-      .reduce((sum, obj) => sum + obj?.data?.busTotalPrice, 0);
+      setTravellerCount(
+        tripData?.flights.length > 0
+          ? {
+              adults: Number(tripData?.flights[0]?.data?.adults),
+              child: Number(tripData?.flights[0]?.data?.child),
+              infant: Number(tripData?.flights[0]?.data?.infant),
+            }
+          : tripData?.hotels.length > 0
+          ? adults
+          : tripData?.bus?.length > 0
+          ? {
+              adults: Number(tripData?.bus[0]?.data.passengers),
+            }
+          : {},
+      );
+      setUserDetails([
+        {
+          firstName: userAccountDetails?.firstName,
+          lastName: userAccountDetails?.lastName,
+          gender: userAccountDetails?.gender,
+          mobileNumber: userAccountDetails?.mobileNumber,
+          email: userAccountDetails?.email,
+        },
+      ]);
+      var mainprice =
+        tripData.flights
+          .filter(flight => flightNotSubmittedIds.includes(flight.id))
+          .reduce((sum, obj) => sum + obj?.data?.finalPrice, 0) +
+        tripData.hotels
+          .filter(flight => hotelNotSubmittedIds.includes(flight.id))
+          .reduce((sum, obj) => sum + obj?.data?.hotelTotalPrice, 0) +
+        tripData.cabs
+          .filter(flight => cabNotSubmittedIds.includes(flight.id))
+          .reduce((sum, obj) => sum + obj?.data?.cabTotalPrice, 0) +
+        tripData.bus
+          .filter(flight => busNotSubmittedIds.includes(flight.id))
+          .reduce((sum, obj) => sum + obj?.data?.busTotalPrice, 0);
 
-  var reqIds =
-    tripData.requestData.length > 0
-      ? tripData?.requestData?.map(req => req.id)
-      : [];
-  setBookingPrice(price);
-  setRequestIds(reqIds);
-  setFinalPrice(mainprice);
-  setRequestId(tripData?.requestData[0]?.id);
-  setRequestData(tripData?.requestData[0]?.data);
-} else {
-  setIsAddedAlltravellers(true);
-} 
+      var reqIds =
+        tripData.requestData.length > 0
+          ? tripData?.requestData?.map(req => req.id)
+          : [];
+      setBookingPrice(price);
+      setRequestIds(reqIds);
+      setFinalPrice(mainprice);
+      setRequestId(tripData?.requestData[0]?.id);
+      setRequestData(tripData?.requestData[0]?.data);
+    } else {
+      setIsAddedAlltravellers(true);
+    }
   };
 
   useEffect(() => {
@@ -678,18 +718,16 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
       };
     });
     var isInternational =
-    item.data.flightNew.segments[0].destCountryCode !==
-      "IN" ||
-      item.data.flightNew.segments[0]
-      .originCountryCode !== "IN";
+      item.data.flightNew.segments[0].destCountryCode !== 'IN' ||
+      item.data.flightNew.segments[0].originCountryCode !== 'IN';
     return (
       <View>
         {index === 0 ? (
-          <Text style={[styles.title, {textAlign: 'center'}]}>Flights</Text>
+          <Text style={[styles.hotelCardTitle, {textAlign: 'center'}]}>Flights</Text>
         ) : null}
         <View>
           <FCard airline={airline} flightArr={flightArr} flightData={item} />
-          <TravDetails id={item.id} isInternational={isInternational}/>
+          <TravDetails id={item.id} isInternational={isInternational} />
         </View>
       </View>
     );
@@ -736,7 +774,7 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
         {index === 0 ? (
           <Text
             style={[
-              styles.title,
+              styles.hotelCardTitle,
               {textAlign: 'center', marginBottom: responsiveHeight(1.5)},
             ]}>
             Hotels
@@ -749,7 +787,7 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
           adults={adults}
           recheck={false}
         />
-        <TravDetails id={item.id}/>
+        <TravDetails id={item.id} />
       </>
     );
   };
@@ -765,7 +803,7 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
     return (
       <View style={{flex: 1}}>
         {index === 0 ? (
-          <Text style={[styles.title, {textAlign: 'center'}]}>Cabs</Text>
+          <Text style={[styles.hotelCardTitle, {textAlign: 'center'}]}>Cabs</Text>
         ) : null}
         <View style={{marginHorizontal: responsiveWidth(1)}}>
           <CCard
@@ -774,7 +812,7 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
             endDate={cabEDate}
             data={item.data}
           />
-          <TravDetails id={item.id}/>
+          <TravDetails id={item.id} />
         </View>
       </View>
     );
@@ -790,7 +828,7 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
     return (
       <>
         {index === 0 ? (
-          <Text style={[styles.title, {textAlign: 'center'}]}>Bus</Text>
+          <Text style={[styles.hotelCardTitle, {textAlign: 'center'}]}>Bus</Text>
         ) : null}
         <View style={{margin: responsiveWidth(1)}}>
           <BCard
@@ -799,7 +837,7 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
             endDate={cabEDate}
             bookingBus={item.data}
           />
-           <TravDetails id={item.id}/>
+          <TravDetails id={item.id} />
         </View>
       </>
     );
@@ -862,7 +900,6 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
   };
 
   const downloadFile = async url => {
-    // console.log(url,"first")
     const {config, fs} = RNFetchBlob;
     let DownloadDir = fs.dirs.DownloadDir; // this is the Downloads directory.
     const expensesDir = `${DownloadDir}/expenses`;
@@ -1101,7 +1138,15 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
     await getTripData();
     setOpenExpense(false);
   };
-  return tripDataLoading ? (
+  const openAllTimeStamps=()=>
+    {
+    setAllTimeStamp(true)
+    }
+    const closeAllTimeStamps=()=>
+    {
+      setAllTimeStamp(false)
+    }
+  return tripDataLoading||approvalLoading ? (
     <View style={styles.LoaderContainer}>
       <View style={styles.Loader}>
         <ProgressBar />
@@ -1129,7 +1174,7 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
           </View>
           <View style={styles.subContainer}>
             {/* {dateOfJourney} */}
-            <View style={[styles.tripDetailsHeader,{alignSelf:'flex-start'}]}>
+            <View style={[styles.tripDetailsHeader, {alignSelf: 'flex-start'}]}>
               <Text style={styles.tripName}>{tripData.data?.name}</Text>
               <Text style={styles.tripDateTitle}>
                 {`created on: `}
@@ -1138,7 +1183,7 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
             </View>
             {/* bookingStatus */}
 
-            {tripData?.data?.length > 0 && (
+            {
               <View style={styles.bookingStatusMainContainer}>
                 {statuses.map(status => {
                   return (
@@ -1155,8 +1200,14 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                       tripData?.data?.bus?.filter(
                         flight => flight.status === status.status,
                       ).length > 0 ? (
-                        <>
-                          <Text style={styles.bookingStatus}>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            width: '100%',
+                          }}>
+                          <Text style={[, {fontSize: responsiveHeight(1.6)}]}>
                             {tripData?.data?.flights?.filter(
                               flight => flight.status === status.status,
                             ).length > 0 ? (
@@ -1219,13 +1270,13 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                               {status.status}
                             </Text>
                           </View>
-                        </>
+                        </View>
                       ) : null}
                     </>
                   );
                 })}
               </View>
-            )}
+            }
 
             {tripData ? (
               <View>
@@ -1447,7 +1498,7 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                                       // price = price + room.Price.OfferedPriceRoundedOff;
                                       hotelPrice =
                                         hotelPrice +
-                                        room.Price.OfferedPriceRoundedOff;
+                                        room.Price.OfferedPriceRoundedOff; 
                                       return (
                                         <View style={styles.hotelRoomFeatures}>
                                           <View
@@ -1607,22 +1658,38 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                                       </View>
                                     </View>
                                   )}
-                                  <View style={styles.hotelTotalPriceContainer}>
-                                    <Text
-                                      style={
-                                        styles.hotelTotalPrice
-                                      }>{`Total Price : ₹ ${Math.ceil(
-                                      hotel.data.hotelTotalPrice,
-                                    ).toLocaleString('en-IN')}`}</Text>
+                                  <View
+                                    style={[
+                                      styles.hotelTotalPriceContainer,
+                                      {justifyContent: 'space-between'},
+                                    ]}>
+                                    <View
+                                      style={styles.hotelTotalPriceContainer}>
+                                      <Text
+                                        style={
+                                          styles.hotelTotalPrice
+                                        }>{`Total Price : ₹ ${Math.ceil(
+                                        hotel.data.hotelTotalPrice,
+                                      ).toLocaleString('en-IN')}`}</Text>
+                                      <TouchableOpacity
+                                        onPress={() =>
+                                          handlehotelPriceinfo(hotel)
+                                        }>
+                                        <IconSwitcher
+                                          componentName="Entypo"
+                                          iconName="info-with-circle"
+                                          color={colors.black}
+                                          iconsize={1.8}
+                                        />
+                                      </TouchableOpacity>
+                                    </View>
                                     <TouchableOpacity
-                                      onPress={() =>
-                                        handlehotelPriceinfo(hotel)
-                                      }>
+                                      onPress={()=>{openAllTimeStamps(),setTimeStampData(hotelReq[0])}}>
                                       <IconSwitcher
-                                        componentName="Entypo"
-                                        iconName="info-with-circle"
+                                        componentName="MaterialIcons"
+                                        iconName="access-alarm"
                                         color={colors.black}
-                                        iconsize={1.8}
+                                        iconsize={3}
                                       />
                                     </TouchableOpacity>
                                   </View>
@@ -1661,27 +1728,28 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                                       </Text>
                                     </Text>
                                   </View>
-                                  <>
-                                    <TouchableOpacity
-                                      onPress={() => {
-                                        setOpenDelete(true);
-                                        setDeleteType('hotels');
-                                        setDeleteId(hotel.id);
-                                      }}>
-                                      <IconSwitcher
-                                        componentName="MaterialIcons"
-                                        iconName="delete"
-                                        color={colors.red}
-                                        iconsize={2.5}
-                                      />
-                                    </TouchableOpacity>
-                                  </>
+                                  {(hotelReq[0]?.requestStatus ==="Not Requested" && hotelStatus[0]?.status === "Not Submitted") ? (
+  <TouchableOpacity
+    onPress={() => {
+      setOpenDelete(true);
+      setDeleteType('hotels');
+      setDeleteId(hotel.id);
+    }}>
+    <IconSwitcher
+      componentName="MaterialIcons"
+      iconName="delete"
+      color={colors.red}
+      iconsize={2.5}
+    />
+  </TouchableOpacity>
+) : null}
                                 </View>
                                 <TravellerDetailsBtn
                                   adults={adults?.adults}
                                   eachTripData={hotel}
                                   tripId={id}
                                   child={adults?.child}
+                                  status={hotelStatus[0]?.status}
                                 />
                                 {isTimeReCheck ? (
                                   <View
@@ -1754,6 +1822,9 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                           var hotelTimeStamp = new Date(
                             flightStatus[0]?.date?.seconds * 1000,
                           );
+                          var fightData = tripData?.data?.flights.filter(
+                            f => f.id === flight.id,
+                          );
                           const updatedAt = flightStatus[0]?.updatedAt?.seconds;
                           var flightUpdatedDate;
                           if (updatedAt) {
@@ -1773,10 +1844,10 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                             );
                           });
                           var isInternational =
-                          flight.data.flightNew.segments[0].destCountryCode !==
-                            "IN" ||
                             flight.data.flightNew.segments[0]
-                            .originCountryCode !== "IN";
+                              .destCountryCode !== 'IN' ||
+                            flight.data.flightNew.segments[0]
+                              .originCountryCode !== 'IN';
                           return (
                             <>
                               <TripDetailsFlightCard
@@ -1798,6 +1869,7 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                                 }
                                 flight={flight}
                                 isInternational={isInternational}
+                                totalFlight={fightData}
                               />
                             </>
                           );
@@ -1897,8 +1969,8 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                 })}
               </>
             ) : null}
-
-            <>
+            {/* not required right Now */}
+            {/* <>
               <View style={styles.addingHotelBtnContainer}>
                 <Text style={styles.flightCardTitle}>Expenses</Text>
                 <TouchableOpacity
@@ -1979,7 +2051,7 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                   })}
                 </>
               ) : null}
-            </>
+            </> */}
           </View>
         </ScrollView>
 
@@ -2008,12 +2080,13 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                   hotelData[0]?.updatedAt?.seconds * 1000
                     ? new Date(hotelData[0].updatedAt?.seconds * 1000)
                     : new Date(hotelData[0]?.date?.seconds * 1000);
-                var originalDate = new Date(hotelTimeStamp);
+                // var originalDate = new Date(hotelTimeStamp);
                 var threeHoursAfter = new Date(
-                  originalDate.getTime() + 3 * 60 * 60 * 1000,
+                  hotelTimeStamp.getTime() + 3 * 60 * 60 * 1000,
                 );
                 var currentTime = new Date();
-                var isTimeReCheck = currentTime < threeHoursAfter;
+                var isTimeReCheck =  hotelData[0]?.status === "Submitted"
+                ? true:currentTime < threeHoursAfter;
                 return isTimeReCheck;
               }) &&
               tripData?.data?.hotels.every(hotel => {
@@ -2024,12 +2097,13 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                   hotelData[0]?.updatedAt?.seconds * 1000
                     ? new Date(hotelData[0].updatedAt?.seconds * 1000)
                     : new Date(hotelData[0]?.date?.seconds * 1000);
-                var originalDate = new Date(hotelTimeStamp);
+                // var originalDate = new Date(hotelTimeStamp);
                 var threeHoursAfter = new Date(
-                  originalDate.getTime() + 3 * 60 * 60 * 1000,
+                  hotelTimeStamp.getTime() + 3 * 60 * 60 * 1000,
                 );
                 var currentTime = new Date();
-                var isTimeReCheck = currentTime < threeHoursAfter;
+                var isTimeReCheck = hotelData[0]?.status === "Submitted"
+                ? true:currentTime < threeHoursAfter;
                 return isTimeReCheck;
               }) ? (
                 <>
@@ -2287,7 +2361,7 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                 <>
                   <View style={styles.approvalMainContainer}>
                     <View style={styles.approvalSubContainer}>
-                      <ScrollView>
+                      <ScrollView >
                         {tripData?.requestData?.length > 0 ? (
                           <>
                             {tripData?.requestData?.map(request => {
@@ -2369,7 +2443,8 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                           </>
                         ) : null}
 
-                        <>
+                        {
+                         <>
                           {tripData?.hotels?.filter(
                             hotel => !hotelIds.includes(hotel.id),
                           )?.length > 0 ||
@@ -2377,8 +2452,8 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                             hotel => !flightsIds.includes(hotel.id),
                           )?.length > 0 ||
                           tripData?.cabs?.filter(
-                            hotel => !cabsIds.includes(hotel.id)?.length > 0,
-                          ) ||
+                            hotel => !cabsIds.includes(hotel.id),
+                          )?.length > 0 ||
                           tripData?.bus?.filter(
                             hotel => !busIds.includes(hotel.id),
                           )?.length > 0 ? (
@@ -2503,10 +2578,11 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                             </TouchableOpacity>
                           ) : null}
                         </>
+                        }
                       </ScrollView>
                     </View>
 
-                    <ScrollView style={{paddingHorizontal: responsiveWidth(2)}}>
+                    <ScrollView style={{paddingHorizontal: responsiveWidth(2)}} contentContainerStyle={{paddingBottom:responsiveHeight(2)}}>
                       {tripData?.requestData?.length > 0 &&
                       requestData &&
                       requestId ? (
@@ -2609,6 +2685,7 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                             ) : null}
                           </View>
 
+                          <View  style={{gap:responsiveHeight(2)}}>
                           <FlatList
                             data={tripData?.flights?.filter(flight =>
                               requestData?.flights.includes(flight.id),
@@ -2639,6 +2716,7 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                             renderItem={busRenderItem}
                             keyExtractor={(item, index) => index.toString()}
                           />
+                          </View>
                         </>
                       ) : (
                         <>
@@ -2735,6 +2813,7 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                             ) : null}
                           </View>
 
+                          <View style={{gap:responsiveHeight(2)}}>
                           <FlatList
                             data={tripData?.flights?.filter(
                               flight => !flightsIds.includes(flight.id),
@@ -2766,6 +2845,7 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                             renderItem={busRenderItem}
                             keyExtractor={(item, index) => index.toString()}
                           />
+                          </View>
                         </>
                       )}
                     </ScrollView>
@@ -2900,8 +2980,8 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                             hotel => !flightsIds.includes(hotel.id),
                           )?.length > 0 ||
                           tripData?.cabs?.filter(
-                            hotel => !cabsIds.includes(hotel.id)?.length > 0,
-                          ) ||
+                            hotel => !cabsIds.includes(hotel.id),
+                          )?.length > 0 ||
                           tripData?.bus?.filter(
                             hotel => !busIds.includes(hotel.id),
                           )?.length > 0 ? (
@@ -3954,20 +4034,27 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                   )?.length !== 0 ? (
                     <View style={styles.paymentMainConatainer}>
                       <View style={styles.paymentTitleContainer}>
-                        <Text
+                       {userAccountDetails?.accountType === "PrePaid" ?  <Text
                           style={[
                             styles.title,
                             {fontSize: responsiveHeight(2)},
                           ]}>
                           Complete the payment
-                        </Text>
+                        </Text>:
                         <Text
+                        style={[
+                          styles.title,
+                          {fontSize: responsiveHeight(2)},
+                        ]}>
+                        Submit the trip for booking.
+                      </Text>}
+                       {userAccountDetails?.accountType === "PrePaid"&& <Text
                           style={[
                             styles.subTitle,
                             {fontSize: responsiveHeight(1.7)},
                           ]}>
                           Select the trips you want to complete the payment
-                        </Text>
+                        </Text>}
                       </View>
 
                       <View style={{marginTop: responsiveHeight(1)}}>
@@ -3991,10 +4078,10 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                         flightNotSubmittedIds.includes(hotel.id),
                       )?.length > 0 ||
                       tripData?.cabs?.filter(
-                        hotel => !cabNotSubmittedIds.includes(hotel.id),
+                        hotel => cabNotSubmittedIds.includes(hotel.id),
                       )?.length > 0 ||
                       tripData?.bus?.filter(
-                        hotel => !busNotSubmittedIds.includes(hotel.id),
+                        hotel => busNotSubmittedIds.includes(hotel.id),
                       )?.length > 0 ? (
                         <View
                           style={[
@@ -4119,25 +4206,30 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                           </View>
                         </View>
                       ) : null}
+                      
                       <View
                         style={{
                           alignItems: 'center',
                           gap: responsiveHeight(1),
                         }}>
-                        <Text
-                          style={[
-                            styles.title,
-                            {fontSize: responsiveHeight(1.8)},
-                          ]}>
-                          Account Balance:{' '}
-                          <Text
-                            style={[
-                              styles.totalPrice,
-                              {fontSize: responsiveHeight(1.8)},
-                            ]}>
-                            &#8377;{Math.ceil(userAccountDetails.balance)}
-                          </Text>
-                        </Text>
+                       {
+                     userAccountDetails?.accountType === "PrePaid" ?     <>
+                         <Text
+                         style={[
+                           styles.title,
+                           {fontSize: responsiveHeight(1.8)},
+                         ]}>
+                         Account Balance:{' '}
+                         <Text
+                           style={[
+                             styles.totalPrice,
+                             {fontSize: responsiveHeight(1.8)},
+                           ]}>
+                           &#8377;{Math.ceil(userAccountDetails.balance)}
+                         </Text>
+                       </Text>
+                         </>:null
+                       }
                         {bookingPrice > 0 ? (
                           <>
                             {userAccountDetails.accountType === 'PostPaid' ? (
@@ -4149,6 +4241,7 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     width: responsiveHeight(18),
+                                    marginTop:responsiveHeight(1)
                                   },
                                 ]}
                                 onPress={handleClick}>
@@ -4191,14 +4284,18 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                                     style={{
                                       alignItems: 'center',
                                       gap: responsiveHeight(2),
+                                      flexDirection:'row'
                                     }}>
-                                    <Text
+                                    {/* <Text
                                       style={[
                                         styles.subTitle,
                                         {fontSize: responsiveHeight(1.8)},
                                       ]}>
                                       Complete the payment
-                                    </Text>
+                                    </Text> */}
+                                    <TouchableOpacity onPress={()=>setSelectedTab("approval")} style={[styles.btn,{paddingVertical: responsiveHeight(1)}]}>
+                                      <Text style={styles.btnTitle}>Previous</Text>
+                                    </TouchableOpacity>
                                     <TouchableOpacity
                                       style={[
                                         styles.btn,
@@ -4214,7 +4311,7 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
                                         <Text
                                           style={[
                                             styles.btnTitle,
-                                            {width: responsiveHeight(15)},
+                                            // {width: responsiveHeight(15)},
                                           ]}>
                                           Make payment
                                         </Text>
@@ -4267,7 +4364,7 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
         <PopUp
           value={openPriceReCheck}
           handlePopUpClose={() => setOpenPriceReCheck(false)}>
-          <View style={styles.recheckCard}>
+          {/* <View style={styles.recheckCard}> */}
             <HCard
               hotel={hotelDetails}
               formattedDate1={formatDate}
@@ -4275,7 +4372,7 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
               adults={hotelAdults}
               recheck={false}
             />
-          </View>
+          {/* </View> */}
 
           <View style={{marginTop: responsiveHeight(2)}}>
             {reCheckLoading ? (
@@ -4666,18 +4763,96 @@ if (busTravellers && cabTravellers && flightTravellers && hotelTravellers) {
         </PopUp>
 
         <PopUp
-        value={isAddedAlltravellers}
-        handlePopUpClose={() => {
-          setIsAddedAlltravellers(false);
-        }}
-      >
-        <View style={{gap:responsiveHeight(1)}}>
-          <Text style={[styles.title,{fontSize:responsiveHeight(1.8)}]}>
-            Please add traveller details for below flights/Hotels/Cabs/Buses
-          </Text>
-          {NotFilledData()}
-        </View>
-      </PopUp>
+          value={isAddedAlltravellers}
+          handlePopUpClose={() => {
+            setIsAddedAlltravellers(false);
+          }}>
+          <View style={{gap: responsiveHeight(1)}}>
+            <Text style={[styles.title, {fontSize: responsiveHeight(1.8)}]}>
+              Please add traveller details for below flights/Hotels/Cabs/Buses
+            </Text>
+            {NotFilledData()}
+          </View>
+        </PopUp>
+
+        {/* alltimeStamps */}
+        <PopUp value={alltimeStamp} handlePopUpClose={closeAllTimeStamps}>
+          <View style={styles.timeStampsContainer}>
+          <IconSwitcher
+                componentName="Octicons"
+                iconName="dot-fill"
+                iconsize={1.8}
+              />
+            <Text style={styles.timeStampsTitles}>Added Date :</Text>
+            <Text style={styles.timeStampsTitles}>
+              {
+                timeStampDate?.date &&
+                moment(timeStampDate?.date?.seconds * 1000).format(
+                  'MMMM D, h:mm a',
+                )}
+            </Text>
+          </View>
+          <View style={styles.timeStampsContainer}>
+          <IconSwitcher
+                componentName="Octicons"
+                iconName="dot-fill"
+                iconsize={1.8}
+              />
+            <Text style={styles.timeStampsTitles}>Sent to Approval :</Text>
+            <Text style={styles.timeStampsTitles}>
+              {
+                timeStampDate?.manager_request_time ?
+                moment(timeStampDate?.manager_request_time * 1000).format(
+                  'MMMM D, h:mm a',
+                ):'Not Requested for Approval'}
+            </Text>
+          </View>
+          <View style={styles.timeStampsContainer}>
+          <IconSwitcher
+                componentName="Octicons"
+                iconName="dot-fill"
+                iconsize={1.8}
+              />
+            <Text style={styles.timeStampsTitles}>Approved Date :</Text>
+            <Text style={styles.timeStampsTitles}>
+              {
+                timeStampDate?.managerApprovedTime ?
+                moment(timeStampDate?.managerApprovedTime?.seconds * 1000).format(
+                  'MMMM D, h:mm a',
+                ):'Not Approved'}
+            </Text>
+          </View>
+          <View style={styles.timeStampsContainer}>
+          <IconSwitcher
+                componentName="Octicons"
+                iconName="dot-fill"
+                iconsize={1.8}
+              />
+            <Text style={styles.timeStampsTitles}>Submitted Date :</Text>
+            <Text style={styles.timeStampsTitles}>
+              {
+                timeStampDate?.submitted_date ?
+                moment(timeStampDate?.submitted_date?.seconds * 1000).format(
+                  'MMMM D, h:mm a',
+                ):'Not Submitted'}
+            </Text>
+          </View>
+          <View style={styles.timeStampsContainer}>
+          <IconSwitcher
+                componentName="Octicons"
+                iconName="dot-fill"
+                iconsize={1.8}
+              />
+            <Text style={styles.timeStampsTitles}>Booked Date :</Text>
+            <Text style={styles.timeStampsTitles}>
+              {
+                timeStampDate?.booked_date ?
+                moment(timeStampDate?.booked_date?.seconds * 1000).format(
+                  'MMMM D, h:mm a',
+                ):'Not Booked'}
+            </Text>
+          </View>
+        </PopUp>
       </View>
     )
   );

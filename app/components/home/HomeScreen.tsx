@@ -25,14 +25,15 @@ const components = [
     iconName: "hotel",
     componentName: "FontAwesome"
   },
-  {
-    categoryName: "cab",
-    iconName: "taxi",
-    componentName: "FontAwesome5"
-  },
+ 
   {
     categoryName: "bus",
     iconName: "bus-alt",
+    componentName: "FontAwesome5"
+  },
+  {
+    categoryName: "cab",
+    iconName: "taxi",
     componentName: "FontAwesome5"
   },
 ];
@@ -71,7 +72,7 @@ const HomeScreen = (props: any) => {
                 style={[styles.navItem, activeComponent === item.categoryName && styles.active]}
                 onPress={() => actions.switchComponent(item.categoryName)}>
                 <View style={styles.categoriesContainer}>
-                  <IconSwitcher componentName={item.componentName} color={activeComponent === item.categoryName ? colors.white : colors.primary} iconName={item.iconName} iconsize={3.2} />
+                  <IconSwitcher componentName={item.componentName} color={activeComponent === item.categoryName ? colors.white : colors.primary} iconName={item.iconName} iconsize={2} />
                   <Text style={activeComponent === item.categoryName ? styles.categoryName : { ...styles.categoryName, color: colors.primary }}>{item.categoryName}</Text>
                 </View>
               </TouchableOpacity>

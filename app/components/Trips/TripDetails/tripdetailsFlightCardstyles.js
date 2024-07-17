@@ -539,5 +539,17 @@ alignItems:'center'
         fontFamily: fonts.primary,
         color: colors.gray,
     },
+    timeStampsContainer:{
+        flexDirection:'row',
+        alignItems:'center',
+        gap:responsiveWidth(2),
+    },
+    timeStampsTitles:
+    {
+        fontSize: responsiveHeight(1.6),
+        fontFamily: fonts.primary,
+        color: colors.primary,
+        flex:1
+    }
 
 })

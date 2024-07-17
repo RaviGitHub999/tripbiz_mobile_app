@@ -1,56 +1,81 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Dimensions, ActivityIndicator } from 'react-native';
-import { styles } from './RoleStyles';
-import IconSwitcher from '../../common/icons/IconSwitcher';
-import { colors, fonts } from '../../../config/theme';
-import ChangePasswordInput from '../changePassword/ChangePasswordInput';
-import { responsiveHeight } from '../../../utils/responsiveScale';
-import MyContext from '../../../context/Context';
-import { ScrollView } from 'react-native-gesture-handler';
+import React, {useContext, useEffect, useState} from 'react';
 import {
-  BarIndicator,
-} from 'react-native-indicators';
+  View,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  Keyboard,
+  KeyboardAvoidingView,
+  Dimensions,
+  ActivityIndicator,
+} from 'react-native';
+import {styles} from './RoleStyles';
+import IconSwitcher from '../../common/icons/IconSwitcher';
+import {colors, fonts} from '../../../config/theme';
+import ChangePasswordInput from '../changePassword/ChangePasswordInput';
+import {responsiveHeight} from '../../../utils/responsiveScale';
+import MyContext from '../../../context/Context';
+import {ScrollView} from 'react-native-gesture-handler';
+import {BarIndicator} from 'react-native-indicators';
 import PopUp from '../../common/popup/PopUp';
 import HCard from '../../Trips/TripDetails/HCard';
 import TravDetails from '../../Trips/TripDetails/TravDetails';
 import FCard from '../../Trips/TripDetails/FCard';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
+import CCard from '../../Trips/TripDetails/CCard';
+import BCard from '../../Trips/TripDetails/BCard';
 const Role = () => {
-  const { actions, userAccountDetails, flightsLogosData, teamMembers, notifications, approveLoading } = useContext(MyContext)
+  const {
+    actions,
+    userAccountDetails,
+    flightsLogosData,
+    teamMembers,
+    notifications,
+    approveLoading,
+  } = useContext(MyContext);
   const [openManager, setOpenManager] = useState(false);
   const [managerData, setManagerData] = useState({
     name: '',
-    email: ''
-  })
-  const [selectedTab, setSelectedTab] = useState("Pending")
+    email: '',
+  });
+  const [selectedTab, setSelectedTab] = useState('Pending');
   const [tripsData, setTripsData] = useState([]);
   const [mounted, setMounted] = useState(true);
-  const [openTrip, setOpenTrip] = useState(null)
-  const [trip, setTrip] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const{goBack}=useNavigation()
+  const [openTrip, setOpenTrip] = useState(null);
+  const [trip, setTrip] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const {goBack} = useNavigation();
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const handleScreenPress = () => {
     Keyboard.dismiss();
   };
 
-
   const handleManagerDataChange = (value, name) => {
-    setManagerData({ ...managerData, [name]: value });
+    setManagerData({...managerData, [name]: value});
   };
 
   const handleManager = () => {
     actions.editManager(managerData);
-  }
+  };
   var getTripData = async () => {
     var data = await actions.getTripsForApproval(
-      userAccountDetails?.approvalRequests
+      userAccountDetails?.approvalRequests,
     );
     setTripsData(data);
   };
 
   useEffect(() => {
     if (mounted) {
-      console.log("loading")
+      console.log('loading');
       getTripData();
       actions.handleFlightsLogos();
     }
@@ -58,24 +83,24 @@ const Role = () => {
       setMounted(false);
     };
   }, []);
-  var getDate = (seconds) => {
+  var getDate = seconds => {
     const timestampInSeconds = seconds;
     const date = new Date(timestampInSeconds * 1000);
     const dayOfWeek = date.getDate();
     const dayofyear = date.getFullYear();
-    const month = date.toLocaleString("en-US", { month: "long" });
+    const month = date.toLocaleString('en-US', {month: 'long'});
     var dateString = `${month.slice(0, 3)} ${dayOfWeek} ${dayofyear}`;
     return dateString;
   };
-  var handleApprove = async (req) => {
-    setLoading(true)
-    await actions.approveTripRequest(req, userAccountDetails?.userid)
-    setOpenTrip(false)
-    setLoading(false)
-    setTripsData()
-    await getTripData()
-}
-console.log(tripsData)
+  var handleApprove = async req => {
+    setLoading(true);
+    await actions.approveTripRequest(req, userAccountDetails?.userid);
+    setOpenTrip(false);
+    setLoading(false);
+    setTripsData();
+    await getTripData();
+  };
+  console.log(tripsData);
   return (
     <>
       <KeyboardAvoidingView style={{flex: 1}}>
@@ -149,27 +174,14 @@ console.log(tripsData)
                 {/* team Member */}
                 {teamMembers?.length > 0 || notifications?.length > 0 ? (
                   <>
-                    <Text style={styles.subTitle}>Team Members</Text>
-                    <View>
-                      {teamMembers?.length > 0 ? (
-                        <>
-                          {teamMembers.map(teamMember => {
-                            return (
-                              <View
-                                style={[
-                                  styles.managerDataContainer,
-                                  {marginTop: responsiveHeight(1)},
-                                ]}
-                                key={teamMember.userId}>
-                                <Text style={styles.managerDataTitle}>
-                                  {teamMember.name}({teamMember.email})
-                                </Text>
-                              </View>
-                            );
-                          })}
-                        </>
-                      ) : null}
-                    </View>
+<View style={styles.teamMembersContainer}>
+<Text style={styles.subTitle}>Team Members</Text>
+<TouchableOpacity onPress={handleClickOpen}>
+<Text style={[styles.NodatamsgTitle,{color:colors.facebook,textDecorationLine:"underline"
+}]}>({teamMembers?.length} Team Members)</Text>
+</TouchableOpacity>
+</View>
+                   
                   </>
                 ) : null}
               </View>
@@ -252,7 +264,11 @@ console.log(tripsData)
                         var date = new Date(
                           trip?.tripDetails?.data?.date?.seconds * 1000,
                         ).toLocaleString();
-
+                        let updatedDate = trip?.requestDetails?.updatedAt
+                        ? new Date(
+                            trip?.requestDetails?.updatedAt?.seconds * 1000
+                          ).toLocaleString()
+                        : "";
                         return (
                           <View
                             style={styles.card}
@@ -284,6 +300,22 @@ console.log(tripsData)
                                     style={
                                       styles.eachTripListTitle
                                     }>{`Flights - ${trip?.tripDetails?.flights?.length}`}</Text>
+                                </View>
+                              ) : null}
+                              {trip?.tripDetails?.cabs?.length > 0 ? (
+                                <View style={styles.eachTripList}>
+                                  <Text
+                                    style={
+                                      styles.eachTripListTitle
+                                    }>{`Cabs - ${trip?.tripDetails?.cabs?.length}`}</Text>
+                                </View>
+                              ) : null}
+                              {trip?.tripDetails?.bus?.length  > 0 ? (
+                                <View style={styles.eachTripList}>
+                                  <Text
+                                    style={
+                                      styles.eachTripListTitle
+                                    }>{`Buses - ${trip?.tripDetails?.bus?.length }`}</Text>
                                 </View>
                               ) : null}
                             </View>
@@ -322,7 +354,9 @@ console.log(tripsData)
                                 </Text>
                               </View>
                             </View>
-
+                            {updatedDate && (
+                            <Text style={styles.eachTripListTitle}>Approved Date:{updatedDate}</Text>
+                          )}
                             <TouchableOpacity
                               style={styles.DetailsBtn}
                               onPress={() => {
@@ -383,14 +417,10 @@ console.log(tripsData)
               var endDate = getDate(
                 hotel?.data?.hotelSearchQuery?.checkOutDate.seconds,
               );
-              var adults = hotel?.data?.hotelSearchQuery?.hotelRoomArr.reduce(
-                (acc, obj) => {
-                  acc.adults += parseInt(obj.adults, 10);
-                  acc.child += parseInt(obj.child, 10);
-                  return acc;
-                },
-                {adults: 0, child: 0},
-              );
+              const adults =
+                trip?.tripDetails?.data?.travellerDetails[hotel.id]?.adults;
+              const child =
+                trip?.tripDetails?.data?.travellerDetails[hotel.id]?.children;
               return (
                 <>
                   {s === 0 ? (
@@ -398,54 +428,13 @@ console.log(tripsData)
                       Hotels
                     </Text>
                   ) : null}
-                  <View style={styles.hotelCard}>
-                    <HCard
-                      hotel={hotel}
-                      formattedDate1={formattedDate1}
-                      endDate={endDate}
-                      adults={adults}
-                    />
-                  </View>
-                  <View style={styles.card}>
-                    <Text style={[styles.title, {textAlign: 'center'}]}>
-                      Traveller Details
-                    </Text>
-                    <View>
-                      <>
-                        {trip?.tripDetails?.data?.travellerDetail ? (
-                          <>
-                            {trip?.tripDetails?.data.travellerDetail[
-                              hotel.id
-                            ]?.map((trav, i) => {
-                              var index = i + 1;
-                              return (
-                                <TravDetails
-                                  trav={trav}
-                                  type={'Traveller'}
-                                  index={index}
-                                />
-                              );
-                            })}
-                          </>
-                        ) : (
-                          <>
-                            {trip?.tripDetails?.data?.travellerDetails[
-                              hotel.id
-                            ]?.map((trav, i) => {
-                              var index = i + 1;
-                              return (
-                                <TravDetails
-                                  trav={trav}
-                                  type={'Traveller'}
-                                  index={index}
-                                />
-                              );
-                            })}
-                          </>
-                        )}
-                      </>
-                    </View>
-                  </View>
+                  <HCard
+                    hotel={hotel}
+                    formattedDate1={formattedDate1}
+                    endDate={endDate}
+                    adults={adults}
+                  />
+                  <TravDetails adults={adults} child={child} />
                 </>
               );
             })}
@@ -464,17 +453,26 @@ console.log(tripsData)
                   ...actions.modifyFlightObject(flight),
                 };
               });
-
+              const adults =
+                trip?.tripDetails?.data?.travellerDetails[flight.id]?.adults;
+              const child =
+                trip?.tripDetails?.data?.travellerDetails[flight.id]?.children;
+              const infants =
+                trip?.tripDetails?.data?.travellerDetails[flight.id]?.infants;
               return (
-                <>
+                <View style={{marginTop: responsiveHeight(1)}}>
                   {s === 0 ? (
                     <Text style={[styles.title, {textAlign: 'center'}]}>
                       Flights
                     </Text>
                   ) : null}
-                  <View style={styles.hotelCard}>
-                    <FCard airline={airline} flightArr={flightArr} />
-                    <View
+                  <>
+                    <FCard
+                      airline={airline}
+                      flightArr={flightArr}
+                      flightData={flight}
+                    />
+                    {/* <View
                       style={{
                         alignSelf: 'flex-end',
                         marginTop: responsiveHeight(1),
@@ -487,9 +485,9 @@ console.log(tripsData)
                         {' '}
                         &#8377; {`${flightArr[0].fare.toLocaleString('en-IN')}`}
                       </Text>
-                    </View>
-                  </View>
-                  <View style={styles.card}>
+                    </View> */}
+                  </>
+                  {/* <View style={styles.card}>
                     <Text style={[styles.title, {textAlign: 'center'}]}>
                       Traveller Details
                     </Text>
@@ -530,12 +528,82 @@ console.log(tripsData)
                         )}
                       </>
                     </View>
-                  </View>
-                </>
+                  </View> */}
+                  <TravDetails adults={adults} child={child} infant={infants} />
+                </View>
               );
             })}
           </View>
-
+          <>
+            {trip?.tripDetails?.cabs &&
+              trip?.tripDetails?.cabs?.map((cab, s) => {
+                console.log(cab);
+                var cabSDate = cab.data.cabStartDate
+                  ? new Date(cab.data.cabStartDate.seconds * 1000)
+                      ?.toString()
+                      ?.slice(4, 10)
+                  : '';
+                var cabEDate = cab.data.cabEndDate
+                  ? new Date(cab.data.cabEndDate.seconds * 1000)
+                      ?.toString()
+                      ?.slice(4, 10)
+                  : '';
+                const adults =
+                  trip?.tripDetails?.data?.travellerDetails[cab.id]?.adults;
+                return (
+                  <View style={{marginTop: responsiveHeight(1)}}>
+                    {s === 0 ? (
+                      <Text style={[styles.title, {textAlign: 'center'}]}>
+                        Cabs
+                      </Text>
+                    ) : null}
+                    <View style={{margin: responsiveHeight(1)}}>
+                      <CCard
+                        item={cab.data.cab}
+                        startDate={cabSDate}
+                        endDate={cabEDate}
+                        data={cab.data}
+                      />
+                    </View>
+                    <TravDetails adults={adults} />
+                  </View>
+                );
+              })}
+          </>
+          <>
+            {trip?.tripDetails?.bus?.map((buses, s) => {
+              var cabSDate = buses?.data?.bus?.DepartureTime
+                ? new Date(buses?.data?.bus?.DepartureTime)
+                    ?.toString()
+                    ?.slice(4, 10)
+                : '';
+              var cabEDate = buses?.data?.bus?.ArrivalTime
+                ? new Date(buses?.data?.bus?.ArrivalTime)
+                    ?.toString()
+                    ?.slice(4, 10)
+                : '';
+              const adults =
+                trip?.tripDetails?.data?.travellerDetails[buses.id]?.adults;
+              return (
+                <View style={{marginTop: responsiveHeight(1)}}>
+                  {s === 0 ? (
+                    <Text style={[styles.title, {textAlign: 'center'}]}>
+                      Cabs
+                    </Text>
+                  ) : null}
+                  <View style={{margin: responsiveHeight(1)}}>
+                  <BCard
+                    item={buses.data.bus}
+                    startDate={cabSDate}
+                    endDate={cabEDate}
+                    bookingBus={buses.data}
+                  />
+                  </View>
+                  <TravDetails adults={adults}/>
+                </View>
+              );
+            })}
+          </>
           {trip?.approvalRequest?.status === 'Pending' ? (
             <View
               style={{
@@ -566,6 +634,34 @@ console.log(tripsData)
             </View>
           ) : null}
         </ScrollView>
+      </PopUp >
+
+      <PopUp  value={open}
+        handlePopUpClose={handleClose} >
+                   <View>
+                   <Text style={styles.subTitle}>Team Members</Text>
+                      {teamMembers?.length > 0 ? (
+                        <>
+                          {teamMembers.map(teamMember => {
+                            return (
+                              // <View
+                              //   style={[
+                              //     styles.managerDataContainer,
+                              //     {marginTop: responsiveHeight(1)},
+                              //   ]}
+                              //   key={teamMember.userId}>
+                               <View style={styles.teamMembersContainer}>
+                                <IconSwitcher componentName='Octicons' iconName='dot-fill' iconsize={2.5}/>
+                                 <Text style={styles.managerDataTitle}>
+                                  {teamMember.name}({teamMember.email})
+                                </Text>
+                                </View>
+                              // </View>
+                            );
+                          })}
+                        </>
+                      ) : null}
+                    </View>
       </PopUp>
     </>
   );

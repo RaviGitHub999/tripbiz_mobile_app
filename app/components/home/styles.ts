@@ -24,22 +24,18 @@ export const styles = StyleSheet.create({
         backgroundColor: colors.white,
         borderRadius: responsiveHeight(2),
         overflow: 'hidden',
-        marginTop:responsiveHeight(2)
+        marginTop:responsiveHeight(2),
     },
     navItem: {
-        flex: 1,
-        paddingHorizontal: responsiveWidth(5.5),
-        justifyContent: 'center',
-        overflow:'hidden'
+        paddingHorizontal: responsiveWidth(3.8),
+        justifyContent: 'center', 
     },
     active: {
         backgroundColor:colors.primaryLite,
-        
     },
     section: {
         marginTop:responsiveHeight(3),
         flex:0.9,
-        // paddingHorizontal: responsiveWidth(5),
         backgroundColor:colors.white,
         borderRadius:responsiveHeight(2),
     },
@@ -61,10 +57,12 @@ export const styles = StyleSheet.create({
     categoriesContainer:{
         flexDirection: 'row' ,
         alignItems:'center',
-        gap:responsiveWidth(3)  
+        gap:responsiveWidth(1.5)  
     },
     appLogo:{
-        height:responsiveHeight(5),
-        width:responsiveHeight(15)
+        // height:responsiveHeight(5),
+        // width:responsiveHeight(15)
+        height:responsiveHeight(7),
+        width:responsiveHeight(19)
     }
 });

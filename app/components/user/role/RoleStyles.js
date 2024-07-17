@@ -133,7 +133,8 @@ export const styles = StyleSheet.create(
         tripListCount: {
             flexDirection: 'row',
             gap: responsiveHeight(1.5),
-            flexWrap: "wrap"
+            flexWrap: "wrap",
+            paddingHorizontal:responsiveWidth(3)
         },
         eachTripList:
         {
@@ -144,7 +145,7 @@ export const styles = StyleSheet.create(
             backgroundColor: colors.whiteSmoke
         },
         eachTripListTitle: {
-            fontSize: responsiveHeight(1.6),
+            fontSize: responsiveHeight(1.4),
             fontFamily: fonts.primary,
             color: colors.primary
         },
@@ -218,6 +219,12 @@ export const styles = StyleSheet.create(
         back:{
             alignSelf:'flex-start',
            marginLeft:responsiveWidth(-3)
+          },
+          teamMembersContainer:
+          {
+            flexDirection:'row',
+            alignItems:'center',
+            gap:responsiveHeight(1)
           }
 
     }

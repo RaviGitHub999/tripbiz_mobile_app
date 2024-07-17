@@ -21,6 +21,7 @@ import PopUp from '../../common/popup/PopUp';
 import {TextInput} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import TravellerDetailsBtn from '../../common/mainComponents/TravellerDetailsButton/TravellerDetailsBtn';
+import moment from 'moment';
 var imgs = [
   {
     passenger: 4,
@@ -69,7 +70,7 @@ var statuses = [
   {status: 'Paid and Submitted', color: '#ffa500'},
   {status: 'Need clarification', color: '#FFC107'},
   {status: 'Price Revision', color: '#2196F3'},
-  {status: 'Booked', color: '#4CAF50'},
+  {status: 'Booked', color: 'green'},
   {status: 'Cancelled', color: '#FF0000'},
   {status: 'Submitted,Payment Pending', color: '#ffa500'},
   {status: 'Booked,Payment Pending', color: '#4CAF50'},
@@ -93,13 +94,14 @@ const CabCard = ({
   approvePage,
   tripId,
   countCab,
-  totalCab
+  totalCab,
 }) => {
   const {navigate} = useNavigation();
   var [submitIsOpen, setSubmitIsOpen] = useState(false);
   var [isloading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('tab1');
   const [openDelete, setOpenDelete] = useState(false);
+  const [alltimeStamp, setAllTimeStamp] = useState(false);
   const {
     actions,
     cabNights,
@@ -233,10 +235,27 @@ const CabCard = ({
     setOpenDelete(false);
     //await getTripData()
   };
-
+  const openAllTimeStamps=()=>
+    {
+    setAllTimeStamp(true)
+    }
+    const closeAllTimeStamps=()=>
+    {
+      setAllTimeStamp(false)
+    }
   return (
     <>
-      <View style={styles.mainContainer}>
+      <View
+        style={[
+          styles.mainContainer,
+          {
+            backgroundColor: cabData?.status
+              ? cabData?.status === 'Booked'
+                ? 'honeydew'
+                : 'white'
+              : "white",
+          },
+        ]}>
         <View style={styles.container}>
           <Image
             source={{uri: cabImg[0]?.image}}
@@ -265,11 +284,11 @@ const CabCard = ({
                     ? new Date(endDate.seconds * 1000)?.toString()?.slice(4, 10)
                     : ''
                 } `}
-               {`(${
-                      cabTotal?.cabNights > 0 && cabTotal?.cabNights === 1
-                        ? cabTotal?.cabNights + " Trip"
-                        : cabTotal?.cabNights + " days"
-                    })`}
+                {`(${
+                  cabTotal?.cabNights > 0 && cabTotal?.cabNights === 1
+                    ? cabTotal?.cabNights + ' Trip'
+                    : cabTotal?.cabNights + ' days'
+                })`}
               </Text>
             ) : (
               <Text style={styles.subTitle}>
@@ -313,10 +332,12 @@ const CabCard = ({
             </View>
           )}
 
-        {tripsPage &&<View style={styles.headerSubContainer_1}>
-            <Text style={styles.subTitle}>{`Pick up Time : `}</Text>
-            <Text style={styles.title}>{cabTotal.selectedTime}</Text>
-          </View>}
+          {tripsPage && (
+            <View style={styles.headerSubContainer_1}>
+              <Text style={styles.subTitle}>{`Pick up Time : `}</Text>
+              <Text style={styles.title}>{cabTotal.selectedTime}</Text>
+            </View>
+          )}
         </View>
 
         {!tripsPage && (
@@ -375,7 +396,11 @@ const CabCard = ({
                 ) : null}
               </>
               {tripsPage ? (
-                <View style={styles.hotelTotalPriceContainer}>
+               <View style={[
+                styles.hotelTotalPriceContainer,
+                {justifyContent: 'space-between'},
+              ]}>
+                 <View style={styles.hotelTotalPriceContainer}>
                   <Text
                     style={
                       styles.hotelTotalPrice
@@ -393,6 +418,15 @@ const CabCard = ({
                       iconsize={1.8}
                     />
                   </TouchableOpacity>
+                </View>
+                <TouchableOpacity onPress={openAllTimeStamps}>
+                <IconSwitcher
+                  componentName="MaterialIcons"
+                  iconName="access-alarm"
+                  color={colors.black}
+                  iconsize={3}
+                />
+              </TouchableOpacity>
                 </View>
               ) : null}
               {cabData?.downloadURL && tripsPage ? (
@@ -421,7 +455,10 @@ const CabCard = ({
                   </Text>
                 </Text>
               </View>
-              <>
+              {cabData?.requestStatus === "Pending" ||
+                    cabData?.status === "Submitted" ||
+                    cabData?.status === "Booked" ||
+                    cabData?.requestStatus === "Approved" ? null :<>
                 <TouchableOpacity
                   onPress={() => {
                     setOpenDelete(true);
@@ -433,11 +470,18 @@ const CabCard = ({
                     iconsize={2.5}
                   />
                 </TouchableOpacity>
-              </>
+              </>}
             </View>
           </>
         ) : null}
-       {tripsPage ? <TravellerDetailsBtn adults={1} eachTripData={totalCab} tripId={tripId} />:null}
+        {tripsPage ? (
+          <TravellerDetailsBtn
+            adults={1}
+            eachTripData={totalCab}
+            tripId={tripId}
+            status={cabData?.status}
+          />
+        ) : null}
       </View>
       <PopUp
         value={submitIsOpen}
@@ -574,6 +618,82 @@ const CabCard = ({
           </View>
         </View>
       </PopUp>
+      <PopUp value={alltimeStamp} handlePopUpClose={closeAllTimeStamps}>
+          <View style={styles.timeStampsContainer}>
+          <IconSwitcher
+                componentName="Octicons"
+                iconName="dot-fill"
+                iconsize={1.8}
+              />
+            <Text style={styles.timeStampsTitles}>Added Date :</Text>
+            <Text style={styles.timeStampsTitles}>
+              {cabData?.date &&
+                moment(cabData?.date?.seconds * 1000).format(
+                  'MMMM D, h:mm a',
+                )}
+            </Text>
+          </View>
+          <View style={styles.timeStampsContainer}>
+          <IconSwitcher
+                componentName="Octicons"
+                iconName="dot-fill"
+                iconsize={1.8}
+              />
+            <Text style={styles.timeStampsTitles}>Sent to Approval :</Text>
+            <Text style={styles.timeStampsTitles}>
+              {
+                cabData?.manager_request_time ?
+                moment(cabData?.manager_request_time * 1000).format(
+                  'MMMM D, h:mm a',
+                ):'Not Requested for Approval'}
+            </Text>
+          </View>
+          <View style={styles.timeStampsContainer}>
+          <IconSwitcher
+                componentName="Octicons"
+                iconName="dot-fill"
+                iconsize={1.8}
+              />
+            <Text style={styles.timeStampsTitles}>Approved Date :</Text>
+            <Text style={styles.timeStampsTitles}>
+              {
+                cabData?.managerApprovedTime ?
+                moment(cabData?.managerApprovedTime?.seconds * 1000).format(
+                  'MMMM D, h:mm a',
+                ):'Not Approved'}
+            </Text>
+          </View>
+          <View style={styles.timeStampsContainer}>
+          <IconSwitcher
+                componentName="Octicons"
+                iconName="dot-fill"
+                iconsize={1.8}
+              />
+            <Text style={styles.timeStampsTitles}>Submitted Date :</Text>
+            <Text style={styles.timeStampsTitles}>
+              {
+                cabData?.submitted_date ?
+                moment(cabData?.submitted_date?.seconds * 1000).format(
+                  'MMMM D, h:mm a',
+                ):'Not Submitted'}
+            </Text>
+          </View>
+          <View style={styles.timeStampsContainer}>
+          <IconSwitcher
+                componentName="Octicons"
+                iconName="dot-fill"
+                iconsize={1.8}
+              />
+            <Text style={styles.timeStampsTitles}>Booked Date :</Text>
+            <Text style={styles.timeStampsTitles}>
+              {
+                cabData?.booked_date ?
+                moment(cabData?.booked_date?.seconds * 1000).format(
+                  'MMMM D, h:mm a',
+                ):'Not Booked'}
+            </Text>
+          </View>
+        </PopUp>
     </>
   );
 };
@@ -582,7 +702,7 @@ const styles = StyleSheet.create({
     marginVertical: responsiveHeight(1.5),
     paddingVertical: responsiveHeight(2),
     paddingHorizontal: responsiveWidth(2),
-    marginHorizontal: responsiveWidth(3),
+    marginHorizontal: responsiveWidth(1.5),
     borderRadius: responsiveHeight(1.5),
     elevation: responsiveHeight(0.4),
     backgroundColor: colors.white,
@@ -841,5 +961,17 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '80%',
   },
+  timeStampsContainer:{
+    flexDirection:'row',
+    alignItems:'center',
+    gap:responsiveWidth(2),
+},
+timeStampsTitles:
+{
+    fontSize: responsiveHeight(1.6),
+    fontFamily: fonts.primary,
+    color: colors.primary,
+    flex:1
+}
 });
 export default CabCard;
