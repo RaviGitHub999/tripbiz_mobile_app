@@ -53,7 +53,7 @@ const TripDetailsFlightCard = ({
     const [alltimeStamp, setAllTimeStamp] = useState(false);
     const { actions, flightsLogosData, domesticFlight } = useContext(MyContext)
     const statuses = [
-        { status: "Paid and Submitted", color: "#ffa500" },
+        { status: "Submitted", color: "#ffa500" },
         { status: "Need clarification", color: "#FFC107" },
         { status: "Price Revision", color: "#2196F3" },
         { status: "Booked", color: "#008000" },
@@ -909,6 +909,9 @@ const closeAllTimeStamps=()=>
           }}>
           <View style={styles.flightPriceAndChargesContainer}>
             {tripsPage ? (
+             <>
+             {
+              [flightBooking].length === 1 &&[flightBooking][0].flightNew.segments.length > 1 ? 
               <>
                 {[flightBooking].map((book, b) => {
                   return (
@@ -917,17 +920,7 @@ const closeAllTimeStamps=()=>
                         <Text
                           style={
                             styles.airportName
-                          }>{`${book.flightNew.segments[0].originAirportCode}`}</Text>
-                        <IconSwitcher
-                          componentName="AntDesign"
-                          iconName="arrowright"
-                          color="black"
-                          iconsize={2}
-                        />
-                        <Text
-                          style={
-                            styles.airportName
-                          }>{`${book.flightNew.segments[0].destAirportCode}`}</Text>
+                          }> Flight Fare</Text>
                       </View>
                       <Text style={styles.flightPrice}>
                         &#8377;{' '}
@@ -944,13 +937,52 @@ const closeAllTimeStamps=()=>
                     </View>
                   );
                 })}
-              </>
+              </>:
+              <>
+              {[flightBooking].map((book, b) => {
+                return (
+                  <View style={styles.flightDirectionMainContainer}>
+                    <View style={styles.flightDirectionContainer}>
+                      <Text
+                        style={
+                          styles.airportName
+                        }>{`${book.flightNew.segments[0].originAirportCode}`}</Text>
+                      <IconSwitcher
+                        componentName="AntDesign"
+                        iconName="arrowright"
+                        color="black"
+                        iconsize={2}
+                      />
+                      <Text
+                        style={
+                          styles.airportName
+                        }>{`${book.flightNew.segments[0].destAirportCode}`}</Text>
+                    </View>
+                    <Text style={styles.flightPrice}>
+                      &#8377;{' '}
+                      {`${
+                        book.flight.Fare.OfferedFare
+                          ? Math.ceil(
+                              book.flight.Fare.OfferedFare,
+                            ).toLocaleString('en-IN')
+                          : Math.ceil(
+                              book.flight.Fare.PublishedFare,
+                            ).toLocaleString('en-IN')
+                      }`}
+                    </Text>
+                  </View>
+                );
+              })}
+            </>
+             }
+             
+             </>
             ) : null}
             <View style={styles.horizontalLine} />
             {fareData?.totalBaggagePrice ? (
               <View style={styles.serviceCharges}>
                 <Text style={styles.flightCharges}>Excess baggage</Text>
-                <Text style={styles.flightChargesPrice}>
+                <Text style={[styles.flightChargesPrice,{fontSize:responsiveHeight(1.8)}]}>
                   + &#8377;
                   {` ${fareData?.totalBaggagePrice?.toLocaleString('en-IN')}`}
                 </Text>
@@ -960,7 +992,7 @@ const closeAllTimeStamps=()=>
             {fareData?.totalMealPrice ? (
               <View style={styles.serviceCharges}>
                 <Text style={styles.flightCharges}>Add-on meal</Text>
-                <Text style={styles.flightChargesPrice}>
+                <Text style={[styles.flightChargesPrice,{fontSize:responsiveHeight(1.8)}]}>
                   + &#8377;
                   {` ${fareData?.totalMealPrice?.toLocaleString('en-IN')}`}
                 </Text>
@@ -970,7 +1002,7 @@ const closeAllTimeStamps=()=>
             {fareData?.totalSeatCharges ? (
               <View style={styles.serviceCharges}>
                 <Text style={styles.flightCharges}>Seat Charges</Text>
-                <Text style={styles.flightChargesPrice}>
+                <Text style={[styles.flightChargesPrice,{fontSize:responsiveHeight(1.8)}]}>
                   + &#8377;
                   {` ${fareData?.totalSeatCharges?.toLocaleString('en-IN')}`}
                 </Text>
@@ -979,11 +1011,16 @@ const closeAllTimeStamps=()=>
 
             <View style={styles.serviceCharges}>
               <Text style={styles.flightCharges}>Service Charges</Text>
-              <Text style={styles.flightChargesPrice}>
+              <Text style={[styles.flightChargesPrice,{fontSize:responsiveHeight(1.8)}]}>
                 + &#8377;
-                {`${Math.ceil(
-                  (fareData?.totalFareSum * domesticFlight) / 100,
-                )}`}
+                {Math.round(flightBooking?.finalFlightServiceCharge)}
+              </Text>
+            </View>
+            <View style={styles.serviceCharges}>
+              <Text style={styles.flightCharges}>GST</Text>
+              <Text style={[styles.flightChargesPrice,{fontSize:responsiveHeight(1.8)}]}>
+                + &#8377;
+                {Math.round(flightBooking?.gstInFinalserviceCharge)}
               </Text>
             </View>
           </View>
@@ -991,7 +1028,7 @@ const closeAllTimeStamps=()=>
             <Text style={styles.totalFareTitle}>Total fare</Text>
             <Text style={styles.totalFare}>
               &#8377;{' '}
-              {` ${Math.ceil(fareData?.finalPrice).toLocaleString('en-IN')}`}
+              {` ${Math.round(flightBooking?.finalPrice).toLocaleString('en-IN')}`}
             </Text>
           </View>
         </PopUp>

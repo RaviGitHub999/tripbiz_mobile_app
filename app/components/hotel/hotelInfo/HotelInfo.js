@@ -501,13 +501,17 @@ const HotelInfo = ({ route: { params }, navigation: { goBack, navigate } }) => {
                                 })}
 
                             <View style={styles.hotelPriceContainer}>
-                                <Text style={styles.hotelPriceText}>Hotel Price</Text>
+                                <Text style={styles.hotelPriceText}>Room price:</Text>
                                 <Text style={styles.hotelPriceTP}>{` ₹ ${bookingHotel?.hotelFinalPrice?.toLocaleString("en-IN")} `}</Text>
                             </View>
                             <View style={styles.dashedLine} />
                             <View style={styles.hotelPriceContainer}>
                                 <Text style={styles.hotelPriceText}>Service Charges</Text>
-                                <Text style={styles.hotelPriceTP}>{` + ${Math.round((bookingHotel?.hotelFinalPrice * domesticHotel) / 100)}`}</Text>
+                                <Text style={styles.hotelPriceTP}>{` + ${Math.round(bookingHotel?.hotelServiceCharge)}`}</Text>
+                            </View>
+                            <View style={styles.hotelPriceContainer}>
+                                <Text style={styles.hotelPriceText}>GST</Text>
+                                <Text style={styles.hotelPriceTP}>{` + ${Math.round(bookingHotel?.calculateGstFromService)}`}</Text>
                             </View>
                         </>
 

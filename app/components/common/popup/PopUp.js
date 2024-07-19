@@ -15,7 +15,7 @@ const PopUp = (props) => {
                 onRequestClose={() => {
                     handlePopUpClose()
                 }}
-            >
+             >
                 <View style={styles.mainContainer}>
                     <View style={styles.subContainer}>
 

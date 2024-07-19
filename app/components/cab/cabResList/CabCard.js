@@ -67,7 +67,7 @@ const cabTypes = [
   '10 hrs cab at disposal',
 ];
 var statuses = [
-  {status: 'Paid and Submitted', color: '#ffa500'},
+  {status: 'Submitted', color: '#ffa500'},
   {status: 'Need clarification', color: '#FFC107'},
   {status: 'Price Revision', color: '#2196F3'},
   {status: 'Booked', color: 'green'},
@@ -88,7 +88,6 @@ const CabCard = ({
   endDate,
   tripsPage,
   cabData,
-  adminPage,
   cabTotal,
   tripsCabType,
   approvePage,
@@ -102,6 +101,12 @@ const CabCard = ({
   const [activeTab, setActiveTab] = useState('tab1');
   const [openDelete, setOpenDelete] = useState(false);
   const [alltimeStamp, setAllTimeStamp] = useState(false);
+  const [pickUpPopup, setPickUpPopup] = useState(false);
+  const [pickUp, setPickUp] = useState("");
+  const [drop, setDrop] = useState("");
+  const [pickUpError, setPickUpError] = useState('');
+  const [dropError, setDropError] = useState('');
+
   const {
     actions,
     cabNights,
@@ -113,6 +118,8 @@ const CabCard = ({
     cabService,
     selectedTime,
     userTripStatus,
+    GSTpercent,
+    minimumServiceCharge
   } = useContext(MyContext);
   // useEffect(() => {
   //   const fetchData = async () => {
@@ -120,7 +127,7 @@ const CabCard = ({
   //   };
 
   //   fetchData();
-  // }, []);
+  // }, []);  
   const [openPriceInfo, setOpenPriceInfo] = useState(false);
   var myStr = cabCity + '_trip';
   let formattedDate;
@@ -173,7 +180,14 @@ const CabCard = ({
 
   const handleAddToTrip = async () => {
     setIsLoading(true);
-    var cabTotalPrice = (cabFinalPrice * cabService) / 100 + cabFinalPrice;
+    // var cabTotalPrice = (cabFinalPrice * cabService) / 100 + cabFinalPrice;
+    const calculateCabservice = (cabFinalPrice * cabService) / 100;
+    const finalServiceCharge =
+    calculateCabservice > minimumServiceCharge? calculateCabservice : minimumServiceCharge;
+  const gstInFinalserviceCharge = finalServiceCharge * (GSTpercent / 100);
+  var cabTotalPrice =
+  finalServiceCharge + gstInFinalserviceCharge + cabFinalPrice;
+
     let newtripid = await actions.editTripBtn(defaultInput, 'cabs', {
       cabCity,
       cabType,
@@ -185,6 +199,10 @@ const CabCard = ({
       cabFinalPrice,
       cabNights,
       selectedTime,
+      pickUp,
+      drop,
+      finalServiceCharge: finalServiceCharge,
+      gstInFinalserviceCharge: gstInFinalserviceCharge,
     });
     setIsLoading(false);
     setSubmitIsOpen(false);
@@ -195,8 +213,14 @@ const CabCard = ({
     setDefaultInput(e);
   };
   const addtoTrip = async id => {
-    var cabTotalPrice = (cabFinalPrice * cabService) / 100 + cabFinalPrice;
+    // var cabTotalPrice = (cabFinalPrice * cabService) / 100 + cabFinalPrice;
     setSubmitIsOpen(false);
+    const calculateCabservice = (cabFinalPrice * cabService) / 100;
+    const finalServiceCharge =
+    calculateCabservice > minimumServiceCharge? calculateCabservice : minimumServiceCharge;
+  const gstInFinalserviceCharge = finalServiceCharge * (GSTpercent / 100);
+  var cabTotalPrice =
+  finalServiceCharge + gstInFinalserviceCharge + cabFinalPrice;
     await actions.editTripById(
       id,
       {
@@ -210,6 +234,10 @@ const CabCard = ({
         cabFinalPrice,
         cabNights,
         selectedTime,
+        pickUp,
+        drop,
+        finalServiceCharge: finalServiceCharge,
+        gstInFinalserviceCharge: gstInFinalserviceCharge,
       },
       'cabs',
     );
@@ -235,14 +263,41 @@ const CabCard = ({
     setOpenDelete(false);
     //await getTripData()
   };
-  const openAllTimeStamps=()=>
-    {
-    setAllTimeStamp(true)
+  const openAllTimeStamps = () => {
+    setAllTimeStamp(true);
+  };
+  const closeAllTimeStamps = () => {
+    setAllTimeStamp(false);
+  };
+  const handlePress = () => {
+    let valid = true;
+    if (cabType === "Airport to City center Hotel" || cabType === "City center hotel to airport") {
+      if (pickUp === "") {
+        setPickUpError("Pick up location cannot be empty.");
+        valid = false;
+      } else {
+        setPickUpError('');
+      }
+      if (drop === "") {
+        setDropError("Drop off location cannot be empty.");
+        valid = false;
+      } else {
+        setDropError('');
+      }
+    } else {
+      if (pickUp === "") {
+        setPickUpError("Pick up location cannot be empty.");
+        valid = false;
+      } else {
+        setPickUpError('');
+      }
     }
-    const closeAllTimeStamps=()=>
-    {
-      setAllTimeStamp(false)
+
+    if (valid) {
+      setSubmitIsOpen(true);
+      setPickUpPopup(false);
     }
+  };
   return (
     <>
       <View
@@ -253,7 +308,7 @@ const CabCard = ({
               ? cabData?.status === 'Booked'
                 ? 'honeydew'
                 : 'white'
-              : "white",
+              : 'white',
           },
         ]}>
         <View style={styles.container}>
@@ -344,7 +399,8 @@ const CabCard = ({
           <TouchableOpacity
             style={styles.btn}
             onPress={() => {
-              setSubmitIsOpen(true);
+              // setSubmitIsOpen(true);
+              setPickUpPopup(true);
             }}>
             <Text style={styles.btnTitle}>Add to trip</Text>
           </TouchableOpacity>
@@ -396,37 +452,38 @@ const CabCard = ({
                 ) : null}
               </>
               {tripsPage ? (
-               <View style={[
-                styles.hotelTotalPriceContainer,
-                {justifyContent: 'space-between'},
-              ]}>
-                 <View style={styles.hotelTotalPriceContainer}>
-                  <Text
-                    style={
-                      styles.hotelTotalPrice
-                    }>{`Total Price : ₹ ${Math.ceil(
-                    cabTotal.cabTotalPrice,
-                  ).toLocaleString('en-IN')}`}</Text>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setOpenPriceInfo(true);
-                    }}>
+                <View
+                  style={[
+                    styles.hotelTotalPriceContainer,
+                    {justifyContent: 'space-between'},
+                  ]}>
+                  <View style={styles.hotelTotalPriceContainer}>
+                    <Text
+                      style={
+                        styles.hotelTotalPrice
+                      }>{`Total Price : ₹ ${Math.ceil(
+                      cabTotal.cabTotalPrice,
+                    ).toLocaleString('en-IN')}`}</Text>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setOpenPriceInfo(true);
+                      }}>
+                      <IconSwitcher
+                        componentName="Entypo"
+                        iconName="info-with-circle"
+                        color={colors.black}
+                        iconsize={1.8}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  <TouchableOpacity onPress={openAllTimeStamps}>
                     <IconSwitcher
-                      componentName="Entypo"
-                      iconName="info-with-circle"
+                      componentName="MaterialIcons"
+                      iconName="access-alarm"
                       color={colors.black}
-                      iconsize={1.8}
+                      iconsize={3}
                     />
                   </TouchableOpacity>
-                </View>
-                <TouchableOpacity onPress={openAllTimeStamps}>
-                <IconSwitcher
-                  componentName="MaterialIcons"
-                  iconName="access-alarm"
-                  color={colors.black}
-                  iconsize={3}
-                />
-              </TouchableOpacity>
                 </View>
               ) : null}
               {cabData?.downloadURL && tripsPage ? (
@@ -455,22 +512,24 @@ const CabCard = ({
                   </Text>
                 </Text>
               </View>
-              {cabData?.requestStatus === "Pending" ||
-                    cabData?.status === "Submitted" ||
-                    cabData?.status === "Booked" ||
-                    cabData?.requestStatus === "Approved" ? null :<>
-                <TouchableOpacity
-                  onPress={() => {
-                    setOpenDelete(true);
-                  }}>
-                  <IconSwitcher
-                    componentName="MaterialIcons"
-                    iconName="delete"
-                    color={colors.red}
-                    iconsize={2.5}
-                  />
-                </TouchableOpacity>
-              </>}
+              {cabData?.requestStatus === 'Pending' ||
+              cabData?.status === 'Submitted' ||
+              cabData?.status === 'Booked' ||
+              cabData?.requestStatus === 'Approved' ? null : (
+                <>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setOpenDelete(true);
+                    }}>
+                    <IconSwitcher
+                      componentName="MaterialIcons"
+                      iconName="delete"
+                      color={colors.red}
+                      iconsize={2.5}
+                    />
+                  </TouchableOpacity>
+                </>
+              )}
             </View>
           </>
         ) : null}
@@ -599,12 +658,19 @@ const CabCard = ({
           <View style={styles.horizentalLine} />
           <View style={styles.priceDetailsContainer}>
             <Text style={styles.priceDetailsTitle}>Service Charges</Text>
-            <Text style={[styles.priceDetails, {color: colors.highlight}]}>
+            <Text style={[styles.priceDetails, {color: colors.highlight,fontSize:responsiveHeight(1.8)}]}>
               + &#8377;{' '}
-              {Math.ceil((cabTotal?.cabFinalPrice * cabService) / 100)}
+              {Math.ceil(cabTotal?.finalServiceCharge)}
             </Text>
           </View>
 
+          <View style={styles.priceDetailsContainer}>
+            <Text style={styles.priceDetailsTitle}>GST</Text>
+            <Text style={[styles.priceDetails, {color: colors.highlight,fontSize:responsiveHeight(1.8)}]}>
+              + &#8377;{' '}
+              {Math.ceil(cabTotal?.gstInFinalserviceCharge)}
+            </Text>
+          </View>
           <View
             style={[
               styles.priceDetailsContainer,
@@ -619,81 +685,122 @@ const CabCard = ({
         </View>
       </PopUp>
       <PopUp value={alltimeStamp} handlePopUpClose={closeAllTimeStamps}>
-          <View style={styles.timeStampsContainer}>
+        <View style={styles.timeStampsContainer}>
           <IconSwitcher
-                componentName="Octicons"
-                iconName="dot-fill"
-                iconsize={1.8}
-              />
-            <Text style={styles.timeStampsTitles}>Added Date :</Text>
-            <Text style={styles.timeStampsTitles}>
-              {cabData?.date &&
-                moment(cabData?.date?.seconds * 1000).format(
-                  'MMMM D, h:mm a',
-                )}
-            </Text>
-          </View>
-          <View style={styles.timeStampsContainer}>
+            componentName="Octicons"
+            iconName="dot-fill"
+            iconsize={1.8}
+          />
+          <Text style={styles.timeStampsTitles}>Added Date :</Text>
+          <Text style={styles.timeStampsTitles}>
+            {cabData?.date &&
+              moment(cabData?.date?.seconds * 1000).format('MMMM D, h:mm a')}
+          </Text>
+        </View>
+        <View style={styles.timeStampsContainer}>
           <IconSwitcher
-                componentName="Octicons"
-                iconName="dot-fill"
-                iconsize={1.8}
-              />
-            <Text style={styles.timeStampsTitles}>Sent to Approval :</Text>
-            <Text style={styles.timeStampsTitles}>
-              {
-                cabData?.manager_request_time ?
-                moment(cabData?.manager_request_time * 1000).format(
+            componentName="Octicons"
+            iconName="dot-fill"
+            iconsize={1.8}
+          />
+          <Text style={styles.timeStampsTitles}>Sent to Approval :</Text>
+          <Text style={styles.timeStampsTitles}>
+            {cabData?.manager_request_time
+              ? moment(cabData?.manager_request_time * 1000).format(
                   'MMMM D, h:mm a',
-                ):'Not Requested for Approval'}
-            </Text>
-          </View>
-          <View style={styles.timeStampsContainer}>
+                )
+              : 'Not Requested for Approval'}
+          </Text>
+        </View>
+        <View style={styles.timeStampsContainer}>
           <IconSwitcher
-                componentName="Octicons"
-                iconName="dot-fill"
-                iconsize={1.8}
-              />
-            <Text style={styles.timeStampsTitles}>Approved Date :</Text>
-            <Text style={styles.timeStampsTitles}>
-              {
-                cabData?.managerApprovedTime ?
-                moment(cabData?.managerApprovedTime?.seconds * 1000).format(
+            componentName="Octicons"
+            iconName="dot-fill"
+            iconsize={1.8}
+          />
+          <Text style={styles.timeStampsTitles}>Approved Date :</Text>
+          <Text style={styles.timeStampsTitles}>
+            {cabData?.managerApprovedTime
+              ? moment(cabData?.managerApprovedTime?.seconds * 1000).format(
                   'MMMM D, h:mm a',
-                ):'Not Approved'}
-            </Text>
-          </View>
-          <View style={styles.timeStampsContainer}>
+                )
+              : 'Not Approved'}
+          </Text>
+        </View>
+        <View style={styles.timeStampsContainer}>
           <IconSwitcher
-                componentName="Octicons"
-                iconName="dot-fill"
-                iconsize={1.8}
-              />
-            <Text style={styles.timeStampsTitles}>Submitted Date :</Text>
-            <Text style={styles.timeStampsTitles}>
-              {
-                cabData?.submitted_date ?
-                moment(cabData?.submitted_date?.seconds * 1000).format(
+            componentName="Octicons"
+            iconName="dot-fill"
+            iconsize={1.8}
+          />
+          <Text style={styles.timeStampsTitles}>Submitted Date :</Text>
+          <Text style={styles.timeStampsTitles}>
+            {cabData?.submitted_date
+              ? moment(cabData?.submitted_date?.seconds * 1000).format(
                   'MMMM D, h:mm a',
-                ):'Not Submitted'}
-            </Text>
-          </View>
-          <View style={styles.timeStampsContainer}>
+                )
+              : 'Not Submitted'}
+          </Text>
+        </View>
+        <View style={styles.timeStampsContainer}>
           <IconSwitcher
-                componentName="Octicons"
-                iconName="dot-fill"
-                iconsize={1.8}
-              />
-            <Text style={styles.timeStampsTitles}>Booked Date :</Text>
-            <Text style={styles.timeStampsTitles}>
-              {
-                cabData?.booked_date ?
-                moment(cabData?.booked_date?.seconds * 1000).format(
+            componentName="Octicons"
+            iconName="dot-fill"
+            iconsize={1.8}
+          />
+          <Text style={styles.timeStampsTitles}>Booked Date :</Text>
+          <Text style={styles.timeStampsTitles}>
+            {cabData?.booked_date
+              ? moment(cabData?.booked_date?.seconds * 1000).format(
                   'MMMM D, h:mm a',
-                ):'Not Booked'}
-            </Text>
-          </View>
-        </PopUp>
+                )
+              : 'Not Booked'}
+          </Text>
+        </View>
+      </PopUp>
+
+      <PopUp
+        value={pickUpPopup}
+        handlePopUpClose={() => {
+          setPickUpPopup(false);
+        }}>
+       <View style={{gap:responsiveHeight(1)}}>
+       <View style={{gap:responsiveHeight(1)}}>
+        <Text style={[styles.newtriptitle,{fontSize:responsiveHeight(2)}]}>Pick up</Text>
+        <TextInput
+          editable
+          multiline
+          // numberOfLines={2}
+          placeholder="Enter name of your trip"
+          style={[styles.multiTextContainer,{fontSize:responsiveHeight(2)}]}
+          value={pickUp}
+          onChangeText={(e) => setPickUp(e)}
+        />
+        {pickUpError ? <Text style={styles.errorText}>{pickUpError}</Text> : null}
+      </View>
+
+       {(cabType === "City center hotel to airport"||cabType === "Airport to City center Hotel")&& <View style={{gap:responsiveHeight(1)}}>
+       <Text style={[styles.newtriptitle,{fontSize:responsiveHeight(2)}]}>Drop</Text>
+        <TextInput
+          editable
+          multiline
+          // numberOfLines={1}
+          placeholder="Enter name of your trip"
+          style={[styles.multiTextContainer,{fontSize:responsiveHeight(2)}]}
+          value={drop}
+          onChangeText={(e) => setDrop(e)}
+        />
+        {dropError ? <Text style={styles.errorText}>{dropError}</Text> : null}
+       </View>}
+
+       <TouchableOpacity
+            style={[styles.btn,{alignSelf:'center'}]}
+            onPress={handlePress}>
+            <Text style={styles.btnTitle}>Add to trip</Text>
+          </TouchableOpacity>
+       </View>
+
+      </PopUp>
     </>
   );
 };
@@ -844,7 +951,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.primary,
   },
   multiTextContainer: {
-    borderWidth: 1,
+    borderWidth: responsiveHeight(0.18),
     textAlignVertical: 'top',
     borderRadius: responsiveHeight(1.3),
     paddingHorizontal: responsiveWidth(3),
@@ -961,17 +1068,20 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '80%',
   },
-  timeStampsContainer:{
-    flexDirection:'row',
-    alignItems:'center',
-    gap:responsiveWidth(2),
-},
-timeStampsTitles:
-{
+  timeStampsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: responsiveWidth(2),
+  },
+  timeStampsTitles: {
     fontSize: responsiveHeight(1.6),
     fontFamily: fonts.primary,
     color: colors.primary,
-    flex:1
-}
+    flex: 1,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: responsiveHeight(1.5),
+  },
 });
 export default CabCard;

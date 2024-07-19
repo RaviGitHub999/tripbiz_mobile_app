@@ -329,7 +329,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
     }
   };
   var statuses = [
-    {status: 'Paid and Submitted', color: '#ffa500'},
+    {status: 'Submitted', color: '#ffa500'},
     {status: 'Need clarification', color: '#FFC107'},
     {status: 'Price Revision', color: '#2196F3'},
     {status: 'Booked', color: '#008000'},
@@ -355,7 +355,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
 
   const handlehotelPriceinfo = hotel => {
     handlePopUps('hotelPrice');
-    setHotelFinalPrice(hotel.data.hotelFinalPrice);
+    setHotelFinalPrice(hotel.data);
     setHotelTotalPrice(hotel.data.hotelTotalPrice);
     setSelectedRoom(hotel.data.selectedRoomType);
   };
@@ -2202,7 +2202,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
               <Text style={styles.popUproomPriceTitle}>Room price:</Text>
               <Text
                 style={[styles.popUproomPriceTitle, {color: colors.secondary}]}>
-                &#8377; {`${hotelFinalPrice.toLocaleString('en-IN')} `}
+                &#8377; {`${Math.ceil(hotelFinalPrice?.hotelFinalPrice)} `}
               </Text>
             </View>
             <View style={styles.popUpHotelPriceDescriptionContaioner}>
@@ -2214,7 +2214,19 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                   styles.popUproomserviceChargesTitle,
                   {color: colors.highlight},
                 ]}>
-                + &#8377;{Math.ceil(hotelTotalPrice - hotelFinalPrice)}
+                + &#8377;{Math.ceil(hotelFinalPrice.hotelServiceCharge)}
+              </Text>
+            </View>
+            <View style={styles.popUpHotelPriceDescriptionContaioner}>
+              <Text style={styles.popUproomserviceChargesTitle}>
+                GST
+              </Text>
+              <Text
+                style={[
+                  styles.popUproomserviceChargesTitle,
+                  {color: colors.highlight},
+                ]}>
+                + &#8377;{Math.ceil(hotelFinalPrice?.calculateGstFromService)}
               </Text>
             </View>
             <View style={styles.popUpHotelPriceDescriptionContaioner}>
@@ -2223,7 +2235,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
               </Text>
               <Text style={styles.totalPrice}>
                 &#8377;{' '}
-                {`${Math.ceil(hotelTotalPrice).toLocaleString('en-IN')}`}
+                {`${Math.ceil(hotelTotalPrice).toLocaleString("en-IN")} `}
               </Text>
             </View>
           </View>

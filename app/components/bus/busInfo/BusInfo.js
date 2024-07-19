@@ -3,7 +3,6 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  Animated,
   Keyboard,
   ActivityIndicator,
 } from 'react-native';
@@ -11,11 +10,8 @@ import React, {useContext, useState} from 'react';
 import IconSwitcher from '../../common/icons/IconSwitcher';
 import {colors} from '../../../config/theme';
 import {styles} from './BusInfoStyles';
-import Rishi from '../../wallet/Rishi';
-import Select from '../../common/select/Select';
 import CustomSelection from '../../common/mainComponents/customSelect/CustomSelection';
 import MyContext from '../../../context/Context';
-import ProgressBar from '../../common/progressBar/ProgressBar';
 import {responsiveHeight, responsiveWidth} from '../../../utils/responsiveScale';
 import SeatLayout from './SeatLayout';
 import {useNavigation} from '@react-navigation/native';
@@ -27,6 +23,8 @@ import { FlatList } from 'react-native';
 const BusInfo = () => {
   const [boardingPoint, setBoardingPoint] = useState(null);
   const [droppingPoint, setDroppingPoint] = useState(null);
+  const [boardingError, setBoardingError] = useState("");
+  const [droppingError, setDroppingError] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState('tab1');
   const [submitIsOpen, setSubmitIsOpen] = useState(false);
@@ -42,7 +40,8 @@ const BusInfo = () => {
     BusOperatorName,
     originDetails,
     destDetails,
-    NoofBusPassengers
+    NoofBusPassengers,
+    GSTpercent
   } = useContext(MyContext);
   const date = new Date(busDate);
   var myStr = destDetails?.cityName;
@@ -122,6 +121,35 @@ const BusInfo = () => {
     // await actions.getLastDoc();
   };
 
+  const handlePress=()=>
+  {
+    let valid=true
+    if(boardingPoint===null||"")
+    {
+      setBoardingError("BoardingPoint cannot be empty.")
+      valid=false
+    }
+    else{
+      setBoardingError("")
+    }
+    if(droppingPoint===null||"")
+      {
+        setDroppingError("DroppingPoint cannot be empty.")
+      valid=false
+      }
+      else{
+        setDroppingError("")
+      }
+
+      if(bookingBus?.selectedSeat?.length < NoofBusPassengers)
+      {
+        valid=false
+      }
+      if(valid)
+      {
+        setSubmitIsOpen(true);
+      }
+  }
   return (
     <>
       <ScrollView
@@ -160,6 +188,7 @@ const BusInfo = () => {
                   }
                   listKey={'CityPointAddress'}
                 />
+                {boardingError&&<Text style={styles.errorText}>{boardingError}</Text>}
               </View>
 
               <View style={styles.boardingPoint_droppingPoint_subContainer}>
@@ -174,6 +203,7 @@ const BusInfo = () => {
                   }
                   listKey={'CityPointLocation'}
                 />
+                {droppingError&&<Text style={styles.errorText}>{droppingError}</Text>}
               </View>
             </View>
           </View>
@@ -248,10 +278,7 @@ const BusInfo = () => {
           ) : (
             <TouchableOpacity
               style={styles.addtotripBtn}
-              onPress={() => {
-                setSubmitIsOpen(true);
-                // setDefaultInput(combinedString);
-              }}>
+              onPress={handlePress}>
               <Text style={styles.addtotripBtnText}>Add to trip</Text>
             </TouchableOpacity>
           )}
@@ -288,16 +315,13 @@ const BusInfo = () => {
               <View style={styles.hotelPriceContainer}>
                 <Text style={styles.hotelPriceText}>Service Charges</Text>
                 <Text style={styles.hotelPriceTP}>
-                  + {bookingBus?.selectedSeat?.length > 0
-                    ? bookingBus?.selectedSeat?.reduce(
-                        (total, seat) =>
-                          total +
-                          Math.ceil(
-                            (seat.Price.OfferedPriceRoundedOff * busService) / 100,
-                          ),
-                        0,
-                      )
-                    : 0}
+                   {` + ${bookingBus?.serviceCharge ? bookingBus?.serviceCharge : ""}`}
+                </Text>
+              </View>
+              <View style={styles.hotelPriceContainer}>
+                <Text style={styles.hotelPriceText}>{`GST(${GSTpercent}%)`}</Text>
+                <Text style={styles.hotelPriceTP}>
+                + &#8377;{`${bookingBus?.GST ? Math.round(bookingBus?.GST) : ""}`}
                 </Text>
               </View>
             </View>

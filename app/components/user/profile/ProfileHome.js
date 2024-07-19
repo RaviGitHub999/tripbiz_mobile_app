@@ -7,7 +7,7 @@ import auth from '@react-native-firebase/auth';
 import MyContext from '../../../context/Context';
 import PopUp from '../../common/popup/PopUp';
 const ProfileHome = () => {
-  var {userAccountDetails} = useContext(MyContext);
+  var {userAccountDetails,actions} = useContext(MyContext);
   const [logOutStatus, setLogOutStatus] = useState(false);
   const {navigate} = useNavigation();
 
@@ -15,6 +15,7 @@ const ProfileHome = () => {
     try {
       await auth().signOut();
       navigate('Login');
+      actions.setRes()
     } catch (error) {
       console.error('Error logging out:', error);
     }

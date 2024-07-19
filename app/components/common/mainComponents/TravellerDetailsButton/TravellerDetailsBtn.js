@@ -359,7 +359,7 @@ const TravellerDetailsBtn = ({
                                       : new Date()
                                   }
                                   mode="date"
-                                  display="default"
+                                  display="calendar"
                                   onChange={(event, date) => {
                                     const newShowIssueDatePicker = [
                                       ...showIssueDatePicker,
@@ -374,11 +374,12 @@ const TravellerDetailsBtn = ({
                                       ); // format as YYYY-MM-DD
                                     }
                                   }}
-                                  minimumDate={
-                                    field.value
-                                      ? new Date(field.value)
-                                      : new Date()
-                                  }
+                                  // minimumDate={
+                                  //   field.value
+                                  //     ? new Date(field.value)
+                                  //     : new Date()
+                                  // }
+                                  minimumDate={new Date(1980, 0, 1)}
                                 />
                               )}
                             </View>
@@ -432,7 +433,7 @@ const TravellerDetailsBtn = ({
                                       : new Date()
                                   }
                                   mode="date"
-                                  display="default"
+                                  display="calendar"
                                   onChange={(event, date) => {
                                     const newShowExpiryDatePicker = [
                                       ...showExpiryDatePicker,
@@ -447,11 +448,7 @@ const TravellerDetailsBtn = ({
                                       ); 
                                     }
                                   }}
-                                  minimumDate={
-                                    field.value
-                                      ? new Date(field.value)
-                                      : new Date()
-                                  }
+                                  minimumDate={new Date(1980, 0, 1)}
                                 />
                               )}
                             </View>
@@ -614,11 +611,12 @@ const TravellerDetailsBtn = ({
                                       ); // format as YYYY-MM-DD
                                     }
                                   }}
-                                  minimumDate={
-                                    field.value
-                                      ? new Date(field.value)
-                                      : new Date()
-                                  }
+                                  // minimumDate={
+                                  //   field.value
+                                  //     ? new Date(field.value)
+                                  //     : new Date()
+                                  // }
+                                  minimumDate={new Date(1980, 0, 1)}
                                 />
                               )}
                             </View>
@@ -687,11 +685,7 @@ const TravellerDetailsBtn = ({
                                       ); 
                                     }
                                   }}
-                                  minimumDate={
-                                    field.value
-                                      ? new Date(field.value)
-                                      : new Date()
-                                  }
+                                  minimumDate={new Date(1980, 0, 1)}
                                 />
                               )}
                             </View>
@@ -851,11 +845,7 @@ const TravellerDetailsBtn = ({
                                       ); // format as YYYY-MM-DD
                                     }
                                   }}
-                                  minimumDate={
-                                    field.value
-                                      ? new Date(field.value)
-                                      : new Date()
-                                  }
+                                  minimumDate={new Date(1980, 0, 1)}
                                 />
                               )}
                             </View>
@@ -924,11 +914,7 @@ const TravellerDetailsBtn = ({
                                       ); 
                                     }
                                   }}
-                                  minimumDate={
-                                    field.value
-                                      ? new Date(field.value)
-                                      : new Date()
-                                  }
+                                  minimumDate={new Date(1980, 0, 1)}
                                 />
                               )}
                             </View>

@@ -67,6 +67,7 @@ const SeatLayout = ({seatData,boardingPoint,droppingPoint}) => {
     seat.ColumnNo === "009" ? false:true
   );
   return (
+   <>
     <ScrollView style={styles.appContainer} horizontal>
           { upperDeckData.length>0&& 
           <Deck
@@ -77,16 +78,29 @@ const SeatLayout = ({seatData,boardingPoint,droppingPoint}) => {
         selectedSeats={selectedSeats}
         isUpperDeck
       />}
-      {lowerDeckData.length>0&&<Deck
+      {/* {lowerDeckData.length>0&&<Deck
         data={lowerDeckData}
         title="Lower Deck"
         addMarginAfterRow={shouldAddMarginAfterLowerDeckRow2 ? 1: null}
         toggleSeatSelection={toggleSeatSelection}
         selectedSeats={selectedSeats}
         isUpperDeck={false}
-      />}
+      />} */}
   
     </ScrollView>
+     <ScrollView style={styles.appContainer} horizontal>
+    
+ {lowerDeckData.length>0&&<Deck
+   data={lowerDeckData}
+   title="Lower Deck"
+   addMarginAfterRow={shouldAddMarginAfterLowerDeckRow2 ? 1: null}
+   toggleSeatSelection={toggleSeatSelection}
+   selectedSeats={selectedSeats}
+   isUpperDeck={false}
+ />}
+
+</ScrollView>
+   </>
   );
 };
 

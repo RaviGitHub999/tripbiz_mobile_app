@@ -93,7 +93,7 @@ export const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     totalFareFlightDetailsMainContainer:{
-        borderBottomWidth: responsiveHeight(0.1),
+        // borderBottomWidth: responsiveHeight(0.1),
          justifyContent: 'space-between',
           marginHorizontal: responsiveWidth(3),
            gap: responsiveHeight(1),

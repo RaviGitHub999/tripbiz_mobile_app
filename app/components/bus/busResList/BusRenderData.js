@@ -19,7 +19,7 @@ import {ActivityIndicator} from 'react-native';
 import TravellerDetailsBtn from '../../common/mainComponents/TravellerDetailsButton/TravellerDetailsBtn';
 import moment from 'moment';
 var statuses = [
-  {status: 'Paid and Submitted', color: '#ffa500'},
+  {status: 'Submitted', color: '#ffa500'},
   {status: 'Need clarification', color: '#FFC107'},
   {status: 'Price Revision', color: '#2196F3'},
   {status: 'Booked', color: 'green'},
@@ -436,21 +436,19 @@ const BusRenderData = ({
           <View style={styles.horizentalLine} />
           <View style={styles.priceDetailsContainer}>
             <Text style={styles.priceDetailsTitle}>Service Charges</Text>
-            <Text style={[styles.priceDetails, {color: colors.highlight}]}>
+            <Text style={[styles.priceDetails, {color: colors.highlight,fontSize:responsiveHeight(1.8)}]}>
               + &#8377;
-              {bookingBus?.selectedSeat?.length > 0
-                ? bookingBus.selectedSeat.reduce(
-                    (total, seat) =>
-                      total +
-                      Math.ceil(
-                        (seat.Price.OfferedPriceRoundedOff * busService) / 100,
-                      ),
-                    0,
-                  )
-                : 0}
+                {Math.round(bookingBus?.serviceCharge)}
             </Text>
           </View>
 
+          <View style={styles.priceDetailsContainer}>
+            <Text style={styles.priceDetailsTitle}>GST</Text>
+            <Text style={[styles.priceDetails, {color: colors.highlight,fontSize:responsiveHeight(1.8)}]}>
+              + &#8377;
+                {Math.round(bookingBus?.GST)}
+            </Text>
+          </View>
           <View
             style={[
               styles.priceDetailsContainer,
