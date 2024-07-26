@@ -2521,6 +2521,8 @@ export default class MyProvider extends Component {
                 totalMealPrice += x;
               });
             }
+            bookingFlight[s].totalBaggagePrice = totalBaggagePrice;
+          bookingFlight[s].totalMealPrice = totalMealPrice;
           });
           var finalPrice =
             totalFareSum + (totalFareSum * this.state.domesticFlight) / 100;
@@ -3436,6 +3438,7 @@ export default class MyProvider extends Component {
           submittedFlights,
           submittedCabs,
           submittedBus,
+          comment
         ) => {
           try {
             // Reference to the admin's document in the 'Accounts' collection
@@ -3481,6 +3484,7 @@ export default class MyProvider extends Component {
               submittedDate: Date.now(),
               travellerDetails: userDetails,
               bus: busArray,
+              comment: comment,
             });
 
             // Update admin's document with new trip ID
@@ -3507,7 +3511,7 @@ export default class MyProvider extends Component {
                   this.state.userId,
                   tripId,
                   newTripDocRef.id,
-                  'Paid and Submitted',
+                  'Submitted',
                   flight.id,
                   'flight',
                 );
@@ -3520,7 +3524,7 @@ export default class MyProvider extends Component {
                   this.state.userId,
                   tripId,
                   newTripDocRef.id,
-                  'Paid and Submitted',
+                  'Submitted',
                   hotel.id,
                   'add',
                 );
@@ -3533,7 +3537,7 @@ export default class MyProvider extends Component {
                   this.state.userId,
                   tripId,
                   newTripDocRef.id,
-                  'Paid and Submitted',
+                  'Submitted',
                   cab.id,
                   'cabs',
                 );
@@ -3546,7 +3550,7 @@ export default class MyProvider extends Component {
                   this.state.userId,
                   tripId,
                   newTripDocRef.id,
-                  'Paid and Submitted',
+                  'Submitted',
                   bus.id,
                   'bus',
                 );
@@ -3569,6 +3573,8 @@ export default class MyProvider extends Component {
           submittedCabs,
           tripName,
           submittedBus,
+          notBus,
+          comment
         ) => {
           try {
             const accountDocRef = firestore()
@@ -3648,6 +3654,7 @@ export default class MyProvider extends Component {
                 submittedFlights,
                 submittedCabs,
                 submittedBus,
+                comment
               );
               return;
             }
@@ -3670,7 +3677,7 @@ export default class MyProvider extends Component {
                     this.state.userId,
                     tripid,
                     querySnapshot.docs[0].id,
-                    'Paid and Submitted',
+                    'Submitted',
                     flight.id,
                     'flight',
                   );
@@ -3682,7 +3689,7 @@ export default class MyProvider extends Component {
                     this.state.userId,
                     tripid,
                     querySnapshot.docs[0].id,
-                    'Paid and Submitted',
+                    'Submitted',
                     hotel.id,
                     'add',
                   );
@@ -3694,7 +3701,7 @@ export default class MyProvider extends Component {
                     this.state.userId,
                     tripid,
                     querySnapshot.docs[0].id,
-                    'Paid and Submitted',
+                    'Submitted',
                     cab.id,
                     'cabs',
                   );
@@ -3706,7 +3713,7 @@ export default class MyProvider extends Component {
                     this.state.userId,
                     tripid,
                     querySnapshot.docs[0].id,
-                    'Paid and Submitted',
+                    'Submitted',
                     bus.id,
                     'bus',
                   );
@@ -4209,6 +4216,7 @@ export default class MyProvider extends Component {
           tripId,
           travellerDetails,
           price,
+          managerComment
         ) => {
           const userDocRef = firestore().collection('Accounts').doc(userId);
           const tripCollecRef = userDocRef.collection('trips').doc(tripId);
@@ -4246,6 +4254,7 @@ export default class MyProvider extends Component {
             cabs: reqCabs,
             bus: reqBus,
             tripStatus: 'Not Submitted',
+            managerComment: managerComment,
           });
 
           const managerDocRef = firestore()
@@ -4263,6 +4272,7 @@ export default class MyProvider extends Component {
               hotels: reqHotels,
               cabs: reqCabs,
               bus: reqBus,
+              managerComment: managerComment,
             }),
           });
 
@@ -5017,7 +5027,14 @@ export default class MyProvider extends Component {
               }
             },
           );
-          var resIndex = data[0][0].ResultIndex;
+
+          const fareFilteredFlight = data.map((e, i) =>
+            e.filter(
+              (f, j) =>
+                f.FareRules[0].FareBasisCode === flight.FareRules[0].FareBasisCode
+            )
+          );
+          var resIndex = fareFilteredFlight[0][0].ResultIndex;
 
           var request = {
             tokenId: flightSearchToken,
@@ -5765,6 +5782,40 @@ export default class MyProvider extends Component {
             bookingBus,
           });
         },
+ addBookings :async (tripId, newBooking) => {
+          const tripDocRef = firestore()
+            .collection('Accounts')
+            .doc(this.state.userId)
+            .collection('trips')
+            .doc(tripId);
+        
+          try {
+            const userTripDetails = await tripDocRef.get();
+            if (userTripDetails.exists) {
+              // Check if bookings array exists
+              const tripData = userTripDetails.data();
+              let updatedBookings = [];
+        
+              if (tripData.bookings) {
+                // Bookings array exists, concatenate it with the new array
+                updatedBookings = [...tripData.bookings, ...newBooking];
+              } else {
+                // Bookings array does not exist, create it with the new array
+                updatedBookings = newBooking;
+              }
+        
+              // Update the document with the updated bookings array
+              await tripDocRef.update({
+                bookings: updatedBookings,
+              });
+            } else {
+              console.log("Trip document does not exist.");
+            }
+          } catch (error) {
+            console.error("Error updating bookings:", error);
+          }
+        }
+       
       },
     };
   }

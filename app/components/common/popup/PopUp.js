@@ -5,7 +5,7 @@ import { responsiveHeight } from '../../../utils/responsiveScale';
 import IconSwitcher from '../icons/IconSwitcher';
 
 const PopUp = (props) => {
-    const { value, handlePopUpClose, } = props;
+    const { value, handlePopUpClose,PopUpheight } = props;
     return (
         value ?
             <Modal
@@ -17,7 +17,7 @@ const PopUp = (props) => {
                 }}
              >
                 <View style={styles.mainContainer}>
-                    <View style={styles.subContainer}>
+                    <View style={[styles.subContainer,{...PopUpheight}]}>
 
                         <View style={{ alignItems: 'flex-end' }}>
                             <TouchableOpacity onPress={handlePopUpClose} >

@@ -13,6 +13,7 @@ import FCard from './FCard'
 import ProgressBar from '../../common/progressBar/ProgressBar'
 import TravellerDetailsBtn from '../../common/mainComponents/TravellerDetailsButton/TravellerDetailsBtn'
 import moment from 'moment'
+import { Colors } from 'react-native/Libraries/NewAppScreen'
 const TripDetailsFlightCard = ({
     flightGrp,
     index,
@@ -623,13 +624,13 @@ const closeAllTimeStamps=()=>
                           iconName="arrowright"
                           color="black"
                         />
-                        <Text>
+                        <Text style={[styles.titles,{flex:1,fontSize:responsiveHeight(1.8)}]}>
                           {' '}
                           {`Layover for ${stop.layoverDur} in ${stop.arrCity}`}
                         </Text>
                       </View>
                     ) : null}
-                    <View style={styles.flightsTimingContainer}>
+                    <View style={[styles.flightsTimingContainer,{backgroundColor:colors.whiteSmoke,padding:responsiveHeight(1.5)}]}>
                       <View style={styles.originContainer}>
                         <Text style={styles.originTitle}>{stop.depTime}</Text>
                         <Text style={styles.flightTimings}>

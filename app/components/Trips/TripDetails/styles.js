@@ -20,6 +20,7 @@ export const styles = StyleSheet.create({
         fontSize: responsiveHeight(2.1),
         fontFamily: fonts.primary,
         color: colors.primary,
+        marginTop:responsiveHeight(1)
     },
     tripDetailsHeader:
     {
@@ -482,10 +483,10 @@ borderRadius:responsiveHeight(1)
         alignItems: 'center',
         gap: responsiveHeight(.5)
     },
-    paymentCheckBoxContainer: {
-        flexDirection: 'row',
-        gap: responsiveHeight(2),
-        alignItems: 'center'
+    paymentCheckBoxTitleConatiner: {
+       flex:1,
+       alignItems:'center',
+       justifyContent:'center'
     },
     notSubmitedContainer: {
         paddingHorizontal: responsiveHeight(1),
@@ -743,7 +744,6 @@ width:responsiveHeight(10),borderRadius:responsiveHeight(1)
         borderRightWidth: responsiveHeight(0.2) 
     },
     approvalMainContainer:{
-        height: '75%',
         flexDirection: 'row',
         marginTop: responsiveHeight(3),
     },
@@ -768,7 +768,14 @@ width:responsiveHeight(10),borderRadius:responsiveHeight(1)
         fontFamily: fonts.primary,
         color: colors.primary,
         flex:1
-    }
+    },
+    multiTextContainer: {
+        borderWidth: 1,
+        textAlignVertical: "top",
+        borderRadius: responsiveHeight(1.3),
+        paddingHorizontal: responsiveWidth(3),
+        fontSize: responsiveHeight(1.3)
+      },
 
 
 })

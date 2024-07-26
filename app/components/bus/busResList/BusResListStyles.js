@@ -12,6 +12,8 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     rowGap: responsiveHeight(1),
     height: responsiveHeight(10),
+    paddingVertical:responsiveHeight(1),
+   
   },
   titleContainer: {
     flexDirection: 'row',
@@ -23,6 +25,7 @@ export const styles = StyleSheet.create({
     color: colors.white,
     fontSize: responsiveHeight(2.2),
     fontFamily: fonts.primary,
+    flex:1
   },
   editButtonContainer: {
     backgroundColor: colors.highlight,
@@ -31,6 +34,7 @@ export const styles = StyleSheet.create({
     borderRadius: responsiveHeight(3),
     alignItems: 'center',
     justifyContent: 'center',
+    alignSelf:'center'
   },
   subTitle: {
     textAlignVertical: 'center',

@@ -36,7 +36,6 @@ const BusResList = () => {
     searchingBus,
   } = useContext(MyContext);
   const {goBack} = useNavigation();
-console.log("ljhn")
   useEffect(() => {
     setFetchedData([...busResList]);
     setRenderedData(busResList.slice(0, 20));

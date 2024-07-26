@@ -62,7 +62,7 @@ const SeatLayout = ({seatData,boardingPoint,droppingPoint}) => {
   const upperDeckData = seatData?.filter((row) =>
     row.some((seat) => seat.IsUpper)
   );
-
+console.log(upperDeckData.flat(upperDeckData.length),"upperDeckData")
   const shouldAddMarginAfterLowerDeckRow2 = lowerDeckData[2]?.some((seat) =>
     seat.ColumnNo === "009" ? false:true
   );

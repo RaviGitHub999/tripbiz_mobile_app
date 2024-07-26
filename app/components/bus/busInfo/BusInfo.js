@@ -19,6 +19,7 @@ import PopUp from '../../common/popup/PopUp';
 import {TextInput} from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native';
 import { FlatList } from 'react-native';
+import BusSeatLayout from './BusSeatLayout';
 
 const BusInfo = () => {
   const [boardingPoint, setBoardingPoint] = useState(null);
@@ -150,28 +151,60 @@ const BusInfo = () => {
         setSubmitIsOpen(true);
       }
   }
+
+  const handleValidation=()=>
+    {
+      let valid=true
+      if(boardingPoint===null||"")
+      {
+        setBoardingError("BoardingPoint cannot be empty.")
+        valid=false
+      }
+      else{
+        setBoardingError("")
+      }
+      if(droppingPoint===null||"")
+        {
+          setDroppingError("DroppingPoint cannot be empty.")
+        valid=false
+        }
+        else{
+          setDroppingError("")
+        }
+  
+        if(bookingBus?.selectedSeat?.length < NoofBusPassengers)
+        {
+          valid=false
+        }
+        if(valid)
+        {
+          navigate('TripDetails', {id: selectedTripId});
+          actions.editTripById(selectedTripId, bookingBus, 'bus');
+          actions.handleSelectedTripId();
+        }
+    }
   return (
     <>
       <ScrollView
         style={{backgroundColor: colors.white}}
         contentContainerStyle={{paddingBottom: responsiveHeight(10)}}>
         <View style={styles.mainContainer}>
-          <View style={{flexDirection:'row',alignItems:'center'}}>
-          <TouchableOpacity
-            style={styles.backIconContainer}
-            onPress={handleGoBack}>
-            <IconSwitcher
-              componentName="AntDesign"
-              iconName="arrowleft"
-              color={colors.primary}
-              iconsize={3.2}
-            />
-          </TouchableOpacity>
-         <View style={{flex:1,alignItems:'center'}}>
-         <Text style={[styles.titles,{color:colors.highlight}]}>
-            {originDetails.cityName} to {destDetails.cityName}
-          </Text>
-         </View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <TouchableOpacity
+              style={styles.backIconContainer}
+              onPress={handleGoBack}>
+              <IconSwitcher
+                componentName="AntDesign"
+                iconName="arrowleft"
+                color={colors.primary}
+                iconsize={3.2}
+              />
+            </TouchableOpacity>
+            <View style={{flex: 1, alignItems: 'center'}}>
+              <Text style={[styles.titles, {color: colors.highlight}]}>
+                {originDetails.cityName} to {destDetails.cityName}
+              </Text>
+            </View>
           </View>
           <View>
             <Text style={styles.titles}>Select Pickup and Drop Points</Text>
@@ -188,7 +221,9 @@ const BusInfo = () => {
                   }
                   listKey={'CityPointAddress'}
                 />
-                {boardingError&&<Text style={styles.errorText}>{boardingError}</Text>}
+                {boardingError && (
+                  <Text style={styles.errorText}>{boardingError}</Text>
+                )}
               </View>
 
               <View style={styles.boardingPoint_droppingPoint_subContainer}>
@@ -203,16 +238,25 @@ const BusInfo = () => {
                   }
                   listKey={'CityPointLocation'}
                 />
-                {droppingError&&<Text style={styles.errorText}>{droppingError}</Text>}
+                {droppingError && (
+                  <Text style={styles.errorText}>{droppingError}</Text>
+                )}
               </View>
             </View>
           </View>
-          <Text style={styles.titles}>{`Number of Adults: ${NoofBusPassengers}`}</Text>
-<View style={styles.errorContainer}>
-<Text style={styles.titles}>{`Select Seats`}</Text>
-{bookingBus?.selectedSeat?.length < NoofBusPassengers && <Text style={styles.errorText}>(Please select {NoofBusPassengers} Seats)</Text>}
-</View>
-          {(bookingBus?.busSeatLayout?.busResult?.GetBusSeatLayOutResult
+          <Text
+            style={
+              styles.titles
+            }>{`Number of Adults: ${NoofBusPassengers}`}</Text>
+          <View style={styles.errorContainer}>
+            <Text style={styles.titles}>{`Select Seats`}</Text>
+            {bookingBus?.selectedSeat?.length < NoofBusPassengers && (
+              <Text style={styles.errorText}>
+                (Please select {NoofBusPassengers} Seats)
+              </Text>
+            )}
+          </View>
+          {/* {(bookingBus?.busSeatLayout?.busResult?.GetBusSeatLayOutResult
             ?.SeatLayoutDetails?.SeatLayout.SeatDetails).length > 0 && (
             <SeatLayout
               seatData={
@@ -222,7 +266,19 @@ const BusInfo = () => {
               boardingPoint={boardingPoint}
               droppingPoint={droppingPoint}
             />
-          )}
+          )} */}
+
+          <View style={{flex: 1}}>
+            {bookingBus?.busSeatLayout?.busResult?.GetBusSeatLayOutResult
+              ?.SeatLayoutDetails?.SeatLayout.SeatDetails.length>0 && (
+              <BusSeatLayout
+                seatData={
+                  bookingBus?.busSeatLayout?.busResult?.GetBusSeatLayOutResult
+                    ?.SeatLayoutDetails?.SeatLayout.SeatDetails
+                }
+              />
+            )}
+          </View>
         </View>
       </ScrollView>
 
@@ -257,11 +313,7 @@ const BusInfo = () => {
               }`}</Text>
               <View style={styles.selectedTripBtnContainer}>
                 <TouchableOpacity
-                  onPress={() => {
-                    navigate('TripDetails', {id: selectedTripId});
-                    actions.editTripById(selectedTripId, bookingBus, 'bus');
-                    actions.handleSelectedTripId();
-                  }}
+                  onPress={handleValidation}
                   style={styles.yesBtn}>
                   <Text style={styles.yesBtnText}>Yes</Text>
                 </TouchableOpacity>
@@ -276,9 +328,7 @@ const BusInfo = () => {
               </View>
             </View>
           ) : (
-            <TouchableOpacity
-              style={styles.addtotripBtn}
-              onPress={handlePress}>
+            <TouchableOpacity style={styles.addtotripBtn} onPress={handlePress}>
               <Text style={styles.addtotripBtnText}>Add to trip</Text>
             </TouchableOpacity>
           )}
@@ -287,21 +337,34 @@ const BusInfo = () => {
       <PopUp value={isExpanded} handlePopUpClose={toggleHeight}>
         <>
           {isExpanded && (
-            <View style={{gap:responsiveHeight(1)}}>
-            <View style={styles.hotelPriceContainer}>
+            <View style={{gap: responsiveHeight(1)}}>
+              <View style={styles.hotelPriceContainer}>
                 <Text style={styles.hotelPriceText}>Bus Name : </Text>
-                <Text style={[styles.hotelPriceTP,{flex:1}]} ellipsizeMode='tail' numberOfLines={1}> {BusOperatorName}</Text>
+                <Text
+                  style={[styles.hotelPriceTP, {flex: 1}]}
+                  ellipsizeMode="tail"
+                  numberOfLines={1}>
+                  {' '}
+                  {BusOperatorName}
+                </Text>
               </View>
-              <View style={{flexDirection:'row',alignItems:'center'}}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Text style={styles.hotelPriceText}>Bus Seats : </Text>
                 {bookingBus?.selectedSeat?.length > 0
-                    ? bookingBus?.selectedSeat?.map((ele,i)=>{
-                      return <Text style={styles.hotelPriceTP}>{ele.SeatName}{i < bookingBus.selectedSeat.length - 1 && ','}</Text>
-                    }):null}
+                  ? bookingBus?.selectedSeat?.map((ele, i) => {
+                      return (
+                        <Text style={styles.hotelPriceTP}>
+                          {ele.SeatName}
+                          {i < bookingBus.selectedSeat.length - 1 && ','}
+                        </Text>
+                      );
+                    })
+                  : null}
               </View>
               <View style={styles.hotelPriceContainer}>
                 <Text style={styles.hotelPriceText}>Bus fare</Text>
-                <Text style={styles.hotelPriceTP}>&#8377;{" "}
+                <Text style={styles.hotelPriceTP}>
+                  &#8377;{' '}
                   {bookingBus?.selectedSeat?.length > 0
                     ? bookingBus?.selectedSeat?.reduce(
                         (total, seat) =>
@@ -315,13 +378,17 @@ const BusInfo = () => {
               <View style={styles.hotelPriceContainer}>
                 <Text style={styles.hotelPriceText}>Service Charges</Text>
                 <Text style={styles.hotelPriceTP}>
-                   {` + ${bookingBus?.serviceCharge ? bookingBus?.serviceCharge : ""}`}
+                  {` + ${
+                    bookingBus?.serviceCharge ? bookingBus?.serviceCharge : ''
+                  }`}
                 </Text>
               </View>
               <View style={styles.hotelPriceContainer}>
-                <Text style={styles.hotelPriceText}>{`GST(${GSTpercent}%)`}</Text>
+                <Text
+                  style={styles.hotelPriceText}>{`GST(${GSTpercent}%)`}</Text>
                 <Text style={styles.hotelPriceTP}>
-                + &#8377;{`${bookingBus?.GST ? Math.round(bookingBus?.GST) : ""}`}
+                  + &#8377;
+                  {`${bookingBus?.GST ? Math.round(bookingBus?.GST) : ''}`}
                 </Text>
               </View>
             </View>

@@ -43,6 +43,7 @@ export const styles = StyleSheet.create({
     flightsTimingContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        borderRadius:responsiveHeight(1)
     },
     originContainer: {
         rowGap: responsiveHeight(0.5),
