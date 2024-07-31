@@ -776,6 +776,28 @@ width:responsiveHeight(10),borderRadius:responsiveHeight(1)
         paddingHorizontal: responsiveWidth(3),
         fontSize: responsiveHeight(1.3)
       },
+      paymentCard:{
+        width: '90%',
+        marginVertical: responsiveHeight(1.5),
+        padding: responsiveHeight(1),
+        paddingBottom: responsiveHeight(2),
+        gap: responsiveHeight(0.6),
+        elevation: responsiveHeight(0.5),
+        backgroundColor: colors.white,
+        borderRadius: responsiveHeight(1),
+      },
+      isActivePaymentCard:
+      {
+        width: '90%',
+        marginVertical: responsiveHeight(1.5),
+        padding: responsiveHeight(1),
+        paddingBottom: responsiveHeight(2),
+        gap: responsiveHeight(0.6),
+        // elevation: responsiveHeight(0.5),
+        // backgroundColor:"#ffa500",
+        backgroundColor:'rgba(255,165,0,.7)',
+        borderRadius: responsiveHeight(1),
+      }
 
 
 })

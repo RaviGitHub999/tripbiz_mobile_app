@@ -6,6 +6,7 @@ import HotelDropDown from './app/components/common/hotelDropDown/HotelDropDown'
 import HotelSearchInput from './app/components/common/HotelSearchInput/HotelSearchInput'
 import MyProvider from './app/context/MyProvider'
 import { NavigationContainer } from '@react-navigation/native'
+import Toast from 'react-native-toast-message'
 
 const App = () => {
   return (
@@ -13,11 +14,12 @@ const App = () => {
     <NavigationContainer>
     <AppNavigator/>
     </NavigationContainer>
+      <Toast/>
     </MyProvider>
   )
 }
 
-export default React.memo(App)
+export default App
 
 // import { View, Text } from 'react-native'
 // import React, { useState } from 'react'

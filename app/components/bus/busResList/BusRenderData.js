@@ -32,6 +32,7 @@ var reqStatuses = [
   {status: 'Approved', color: '#008000'},
   {status: 'Pending', color: '#ffa500'},
   {status: 'Not Requested', color: '#808080'},
+  { status: "Skipped", color: "#FF0000" },
 ];
 const BusRenderData = ({
   item,

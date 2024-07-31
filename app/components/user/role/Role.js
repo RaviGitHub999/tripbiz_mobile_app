@@ -8,6 +8,8 @@ import {
   KeyboardAvoidingView,
   Dimensions,
   ActivityIndicator,
+  RefreshControl,
+   ScrollView
 } from 'react-native';
 import {styles} from './RoleStyles';
 import IconSwitcher from '../../common/icons/IconSwitcher';
@@ -15,7 +17,6 @@ import {colors, fonts} from '../../../config/theme';
 import ChangePasswordInput from '../changePassword/ChangePasswordInput';
 import {responsiveHeight} from '../../../utils/responsiveScale';
 import MyContext from '../../../context/Context';
-import {ScrollView} from 'react-native-gesture-handler';
 import {BarIndicator} from 'react-native-indicators';
 import PopUp from '../../common/popup/PopUp';
 import HCard from '../../Trips/TripDetails/HCard';
@@ -45,6 +46,7 @@ const Role = () => {
   const [trip, setTrip] = useState(null);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const {goBack} = useNavigation();
 
   const handleClickOpen = () => {
@@ -75,7 +77,6 @@ const Role = () => {
 
   useEffect(() => {
     if (mounted) {
-      console.log('loading');
       getTripData();
       actions.handleFlightsLogos();
     }
@@ -83,6 +84,15 @@ const Role = () => {
       setMounted(false);
     };
   }, []);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    setTimeout(async () => {
+      getTripData();
+      actions.handleFlightsLogos();
+      setRefreshing(false);
+    }, 2000);
+  };
   var getDate = seconds => {
     const timestampInSeconds = seconds;
     const date = new Date(timestampInSeconds * 1000);
@@ -100,12 +110,11 @@ const Role = () => {
     setTripsData();
     await getTripData();
   };
-  console.log(tripsData);
   return (
     <>
       <KeyboardAvoidingView style={{flex: 1}}>
         <TouchableWithoutFeedback onPress={handleScreenPress}>
-          <ScrollView>
+          <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}>
             <View style={styles.mainContainer}>
               <TouchableOpacity style={styles.back} onPress={goBack}>
                 <IconSwitcher
@@ -246,7 +255,7 @@ const Role = () => {
                         Loading Approve Request...
                       </Text>
                     </View>
-                  ) : tripsData.length > 0 ? (
+                  ) : tripsData? (
                     tripsData
                       ?.filter(a => {
                         return a?.requestDetails?.status === selectedTab;

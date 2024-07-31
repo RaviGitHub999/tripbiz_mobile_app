@@ -44,6 +44,7 @@ import BCard from './BCard';
 import RNFetchBlob from 'rn-fetch-blob';
 import TravellerDetailsBtn from '../../common/mainComponents/TravellerDetailsButton/TravellerDetailsBtn';
 import moment from 'moment';
+import Toast from 'react-native-toast-message';
 const TripDetails = ({navigation: {navigate, goBack}}) => {
   const [mounted, setMounted] = useState(true);
   const [popup, setPopUp] = useState({
@@ -112,6 +113,9 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
     buses: [],
   });
   const [bookingIndex, setBookingIndex] = useState([]);
+  const [bookingNumber, setBookingNumber] = useState(0);
+  const [mandatoryError, setMandatoryError] = useState('');
+  // const[bookingalert,setBookingAlert]=useState(false)
   const {
     actions,
     tripData,
@@ -121,15 +125,20 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
     userAccountDetails,
     domesticHotel,
   } = useContext(MyContext);
-
+  const errorMessage =
+    userAccountDetails.approvalType === 'Mandatory'
+      ? 'Approval is Mandatory'
+      : 'Please select any above options';
   useEffect(() => {
-   if(tripData?.data?.bookings?.length) 
-    {setCheck(new Array(tripData?.data?.bookings.length).fill(false));
-    setManagerComment(new Array(tripData?.data?.bookings.length).fill(false));}
+    if (tripData?.data?.bookings?.length) {
+      setCheck(new Array(tripData?.data?.bookings.length).fill(false));
+      setManagerComment(new Array(tripData?.data?.bookings.length).fill(false));
+    }
   }, [tripData?.data?.bookings?.length]);
-  const handleCheckboxChange = index => {
+  const handleCheckboxChange = (book, index) => {
     const updatedChecked = [...check];
     updatedChecked[index] = !updatedChecked[index];
+    handleCheck(book, updatedChecked[index], index);
     setCheck(updatedChecked);
   };
   const handleviewPaymentComment = index => {
@@ -165,7 +174,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
   };
 
   const handleCommentChange = (index, comment) => {
-    setComment((prevComments) => ({
+    setComment(prevComments => ({
       ...prevComments,
       [`Booking${index + 1}`]: comment,
     }));
@@ -260,17 +269,19 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
     }
     const tripbookingPrice =
       tripData.flights
-        .filter((flight) => submittedFlights.includes(flight.id))
+        .filter(flight => submittedFlights.includes(flight.id))
         .reduce((sum, obj) => sum + obj?.data?.finalPrice, 0) +
       tripData.hotels
-        .filter((flight) => submittedHotels.includes(flight.id))
+        .filter(flight => submittedHotels.includes(flight.id))
         .reduce((sum, obj) => sum + obj?.data?.hotelTotalPrice, 0) +
       tripData.cabs
-        .filter((flight) => submittedCabs.includes(flight.id))
+        .filter(flight => submittedCabs.includes(flight.id))
         .reduce((sum, obj) => sum + obj?.data?.cabTotalPrice, 0) +
       tripData.bus
-        .filter((flight) => submittedBus.includes(flight.id))
+        .filter(flight => submittedBus.includes(flight.id))
         .reduce((sum, obj) => sum + obj?.data?.busTotalPrice, 0);
+
+    await actions.updateBookingStatus(id, bookingIndex, comment);
     await actions.editAdminTrips(
       id,
       tripData,
@@ -286,9 +297,10 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
       selectedItems.buses,
       // submittedBus,
       notbus,
-      comment
+      comment,
     );
     setPaymentLoading(false);
+    showToast();
     setSelectedItems({
       flights: [],
       hotels: [],
@@ -296,34 +308,34 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
       buses: [],
     });
   };
-  var handleManagerClick = async () => {
+  var handleManagerClick = async status => {
     setApporvalLoading(true);
     var flightArray = tripData?.data?.flights.filter(
-      (flight) => flight.requestStatus === "Not Requested"
+      flight => flight.requestStatus === 'Not Requested',
     );
     var hotelArray = tripData?.data?.hotels.filter(
-      (hotel) => hotel.requestStatus === "Not Requested"
+      hotel => hotel.requestStatus === 'Not Requested',
     );
     var cabArray = tripData?.data?.cabs?.filter(
-      (cab) => cab.requestStatus === "Not Requested"
+      cab => cab.requestStatus === 'Not Requested',
     );
     var busArray =
       tripData?.data?.bus?.filter(
-        (bus) => bus.requestStatus === "Not Requested"
+        bus => bus.requestStatus === 'Not Requested',
       ) ?? [];
 
-      const tripbookingPrice =
+    const tripbookingPrice =
       tripData?.flights
-        ?.filter((flight) => flightArray.some((id) => id.id === flight.id))
+        ?.filter(flight => flightArray.some(id => id.id === flight.id))
         .reduce((sum, obj) => sum + obj?.data?.finalPrice, 0) +
       tripData?.hotels
-        ?.filter((flight) => hotelArray.some((id) => id.id === flight.id))
+        ?.filter(flight => hotelArray.some(id => id.id === flight.id))
         .reduce((sum, obj) => sum + obj?.data?.hotelTotalPrice, 0) +
       tripData?.cabs
-        ?.filter((flight) => cabArray.some((id) => id.id === flight.id))
+        ?.filter(flight => cabArray.some(id => id.id === flight.id))
         .reduce((sum, obj) => sum + obj?.data?.cabTotalPrice, 0) +
       tripData?.bus
-        ?.filter((flight) => busArray.some((id) => id.id === flight.id))
+        ?.filter(flight => busArray.some(id => id.id === flight.id))
         .reduce((sum, obj) => sum + obj?.data?.busTotalPrice, 0);
     let book = [
       {
@@ -333,9 +345,9 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
         bus: busArray,
         comment: managerComment,
         bookingPrice: tripbookingPrice,
-        bookingStatus: "pending",
-        submissionStatus: "Not Submitted",
-        adminComment: "",
+        bookingStatus: 'pending',
+        submissionStatus: 'Not Submitted',
+        adminComment: '',
       },
     ];
 
@@ -348,15 +360,18 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
       travellerDetails,
       price,
       managerComment,
+      status,
     );
-    await actions.sendBookingApprovalEmail({
-      id: userId,
-      userName: userAccountDetails.firstName + userAccountDetails.lastName,
-      userEmail: userAccountDetails.email,
-      managerEmail: userAccountDetails.manager.email,
-      managerName: userAccountDetails.manager.name,
-      tripName: tripData.data.name,
-    });
+    if (status !== 'Skipped') {
+      await actions.sendBookingApprovalEmail({
+        id: userId,
+        userName: userAccountDetails.firstName + userAccountDetails.lastName,
+        userEmail: userAccountDetails.email,
+        managerEmail: userAccountDetails.manager.email,
+        managerName: userAccountDetails.manager.name,
+        tripName: tripData.data.name,
+      });
+    }
     setApporvalLoading(false);
     setTraveller(true);
     await getTripData();
@@ -468,6 +483,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
     {status: 'Approved', color: '#008000'},
     {status: 'Pending', color: '#ffa500'},
     {status: 'Not Requested', color: '#808080'},
+    {status: 'Skipped', color: '#FF0000'},
   ];
   var price = 0;
   const route = useRoute();
@@ -1335,6 +1351,36 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
     (accumulator, currentValue) => accumulator + currentValue,
     0,
   );
+
+  const getStatusColour = color => {
+    return reqStatuses.find(c => c.status === color) || null;
+  };
+
+  const getBookingStatusColour = color => {
+    return statuses.find(c => c.status === color) || null;
+  };
+  const bookingMessage =
+    bookingIndex
+      .map((ele, index) => {
+        return `Booking#${ele + 1}${
+          index < bookingIndex.length - 1 ? ',' : ''
+        }`;
+      })
+      .join(' ') + ' Submitted';
+  const showToast = () => {
+    Toast.show({
+      type: 'success',
+      text1: 'Booking Status',
+      text2: bookingMessage,
+      position: 'bottom',
+      text1Style: {
+        fontSize: responsiveHeight(1.8),
+      },
+      text2Style: {
+        fontSize: responsiveHeight(1.6),
+      },
+    });
+  };
   return tripDataLoading || approvalLoading ? (
     <View style={styles.LoaderContainer}>
       <View style={styles.Loader}>
@@ -2163,6 +2209,141 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                 })}
               </>
             ) : null}
+
+            {tripData?.otherBookings ? (
+              <>
+                <View style={styles.addingHotelBtnContainer}>
+                  <Text style={styles.flightCardTitle}>Other Bookings</Text>
+                </View>
+                {tripData?.otherBookings?.map(other => {
+                    const otherM = tripData?.data?.otherbookings?.filter(
+                      (otherMain) => {
+                        return otherMain.id === other.id;
+                      }
+                    );
+                   var color = statuses.filter(status => {
+                    return status?.status === otherM[0].status
+                  });
+                  var reqColor = reqStatuses.filter(status => {
+                    return (
+                      status?.status === otherM[0].requestStatus
+                    );
+                  });
+                  return (
+                    <View style={[styles.hotelCard,{gap: 5,paddingVertical:responsiveHeight(1.3),paddingHorizontal:0}]}>
+                      <View
+                        style={{flexDirection: 'row', alignItems: 'center',paddingLeft:responsiveHeight(1.5)}}>
+                        <IconSwitcher
+                          componentName="FontAwesome5"
+                          iconName="globe"
+                          iconsize={4}
+                        />
+                        <Text
+                          style={[
+                            styles.hotelCardTitle,
+                            {textAlign: 'center', flex: 1},
+                          ]}>
+                          {other?.data?.bookingType}
+                        </Text>
+                        <View style={[styles.hotelDates, {marginRight: 0}]}>
+                          <Text style={styles.hotelBookedDate}>
+                            {other?.data?.bookingDate}
+                          </Text>
+                        </View>
+                      </View>
+                     <View style={{paddingHorizontal:responsiveHeight(1.3)}}>
+                     <>
+                        {/* <Text style={styles.title}>Description :</Text> */}
+                        <Text style={styles.subTitle}>
+                          {other?.data?.bookingDetails}
+                        </Text>
+                      </>
+                      <View style={[styles.hotelPriceMainContainer,{borderTopWidth:responsiveHeight(0.18),borderBottomWidth: responsiveHeight(0.18)}]}>
+                        <View style={styles.bookingStatusTitlesMainContainer}>
+                          <Text
+                            style={
+                              styles.bookingStatusTitles
+                            }>{`Approval Status : `}</Text>
+                          <View
+                          style={[
+                            styles.bookingStatusTextContainer,
+                            {
+                              backgroundColor: reqColor[0]
+                                ? reqColor[0].color
+                                : '#808080',
+                            },
+                          ]}
+                          >
+                            <Text style={styles.bookingStatusText}>
+                            {otherM[0].requestStatus}
+                            </Text>
+                          </View>
+                        </View>
+                        <>
+                          <View style={styles.bookingStatusTitlesMainContainer}>
+                            <Text
+                              style={
+                                styles.bookingStatusTitles
+                              }>{`Booking Status : `}</Text>
+                            <View
+                              style={[
+                                styles.bookingStatusTextContainer,
+                                {
+                                  backgroundColor: color[0]
+                                    ? color[0].color
+                                    : '#808080',
+                                },
+                              ]}>
+                              <Text style={styles.bookingStatusText}>
+                              {otherM[0].status}
+                              </Text>
+                            </View>
+                          </View>
+                        </>
+
+                        <View
+                          style={[
+                            styles.hotelTotalPriceContainer,
+                            {justifyContent: 'space-between'},
+                          ]}>
+                          <View style={styles.hotelTotalPriceContainer}>
+                            <Text
+                              style={
+                                styles.hotelTotalPrice
+                              }>{`Total Price : ₹ ${Math.ceil(
+                              other?.data?.bookingCost,
+                            ).toLocaleString('en-IN')}`}</Text>
+                            <TouchableOpacity
+                      onPress={() => {
+                        // setOpenPriceInfo(true);
+                      }}>
+                      <IconSwitcher
+                        componentName="Entypo"
+                        iconName="info-with-circle"
+                        color={colors.black}
+                        iconsize={1.8}
+                      />
+                    </TouchableOpacity>
+                          </View>
+                          <TouchableOpacity 
+                          // onPress={openAllTimeStamps}
+                          >
+                    <IconSwitcher
+                      componentName="MaterialIcons"
+                      iconName="access-alarm"
+                      color={colors.black}
+                      iconsize={3}
+                    />
+                  </TouchableOpacity>
+                        </View>
+                      </View>
+                     </View>
+                    </View>
+                  );
+                })}
+              </>
+            ) : null}
+
             {/* not required right Now */}
             {/* <>
               <View style={styles.addingHotelBtnContainer}>
@@ -2468,6 +2649,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
             setTraveller(!traveller);
             handleSelectedTab('travellers');
             setViewComments(false);
+            setBookingNumber(0);
           }}
           PopUpheight={{height: responsiveHeight(100)}}>
           <View>
@@ -2532,7 +2714,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                   <View style={styles.approvalSubContainer}>
                     {tripData?.requestData?.length > 0 ? (
                       <>
-                        {tripData?.requestData?.map(request => {
+                        {tripData?.requestData?.map((request, index) => {
                           return (
                             <>
                               <TouchableOpacity
@@ -2544,6 +2726,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                 onPress={() => {
                                   setRequestData(request.data);
                                   setRequestId(request.id);
+                                  setBookingNumber(index);
                                 }}>
                                 {request.data.flights?.length > 0 ? (
                                   <Text
@@ -2761,30 +2944,66 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                         {/* Requested */}
 
                         <View style={{marginBottom: responsiveHeight(1)}}>
-                          <Text style={styles.subTitle}>
-                            Requested on:
-                            <Text
-                              style={[
-                                styles.subTitle,
-                                {color: colors.highlight},
-                              ]}>{` ${new Date(
-                              requestData?.createdAt?.seconds * 1000,
-                            ).toLocaleString('en-US', {
-                              month: 'long',
-                              day: 'numeric',
-                            })}`}</Text>
-                          </Text>
-                          <Text style={styles.title}>
-                            Total price:
-                            <Text
-                              style={[styles.title, {color: colors.secondary}]}>
-                              {' '}
-                              &#8377;{' '}
-                              {`${Math.ceil(finalCost).toLocaleString(
-                                'en-IN',
-                              )} `}
+                          <View style={{gap: responsiveHeight(0.5)}}>
+                            <Text style={styles.title}>{`Booking#${
+                              bookingNumber + 1
+                            }`}</Text>
+                            <View
+                              style={styles.bookingStatusTitlesMainContainer}>
+                              <Text
+                                style={
+                                  styles.subTitle
+                                }>{`Approval Status : `}</Text>
+                              <View
+                                style={[
+                                  styles.bookingStatusTextContainer,
+                                  {
+                                    backgroundColor: getStatusColour(
+                                      requestData?.status,
+                                    ).color,
+                                  },
+                                ]}>
+                                <Text style={styles.bookingStatusText}>
+                                  {requestData?.status}
+                                </Text>
+                              </View>
+                            </View>
+                            <View
+                              style={styles.bookingStatusTitlesMainContainer}>
+                              <Text
+                                style={
+                                  styles.subTitle
+                                }>{`Booking Status : `}</Text>
+                              <View
+                                style={[
+                                  styles.bookingStatusTextContainer,
+                                  {
+                                    backgroundColor: getBookingStatusColour(
+                                      tripData?.data?.bookings[bookingNumber]
+                                        ?.submissionStatus,
+                                    ).color,
+                                  },
+                                ]}>
+                                <Text style={styles.bookingStatusText}>
+                                  {requestData?.status}
+                                </Text>
+                              </View>
+                            </View>
+                            <Text style={styles.title}>
+                              Total price:
+                              <Text
+                                style={[
+                                  styles.title,
+                                  {color: colors.secondary},
+                                ]}>
+                                {' '}
+                                &#8377;{' '}
+                                {`${Math.ceil(finalCost).toLocaleString(
+                                  'en-IN',
+                                )} `}
+                              </Text>
                             </Text>
-                          </Text>
+                          </View>
                         </View>
 
                         <View
@@ -2891,14 +3110,14 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                         {/* not Requested */}
 
                         <View style={{marginBottom: responsiveHeight(1)}}>
-                          <Text style={styles.subTitle}>
+                          {/* <Text style={styles.subTitle}>
                             Created on:
                             <Text
                               style={[
                                 styles.subTitle,
                                 {color: colors.highlight},
                               ]}>{` ${newdate}`}</Text>
-                          </Text>
+                          </Text> */}
                           <Text style={styles.title}>
                             Total price:
                             <Text
@@ -3031,11 +3250,11 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                       gap: responsiveHeight(1),
                       alignItems: 'center',
                     }}>
-                    {approvalError && (
+                    {/* {approvalError && (
                       <Text style={[styles.title, {color: colors.red}]}>
                         Approval is Mandatory
                       </Text>
-                    )}
+                    )} */}
                     <TouchableOpacity
                       style={[styles.btn]}
                       onPress={() => {
@@ -3072,6 +3291,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                   setRequestData(request.data);
                                   setRequestId(request.id);
                                   setViewComments(false);
+                                  setMandatoryError('');
                                 }}>
                                 {request.data.flights?.length > 0 ? (
                                   <Text
@@ -3161,6 +3381,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                             setRequestData(null);
                             setRequestId(null);
                             setViewComments(false);
+                            setMandatoryError('');
                           }}>
                           {tripData?.flights?.filter(
                             hotel => !flightsIds.includes(hotel.id),
@@ -3339,9 +3560,13 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                         </View>
                                       ) : (
                                         <View>
-                                          <Text style={styles.subTitle}>
-                                            Your trip is submitted for approval
-                                          </Text>
+                                          {userAccountDetails.approvalType ===
+                                            'Mandatory' && (
+                                            <Text style={styles.subTitle}>
+                                              Your trip is submitted for
+                                              approval
+                                            </Text>
+                                          )}
                                           <View style={styles.statusContainer}>
                                             <Text style={styles.subTitle}>
                                               Status:
@@ -3399,7 +3624,9 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                         }>{`Send booking for Approval: `}</Text>
                                       <TouchableOpacity
                                         style={styles.btn}
-                                        onPress={handleManagerClick}>
+                                        onPress={() =>
+                                          handleManagerClick('Pending')
+                                        }>
                                         <Text
                                           style={[
                                             styles.subTitle,
@@ -3547,18 +3774,43 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                       style={
                                         styles.subTitle
                                       }>{`Send booking for Approval: `}</Text>
-                                    <TouchableOpacity
-                                      style={styles.btn}
-                                      onPress={handleManagerClick}>
-                                      <Text
-                                        style={[
-                                          styles.subTitle,
-                                          {color: colors.white},
-                                        ]}>
-                                        Yes
-                                      </Text>
-                                    </TouchableOpacity>
-                                    <Text style={styles.title}>OR</Text>
+                                    <View
+                                      style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        gap: responsiveHeight(1),
+                                      }}>
+                                      <TouchableOpacity
+                                        style={styles.btn}
+                                        onPress={() =>
+                                          handleManagerClick('Pending')
+                                        }>
+                                        <Text
+                                          style={[
+                                            styles.subTitle,
+                                            {color: colors.white},
+                                          ]}>
+                                          Yes
+                                        </Text>
+                                      </TouchableOpacity>
+                                      {userAccountDetails.approvalType ===
+                                        'Non Mandatory' && (
+                                        <TouchableOpacity
+                                          style={styles.btn}
+                                          onPress={() =>
+                                            handleManagerClick('Skipped')
+                                          }>
+                                          <Text
+                                            style={[
+                                              styles.subTitle,
+                                              {color: colors.white},
+                                            ]}>
+                                            Skip
+                                          </Text>
+                                        </TouchableOpacity>
+                                      )}
+                                    </View>
+                                    {/* <Text style={styles.title}>OR</Text> */}
                                     {/* <Text style={styles.subTitle}>
                                           Continue booking without Approval
                                         </Text> */}
@@ -3630,6 +3882,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                     paddingVertical: responsiveHeight(1),
                     borderRadius: responsiveHeight(1),
                     marginTop: responsiveHeight(2),
+                    paddingLeft: responsiveHeight(0.5),
                   }}>
                   <View
                     style={{
@@ -3639,14 +3892,18 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                       alignItems: 'center',
                     }}>
                     {approvalError && (
-                      <Text style={[styles.title, {color: colors.red}]}>
-                        Approval is Mandatory
+                      <Text
+                        style={[styles.title, {color: colors.red, flex: 1}]}>
+                        {mandatoryError}
                       </Text>
                     )}
                     <TouchableOpacity
                       style={[styles.btn]}
                       onPress={() => {
                         setSelectedTab('travellers');
+                        setRequestData(tripData?.requestData[0]?.data);
+                        setRequestId(tripData?.requestData[0]?.id);
+                        setBookingNumber(0);
                       }}>
                       <Text style={[styles.subTitle, {color: colors.white}]}>
                         Previous
@@ -3655,15 +3912,24 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                     <TouchableOpacity
                       style={[styles.btn]}
                       onPress={() => {
-                        if (userAccountDetails.approvalType !== 'Mandatory') {
-                          setSelectedTab('payment');
-                        } else if (
-                          requestData?.status !== undefined &&
-                          userAccountDetails.approvalType === 'Mandatory'
+                        // if (userAccountDetails.approvalType !== 'Mandatory') {
+                        //   setSelectedTab('payment');
+                        // } else if (
+                        //   requestData?.status !== undefined &&
+                        //   userAccountDetails.approvalType === 'Mandatory'
+                        // ) {
+                        //   setSelectedTab('payment');
+                        // } else {
+                        //   setApprovalError(true);
+                        // }
+                        if (
+                          requestData?.status !== 'Pending' &&
+                          requestData?.status !== 'Skipped'
                         ) {
-                          setSelectedTab('payment');
-                        } else {
                           setApprovalError(true);
+                          setMandatoryError(errorMessage);
+                        } else {
+                          setSelectedTab('payment');
                         }
                       }}>
                       <Text style={[styles.subTitle, {color: colors.white}]}>
@@ -3735,16 +4001,11 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                       {tripData?.data?.bookings?.map((book, i) => {
                         return (
                           <View
-                            style={{
-                              width: '90%',
-                              marginVertical: responsiveHeight(1.5),
-                              padding: responsiveHeight(0.6),
-                              paddingBottom:responsiveHeight(2),
-                              gap: responsiveHeight(0.6),
-                              elevation:responsiveHeight(0.5),
-                              backgroundColor:colors.white,
-                             borderRadius:responsiveHeight(0.6)
-                            }}>
+                            style={
+                              book.submissionStatus === 'Submitted'
+                                ? styles.isActivePaymentCard
+                                : styles.paymentCard
+                            }>
                             <View style={{flexDirection: 'row'}}>
                               <View>
                                 {book.submissionStatus === 'Submitted' ? (
@@ -3757,8 +4018,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                 ) : (
                                   <TouchableOpacity
                                     onPress={() => {
-                                      handleCheckboxChange(i);
-                                      handleCheck(book, check[i], i);
+                                      handleCheckboxChange(book, i);
                                     }}
                                     disabled={
                                       book.submissionStatus === 'Submitted'
@@ -3808,52 +4068,75 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                               </Text>
                             )}
                             <View>
-                            {
-                              book.submissionStatus ===
-                              "Submitted" ? 
-                              <>
-                             <TouchableOpacity style={{alignSelf:'center',flexDirection:"row",justifyContent:'center',alignItems:'center'}} onPress={()=>handleviewPaymentComment(i)}>
-                                <Text>{viewpaymentComments[i]?"Close Comment":"View Comment"}</Text>
-                                <IconSwitcher
-                                              componentName="Entypo"
-                                              iconName={
-                                                viewpaymentComments[i]
-                                                  ? 'chevron-small-up'
-                                                  : 'chevron-small-down'
-                                              }
-                                              iconsize={3}
-                                            />
-                              </TouchableOpacity> 
-                              {
-                                viewpaymentComments[i]&&
+                              {book.submissionStatus === 'Submitted' ? (
                                 <>
-                                 <Text>Comments :</Text>
-                                <Text>{book.adminComment}</Text>
+                                  <TouchableOpacity
+                                    style={{
+                                      alignSelf: 'center',
+                                      flexDirection: 'row',
+                                      justifyContent: 'center',
+                                      alignItems: 'center',
+                                    }}
+                                    onPress={() => handleviewPaymentComment(i)}>
+                                    <Text>
+                                      {viewpaymentComments[i]
+                                        ? 'Close Comment'
+                                        : 'View Comment'}
+                                    </Text>
+                                    <IconSwitcher
+                                      componentName="Entypo"
+                                      iconName={
+                                        viewpaymentComments[i]
+                                          ? 'chevron-small-up'
+                                          : 'chevron-small-down'
+                                      }
+                                      iconsize={3}
+                                    />
+                                  </TouchableOpacity>
+                                  {viewpaymentComments[i] && (
+                                    <>
+                                      <Text>Comments :</Text>
+                                      <Text>{book.adminComment}</Text>
+                                    </>
+                                  )}
                                 </>
-                              }
-                              </>
-                              
-                              :
-                              <TextInput
-                                        editable
-                                        multiline
-                                        numberOfLines={1}
-                                        placeholder="Enter the Comment"
-                                        style={[styles.multiTextContainer,{borderRadius:0,fontSize:responsiveHeight(1.6)}]}
-                                        // value={}
-                                        onChangeText={
-                                          (e) =>
-                                            handleCommentChange(
-                                              i,
-                                              e
-                                            )
-                                        }
-                                      />
-                            }
+                              ) : (
+                                <TextInput
+                                  editable
+                                  multiline
+                                  numberOfLines={1}
+                                  placeholder="Enter the Comment"
+                                  style={[
+                                    styles.multiTextContainer,
+                                    {
+                                      borderRadius: 0,
+                                      fontSize: responsiveHeight(1.6),
+                                    },
+                                  ]}
+                                  // value={}
+                                  onChangeText={e => handleCommentChange(i, e)}
+                                />
+                              )}
                             </View>
-                            <View style={{flexDirection:'row',alignSelf:'flex-end'}}>
-                              <Text style={[styles.totalPrice,{fontSize:responsiveHeight(1.5)}]}>Total :</Text>
-                              <Text style={[styles.totalPrice,{fontSize:responsiveHeight(1.5)}]}>{Math.round(book.bookingPrice).toLocaleString()}</Text>
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                alignSelf: 'flex-end',
+                              }}>
+                              <Text
+                                style={[
+                                  styles.totalPrice,
+                                  {fontSize: responsiveHeight(1.5)},
+                                ]}>
+                                Total :
+                              </Text>
+                              <Text
+                                style={[
+                                  styles.totalPrice,
+                                  {fontSize: responsiveHeight(1.5)},
+                                ]}>
+                                {Math.round(book.bookingPrice).toLocaleString()}
+                              </Text>
                             </View>
                           </View>
                         );
@@ -4089,34 +4372,36 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                     </Text>
                                   </TouchableOpacity>
                                   {(selectedItems.buses ||
-                                          selectedItems.cabs ||
-                                          selectedItems.flights ||
-                                          selectedItems.hotels) &&<TouchableOpacity
-                                    style={[
-                                      styles.btn,
-                                      {
-                                        paddingVertical: responsiveHeight(1),
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        width: responsiveHeight(18),
-                                      },
-                                    ]}
-                                    onPress={handleClick}>
-                                    {!paymentLoading ? (
-                                      <Text
-                                        style={[
-                                          styles.btnTitle,
-                                          // {width: responsiveHeight(15)},
-                                        ]}>
-                                        Make payment
-                                      </Text>
-                                    ) : (
-                                      <ActivityIndicator
-                                        size={'small'}
-                                        color={colors.facebook}
-                                      />
-                                    )}
-                                  </TouchableOpacity>}
+                                    selectedItems.cabs ||
+                                    selectedItems.flights ||
+                                    selectedItems.hotels) && (
+                                    <TouchableOpacity
+                                      style={[
+                                        styles.btn,
+                                        {
+                                          paddingVertical: responsiveHeight(1),
+                                          alignItems: 'center',
+                                          justifyContent: 'center',
+                                          width: responsiveHeight(18),
+                                        },
+                                      ]}
+                                      onPress={handleClick}>
+                                      {!paymentLoading ? (
+                                        <Text
+                                          style={[
+                                            styles.btnTitle,
+                                            // {width: responsiveHeight(15)},
+                                          ]}>
+                                          Make payment
+                                        </Text>
+                                      ) : (
+                                        <ActivityIndicator
+                                          size={'small'}
+                                          color={colors.facebook}
+                                        />
+                                      )}
+                                    </TouchableOpacity>
+                                  )}
                                 </View>
                               )}
                             </>

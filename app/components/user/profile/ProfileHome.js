@@ -73,8 +73,8 @@ const ProfileHome = () => {
         handlePopUpClose={() => setLogOutStatus(false)}>
 <Text style={[styles.title,{textAlign:'center'}]}>Are you sure you want to logout </Text>
 <View style={styles.btnsContainer}>
-  <TouchableOpacity style={styles.btn} onPress={handleLogout}><Text style={styles.btntitle}>Yes</Text></TouchableOpacity>
-  <TouchableOpacity style={styles.btn} onPress={()=>setLogOutStatus(false)}><Text style={styles.btntitle}>Back</Text></TouchableOpacity>
+  <TouchableOpacity style={styles.yesBtn} onPress={handleLogout}><Text style={styles.btntitle}>Yes</Text></TouchableOpacity>
+  <TouchableOpacity style={styles.yesBtn} onPress={()=>setLogOutStatus(false)}><Text style={styles.btntitle}>Back</Text></TouchableOpacity>
 </View>
         </PopUp>
     </React.Fragment>
@@ -126,6 +126,14 @@ const styles = StyleSheet.create({
     fontSize: responsiveHeight(2),
     fontFamily: fonts.primary,
     color: colors.white, 
+  },
+  yesBtn:{
+    paddingVertical:responsiveHeight(1),
+    paddingHorizontal:responsiveHeight(3),
+    backgroundColor:colors.primary,
+    alignItems:'center',
+    justifyContent:'center',
+    borderRadius:responsiveHeight(1)
   }
 });
 export default ProfileHome;

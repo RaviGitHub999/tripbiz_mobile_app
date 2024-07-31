@@ -224,5 +224,16 @@ export const styles = StyleSheet.create({
 fontSize:responsiveHeight(1.5),
 fontFamily:fonts.primary,
 color:colors.red
+  },
+  SeatsContainer:{
+    flexDirection:'row',
+    gap:responsiveWidth(4)
+  },
+  deckContainer:{
+    height:responsiveHeight(50),
+    // borderWidth:1,
+    width:responsiveWidth(45),
+    backgroundColor:colors.whiteSmoke,
+    borderRadius:responsiveHeight(2)
   }
 });

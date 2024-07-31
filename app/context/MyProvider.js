@@ -366,7 +366,6 @@ export default class MyProvider extends Component {
           this.setState({filterActions: !this.state.filterActions});
         },
         loginAction: async (email, password) => {
-          console.log(email, password);
           try {
             const response = await auth().signInWithEmailAndPassword(
               email,
@@ -666,7 +665,6 @@ export default class MyProvider extends Component {
           );
         },
         fetchHotelCityList: async () => {
-          console.log('calling..............');
           try {
             const accountDocRef = firestore().collection('hotelAutoComplete');
             const hotelLists = [];
@@ -702,7 +700,6 @@ export default class MyProvider extends Component {
             try {
               var results1 = hotelFuse.search(keyword);
               if (results1.length > 0) {
-                console.log(results1, 'results1');
                 this.setState({
                   cityHotelRes: results1,
                   hotelCityLoading: false,
@@ -1464,10 +1461,6 @@ export default class MyProvider extends Component {
             } else {
               filteredArr = filteredArr.filter(a => {
                 var newflightObj = this.state.actions.modifyFlightObject(a[0]);
-                console.log(
-                  new Date(newflightObj.segments[0].depTimeDate).getHours(),
-                  this.state.intOriginStartTime1.getHours(),
-                );
                 return (
                   new Date(newflightObj.segments[0].depTimeDate).getHours() >=
                     this.state.intOriginStartTime1.getHours() &&
@@ -1585,7 +1578,7 @@ export default class MyProvider extends Component {
 
           request.segments = segments;
 
-          console.log('Search req', request);
+          // console.log('Search req', request);
 
           var flightRes = await fetch(
             'https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/flightSearch',
@@ -1601,11 +1594,11 @@ export default class MyProvider extends Component {
             .then(res => res.json())
             .catch(err => console.log(err));
 
-          console.log(flightRes);
+          // console.log(flightRes);
 
           var flightReqs = [];
           if (flightRes?.flightResult?.Response?.Results.length === 1) {
-            console.log(request);
+            // console.log(request);
             flightReqs.push(request);
             this.setState({
               flightReq1: request,
@@ -1675,7 +1668,6 @@ export default class MyProvider extends Component {
           clearTimeout(flightSessionTimeout);
         },
         getRecommondedHotelList: async () => {
-          console.log('reco called');
           try {
             const accCollectionRef = firestore()
               .collection('recomondedHotels')
@@ -1702,7 +1694,7 @@ export default class MyProvider extends Component {
             const doc = await documentRef.get();
 
             if (doc.exists) {
-              console.log('called');
+             
               const documentData = doc.data();
               const transformedData = documentData.hotelImageList.reduce(
                 (acc, entry) => {
@@ -1999,7 +1991,7 @@ export default class MyProvider extends Component {
               categoryId: query.categoryId ? query.categoryId : null,
             };
 
-            console.log('Hotel info req', hotelInfoReq);
+            // console.log('Hotel info req', hotelInfoReq);
 
             var hotelInfoRes = await fetch(
               'https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/hotelInfoRes',
@@ -2017,7 +2009,7 @@ export default class MyProvider extends Component {
 
             hotelInfoRes.hotelSearchRes = query.hotelSearchRes;
 
-            console.log('Hotel info res', hotelInfoRes);
+            // console.log('Hotel info res', hotelInfoRes);
 
             let roomTypes = this.state.hotelRoomArr.map((room, r) => {
               return {
@@ -2201,17 +2193,30 @@ export default class MyProvider extends Component {
           bookingHotel.hotelFinalPrice =
             this.state.actions.calculateHotelFinalPrice(
               bookingHotel.selectedRoomType,
-            );
+            ).finalPrice;
           bookingHotel.hotelTotalPrice =
             this.state.actions.calculateHotelFinalPrice(
               bookingHotel.selectedRoomType,
-            ) +
-            (this.state.actions.calculateHotelFinalPrice(
-              bookingHotel.selectedRoomType,
-            ) *
-              this.state.domesticHotel) /
-              100;
-
+            ).finalPrice +
+            this.state.actions.calculateHotelFinalPrice(
+              bookingHotel.selectedRoomType
+            ).finalHotelServiceCharge +
+            this.state.actions.calculateHotelFinalPrice(
+              bookingHotel.selectedRoomType
+            ).calculateGstFromService;
+            // (this.state.actions.calculateHotelFinalPrice(
+            //   bookingHotel.selectedRoomType,
+            // ) *
+            //   this.state.domesticHotel) /
+            //   100;
+            bookingHotel.hotelServiceCharge =
+            this.state.actions.calculateHotelFinalPrice(
+              bookingHotel.selectedRoomType
+            ).finalHotelServiceCharge;
+          bookingHotel.calculateGstFromService =
+            this.state.actions.calculateHotelFinalPrice(
+              bookingHotel.selectedRoomType
+            ).calculateGstFromService;
           this.setState({
             bookingHotel,
           });
@@ -2219,11 +2224,11 @@ export default class MyProvider extends Component {
 
         fetchFareRule: async (resultIndex, airlineName, fare) => {
           if (!this.state.flightSessionExpired) {
-            console.log(
-              `Fare rule running for ${airlineName}(${fare.toLocaleString(
-                'en-IN',
-              )}/-)`,
-            );
+            // console.log(
+            //   `Fare rule running for ${airlineName}(${fare.toLocaleString(
+            //     'en-IN',
+            //   )}/-)`,
+            // );
             var request = {
               traceId: this.state.flightTraceId,
               resultIndex,
@@ -2349,7 +2354,7 @@ export default class MyProvider extends Component {
               );
             });
 
-            console.log('Flight booking req', bookReqList);
+            // console.log('Flight booking req', bookReqList);
 
             var flightBookData = await Promise.all(bookReqs);
             var fareData = await Promise.all(fareReq);
@@ -2359,7 +2364,7 @@ export default class MyProvider extends Component {
               fareData,
             );
 
-            console.log('Flight booking res', flightBookData);
+            // console.log('Flight booking res', flightBookData);
             this.setState({
               // flightBookData,
               bookingFlight,
@@ -2694,11 +2699,11 @@ export default class MyProvider extends Component {
             }
           } else if (type === 'baggage') {
             if (e !== 'No excess baggage') {
-              console.log(
-                bookingFlight[bookIndex].selectedBaggage[segIndex][traveller]
-                  .price,
-                '........>>>>>>>>>',
-              );
+              // console.log(
+              //   bookingFlight[bookIndex].selectedBaggage[segIndex][traveller]
+              //     .price,
+              //   '........>>>>>>>>>',
+              // );
               bookingFlight[bookIndex].selectedBaggage[segIndex][
                 traveller
               ].price = Number(
@@ -2841,6 +2846,23 @@ export default class MyProvider extends Component {
             });
           });
           return cabsArray;
+        },
+        getAllBookings: async (id, userid) => {
+          var bookingCollectionRef = firestore()
+            .collection('Accounts')
+            .doc(userid)
+            .collection('trips')
+            .doc(id)
+            .collection('otherbookings');
+          const querysnapshot = await bookingCollectionRef.get();
+          var bookingsArray = [];
+          querysnapshot.forEach(doc => {
+            bookingsArray.push({
+              id: doc.id,
+              data: doc.data(),
+            });
+          });
+          return bookingsArray;
         },
         getAllBus: async (id, userid) => {
           var busCollectionRef = firestore()
@@ -3125,7 +3147,7 @@ export default class MyProvider extends Component {
               console.log(response);
             }
             var data = await response.json();
-            console.log(data);
+            // console.log(data);
           } catch (error) {
             console.log(error);
           }
@@ -3141,7 +3163,7 @@ export default class MyProvider extends Component {
             const doc = await docCollectionRef.get();
             const sendData = doc.data();
 
-            const [flights, hotels, requestData, cabs, expenses, bus] =
+            const [flights, hotels, requestData, cabs,otherBookings, expenses, bus] =
               await Promise.all([
                 this.state.actions.getAllFlights(doc.id, userid),
                 this.state.actions.getAllHotels(doc.id, userid),
@@ -3149,6 +3171,7 @@ export default class MyProvider extends Component {
                   ? this.state.actions.getRequests(sendData?.requestId, userid)
                   : '',
                 this.state.actions.getAllCabs(doc.id, userid),
+                this.state.actions.getAllBookings(doc.id, userid),
                 this.state.actions.getAllExpenses(doc.id, userid),
                 this.state.actions.getAllBus(doc.id, userid),
               ]);
@@ -3159,9 +3182,10 @@ export default class MyProvider extends Component {
               hotels: hotels,
               flights: flights,
               cabs: cabs,
+              otherBookings: otherBookings,
               expenses,
               requestData: requestData,
-              bus,
+              bus:bus.length > 0 ? bus : [],
             });
 
             return sendData;
@@ -3744,19 +3768,19 @@ export default class MyProvider extends Component {
               .doc(id);
 
             const doc = await docCollectionRef.get();
-            console.log(doc, '----doc');
+            // console.log(doc, '----doc');
 
             const sendData = doc.data();
-            console.log(sendData, 'sendData');
+            // console.log(sendData, 'sendData');
 
             // let requestData = [];
             // if (sendData.requestId) {
             //   requestData = await this.state.actions.getRequests(sendData.requestId, userid);
             // }
 
-            console.log(requestData, 'requestData');
+            // console.log(requestData, 'requestData');
 
-            const [flights, hotels, requestData, cabs, expenses, bus] =
+            const [flights, hotels, requestData, cabs,otherBookings, expenses, bus] =
               await Promise.all([
                 this.state.actions.getAllFlights(docCollectionRef.id, userid),
                 this.state.actions.getAllHotels(docCollectionRef.id, userid),
@@ -3764,6 +3788,7 @@ export default class MyProvider extends Component {
                   ? this.state.actions.getRequests(sendData.requestId, userid)
                   : '',
                 this.state.actions.getAllCabs(docCollectionRef.id, userid),
+                this.state.actions.getAllBookings(docCollectionRef.id, userid),
                 this.state.actions.getAllExpenses(docCollectionRef.id, userid),
                 this.state.actions.getAllBus(docCollectionRef.id, userid),
               ]);
@@ -3774,6 +3799,7 @@ export default class MyProvider extends Component {
               hotels: hotels,
               flights: flights,
               cabs: cabs,
+              otherBookings: otherBookings,
               requestData: requestData,
               expenses: expenses,
               bus: bus.length > 0 ? bus : [],
@@ -3880,7 +3906,7 @@ export default class MyProvider extends Component {
               return this.state.actions.objToArr(flight);
             });
 
-            console.log(changedObj, 'changedObj');
+            // console.log(changedObj, 'changedObj');
             this.setState({
               bookingFlight: changedObj,
             });
@@ -4216,7 +4242,8 @@ export default class MyProvider extends Component {
           tripId,
           travellerDetails,
           price,
-          managerComment
+          managerComment,
+          status
         ) => {
           const userDocRef = firestore().collection('Accounts').doc(userId);
           const tripCollecRef = userDocRef.collection('trips').doc(tripId);
@@ -4245,7 +4272,7 @@ export default class MyProvider extends Component {
           const tripReqcollectionRef = userDocRef.collection('tripRequests');
           const newtripdocRef = await tripReqcollectionRef.add({
             createdAt: new Date(),
-            status: 'Pending',
+            status: status,
             tripId: tripId,
             userId: userId,
             price: price,
@@ -4261,6 +4288,8 @@ export default class MyProvider extends Component {
             .collection('Accounts')
             .doc(managerId);
 
+         if(status !== "Skipped")
+         {
           await managerDocRef.update({
             approvalRequests: firestore.FieldValue.arrayUnion({
               userId: userId,
@@ -4275,6 +4304,7 @@ export default class MyProvider extends Component {
               managerComment: managerComment,
             }),
           });
+         }
 
           const newTravellers = {
             ...tripData.data().travellerDetails,
@@ -4290,7 +4320,7 @@ export default class MyProvider extends Component {
             await tripCollecRef.update({
               flights: firestore.FieldValue.arrayRemove(flight),
             });
-            const newflight = {...flight, requestStatus: 'Pending'};
+            const newflight = {...flight, requestStatus: status};
             await tripCollecRef.update({
               flights: firestore.FieldValue.arrayUnion(newflight),
             });
@@ -4299,7 +4329,7 @@ export default class MyProvider extends Component {
               await tripCollecRef.update({
                 hotels: firestore.FieldValue.arrayRemove(hotel),
               });
-              const newhotel = {...hotel, requestStatus: 'Pending'};
+              const newhotel = {...hotel, requestStatus: status};
               await tripCollecRef.update({
                 hotels: firestore.FieldValue.arrayUnion(newhotel),
               });
@@ -4308,7 +4338,7 @@ export default class MyProvider extends Component {
               await tripCollecRef.update({
                 cabs: firestore.FieldValue.arrayRemove(cab),
               });
-              const newCab = {...cab, requestStatus: 'Pending'};
+              const newCab = {...cab, requestStatus: status};
               await tripCollecRef.update({
                 cabs: firestore.FieldValue.arrayUnion(newCab),
               });
@@ -4317,7 +4347,7 @@ export default class MyProvider extends Component {
               await tripCollecRef.update({
                 bus: firestore.FieldValue.arrayRemove(bus),
               });
-              const newBus = {...bus, requestStatus: 'Pending'};
+              const newBus = {...bus, requestStatus: status};
               await tripCollecRef.update({
                 bus: firestore.FieldValue.arrayUnion(newBus),
               });
@@ -4327,7 +4357,7 @@ export default class MyProvider extends Component {
             ]);
           const reqData = {
             createdAt: new Date(),
-            status: 'Pending',
+            status: status,
             tripId: tripId,
             userId: userId,
             price: price,
@@ -4358,7 +4388,7 @@ export default class MyProvider extends Component {
             }
 
             const data = await response.json();
-            console.log(data);
+            // console.log(data);
           } catch (error) {
             console.log(error);
           }
@@ -4393,7 +4423,7 @@ export default class MyProvider extends Component {
             const travDetails = tripData?.travellerDetails;
             const newTravDetails = {...travDetails, ...travellerDetails};
 
-            console.log(newTravDetails);
+            // console.log(newTravDetails);
 
             await tripDocRef.update({
               travellerDetails: newTravDetails,
@@ -4763,7 +4793,7 @@ export default class MyProvider extends Component {
             this.setState({
               approveLoading: false,
             });
-            console.log('second');
+            // console.log('second');
             return requestData;
           } catch (error) {
             console.error('Error getting trips for approval: ', error);
@@ -4785,7 +4815,6 @@ export default class MyProvider extends Component {
               console.log(response);
             }
             var data = await response.json();
-            console.log(data);
           } catch (error) {
             console.log(error);
           }
@@ -5055,7 +5084,7 @@ export default class MyProvider extends Component {
           )
             .then(res => res.json())
             .catch(err => console.log(err));
-          console.log(data2);
+          
           var flightData = data2.fareQuoteResult.Response.Results;
           var ssrData = data2?.ssrResult?.Response;
           return {flightData, ssrData};
@@ -5208,7 +5237,7 @@ export default class MyProvider extends Component {
               });
             },
           );
-          console.log(selectedRooms);
+          
           return selectedRooms;
         },
         updateHotelBookingDetails: async (newPrice, hotelId, tripId) => {
@@ -5285,7 +5314,7 @@ export default class MyProvider extends Component {
               throw new Error('Flight not found in the trip data');
             }
 
-            console.log('added');
+           
 
             await tripsRef.update({
               flights: firestore.FieldValue.arrayRemove(tripItem[0]),
@@ -5649,7 +5678,7 @@ export default class MyProvider extends Component {
             )
               .then(res => res.json())
               .catch(err => console.log(err));
-            console.log(busRes);
+            // console.log(busRes);
             if (busRes?.response?.error) {
               this.setState({
                 busResList: [],
@@ -5814,7 +5843,52 @@ export default class MyProvider extends Component {
           } catch (error) {
             console.error("Error updating bookings:", error);
           }
-        }
+        },
+        updateBookingStatus : async (tripId, indexes, adminComment) => {
+          const accountCollectionRef = firestore()
+            .collection('Accounts')
+            .doc(this.state.userId);
+          const tripCollectionRef = accountCollectionRef.collection('trips').doc(tripId);
+      
+          try {
+            const userTripDetails = await tripCollectionRef.get();
+            if (userTripDetails.exists) {
+              const tripData = userTripDetails.data();
+              if (tripData.bookings) {
+                if (tripData.bookings.length) {
+                  const updatedBookings = [...tripData.bookings];
+                  indexes.forEach((index) => {
+                    const key = `Booking${index + 1}`;
+                    if (index >= 0 && index < updatedBookings.length) {
+                      updatedBookings[index] = {
+                        ...updatedBookings[index],
+                        submissionStatus: 'Submitted',
+                        adminComment: adminComment[key] ?? '',
+                      };
+                    } else {
+                      console.log(`Invalid index provided: ${index}`);
+                    }
+                  });
+      
+                  await tripCollectionRef.update({
+                    bookings: updatedBookings,
+                  });
+      
+                  console.log('Successfully updated field:');
+                } else {
+                  console.log('Invalid index provided.');
+                }
+              } else {
+                console.log('No bookings to update.');
+              }
+            } else {
+              console.log('Trip document does not exist.');
+            }
+          } catch (error) {
+            console.error('Error updating booking field at index:', error);
+          }
+        },
+      
        
       },
     };

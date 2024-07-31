@@ -4,7 +4,7 @@ import { responsiveHeight } from '../../../utils/responsiveScale';
 import MyContext from '../../../context/Context';
 import { busSeating, selectedSeat, sitterSelected, sleeperBedSelected, sleeperBedSelected1, sleeperbed, sleeperbed1, sleeperselected } from "./assets";
 import { colors } from '../../../config/theme';
-const BusSeatLayout = ({ seatData }) => {
+const BusSeatLayout = ({ deck }) => {
   const [selectedSeats, setSelectedSeats] = useState([]);
   const { actions, NoofBusPassengers } = useContext(MyContext);
 
@@ -52,13 +52,13 @@ const BusSeatLayout = ({ seatData }) => {
       return (
           seat.SeatType === 1? <Image
           source={sitterSelected}
-          style={{  width: 35 * seat.Width,
-            height: 35 * seat.Height,}}
+          style={{  width: responsiveHeight(3*seat.Width),
+            height:responsiveHeight (3* seat.Height)}}
         />:
         <Image
           source={sleeperselected}
-          style={{  width: 35 * seat.Width,
-            height: 35 * seat.Height,}}
+          style={{  width: responsiveHeight(3*seat.Width),
+            height:responsiveHeight (3* seat.Height)}}
           resizeMode="contain"
         />
       );
@@ -76,8 +76,8 @@ const BusSeatLayout = ({ seatData }) => {
       return (
         <Image
           source={isSelected ? sleeperBedSelected : sleeperbed}
-          style={{  width: 35 * seat.Width,
-            height: 35 * seat.Height,}}
+          style={{  width: responsiveHeight(3*seat.Width),
+            height:responsiveHeight (3* seat.Height)}}
           resizeMode="contain"
         />
       );
@@ -86,8 +86,8 @@ const BusSeatLayout = ({ seatData }) => {
       return (
         <Image
           source={isSelected ? sleeperBedSelected1 : sleeperbed1}
-          style={{  width: 35 * seat.Width,
-            height: 35 * seat.Height,}}
+          style={{  width: responsiveHeight(3*seat.Width),
+            height:responsiveHeight (3* seat.Height)}}
           resizeMode="contain"
         />
       );
@@ -97,29 +97,29 @@ const BusSeatLayout = ({ seatData }) => {
       return (
         <Image
           source={isSelected ? selectedSeat : busSeating}
-          style={{ height: responsiveHeight(3.5), width: responsiveHeight(3.5) }}
+          style={{  width: responsiveHeight(3*seat.Width),
+            height:responsiveHeight (3* seat.Height)}}
         />
       );
     }
   };
   // Filter and flatten seat data
-  const lowerDeckData = seatData?.filter(
-    (row) => !row.some((seat) => seat.IsUpper)
-  );
-  const upperDeckData = seatData?.filter((row) =>
-    row.some((seat) => seat.IsUpper)
-  );
-  const lowerDeck = lowerDeckData.flat(lowerDeckData.length);
-  const upperDeck = upperDeckData.flat(upperDeckData.length);
+  // const lowerDeckData = seatData?.filter(
+  //   (row) => !row.some((seat) => seat.IsUpper)
+  // );
+  // const upperDeckData = seatData?.filter((row) =>
+  //   row.some((seat) => seat.IsUpper)
+  // );
+  // const lowerDeck = lowerDeckData.flat(lowerDeckData.length);
+  // const upperDeck = upperDeckData.flat(upperDeckData.length);
 
   // Calculate dimensions
-  const columnCount = Math.max(...lowerDeck.map(o => parseInt(o.RowNo, 10)));
-  const columnCount1 = Math.max(...upperDeck.map(o => parseInt(o.RowNo, 10)));
+  const columnCount = Math.max(...deck.map(o => parseInt(o.RowNo, 10)));
+  // const columnCount1 = Math.max(...upperDeck.map(o => parseInt(o.RowNo, 10)));
+  // console.log(first)
   return (
-    <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: responsiveHeight(2), flex: 1 }}>
-      {/* lowerDeck */}
-      <View style={[styles.container, { height: responsiveHeight(65) }]}>
-        {lowerDeck.map((item) =>{ 
+      <View style={[styles.container]}>
+        {deck.map((item) =>{ 
            const isSelected=selectedSeats.some(
             (s) =>
               s.RowNo === item.RowNo &&
@@ -128,12 +128,13 @@ const BusSeatLayout = ({ seatData }) => {
           return(
           <TouchableOpacity
             style={{
-              width: 35 * item.Width,
-              height: 35 * item.Height,
-              margin: 13,
+              // width: 35 * item.Width,
+              // height: 35 * item.Height,
+              // margin: 13,
+              margin:responsiveHeight(2),
               position: 'absolute',
-              left: (columnCount - parseInt(item.RowNo, 10)) * 40,
-              top: parseInt(item.ColumnNo, 10) * 40,
+              left: (columnCount - parseInt(item.RowNo, 10)) * responsiveHeight(3.5),
+              top: parseInt(item.ColumnNo, 10) * responsiveHeight(4),
             }}
             key={item.SeatName}
             onPress={() => toggleSeatSelection(item)}
@@ -143,44 +144,19 @@ const BusSeatLayout = ({ seatData }) => {
           </TouchableOpacity>
         )})}
       </View>
-      {/* upperDeck */}
-      <View style={[styles.container, { height: responsiveHeight(65) }]}>
-        {upperDeck.map((item) =>{
-          const isSelected=selectedSeats.some(
-            (s) =>
-              s.RowNo === item.RowNo &&
-              s.ColumnNo === item.ColumnNo &&
-              s.IsUpper === item.IsUpper)
-          return (
-          <TouchableOpacity
-            style={{
-              width: 35 * item.Width,
-              height: 35 * item.Height,
-              margin: 13,
-              position: 'absolute',
-              left: (columnCount1 - parseInt(item.RowNo, 10)) * 40,
-              top: parseInt(item.ColumnNo, 10) * 40,
-            }}
-            key={item.SeatName}
-            onPress={() => toggleSeatSelection(item)}
-          >
-            {getIconDetails(item, isSelected)}
-          </TouchableOpacity>
-        )})}
-      </View>
-    </View>
+      
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingTop: 10,
+    // flex: 1,
+    // justifyContent: 'center',
+    // paddingTop: 10,
     backgroundColor: colors.whiteSmoke,
-    padding: 8,
-    borderWidth: 1,
-    borderRadius: 10,
+    // padding: 8,
+    // borderWidth: 1,
+    // borderRadius: 10,
   },
 });
 

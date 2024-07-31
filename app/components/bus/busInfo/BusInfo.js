@@ -183,6 +183,16 @@ const BusInfo = () => {
           actions.handleSelectedTripId();
         }
     }
+    const seatData= bookingBus?.busSeatLayout?.busResult?.GetBusSeatLayOutResult?.SeatLayoutDetails?.SeatLayout.SeatDetails.length>0?bookingBus?.busSeatLayout?.busResult?.GetBusSeatLayOutResult?.SeatLayoutDetails?.SeatLayout.SeatDetails:[]
+    
+    const lowerDeckData = seatData?.filter(
+      (row) => !row.some((seat) => seat.IsUpper)
+    );
+    const upperDeckData = seatData?.filter((row) =>
+      row.some((seat) => seat.IsUpper)
+    );
+    const lowerDeck = lowerDeckData.flat(lowerDeckData.length);
+    const upperDeck = upperDeckData.flat(upperDeckData.length);
   return (
     <>
       <ScrollView
@@ -267,18 +277,23 @@ const BusInfo = () => {
               droppingPoint={droppingPoint}
             />
           )} */}
-
-          <View style={{flex: 1}}>
-            {bookingBus?.busSeatLayout?.busResult?.GetBusSeatLayOutResult
-              ?.SeatLayoutDetails?.SeatLayout.SeatDetails.length>0 && (
-              <BusSeatLayout
-                seatData={
-                  bookingBus?.busSeatLayout?.busResult?.GetBusSeatLayOutResult
-                    ?.SeatLayoutDetails?.SeatLayout.SeatDetails
-                }
-              />
-            )}
+  <View style={styles.SeatsContainer}>
+            <Text style={[styles.titles,{width:responsiveWidth(45),textAlign:'center'}]}>Lower</Text>
+          {upperDeck.length>0 && <Text style={[styles.titles,{width:responsiveWidth(45),textAlign:'center'}]}>Upper</Text>}
           </View>
+        <View style={{flexDirection:'row',gap:responsiveWidth(4)}}>    
+       {lowerDeck.length>0 && <View style={styles.deckContainer}> 
+               <BusSeatLayout
+              deck={lowerDeck}
+              />
+            
+          </View>}
+         {upperDeck.length>0 &&  <View style={styles.deckContainer}>
+              <BusSeatLayout
+              deck={upperDeck}
+              />
+          </View>}
+        </View>
         </View>
       </ScrollView>
 
