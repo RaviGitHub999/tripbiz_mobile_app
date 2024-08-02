@@ -3163,7 +3163,7 @@ export default class MyProvider extends Component {
             const doc = await docCollectionRef.get();
             const sendData = doc.data();
 
-            const [flights, hotels, requestData, cabs,otherBookings, expenses, bus] =
+            const [flights, hotels, requestData, cabs ,expenses, bus] =
               await Promise.all([
                 this.state.actions.getAllFlights(doc.id, userid),
                 this.state.actions.getAllHotels(doc.id, userid),
@@ -3171,7 +3171,6 @@ export default class MyProvider extends Component {
                   ? this.state.actions.getRequests(sendData?.requestId, userid)
                   : '',
                 this.state.actions.getAllCabs(doc.id, userid),
-                this.state.actions.getAllBookings(doc.id, userid),
                 this.state.actions.getAllExpenses(doc.id, userid),
                 this.state.actions.getAllBus(doc.id, userid),
               ]);
@@ -3182,7 +3181,6 @@ export default class MyProvider extends Component {
               hotels: hotels,
               flights: flights,
               cabs: cabs,
-              otherBookings: otherBookings,
               expenses,
               requestData: requestData,
               bus:bus.length > 0 ? bus : [],
@@ -3448,7 +3446,65 @@ export default class MyProvider extends Component {
                 });
               }
             }
+            if (type === 'other') {
+              var accountCollectionRef = db.collection('Accounts').doc(userId);
+              var tripCollectionRef = accountCollectionRef
+                .collection('trips')
+                .doc(tripId);
+              var userBusDetails = await tripCollectionRef.get();
+              var userBussArray = userBusDetails.data().otherBookings;
+              var userCurrBuss = userBussArray.filter(
+                bus => bus.id === hotelId,
+              );
 
+              await tripCollectionRef.update({
+                otherBookings: firestore.FieldValue.arrayRemove(userCurrBuss[0]),
+              });
+
+              await tripCollectionRef.update({
+                otherBookings: firestore.FieldValue.arrayUnion({
+                  ...userCurrBuss[0],
+                  status: status,
+                  // submitted_date: new Date(),
+                  booked_date:
+                    status === 'Booked' || status === 'Booked,Payment Pending'
+                      ? new Date()
+                      : null,
+                }),
+              });
+              var adminCollectionRef = db
+                .collection('Accounts')
+                .doc(this.state.adminDetails.userid);
+              var admintripCollectionRef = adminCollectionRef
+                .collection('trips')
+                .doc(adminTripId);
+              var adminBusDetails = await admintripCollectionRef.get();
+              var adminBusArray = adminBusDetails.data().otherBookings;
+              var admincurrBus = adminBusArray.filter(bus => {
+                return bus.id === hotelId;
+              });
+              await admintripCollectionRef.update({
+                otherBookings: firestore.FieldValue.arrayRemove(admincurrBus[0]),
+              });
+
+              if (status === 'Booked' || status === 'Booked,Payment Pending') {
+                await admintripCollectionRef.update({
+                  otherBookings: firestore.FieldValue.arrayUnion({
+                    ...userCurrBuss[0],
+                    status: status,
+                    bookedAt: Date.now(),
+                  }),
+                });
+              } else {
+                await admintripCollectionRef.update({
+                  otherBookings: firestore.FieldValue.arrayUnion({
+                    ...userCurrBuss[0],
+                    status: status,
+                    // submitted_date: new Date(),
+                  }),
+                });
+              }
+            }
             await this.state.actions.getTripDoc(tripId, this.state.userId);
           } catch (error) {
             console.error(error);
@@ -4668,57 +4724,36 @@ export default class MyProvider extends Component {
             return [];
           }
         },
-        //   const requestData = [];
-        //           this.setState({
-        //             approveLoading: true,
-        //           });
-        //           try {
-        //             if (approvalRequests) {
-        //               for (const req of approvalRequests) {
-        //                 const userDataRef = firestore().collection("Accounts").doc(req.userId);
-        //                 const data = await userDataRef.get();
-        //                 const tripRef = userDataRef.collection("trips").doc(req.tripId);
+        getTripsOthers: async (otherIds, tripId, userId) => {
+          try {
+            const otherArray = [];
 
-        //                 const [flights, hotels, cabs] = await Promise.all([
-        //                   await this.state.actions.getTripsFlights(req.flights, req.tripId, req.userId),
-        //                   await this.state.actions.getTripsHotels(req.hotels, req.tripId, req.userId),
-        //                   // actions.getTripsCabs(req.cabs, req.tripId, req.userId),
-        //                 ]);
+            if (otherIds.length > 0) {
+              for (const otherId of otherIds) {
+                const hotelDocRef = firestore()
+                  .collection('Accounts')
+                  .doc(userId)
+                  .collection('trips')
+                  .doc(tripId)
+                  .collection('otherbookings')
+                  .doc(otherId);
 
-        //                 const doc = await tripRef.get();
-        //                 const tripReqRef = userDataRef.collection("tripRequests").doc(req.requestId);
-        //                 const reqDoc = await tripReqRef.get();
+                const querySnapshot = await hotelDocRef.get();
+                const sendData = querySnapshot.data();
 
-        //                 const tripDetails = {
-        //                   userDetails: data.data(),
-        //                   tripDetails: {
-        //                     id: doc.id,
-        //                     data: doc.data(),
-        //                     hotels: hotels,
-        //                     flights: flights,
-        //                     // cabs: cabs,
-        //                   },
-        //                   requestDetails: reqDoc.data(),
-        //                   approvalRequest: req,
-        //                 };
+                otherArray.push({
+                  id: querySnapshot.id,
+                  data: sendData,
+                });
+              }
+            }
 
-        //                 requestData.push(tripDetails);
-        //               }
-        //             }
-
-        //             this.setState({
-        //               approveLoading: false,
-        //             });
-        //             return requestData;
-        //           } catch (error) {
-        //             Alert.alert(
-        //               'Error',
-        //               error.message,
-        //               [{ text: 'OK' }]
-        //             );
-        //             throw error;
-        //           }
-        //         },
+            return otherArray;
+          } catch (error) {
+            console.error('Error getting Buses:', error);
+            return [];
+          }
+        },
         getTripsForApproval: async approvalRequests => {
           if (!approvalRequests) {
             this.setState({
@@ -4743,7 +4778,7 @@ export default class MyProvider extends Component {
                     .collection('trips')
                     .doc(req.tripId);
 
-                  const [flights, hotels, cabs, bus] = await Promise.all([
+                  const [flights, hotels, cabs, bus,otherBookings] = await Promise.all([
                     await this.state.actions.getTripsFlights(
                       req.flights,
                       req.tripId,
@@ -4764,6 +4799,11 @@ export default class MyProvider extends Component {
                       req.tripId,
                       req.userId,
                     ),
+                    await this.state.actions.getTripsOthers(
+                      req.otherBookings,
+                      req.tripId,
+                      req.userId
+                    ),
                   ]);
 
                   const tripDoc = await tripRef.get();
@@ -4781,6 +4821,7 @@ export default class MyProvider extends Component {
                       flights: flights,
                       cabs: cabs,
                       bus: bus,
+                      otherBookings: otherBookings,
                     },
                     requestDetails: reqDoc.data(),
                     approvalRequest: req,
@@ -4844,22 +4885,6 @@ export default class MyProvider extends Component {
                 this.state.userAccountDetails.lastName,
               tripName: tripData.name,
             });
-
-            // if (approvalRequest.flights) {
-            //   approvalRequest.flights.forEach(async (flightId) => {
-            //     const flightDocRef = tripRef.collection('flights').doc(flightId);
-            //     const flightSnapshot = await flightDocRef.get();
-            //     if (flightSnapshot.exists) {
-            //       await flightDocRef.delete();
-            //       await tripRef.collection('flights').add({
-            //         ...flightSnapshot.data(),
-            //         requestStatus: 'Approved',
-            //         managerApprovedTime: new Date(),
-            //       });
-            //     }
-            //   });
-            // }
-
             if (approvalRequest.flights) {
               var flightData = tripData.flights.filter(flight =>
                 approvalRequest.flights.includes(flight.id),
@@ -4878,22 +4903,6 @@ export default class MyProvider extends Component {
                 });
               }
             }
-
-            // if (approvalRequest.hotels) {
-            //   approvalRequest.hotels.forEach(async (hotelId) => {
-            //     const hotelDocRef = tripRef.collection('hotels').doc(hotelId);
-            //     const hotelSnapshot = await hotelDocRef.get();
-            //     if (hotelSnapshot.exists) {
-            //       await hotelDocRef.delete();
-            //       await tripRef.collection('hotels').add({
-            //         ...hotelSnapshot.data(),
-            //         requestStatus: 'Approved',
-            //         managerApprovedTime: new Date(),
-            //       });
-            //     }
-            //   });
-            // }
-
             if (approvalRequest.hotels) {
               var hotelData = tripData.hotels.filter(hotel =>
                 approvalRequest.hotels.includes(hotel.id),
@@ -4912,21 +4921,6 @@ export default class MyProvider extends Component {
                 });
               }
             }
-
-            // if (approvalRequest.cabs.length > 0) {
-            //   approvalRequest.cabs.forEach(async (cabId) => {
-            //     const cabDocRef = tripRef.collection('cabs').doc(cabId);
-            //     const cabSnapshot = await cabDocRef.get();
-            //     if (cabSnapshot.exists) {
-            //       await cabDocRef.delete();
-            //       await tripRef.collection('cabs').add({
-            //         ...cabSnapshot.data(),
-            //         requestStatus: 'Approved',
-            //         managerApprovedTime: new Date(),
-            //       });
-            //     }
-            //   });
-            // }
 
             if (approvalRequest.cabs.length > 0) {
               var cabData = tripData.cabs?.filter(cab =>
@@ -4948,22 +4942,6 @@ export default class MyProvider extends Component {
                 }
               }
             }
-
-            // if (approvalRequest.bus.length > 0) {
-            //   approvalRequest.bus.forEach(async (busId) => {
-            //     const cabDocRef = tripRef.collection('cabs').doc(busId);
-            //     const cabSnapshot = await cabDocRef.get();
-            //     if (cabSnapshot.exists) {
-            //       await cabDocRef.delete();
-            //       await tripRef.collection('cabs').add({
-            //         ...cabSnapshot.data(),
-            //         requestStatus: 'Approved',
-            //         managerApprovedTime: new Date(),
-            //       });
-            //     }
-            //   });
-            // }
-
             if (approvalRequest.bus.length > 0) {
               var busData = tripData.bus?.filter(bus =>
                 approvalRequest.bus.includes(bus.id),
@@ -4984,7 +4962,26 @@ export default class MyProvider extends Component {
                 }
               }
             }
-
+            if (approvalRequest.otherBookings) {
+              var othersData = tripData.otherbookings?.filter(other =>
+                approvalRequest.otherbookings.includes(other.id),
+              );
+             
+                for (const other of othersData) {
+                  await tripRef.update({
+                    otherbookings: firestore.FieldValue.arrayRemove(other),
+                  });
+                  var bData = {
+                    ...other,
+                    requestStatus: 'Approved',
+                    managerApprovedTime: new Date(),
+                  };
+                  await tripRef.update({
+                    otherbookings: firestore.FieldValue.arrayUnion(bData),
+                  });
+                }
+              
+            }
             const tripReqcollectionRef = userDocRef
               .collection('tripRequests')
               .doc(approvalRequest.requestId);
@@ -5063,32 +5060,38 @@ export default class MyProvider extends Component {
                 f.FareRules[0].FareBasisCode === flight.FareRules[0].FareBasisCode
             )
           );
-          var resIndex = fareFilteredFlight[0][0].ResultIndex;
-
-          var request = {
-            tokenId: flightSearchToken,
-            traceId: flightTraceId,
-            resultIndex: resIndex,
-          };
-
-          var data2 = await fetch(
-            'https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/flightBookData',
+          if(fareFilteredFlight.flat().length===0)
             {
-              method: 'POST',
-              // credentials: "include",
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(request),
+              return []
+            }
+            else{
+              var resIndex = fareFilteredFlight[0][0].ResultIndex;
+              var request = {
+                tokenId: flightSearchToken,
+                traceId: flightTraceId,
+                resultIndex: resIndex,
+              };
+    
+              var data2 = await fetch(
+                'https://us-central1-tripfriday-2b399.cloudfunctions.net/tboApi/flightBookData',
+                {
+                  method: 'POST',
+                  // credentials: "include",
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(request),
+                },
+              )
+                .then(res => res.json())
+                .catch(err => console.log(err));
+              
+              var flightData = data2.fareQuoteResult.Response.Results;
+              var ssrData = data2?.ssrResult?.Response;
+              return {flightData, ssrData};
+            }
             },
-          )
-            .then(res => res.json())
-            .catch(err => console.log(err));
           
-          var flightData = data2.fareQuoteResult.Response.Results;
-          var ssrData = data2?.ssrResult?.Response;
-          return {flightData, ssrData};
-        },
 
         //   cityIds,
         //   searchReq,

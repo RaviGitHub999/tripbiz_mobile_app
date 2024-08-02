@@ -586,8 +586,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
         {filterdFlights?.map((flight, i) => {
           const flightName =
             flight?.data?.flightNew?.segments?.[0]?.airlineName;
-          const ArrDate =
-            flight?.data?.flightRequest?.segments[0]?.PreferredArrivalTime;
+          const ArrDate = flight?.data?.flight?.Segments[0][0]?.Origin?.DepTime;
           return (
             <View style={styles.notFilledDataContainer}>
               <IconSwitcher
@@ -595,11 +594,13 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                 iconName="dot-fill"
                 iconsize={2}
               />
-              <Text style={styles.subTitle}>
+              <Text style={[styles.subTitle, {flex: 1}]}>
                 <Text style={[styles.title, {fontSize: responsiveHeight(1.6)}]}>
                   {flightName}
                 </Text>{' '}
-                Flight {new Date(ArrDate).toLocaleString()}
+                Flight {moment(ArrDate).format('MMMM D, h:mm a')},
+                {flight?.data?.adults} Adults, {flight?.data?.child} Child,{' '}
+                {flight?.data?.infant} Infant
               </Text>
             </View>
           );
@@ -607,6 +608,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
         {filterdHotels?.map((hotel, i) => {
           const hotelName =
             hotel?.data?.hotelInfo?.HotelInfoResult?.HotelDetails?.HotelName;
+          const hotelDate = hotel?.data?.hotelSearchQuery?.checkInDate;
           return (
             <View style={styles.notFilledDataContainer}>
               <IconSwitcher
@@ -614,17 +616,21 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                 iconName="dot-fill"
                 iconsize={2}
               />
-              <Text style={[styles.subTitle]}>
+              <Text style={[styles.subTitle, {flex: 1}]}>
                 <Text style={[styles.title, {fontSize: responsiveHeight(1.6)}]}>
                   {hotelName}
                 </Text>{' '}
-                Hotel
+                Hotel,
+                {moment(hotelDate.seconds * 1000).format('MMMM D, h:mm a')},
+                {hotel?.data?.hotelSearchQuery?.hotelRoomArr[0]?.adults} Adults,{' '}
+                {hotel?.data?.hotelSearchQuery?.hotelRoomArr[0]?.child} Child
               </Text>
             </View>
           );
         })}
         {filterdCabs?.map((cab, i) => {
           const cabName = cab?.data?.cabCity;
+          const cabDate = cab?.data?.cabStartDate?.seconds * 1000;
           return (
             <View style={styles.notFilledDataContainer}>
               <IconSwitcher
@@ -632,17 +638,20 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                 iconName="dot-fill"
                 iconsize={2}
               />
-              <Text style={styles.subTitle}>
+              <Text style={[styles.subTitle, {flex: 1}]}>
                 <Text style={[styles.title, {fontSize: responsiveHeight(1.6)}]}>
                   {cabName}
                 </Text>{' '}
-                Cab
+                Cab, {moment(cabDate).format('MMMM D')},{' '}
+                {cab?.data?.selectedTime}
               </Text>
             </View>
           );
         })}
         {filterdBuses?.map((bus, i) => {
           const TravelName = bus?.data?.bus?.TravelName;
+          const busDate = bus?.data?.bus?.ArrivalTime;
+          const passengers = bus?.data?.passengers;
           return (
             <View style={styles.notFilledDataContainer}>
               <IconSwitcher
@@ -650,11 +659,12 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                 iconName="dot-fill"
                 iconsize={2}
               />
-              <Text style={styles.subTitle}>
+              <Text style={[styles.subTitle, {flex: 1}]}>
                 <Text style={[styles.title, {fontSize: responsiveHeight(1.6)}]}>
                   {TravelName}
                 </Text>{' '}
-                Bus
+                Bus, {moment(busDate).format('MMMM D, h:mm a')}, {passengers}{' '}
+                Passengers
               </Text>
             </View>
           );
@@ -2216,129 +2226,152 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                   <Text style={styles.flightCardTitle}>Other Bookings</Text>
                 </View>
                 {tripData?.otherBookings?.map(other => {
-                    const otherM = tripData?.data?.otherbookings?.filter(
-                      (otherMain) => {
-                        return otherMain.id === other.id;
-                      }
-                    );
-                   var color = statuses.filter(status => {
-                    return status?.status === otherM[0].status
-                  });
-                  var reqColor = reqStatuses.filter(status => {
-                    return (
-                      status?.status === otherM[0].requestStatus
-                    );
-                  });
+                  // const otherM = tripData?.data?.otherbookings?.map(otherMain => {
+                      console.log(tripData?.data,"otherMain")
+                  //     return (otherMain.id === other.id);
+                  //   },
+                  // );
+                  // tripData?.data?.otherbookings?.filter((other)=>
+                  // {
+                  //   console.log( other.id)
+                  // })
+                  // console.log(otherM,"otherM")
+                  // var color = statuses.filter(status => {
+                  //   return status?.status === otherM[0].status;
+                  // });
+                  // var reqColor = reqStatuses.filter(status => {
+                  //   return status?.status === otherM[0].requestStatus;
+                  // });
                   return (
-                    <View style={[styles.hotelCard,{gap: 5,paddingVertical:responsiveHeight(1.3),paddingHorizontal:0}]}>
-                      <View
-                        style={{flexDirection: 'row', alignItems: 'center',paddingLeft:responsiveHeight(1.5)}}>
-                        <IconSwitcher
-                          componentName="FontAwesome5"
-                          iconName="globe"
-                          iconsize={4}
-                        />
-                        <Text
-                          style={[
-                            styles.hotelCardTitle,
-                            {textAlign: 'center', flex: 1},
-                          ]}>
-                          {other?.data?.bookingType}
-                        </Text>
-                        <View style={[styles.hotelDates, {marginRight: 0}]}>
-                          <Text style={styles.hotelBookedDate}>
-                            {other?.data?.bookingDate}
-                          </Text>
-                        </View>
-                      </View>
-                     <View style={{paddingHorizontal:responsiveHeight(1.3)}}>
-                     <>
-                        {/* <Text style={styles.title}>Description :</Text> */}
-                        <Text style={styles.subTitle}>
-                          {other?.data?.bookingDetails}
-                        </Text>
-                      </>
-                      <View style={[styles.hotelPriceMainContainer,{borderTopWidth:responsiveHeight(0.18),borderBottomWidth: responsiveHeight(0.18)}]}>
-                        <View style={styles.bookingStatusTitlesMainContainer}>
-                          <Text
-                            style={
-                              styles.bookingStatusTitles
-                            }>{`Approval Status : `}</Text>
-                          <View
-                          style={[
-                            styles.bookingStatusTextContainer,
-                            {
-                              backgroundColor: reqColor[0]
-                                ? reqColor[0].color
-                                : '#808080',
-                            },
-                          ]}
-                          >
-                            <Text style={styles.bookingStatusText}>
-                            {otherM[0].requestStatus}
-                            </Text>
-                          </View>
-                        </View>
-                        <>
-                          <View style={styles.bookingStatusTitlesMainContainer}>
-                            <Text
-                              style={
-                                styles.bookingStatusTitles
-                              }>{`Booking Status : `}</Text>
-                            <View
-                              style={[
-                                styles.bookingStatusTextContainer,
-                                {
-                                  backgroundColor: color[0]
-                                    ? color[0].color
-                                    : '#808080',
-                                },
-                              ]}>
-                              <Text style={styles.bookingStatusText}>
-                              {otherM[0].status}
-                              </Text>
-                            </View>
-                          </View>
-                        </>
+                    // <View
+                    //   style={[
+                    //     styles.hotelCard,
+                    //     {
+                    //       gap: 5,
+                    //       paddingVertical: responsiveHeight(1.3),
+                    //       paddingHorizontal: 0,
+                    //     },
+                    //   ]}>
+                    //   <View
+                    //     style={{
+                    //       flexDirection: 'row',
+                    //       alignItems: 'center',
+                    //       paddingLeft: responsiveHeight(1.5),
+                    //     }}>
+                    //     <IconSwitcher
+                    //       componentName="FontAwesome5"
+                    //       iconName="globe"
+                    //       iconsize={4}
+                    //     />
+                    //     <Text
+                    //       style={[
+                    //         styles.hotelCardTitle,
+                    //         {textAlign: 'center', flex: 1},
+                    //       ]}>
+                    //       {other?.data?.bookingType}
+                    //     </Text>
+                    //     <View style={[styles.hotelDates, {marginRight: 0}]}>
+                    //       <Text style={styles.hotelBookedDate}>
+                    //         {other?.data?.bookingDate}
+                    //       </Text>
+                    //     </View>
+                    //   </View>
+                    //   <View style={{paddingHorizontal: responsiveHeight(1.3)}}>
+                    //     <>
+                    //       {/* <Text style={styles.title}>Description :</Text> */}
+                    //       <Text style={styles.subTitle}>
+                    //         {other?.data?.bookingDetails}
+                    //       </Text>
+                    //     </>
+                    //     <View
+                    //       style={[
+                    //         styles.hotelPriceMainContainer,
+                    //         {
+                    //           borderTopWidth: responsiveHeight(0.18),
+                    //           borderBottomWidth: responsiveHeight(0.18),
+                    //         },
+                    //       ]}>
+                    //       <View style={styles.bookingStatusTitlesMainContainer}>
+                    //         <Text
+                    //           style={
+                    //             styles.bookingStatusTitles
+                    //           }>{`Approval Status : `}</Text>
+                    //         <View
+                    //           style={[
+                    //             styles.bookingStatusTextContainer,
+                    //             {
+                    //               backgroundColor: reqColor[0]
+                    //                 ? reqColor[0].color
+                    //                 : '#808080',
+                    //             },
+                    //           ]}>
+                    //           <Text style={styles.bookingStatusText}>
+                    //             {otherM[0].requestStatus}
+                    //           </Text>
+                    //         </View>
+                    //       </View>
+                    //       <>
+                    //         <View
+                    //           style={styles.bookingStatusTitlesMainContainer}>
+                    //           <Text
+                    //             style={
+                    //               styles.bookingStatusTitles
+                    //             }>{`Booking Status : `}</Text>
+                    //           <View
+                    //             style={[
+                    //               styles.bookingStatusTextContainer,
+                    //               {
+                    //                 backgroundColor: color[0]
+                    //                   ? color[0].color
+                    //                   : '#808080',
+                    //               },
+                    //             ]}>
+                    //             <Text style={styles.bookingStatusText}>
+                    //               {otherM[0].status}
+                    //             </Text>
+                    //           </View>
+                    //         </View>
+                    //       </>
 
-                        <View
-                          style={[
-                            styles.hotelTotalPriceContainer,
-                            {justifyContent: 'space-between'},
-                          ]}>
-                          <View style={styles.hotelTotalPriceContainer}>
-                            <Text
-                              style={
-                                styles.hotelTotalPrice
-                              }>{`Total Price : ₹ ${Math.ceil(
-                              other?.data?.bookingCost,
-                            ).toLocaleString('en-IN')}`}</Text>
-                            <TouchableOpacity
-                      onPress={() => {
-                        // setOpenPriceInfo(true);
-                      }}>
-                      <IconSwitcher
-                        componentName="Entypo"
-                        iconName="info-with-circle"
-                        color={colors.black}
-                        iconsize={1.8}
-                      />
-                    </TouchableOpacity>
-                          </View>
-                          <TouchableOpacity 
-                          // onPress={openAllTimeStamps}
-                          >
-                    <IconSwitcher
-                      componentName="MaterialIcons"
-                      iconName="access-alarm"
-                      color={colors.black}
-                      iconsize={3}
-                    />
-                  </TouchableOpacity>
-                        </View>
-                      </View>
-                     </View>
-                    </View>
+                    //       <View
+                    //         style={[
+                    //           styles.hotelTotalPriceContainer,
+                    //           {justifyContent: 'space-between'},
+                    //         ]}>
+                    //         <View style={styles.hotelTotalPriceContainer}>
+                    //           <Text
+                    //             style={
+                    //               styles.hotelTotalPrice
+                    //             }>{`Total Price : ₹ ${Math.ceil(
+                    //             other?.data?.bookingCost,
+                    //           ).toLocaleString('en-IN')}`}</Text>
+                    //           <TouchableOpacity
+                    //             onPress={() => {
+                    //               // setOpenPriceInfo(true);
+                    //             }}>
+                    //             <IconSwitcher
+                    //               componentName="Entypo"
+                    //               iconName="info-with-circle"
+                    //               color={colors.black}
+                    //               iconsize={1.8}
+                    //             />
+                    //           </TouchableOpacity>
+                    //         </View>
+                    //         <TouchableOpacity
+                    //         // onPress={openAllTimeStamps}
+                    //         >
+                    //           <IconSwitcher
+                    //             componentName="MaterialIcons"
+                    //             iconName="access-alarm"
+                    //             color={colors.black}
+                    //             iconsize={3}
+                    //           />
+                    //         </TouchableOpacity>
+                    //       </View>
+                    //     </View>
+                    //   </View>
+                    // </View>
+                    <></>
                   );
                 })}
               </>
@@ -2985,7 +3018,10 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                   },
                                 ]}>
                                 <Text style={styles.bookingStatusText}>
-                                  {requestData?.status}
+                                  {
+                                    tripData?.data?.bookings[bookingNumber]
+                                      ?.submissionStatus
+                                  }
                                 </Text>
                               </View>
                             </View>
@@ -4301,29 +4337,41 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                       {bookingPrice > 0 ? (
                         <>
                           {userAccountDetails.accountType === 'PostPaid' ? (
-                            <TouchableOpacity
-                              style={[
-                                styles.btn,
-                                {
-                                  paddingVertical: responsiveHeight(1),
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  width: responsiveHeight(18),
-                                  marginTop: responsiveHeight(1),
-                                },
-                              ]}
-                              onPress={handleClick}>
-                              {!paymentLoading ? (
-                                <Text style={[styles.btnTitle]}>
-                                  Submit for Booking
-                                </Text>
-                              ) : (
-                                <ActivityIndicator
-                                  size={'small'}
-                                  color={colors.facebook}
-                                />
-                              )}
-                            </TouchableOpacity>
+                            <View  style={{
+                              alignItems: 'center',
+                              gap: responsiveHeight(2),
+                              flexDirection: 'row',
+                            }}>
+                              <TouchableOpacity
+                                onPress={() => setSelectedTab('approval')}
+                                style={[
+                                  styles.btn,
+                                  {
+                                    paddingVertical: responsiveHeight(1),
+                                  }
+                                ]}>
+                                <Text style={styles.btnTitle}>Previous</Text>
+                              </TouchableOpacity>
+                              <TouchableOpacity
+                                style={[
+                                  styles.btn,
+                                  {
+                                    paddingVertical: responsiveHeight(1),
+                                  },
+                                ]}
+                                onPress={handleClick}>
+                                {!paymentLoading ? (
+                                  <Text style={[styles.btnTitle]}>
+                                    Submit for Booking
+                                  </Text>
+                                ) : (
+                                  <ActivityIndicator
+                                    size={'small'}
+                                    color={colors.facebook}
+                                  />
+                                )}
+                              </TouchableOpacity>
+                            </View>
                           ) : (
                             <>
                               {userAccountDetails.balance < bookingPrice ? (

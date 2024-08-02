@@ -40,7 +40,7 @@ const TripDetailsFlightCard = ({
     const [tripsSeat, setTripsSeat] = useState(false)
     const [openDelete, setOpenDelete] = useState(false)
     const [deleteId, setDeleteId] = useState(false)
-    const [deleteType, setDeleteType] = useState(false)
+    const [deleteType, setDeleteType] = useState(null)
     const [openFlightPrice, setOpenFlightPrice] = useState(false)
     const [openFareRules, setOpenFareRules] = useState(false)
     const [openPriceReCheck, setOpenPriceReCheck] = useState(false)
@@ -52,6 +52,7 @@ const TripDetailsFlightCard = ({
     const [checkingDate, setCheckingDate] = useState(null)
     const [recheckSeatsAvailable, setRecheckSeatsAvailable] = useState(false);
     const [alltimeStamp, setAllTimeStamp] = useState(false);
+    const [flightRecheckError,setFlightRecheckError]=useState(false)
     const { actions, flightsLogosData, domesticFlight } = useContext(MyContext)
     const statuses = [
         { status: "Submitted", color: "#ffa500" },
@@ -93,12 +94,10 @@ const TripDetailsFlightCard = ({
     }
 
     function isDateNotLessThanCurrent(givenDate) {
-        const currentDate = new Date();
-        currentDate.setHours(0, 0, 0, 0);
-        const dateToCheck = new Date(givenDate);
-        dateToCheck.setHours(0, 0, 0, 0);
-        return dateToCheck > currentDate;
-    }
+      const currentDate = moment();
+      const dateToCheck = moment(givenDate);
+      return dateToCheck.isSameOrAfter(currentDate);
+  }
 
 
     const handleRenderingFlightCard = ({ item }) => {
@@ -313,27 +312,35 @@ const TripDetailsFlightCard = ({
     const handleRecheckFlightPrice = async () => {
         setReCheckLoading(true)
         setOpenPriceReCheck(true)
-     console.log(checkingDate)
+        setFlightRecheckError(false)
          if(checkingDate)
             {
+              
                 var data = await actions.getFlightUpdatedDetails(flightBooking.flightRequest, flightBooking.flight)
-                getUpdatedFares(data.ssrData)
-                setReCheckData(data)
-                areSeatsAvailable(
-                    data?.ssrData?.SeatDynamic !== undefined
-                      ? data?.ssrData?.SeatDynamic[0]?.SegmentSeat[0]
-                          ?.RowSeats
-                      : null,
-                    flightBooking?.seats !== undefined
-                      ? flightBooking?.seats[0][0]
-                      : null
-                    // selectedSeats
-                  );
+                if (data.length !== 0) {
+                  getUpdatedFares(data.ssrData)
+                  setReCheckData(data)
+                  areSeatsAvailable(
+                      data?.ssrData?.SeatDynamic !== undefined
+                        ? data?.ssrData?.SeatDynamic[0]?.SegmentSeat[0]
+                            ?.RowSeats
+                        : null,
+                      flightBooking?.seats !== undefined
+                        ? flightBooking?.seats[0][0]
+                        : null
+                      // selectedSeats
+                    ); 
+              }
+              else{
+                setReCheckLoading(false)
+                setDeleteType("flights")
+                setDeleteId(flightId)
+                setFlightRecheckError(true)
+              }
+              
+               
+                
             }
-            // else{
-            //     Alert.alert("Please Check Check-in Date")
-            // }
-
         setReCheckLoading(false)
         setDeleteType("flights")
         setDeleteId(flightId)
@@ -1066,7 +1073,7 @@ const closeAllTimeStamps=()=>
                 flightArr={flightArr}
                 flightData={{data: flightBooking}}
               />
-              {checkingDate ? (
+              {checkingDate ?!flightRecheckError? (
                 <>
                   {reCheckLoading ? (
                     <View style={styles.progressBarContainer}>
@@ -1279,7 +1286,20 @@ const closeAllTimeStamps=()=>
                     </View>
                   )}
                 </>
-              ) : (
+              ):
+              <View style={styles.exceedDateContainer}>
+              <Text style={styles.recheckPriceTitles}>
+               Selected Flight is not available. Please add another Flight.
+              </Text>
+              <TouchableOpacity
+                style={[styles.btn]}
+                onPress={() => {
+                  handleDelete(), setOpenPriceReCheck(false);
+                }}>
+                <Text style={styles.btnTitle}>Delete Flight</Text>
+              </TouchableOpacity>
+            </View>
+              : (
                 <View style={styles.exceedDateContainer}>
                   <Text style={styles.recheckPriceTitles}>
                     Flight date has exceeded. Please change the date.

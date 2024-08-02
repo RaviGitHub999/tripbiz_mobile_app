@@ -14,6 +14,7 @@ const ProfileHome = () => {
   const handleLogout = async () => {
     try {
       await auth().signOut();
+      actions.setRes()
       navigate('Login');
       actions.setRes()
     } catch (error) {
