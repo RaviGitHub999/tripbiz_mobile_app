@@ -4,9 +4,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   Pressable,
+  Linking,
+  Alert,
 } from 'react-native';
 import React, {useCallback, useContext, useState} from 'react';
 import {
+  responsiveFontSize,
   responsiveHeight,
   responsiveWidth,
 } from '../../../utils/responsiveScale';
@@ -34,6 +37,14 @@ var reqStatuses = [
   {status: 'Not Requested', color: '#808080'},
   { status: "Skipped", color: "#FF0000" },
 ];
+const downloadDoc = async hotelStatus => {
+  try {
+    await Linking.openURL(hotelStatus);
+  } catch (error) {
+    Alert.alert('Error', 'An error occurred while trying to open the URL');
+    console.error('An error occurred', error);
+  }
+};
 const BusRenderData = ({
   item,
   tripsPage,
@@ -312,8 +323,10 @@ const BusRenderData = ({
               ) : null}
               {busData?.downloadURL && tripsPage ? (
                 <TouchableOpacity
-                  onPress={() => downloadDoc(cabData?.downloadURL)}>
-                  <Text>Voucher</Text>
+                  onPress={() => downloadDoc(busData?.downloadURL)}
+                  style={styles.voucherContainer}
+                  >
+                  <Text style={styles.voucherTitle}>Voucher</Text>
                   <IconSwitcher
                     componentName="FontAwesome"
                     iconName="download"
@@ -828,6 +841,24 @@ const styles = StyleSheet.create({
     fontFamily: fonts.primary,
     color: colors.primary,
     flex: 1,
+  },
+  voucherContainer:
+  {
+    flexDirection:"row",
+    alignItems:"center",
+    gap:responsiveHeight(1),
+    borderWidth:responsiveFontSize(0.18),
+    alignSelf:'flex-start',
+    padding:responsiveWidth(2),
+    borderColor:colors.primary,
+    borderRadius:responsiveHeight(1)
+  },
+  voucherTitle:
+  {
+    fontSize:responsiveHeight(1.8),
+    fontFamily:fonts.secondry,
+    textAlign:'center',
+    color:colors.primary
   },
 });
 

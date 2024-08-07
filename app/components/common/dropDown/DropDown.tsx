@@ -82,7 +82,7 @@ const styles = StyleSheet.create(
             paddingHorizontal: responsiveWidth(2.5),
             borderRadius: responsiveHeight(1.5),
             paddingVertical: responsiveHeight(0.5),
-            width: responsiveWidth(24),
+            // width: responsiveWidth(24),
             height:responsiveHeight(8),
             justifyContent:'center'
         },

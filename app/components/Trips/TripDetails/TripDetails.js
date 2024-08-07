@@ -115,6 +115,10 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
   const [bookingIndex, setBookingIndex] = useState([]);
   const [bookingNumber, setBookingNumber] = useState(0);
   const [mandatoryError, setMandatoryError] = useState('');
+  const [otherPriceInfo, setOtherPriceInfo] = useState(false);
+  const [otherPrice, setOtherPrice] = useState({});
+  const [allotherTime, setAllOtherTime] = useState(false);
+  const [allotherTimeData, setAllOtherTimeData] = useState();
   // const[bookingalert,setBookingAlert]=useState(false)
   const {
     actions,
@@ -2226,152 +2230,174 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                   <Text style={styles.flightCardTitle}>Other Bookings</Text>
                 </View>
                 {tripData?.otherBookings?.map(other => {
-                  // const otherM = tripData?.data?.otherbookings?.map(otherMain => {
-                      console.log(tripData?.data,"otherMain")
-                  //     return (otherMain.id === other.id);
-                  //   },
-                  // );
-                  // tripData?.data?.otherbookings?.filter((other)=>
-                  // {
-                  //   console.log( other.id)
-                  // })
-                  // console.log(otherM,"otherM")
-                  // var color = statuses.filter(status => {
-                  //   return status?.status === otherM[0].status;
-                  // });
-                  // var reqColor = reqStatuses.filter(status => {
-                  //   return status?.status === otherM[0].requestStatus;
-                  // });
+                   const otherM = tripData?.data?.otherBookings?.filter(
+                    (otherMain) => {
+                      return otherMain.id === other.id;
+                    }
+                  );
+                  var color = statuses.filter(status => {
+                    return status?.status === otherM[0].status;
+                  });
+                  var reqColor = reqStatuses.filter(status => {
+                    return status?.status === otherM[0].requestStatus;
+                  });
                   return (
-                    // <View
-                    //   style={[
-                    //     styles.hotelCard,
-                    //     {
-                    //       gap: 5,
-                    //       paddingVertical: responsiveHeight(1.3),
-                    //       paddingHorizontal: 0,
-                    //     },
-                    //   ]}>
-                    //   <View
-                    //     style={{
-                    //       flexDirection: 'row',
-                    //       alignItems: 'center',
-                    //       paddingLeft: responsiveHeight(1.5),
-                    //     }}>
-                    //     <IconSwitcher
-                    //       componentName="FontAwesome5"
-                    //       iconName="globe"
-                    //       iconsize={4}
-                    //     />
-                    //     <Text
-                    //       style={[
-                    //         styles.hotelCardTitle,
-                    //         {textAlign: 'center', flex: 1},
-                    //       ]}>
-                    //       {other?.data?.bookingType}
-                    //     </Text>
-                    //     <View style={[styles.hotelDates, {marginRight: 0}]}>
-                    //       <Text style={styles.hotelBookedDate}>
-                    //         {other?.data?.bookingDate}
-                    //       </Text>
-                    //     </View>
-                    //   </View>
-                    //   <View style={{paddingHorizontal: responsiveHeight(1.3)}}>
-                    //     <>
-                    //       {/* <Text style={styles.title}>Description :</Text> */}
-                    //       <Text style={styles.subTitle}>
-                    //         {other?.data?.bookingDetails}
-                    //       </Text>
-                    //     </>
-                    //     <View
-                    //       style={[
-                    //         styles.hotelPriceMainContainer,
-                    //         {
-                    //           borderTopWidth: responsiveHeight(0.18),
-                    //           borderBottomWidth: responsiveHeight(0.18),
-                    //         },
-                    //       ]}>
-                    //       <View style={styles.bookingStatusTitlesMainContainer}>
-                    //         <Text
-                    //           style={
-                    //             styles.bookingStatusTitles
-                    //           }>{`Approval Status : `}</Text>
-                    //         <View
-                    //           style={[
-                    //             styles.bookingStatusTextContainer,
-                    //             {
-                    //               backgroundColor: reqColor[0]
-                    //                 ? reqColor[0].color
-                    //                 : '#808080',
-                    //             },
-                    //           ]}>
-                    //           <Text style={styles.bookingStatusText}>
-                    //             {otherM[0].requestStatus}
-                    //           </Text>
-                    //         </View>
-                    //       </View>
-                    //       <>
-                    //         <View
-                    //           style={styles.bookingStatusTitlesMainContainer}>
-                    //           <Text
-                    //             style={
-                    //               styles.bookingStatusTitles
-                    //             }>{`Booking Status : `}</Text>
-                    //           <View
-                    //             style={[
-                    //               styles.bookingStatusTextContainer,
-                    //               {
-                    //                 backgroundColor: color[0]
-                    //                   ? color[0].color
-                    //                   : '#808080',
-                    //               },
-                    //             ]}>
-                    //             <Text style={styles.bookingStatusText}>
-                    //               {otherM[0].status}
-                    //             </Text>
-                    //           </View>
-                    //         </View>
-                    //       </>
+                    <View
+                      style={[
+                        styles.hotelCard,
+                        {
+                          gap: 5,
+                          paddingVertical: responsiveHeight(1.3),
+                          paddingHorizontal: 0,
+                        },
+                      ]}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          paddingLeft: responsiveHeight(1.5),
+                        }}>
+                        <IconSwitcher
+                          componentName="FontAwesome5"
+                          iconName="globe"
+                          iconsize={4}
+                        />
+                        <Text
+                          style={[
+                            styles.hotelCardTitle,
+                            {textAlign: 'center', flex: 1},
+                          ]}>
+                          {other?.data?.bookingType}
+                        </Text>
+                        <View style={[styles.hotelDates, {marginRight: 0}]}>
+                          <Text style={styles.hotelBookedDate}>
+                            {other?.data?.bookingDate}
+                          </Text>
+                        </View>
+                      </View>
+                      <View style={{paddingHorizontal: responsiveHeight(1.3)}}>
+                        <>
+                          {/* <Text style={styles.title}>Description :</Text> */}
+                          <Text style={styles.subTitle}>
+                            {other?.data?.bookingDetails}
+                          </Text>
+                        </>
+                        <View
+                          style={[
+                            styles.hotelPriceMainContainer,
+                            {
+                              borderTopWidth: responsiveHeight(0.18),
+                              borderBottomWidth: responsiveHeight(0.18),
+                            },
+                          ]}>
+                          <View style={styles.bookingStatusTitlesMainContainer}>
+                            <Text
+                              style={
+                                styles.bookingStatusTitles
+                              }>{`Approval Status : `}</Text>
+                            <View
+                              style={[
+                                styles.bookingStatusTextContainer,
+                                {
+                                  backgroundColor: reqColor[0]
+                                    ? reqColor[0].color
+                                    : '#808080',
+                                },
+                              ]}>
+                              <Text style={styles.bookingStatusText}>
+                                {otherM[0].requestStatus}
+                              </Text>
+                            </View>
+                          </View>
+                          <>
+                            <View
+                              style={styles.bookingStatusTitlesMainContainer}>
+                              <Text
+                                style={
+                                  styles.bookingStatusTitles
+                                }>{`Booking Status : `}</Text>
+                              <View
+                                style={[
+                                  styles.bookingStatusTextContainer,
+                                  {
+                                    backgroundColor: color[0]
+                                      ? color[0].color
+                                      : '#808080',
+                                  },
+                                ]}>
+                                <Text style={styles.bookingStatusText}>
+                                  {otherM[0].status}
+                                </Text>
+                              </View>
+                            </View>
+                          </>
 
-                    //       <View
-                    //         style={[
-                    //           styles.hotelTotalPriceContainer,
-                    //           {justifyContent: 'space-between'},
-                    //         ]}>
-                    //         <View style={styles.hotelTotalPriceContainer}>
-                    //           <Text
-                    //             style={
-                    //               styles.hotelTotalPrice
-                    //             }>{`Total Price : ₹ ${Math.ceil(
-                    //             other?.data?.bookingCost,
-                    //           ).toLocaleString('en-IN')}`}</Text>
-                    //           <TouchableOpacity
-                    //             onPress={() => {
-                    //               // setOpenPriceInfo(true);
-                    //             }}>
-                    //             <IconSwitcher
-                    //               componentName="Entypo"
-                    //               iconName="info-with-circle"
-                    //               color={colors.black}
-                    //               iconsize={1.8}
-                    //             />
-                    //           </TouchableOpacity>
-                    //         </View>
-                    //         <TouchableOpacity
-                    //         // onPress={openAllTimeStamps}
-                    //         >
-                    //           <IconSwitcher
-                    //             componentName="MaterialIcons"
-                    //             iconName="access-alarm"
-                    //             color={colors.black}
-                    //             iconsize={3}
-                    //           />
-                    //         </TouchableOpacity>
-                    //       </View>
-                    //     </View>
-                    //   </View>
-                    // </View>
-                    <></>
+                          <View
+                            style={[
+                              styles.hotelTotalPriceContainer,
+                              {justifyContent: 'space-between'},
+                            ]}>
+                            <View style={styles.hotelTotalPriceContainer}>
+                              <Text
+                                style={
+                                  styles.hotelTotalPrice
+                                }>{`Total Price : ₹ ${Math.ceil(
+                                other?.data?.bookingCost,
+                              ).toLocaleString('en-IN')}`}</Text>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  setOtherPriceInfo(true);
+                                  setOtherPrice({
+                                    total: other?.data?.overallBookingPrice,
+                                    price: other?.data?.bookingCost,
+                                    service: other?.data?.bookingService,
+                                    gst: other?.data?.bookingGst,
+                                  });
+                                }}>
+                                <IconSwitcher
+                                  componentName="Entypo"
+                                  iconName="info-with-circle"
+                                  color={colors.black}
+                                  iconsize={1.8}
+                                />
+                              </TouchableOpacity>
+                            </View>
+                            <TouchableOpacity
+                            onPress={() => {
+                              setAllOtherTimeData(otherM[0]);
+                              setAllOtherTime(true);
+                            }}
+                            >
+                              <IconSwitcher
+                                componentName="MaterialIcons"
+                                iconName="access-alarm"
+                                color={colors.black}
+                                iconsize={3}
+                              />
+                            </TouchableOpacity>
+                          </View>
+
+                        </View>
+                      </View>
+                    <View style={{paddingHorizontal: responsiveHeight(1.3),marginTop:responsiveHeight(1)}}>
+                    {otherM[0]?.downloadURL && (
+                            <TouchableOpacity
+                              style={styles.voucherContainer}
+                              onPress={() =>
+                                downloadDoc(otherM[0]?.downloadURL)
+                              }>
+                              <Text style={styles.voucherTitle}>Voucher</Text>
+                              <IconSwitcher
+                                componentName="FontAwesome"
+                                iconName="download"
+                                iconsize={2}
+                                color={colors.primary}
+                              />
+                            </TouchableOpacity>
+                          )}
+                    </View>
+                    </View>
+                    // <></>
                   );
                 })}
               </>
@@ -3960,7 +3986,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                         // }
                         if (
                           requestData?.status !== 'Pending' &&
-                          requestData?.status !== 'Skipped'
+                          requestData?.status !== 'Skipped'&&requestData?.status !== 'Approved'
                         ) {
                           setApprovalError(true);
                           setMandatoryError(errorMessage);
@@ -4971,6 +4997,126 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
             <Text style={styles.timeStampsTitles}>
               {timeStampDate?.booked_date
                 ? moment(timeStampDate?.booked_date?.seconds * 1000).format(
+                    'MMMM D, h:mm a',
+                  )
+                : 'Not Booked'}
+            </Text>
+          </View>
+        </PopUp>
+        {/* otherPriceInfo */}
+        <PopUp value={otherPriceInfo} handlePopUpClose={() => {
+          setOtherPriceInfo(false);
+        }}>
+<View style={styles.priceInfo}>
+          <View style={styles.priceDetailsContainer}>
+            <Text style={styles.priceDetailsTitle}>Price</Text>
+            <Text style={[styles.priceDetails, {color: colors.highlight}]}>
+              &#8377;
+              {` ${otherPrice?.price}`}
+            </Text>
+          </View>
+          <View style={styles.horizentalLine} />
+          <View style={styles.priceDetailsContainer}>
+            <Text style={styles.priceDetailsTitle}>Service Charges</Text>
+            <Text style={[styles.priceDetails, {color: colors.highlight,fontSize:responsiveHeight(1.8)}]}>
+              + &#8377;
+              {otherPrice?.service}
+            </Text>
+          </View>
+
+          <View style={styles.priceDetailsContainer}>
+            <Text style={styles.priceDetailsTitle}>GST</Text>
+            <Text style={[styles.priceDetails, {color: colors.highlight,fontSize:responsiveHeight(1.8)}]}>
+              + &#8377;
+                {Math.round(otherPrice?.gst)}
+            </Text>
+          </View>
+          <View
+            style={[
+              styles.priceDetailsContainer,
+              {marginTop: responsiveHeight(2)},
+            ]}>
+            <Text style={styles.priceDetails}>Total fare</Text>
+            <Text style={[styles.priceDetails, {color: colors.secondary}]}>
+              + &#8377;
+              {` ${Math.round(otherPrice?.total).toLocaleString(
+                'en-IN',
+              )}`}
+            </Text>
+          </View>
+        </View>
+        </PopUp>
+       {/* OtherBookingsalltimeStamps */}
+        <PopUp value={allotherTime} handlePopUpClose={() => setAllOtherTime(false)}>
+          <View style={styles.timeStampsContainer}>
+            <IconSwitcher
+              componentName="Octicons"
+              iconName="dot-fill"
+              iconsize={1.8}
+            />
+            <Text style={styles.timeStampsTitles}>Added Date :</Text>
+            <Text style={styles.timeStampsTitles}>
+              {allotherTimeData?.date &&
+                moment(allotherTimeData?.date?.seconds * 1000).format(
+                  'MMMM D, h:mm a',
+                )}
+            </Text>
+          </View>
+          <View style={styles.timeStampsContainer}>
+            <IconSwitcher
+              componentName="Octicons"
+              iconName="dot-fill"
+              iconsize={1.8}
+            />
+            <Text style={styles.timeStampsTitles}>Sent to Approval :</Text>
+            <Text style={styles.timeStampsTitles}>
+              {allotherTimeData?.date ?
+                moment(allotherTimeData?.date?.seconds * 1000).format(
+                  'MMMM D, h:mm a',
+                )
+                : 'Not Requested for Approval'}
+            </Text>
+          </View>
+          <View style={styles.timeStampsContainer}>
+            <IconSwitcher
+              componentName="Octicons"
+              iconName="dot-fill"
+              iconsize={1.8}
+            />
+            <Text style={styles.timeStampsTitles}>Approved Date :</Text>
+            <Text style={styles.timeStampsTitles}>
+              {allotherTimeData?.managerApprovedTime
+                ? moment(
+                  allotherTimeData?.managerApprovedTime?.seconds * 1000,
+                  ).format('MMMM D, h:mm a')
+                : 'Not Approved'}
+            </Text>
+          </View>
+          <View style={styles.timeStampsContainer}>
+            <IconSwitcher
+              componentName="Octicons"
+              iconName="dot-fill"
+              iconsize={1.8}
+            />
+            <Text style={styles.timeStampsTitles}>Submitted Date :</Text>
+            <Text style={styles.timeStampsTitles}>
+              {allotherTimeData?.date ?
+                moment(allotherTimeData?.date?.seconds * 1000).format(
+                  'MMMM D, h:mm a',
+                )
+                : 'Not Submitted'}
+            </Text>
+          </View>
+          <View style={styles.timeStampsContainer}>
+            <IconSwitcher
+              componentName="Octicons"
+              iconName="dot-fill"
+              iconsize={1.8}
+            />
+            <Text style={styles.timeStampsTitles}>Booked Date :</Text>
+            <Text style={styles.timeStampsTitles}>
+              {timeStampDate?.booked_date
+                ? moment(allotherTimeData?.booked_date?.seconds * 1000).format(
                     'MMMM D, h:mm a',
                   )
                 : 'Not Booked'}

@@ -797,7 +797,32 @@ width:responsiveHeight(10),borderRadius:responsiveHeight(1)
         // backgroundColor:"#ffa500",
         backgroundColor:'rgba(255,165,0,.7)',
         borderRadius: responsiveHeight(1),
-      }
+      },
+      priceDetailsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      },
+      priceDetailsTitle: {
+        fontSize: responsiveHeight(2),
+        fontFamily: fonts.primary,
+        color: colors.lightGray,
+      },
+      priceDetails: {
+        fontSize: responsiveHeight(2.3),
+        fontFamily: fonts.secondry,
+        color: colors.primary,
+      },
+      horizentalLine: {
+        borderTopWidth: responsiveHeight(0.2),
+        color: colors.lightGray,
+        borderStyle: 'dashed',
+        marginVertical: responsiveHeight(1),
+      },
+      priceInfo: {
+        alignSelf: 'center',
+        width: '80%',
+      },
 
 
 })

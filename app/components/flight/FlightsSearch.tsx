@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, FlatList, ScrollView } from 'react-native'
 import React, { useState, useCallback, useContext, useEffect } from 'react'
 import { styles } from './styles'
-import { responsiveWidth } from '../../utils/responsiveScale'
+import { responsiveHeight, responsiveWidth } from '../../utils/responsiveScale'
 import SearchInputs from '../common/searchInputs/SearchInputs'
 import DropDown from '../common/dropDown/DropDown'
 import CustomButton from '../common/customButton/CustomButton'
@@ -27,7 +27,8 @@ const FlightsSearch: React.FC<IProps> = ({ navigation: { navigate } }) => {
   const [isSearchReady, setSearchReady] = useState(false);
   // const [active, setActive] = useState(btns[0].journeyType)
   const [calenderOpen, setCalenderOpen] = useState<CalenderOpen>({ departureCalender: false, returCalender: false })
-  const { journeyWay,departureformattedDate, actions, oriRes, desRes, origin, airportOriginLoading, airportOriginData, destination, originSelectedAirport, originselected, destinationSelectedAirPort, destinationselected, departure, returnDate, dateValue, returnDateValue, airportDestData, airportDestLoading,directflight } = useContext<any>(MyContext)
+  const { journeyWay,departureformattedDate, actions,adults, oriRes, desRes, origin, airportOriginLoading, airportOriginData, destination, originSelectedAirport, originselected, destinationSelectedAirPort, destinationselected, departure, returnDate, dateValue, returnDateValue, airportDestData, airportDestLoading,directflight } = useContext<any>(MyContext)
+  const [errors, setErrors] = useState<any>({});
   const handleActive = useCallback((item: IBtns) => {
     // setActive(item.journeyType);
     actions.handleJourneyWay(item.journeyTypeNo);
@@ -88,47 +89,35 @@ const FlightsSearch: React.FC<IProps> = ({ navigation: { navigate } }) => {
       </View>
     </TouchableOpacity>
   ));
-  // const handleSearch = () => {
+  // const handleSearch =  () => {
   //   if (originSelectedAirport.address.cityName && destinationSelectedAirPort.address.cityName && departureformattedDate.length !== 0) {
-  //     navigate("OneWayFlights")
-  //     // actions.flightSearch()
-  //     // actions.handleFlightsLogos()
-  //   }
-
-  // }
-  const handleSearch =  () => {
-    if (originSelectedAirport.address.cityName && destinationSelectedAirPort.address.cityName && departureformattedDate.length !== 0) {
-      navigate("OneWayFlights");
-    }
-  }
-  // const handleSearch = async () => {
-  //   if (originSelectedAirport.address.cityName && destinationSelectedAirPort.address.cityName && departureformattedDate.length !== 0) {
-  //     console.log('Before flightSearch');
-  //     await actions.flightSearch();
-  //     console.log('After flightSearch');
-  
-  //     console.log('Before handleFlightsLogos');
-  //     await actions.handleFlightsLogos();
-  //     console.log('After handleFlightsLogos');
-  
-  //     console.log('Before navigate');
   //     navigate("OneWayFlights");
-  //     console.log('After navigate');
   //   }
   // }
-  
+  const validate = () => {
+    const newErrors:any = {};
+    if (!originSelectedAirport.address.cityName) newErrors.origin = 'Origin is required';
+    if (!destinationSelectedAirPort.address.cityName) newErrors.destination = 'Destination is required';
+    if (departureformattedDate==="") newErrors.departureDate = 'Departure date is required';
+    // if (adults===0) newErrors.adults = 'Please enter a valid number of adults';
 
-  // useEffect(() => {
-  //   if (isSearchReady) {
-     
-  //   }
-  // }, [isSearchReady]);
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+  const handleSearch = () => {
+    if (validate()) {
+      navigate("OneWayFlights");
+    } else {
+      console.log('Form has errors');
+    }
+  };
   return (
     <View style={styles.subContainer}>
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} >
         <FlatList data={btns} renderItem={handleRender} keyExtractor={item => item.journeyType} horizontal style={styles.btnContainer} />
         <View style={styles.fieldsContainer}>
-          <SearchInputs btn={false} dropDown={false} placeholder='Origin' handleChangeText={handleChange} Value={origin} stateName="origin" selectedObj={originSelectedAirport} selected={originselected} />
+         <SearchInputs btn={false} dropDown={false} placeholder='Origin' handleChangeText={handleChange} Value={origin} stateName="origin" selectedObj={originSelectedAirport} selected={originselected} />
+         {errors.origin? <Text style={[styles.errorText]}>{`* ${errors.origin}`}</Text>:null}
           {
             oriRes ?
               <View >
@@ -141,6 +130,7 @@ const FlightsSearch: React.FC<IProps> = ({ navigation: { navigate } }) => {
               </View> : null
           }
           <SearchInputs btn={false} dropDown={false} placeholder='Destination' handleChangeText={handleChange} Value={destination} stateName="destination" selectedObj={destinationSelectedAirPort} selected={destinationselected} />
+         {errors.destination? <Text style={[styles.errorText]}>{`* ${errors.destination}`}</Text>:null}
           {
             desRes ?
               <View >
@@ -164,16 +154,23 @@ const FlightsSearch: React.FC<IProps> = ({ navigation: { navigate } }) => {
                   </View>}
               </View> : null
           }
-          <View {...journeyWay === "2" && { style: { flexDirection: 'row', justifyContent: 'space-between' } }}>
-            <SearchInputs  btn={true} dropDown={false} placeholder={departure}{...journeyWay === "2" && { customStyles: { width: responsiveWidth(41) } }} handleDatePicker={handleOpenCalender} />
+          <View {...journeyWay === "2" && { style: { flexDirection: 'row',gap:responsiveHeight(2) } }}>
+            <SearchInputs  btn={true} dropDown={false} placeholder={departure}{...journeyWay === "2" && { customStyles: { width: responsiveWidth(41) } }} handleDatePicker={handleOpenCalender} />   
             {journeyWay === "2" && <SearchInputs  btn={true} dropDown={false} placeholder={returnDate} customStyles={{ width: responsiveWidth(41) }} handleDatePicker={handleOpenReturnCalender} />}
           </View>
-          <View style={{ flexDirection: "row", justifyContent: 'space-evenly' }}>
+          {errors.departureDate?<View {...journeyWay === "2" && { style: { flexDirection: 'row',columnGap:responsiveHeight(2) } }}>
+          { errors.departureDate?<Text  style={[styles.errorText,{flex:1,textAlignVertical:'center',}]}>{`* ${errors.departureDate}`}</Text>:null}
+            {journeyWay === "2" &&  errors.departureDate?<Text style={[styles.errorText,{flex:1,textAlignVertical:'center',}]}>{`* ${errors.departureDate}`}</Text>:null}
+          </View>:null}
+          <DropDown length={10} particularState='Adults' placeHolder='Adults'/>
+          <SearchInputs btn={true} dropDown={true}  />
+          {/* <View style={{ flexDirection: "row", justifyContent: 'space-evenly' }}>
             <DropDown length={10} particularState='Adults' placeHolder='Adults'/>
             <DropDown length={9} particularState='Children' placeHolder='Children'/>
             <DropDown length={9} particularState='Infants' placeHolder='Infants'/>
-          </View>
-          <SearchInputs btn={true} dropDown={true}  />
+          </View> */}
+                    
+          
 
          
    <View style={styles.directFlightContainer}>

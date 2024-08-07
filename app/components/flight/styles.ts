@@ -33,7 +33,7 @@ backgroundColor:colors.primary
     },
     fieldsContainer:{
         marginTop:responsiveHeight(2.8),
-        gap:responsiveHeight(3)
+        gap:responsiveHeight(2)
     },
     airportOriginDataContainer:{
         borderWidth:1,
@@ -63,5 +63,10 @@ backgroundColor:colors.primary
         fontSize:responsiveHeight(2.2),
         fontFamily:fonts.primary,
         color:colors.primary
+    },
+    errorText:{
+        fontSize:responsiveHeight(1.5),
+        fontFamily:fonts.primary,
+        color:colors.red
     }
 })
