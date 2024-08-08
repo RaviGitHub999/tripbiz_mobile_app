@@ -135,6 +135,8 @@ import MyContext from '../../context/Context';
 import CustomInput from '../common/customInput/CustomInput';
 import CustomButton from '../common/customButton/CustomButton';
 import { useNavigation } from '@react-navigation/native';
+import PopUp from '../common/popup/PopUp';
+import { responsiveFontSize, responsiveHeight } from '../../utils/responsiveScale';
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -142,6 +144,7 @@ const LoginScreen = () => {
   const [passwordError, setPasswordError] = useState('');
   const [securePassword, setSecurePassword] = useState(true)
   const [isLoading, setIsLoading] = useState(false);
+  const [forgotPop, setForgotPop] = useState(false);
   const { navigate, isFocused } = useNavigation()
   const { actions } = useContext(MyContext)
   const handleEmailChange = (text) => {
@@ -216,8 +219,11 @@ const LoginScreen = () => {
   const handleSecurePassword = () => {
     setSecurePassword(!securePassword)
   }
+  // const handleForgotPassword = () => {
+  //   navigate("ChangePassword")
+  // }
   const handleForgotPassword = () => {
-    navigate("ChangePassword")
+    setForgotPop(!forgotPop)
   }
 
   useEffect(() => {
@@ -258,6 +264,13 @@ const LoginScreen = () => {
         </View>
 
       </ScrollView>
+      <PopUp value={forgotPop} handlePopUpClose={handleForgotPassword}>
+        <View style={{alignItems:'center',justifyContent:'center',gap:responsiveHeight(1)}}>
+        <Text style={[styles.loginmethodsTitle,{fontSize:responsiveHeight(1.8)}]}>Please send an email to support@tripbizz.com</Text>
+        <Text style={[styles.loginmethodsTitle,{fontSize:responsiveHeight(1.8)}]}>OR</Text>
+        <Text style={[styles.loginmethodsTitle,{fontSize:responsiveHeight(1.8)}]}>Contact +91 9949269044</Text>
+        </View>
+      </PopUp>
     </>
 
   );

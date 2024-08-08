@@ -26,31 +26,34 @@ const TravellerDetailsBtn = ({
   tripId,
   infant,
   isInternational,
-  status
+  status,
+  type,
 }) => {
   const [travDetails, setTravDetails] = useState(false);
   const [newtravellerDetails, setNewTravellerDetails] = useState();
   const [isFormDisabled, setIsFormDisabled] = useState(false);
   const {control, handleSubmit, setValue} = useForm();
   const [showIssueDatePicker, setShowIssueDatePicker] = useState(
-    Array(parseInt(adults?adults:0)).fill(false),
+    Array(parseInt(adults ? adults : 0)).fill(false),
   );
   const [showExpiryDatePicker, setShowExpiryDatePicker] = useState(
-    Array(parseInt(adults?adults:0)).fill(false),
+    Array(parseInt(adults ? adults : 0)).fill(false),
   );
-
+  const [showBirthDatePicker, setShowBirthDatePicker] = useState(
+    Array(parseInt(adults ? adults : 0)).fill(false),
+  );
   const [showchildIssueDatePicker, setShowChildIssueDatePicker] = useState(
-    Array(parseInt(child?child:0)).fill(false),
+    Array(parseInt(child ? child : 0)).fill(false),
   );
   const [showchildExpiryDatePicker, setShowChildExpiryDatePicker] = useState(
-    Array(parseInt(child?child:0)).fill(false),
+    Array(parseInt(child ? child : 0)).fill(false),
   );
 
   const [showinfantIssueDatePicker, setShowInfantIssueDatePicker] = useState(
-    Array(parseInt(infant?infant:0)).fill(false),
+    Array(parseInt(infant ? infant : 0)).fill(false),
   );
   const [showinfantExpiryDatePicker, setShowInfantExpiryDatePicker] = useState(
-    Array(parseInt(infant?infant:0)).fill(false),
+    Array(parseInt(infant ? infant : 0)).fill(false),
   );
   const {actions, userAccountDetails, tripData} = useContext(MyContext);
   useEffect(() => {
@@ -61,19 +64,20 @@ const TravellerDetailsBtn = ({
           setValue(`children[${index}].gender`, child.gender);
           setValue(`children[${index}].firstName`, child.firstName);
           setValue(`children[${index}].lastName`, child.lastName);
+
           if (isInternational) {
             setValue(`children[${index}].passportNumber`, child.passportNumber);
             setValue(
               `children[${index}].passportIssueCountry`,
-              child.passportIssueCountry
+              child.passportIssueCountry,
             );
             setValue(
               `children[${index}].passportIssueDate`,
-              child.passportIssueDate
+              child.passportIssueDate,
             );
             setValue(
               `children[${index}].passportExpiryDate`,
-              child.passportExpiryDate
+              child.passportExpiryDate,
             );
           }
         });
@@ -83,6 +87,7 @@ const TravellerDetailsBtn = ({
           setValue(`adults[${index}].gender`, adult.gender);
           setValue(`adults[${index}].firstName`, adult.firstName);
           setValue(`adults[${index}].lastName`, adult.lastName);
+          setValue(`adults[${index}].birthDate`, adult.birthDate);
           if (index === 0) {
             setValue(`adults[${index}].email`, adult.email);
             setValue(`adults[${index}].mobileNumber`, adult.mobileNumber);
@@ -101,6 +106,7 @@ const TravellerDetailsBtn = ({
               `adults[${index}].passportExpiryDate`,
               adult.passportExpiryDate,
             );
+            setValue(`adults[${index}].birthDate`, adult.birthDate);
           }
         });
       }
@@ -113,19 +119,19 @@ const TravellerDetailsBtn = ({
           if (isInternational) {
             setValue(
               `infants[${index}].passportNumber`,
-              infants.passportNumber
+              infants.passportNumber,
             );
             setValue(
               `infants[${index}].passportIssueCountry`,
-              infants.passportIssueCountry
+              infants.passportIssueCountry,
             );
             setValue(
               `infants[${index}].passportIssueDate`,
-              infants.passportIssueDate
+              infants.passportIssueDate,
             );
             setValue(
               `infants[${index}].passportExpiryDate`,
-              infants.passportExpiryDate
+              infants.passportExpiryDate,
             );
           }
         });
@@ -162,9 +168,11 @@ const TravellerDetailsBtn = ({
       {tripData?.data?.travellerDetails &&
       tripData?.data?.travellerDetails[eachTripData.id] ? (
         <TouchableOpacity
-          style={[styles.btn,{backgroundColor:colors.highlight}]}
+          style={[styles.btn, {backgroundColor: colors.highlight}]}
           onPress={handleViewTravellerDetails}>
-          <Text style={[styles.btnText,{color:colors.primary}]}>View Travellers</Text>
+          <Text style={[styles.btnText, {color: colors.primary}]}>
+            View Travellers
+          </Text>
         </TouchableOpacity>
       ) : (
         <TouchableOpacity style={styles.btn} onPress={handleTravDetails}>
@@ -190,7 +198,11 @@ const TravellerDetailsBtn = ({
                           placeHolder="Title"
                           value={field.value ? field.value : 'Title'}
                           setValue={field.onChange}
-                          customStyles={!isFormDisabled?styles.customStyles:styles.activeCustomStyles}
+                          customStyles={
+                            !isFormDisabled
+                              ? styles.customStyles
+                              : styles.activeCustomStyles
+                          }
                           isEditable={isFormDisabled}
                         />
                       </>
@@ -206,7 +218,9 @@ const TravellerDetailsBtn = ({
                         <TextInput
                           {...field}
                           value={field.value}
-                          style={!isFormDisabled?styles.input:styles.activeInput}
+                          style={
+                            !isFormDisabled ? styles.input : styles.activeInput
+                          }
                           placeholder="First Name"
                           onChangeText={field.onChange}
                           editable={!isFormDisabled}
@@ -224,7 +238,9 @@ const TravellerDetailsBtn = ({
                         <TextInput
                           {...field}
                           value={field.value}
-                          style={!isFormDisabled?styles.input:styles.activeInput}
+                          style={
+                            !isFormDisabled ? styles.input : styles.activeInput
+                          }
                           placeholder="Last Name"
                           onChangeText={field.onChange}
                           editable={!isFormDisabled}
@@ -232,6 +248,30 @@ const TravellerDetailsBtn = ({
                       </>
                     )}
                   />
+                  {type === 'bus' && (
+                    <Controller
+                      name={`adults[${i}].birthDate`}
+                      control={control}
+                      // defaultValue={i === 0 ? userAccountDetails.lastName : ''}
+                      render={({field}) => (
+                        <>
+                          <Text style={styles.label}>Age</Text>
+                          <TextInput
+                            {...field}
+                            value={field.value}
+                            style={
+                              !isFormDisabled
+                                ? styles.input
+                                : styles.activeInput
+                            }
+                            placeholder="Age"
+                            onChangeText={field.onChange}
+                            editable={!isFormDisabled}
+                          />
+                        </>
+                      )}
+                    />
+                  )}
                   {i === 0 && (
                     <>
                       <Controller
@@ -244,7 +284,11 @@ const TravellerDetailsBtn = ({
                             <TextInput
                               {...field}
                               value={field.value}
-                              style={!isFormDisabled?styles.input:styles.activeInput}
+                              style={
+                                !isFormDisabled
+                                  ? styles.input
+                                  : styles.activeInput
+                              }
                               placeholder="Email"
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
@@ -264,7 +308,11 @@ const TravellerDetailsBtn = ({
                             <TextInput
                               {...field}
                               value={field.value}
-                              style={!isFormDisabled?styles.input:styles.activeInput}
+                              style={
+                                !isFormDisabled
+                                  ? styles.input
+                                  : styles.activeInput
+                              }
                               placeholder="Mobile Number"
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
@@ -285,7 +333,11 @@ const TravellerDetailsBtn = ({
                             <TextInput
                               {...field}
                               value={field.value}
-                              style={!isFormDisabled?styles.input:styles.activeInput}
+                              style={
+                                !isFormDisabled
+                                  ? styles.input
+                                  : styles.activeInput
+                              }
                               placeholder="Passport Number"
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
@@ -305,7 +357,11 @@ const TravellerDetailsBtn = ({
                             <TextInput
                               {...field}
                               value={field.value}
-                              style={!isFormDisabled?styles.input:styles.activeInput}
+                              style={
+                                !isFormDisabled
+                                  ? styles.input
+                                  : styles.activeInput
+                              }
                               placeholder="Passport Issue Country"
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
@@ -321,8 +377,8 @@ const TravellerDetailsBtn = ({
                           return (
                             <View>
                               <Text style={styles.label}>
-                              Passport Issue Date
-                            </Text>
+                                Passport Issue Date
+                              </Text>
                               <TouchableOpacity
                                 onPress={() => {
                                   const newShowIssueDatePicker = [
@@ -346,7 +402,11 @@ const TravellerDetailsBtn = ({
                                         })
                                       : ''
                                   }
-                                  style={!isFormDisabled?styles.input:styles.activeInput}
+                                  style={
+                                    !isFormDisabled
+                                      ? styles.input
+                                      : styles.activeInput
+                                  }
                                   placeholder="Passport Issue Date"
                                   editable={false}
                                 />
@@ -395,8 +455,8 @@ const TravellerDetailsBtn = ({
                           return (
                             <View>
                               <Text style={styles.label}>
-                              Passport Expiry Date
-                            </Text>
+                                Passport Expiry Date
+                              </Text>
                               <TouchableOpacity
                                 onPress={() => {
                                   const newShowExpiryDatePicker = [
@@ -420,7 +480,11 @@ const TravellerDetailsBtn = ({
                                         })
                                       : ''
                                   }
-                                  style={!isFormDisabled?styles.input:styles.activeInput}
+                                  style={
+                                    !isFormDisabled
+                                      ? styles.input
+                                      : styles.activeInput
+                                  }
                                   placeholder="Passport Expiry Date"
                                   editable={false}
                                 />
@@ -439,13 +503,86 @@ const TravellerDetailsBtn = ({
                                       ...showExpiryDatePicker,
                                     ];
                                     newShowExpiryDatePicker[i] = false;
-                                   setShowExpiryDatePicker(
-                                    newShowExpiryDatePicker,
+                                    setShowExpiryDatePicker(
+                                      newShowExpiryDatePicker,
                                     );
                                     if (date) {
                                       field.onChange(
                                         date.toISOString().split('T')[0],
-                                      ); 
+                                      );
+                                    }
+                                  }}
+                                  minimumDate={new Date(1980, 0, 1)}
+                                />
+                              )}
+                            </View>
+                          );
+                        }}
+                      />
+
+                      <Controller
+                        name={`adults[${i}].birthDate`}
+                        control={control}
+                        defaultValue={''}
+                        render={({field}) => {
+                          return (
+                            <View>
+                              <Text style={styles.label}>
+                              Date of birth
+                              </Text>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  const newBirthDatePicker = [
+                                    ...showBirthDatePicker,
+                                  ];
+                                  newBirthDatePicker[i] = true;
+                                  setShowBirthDatePicker(
+                                    newBirthDatePicker,
+                                  );
+                                }}
+                                disabled={isFormDisabled}>
+                                <TextInput
+                                  value={
+                                    field.value
+                                      ? new Date(
+                                          field.value,
+                                        ).toLocaleDateString('en-GB', {
+                                          day: '2-digit',
+                                          month: '2-digit',
+                                          year: 'numeric',
+                                        })
+                                      : ''
+                                  }
+                                  style={
+                                    !isFormDisabled
+                                      ? styles.input
+                                      : styles.activeInput
+                                  }
+                                  placeholder="Date of birth"
+                                  editable={false}
+                                />
+                              </TouchableOpacity>
+                              {showBirthDatePicker[i] && (
+                                <DateTimePicker
+                                  value={
+                                    field.value
+                                      ? new Date(field.value)
+                                      : new Date()
+                                  }
+                                  mode="date"
+                                  display="calendar"
+                                  onChange={(event, date) => {
+                                    const newBirthDatePicker = [
+                                      ...showBirthDatePicker,
+                                    ];
+                                    newBirthDatePicker[i] = false;
+                                    setShowBirthDatePicker(
+                                      newBirthDatePicker,
+                                    );
+                                    if (date) {
+                                      field.onChange(
+                                        date.toISOString().split('T')[0],
+                                      );
                                     }
                                   }}
                                   minimumDate={new Date(1980, 0, 1)}
@@ -476,7 +613,11 @@ const TravellerDetailsBtn = ({
                         placeHolder="Title"
                         value={field.value ? field.value : 'Title'}
                         setValue={field.onChange}
-                        customStyles={!isFormDisabled?styles.customStyles:styles.activeCustomStyles}
+                        customStyles={
+                          !isFormDisabled
+                            ? styles.customStyles
+                            : styles.activeCustomStyles
+                        }
                         isEditable={isFormDisabled}
                       />
                     )}
@@ -489,7 +630,9 @@ const TravellerDetailsBtn = ({
                       <TextInput
                         {...field}
                         value={field.value}
-                        style={!isFormDisabled?styles.input:styles.activeInput}
+                        style={
+                          !isFormDisabled ? styles.input : styles.activeInput
+                        }
                         placeholder="First Name"
                         onChangeText={field.onChange}
                         editable={!isFormDisabled}
@@ -504,14 +647,16 @@ const TravellerDetailsBtn = ({
                       <TextInput
                         {...field}
                         value={field.value}
-                        style={!isFormDisabled?styles.input:styles.activeInput}
+                        style={
+                          !isFormDisabled ? styles.input : styles.activeInput
+                        }
                         placeholder="Last Name"
                         onChangeText={field.onChange}
                         editable={!isFormDisabled}
                       />
                     )}
                   />
-                   {isInternational && (
+                  {isInternational && (
                     <>
                       <Controller
                         name={`children[${i}].passportNumber`}
@@ -522,7 +667,11 @@ const TravellerDetailsBtn = ({
                             <TextInput
                               {...field}
                               value={field.value}
-                              style={!isFormDisabled?styles.input:styles.activeInput}
+                              style={
+                                !isFormDisabled
+                                  ? styles.input
+                                  : styles.activeInput
+                              }
                               placeholder="Passport Number"
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
@@ -542,7 +691,11 @@ const TravellerDetailsBtn = ({
                             <TextInput
                               {...field}
                               value={field.value}
-                              style={!isFormDisabled?styles.input:styles.activeInput}
+                              style={
+                                !isFormDisabled
+                                  ? styles.input
+                                  : styles.activeInput
+                              }
                               placeholder="Passport Issue Country"
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
@@ -558,8 +711,8 @@ const TravellerDetailsBtn = ({
                           return (
                             <View>
                               <Text style={styles.label}>
-                              Passport Issue Date
-                            </Text>
+                                Passport Issue Date
+                              </Text>
                               <TouchableOpacity
                                 onPress={() => {
                                   const newShowIssueDatePicker = [
@@ -583,7 +736,11 @@ const TravellerDetailsBtn = ({
                                         })
                                       : ''
                                   }
-                                  style={!isFormDisabled?styles.input:styles.activeInput}
+                                  style={
+                                    !isFormDisabled
+                                      ? styles.input
+                                      : styles.activeInput
+                                  }
                                   placeholder="Passport Issue Date"
                                   editable={false}
                                 />
@@ -632,8 +789,8 @@ const TravellerDetailsBtn = ({
                           return (
                             <View>
                               <Text style={styles.label}>
-                              Passport Expiry Date
-                            </Text>
+                                Passport Expiry Date
+                              </Text>
                               <TouchableOpacity
                                 onPress={() => {
                                   const newShowExpiryDatePicker = [
@@ -657,7 +814,11 @@ const TravellerDetailsBtn = ({
                                         })
                                       : ''
                                   }
-                                  style={!isFormDisabled?styles.input:styles.activeInput}
+                                  style={
+                                    !isFormDisabled
+                                      ? styles.input
+                                      : styles.activeInput
+                                  }
                                   placeholder="Passport Expiry Date"
                                   editable={false}
                                 />
@@ -676,13 +837,13 @@ const TravellerDetailsBtn = ({
                                       ...showchildExpiryDatePicker,
                                     ];
                                     newShowExpiryDatePicker[i] = false;
-                                   setShowChildExpiryDatePicker(
-                                    newShowExpiryDatePicker,
+                                    setShowChildExpiryDatePicker(
+                                      newShowExpiryDatePicker,
                                     );
                                     if (date) {
                                       field.onChange(
                                         date.toISOString().split('T')[0],
-                                      ); 
+                                      );
                                     }
                                   }}
                                   minimumDate={new Date(1980, 0, 1)}
@@ -714,7 +875,11 @@ const TravellerDetailsBtn = ({
                         placeHolder="Title"
                         value={field.value ? field.value : 'Title'}
                         setValue={field.onChange}
-                        customStyles={!isFormDisabled?styles.customStyles:styles.activeCustomStyles}
+                        customStyles={
+                          !isFormDisabled
+                            ? styles.customStyles
+                            : styles.activeCustomStyles
+                        }
                         isEditable={isFormDisabled}
                       />
                     )}
@@ -726,7 +891,9 @@ const TravellerDetailsBtn = ({
                     render={({field}) => (
                       <TextInput
                         value={field.value}
-                        style={!isFormDisabled?styles.input:styles.activeInput}
+                        style={
+                          !isFormDisabled ? styles.input : styles.activeInput
+                        }
                         placeholder="First Name"
                         onChangeText={field.onChange}
                         editable={!isFormDisabled}
@@ -740,7 +907,9 @@ const TravellerDetailsBtn = ({
                     render={({field}) => (
                       <TextInput
                         value={field.value}
-                        style={!isFormDisabled?styles.input:styles.activeInput}
+                        style={
+                          !isFormDisabled ? styles.input : styles.activeInput
+                        }
                         placeholder="Last Name"
                         onChangeText={field.onChange}
                         editable={!isFormDisabled}
@@ -757,7 +926,11 @@ const TravellerDetailsBtn = ({
                             <Text style={styles.label}>Passport Number</Text>
                             <TextInput
                               value={field.value}
-                              style={!isFormDisabled?styles.input:styles.activeInput}
+                              style={
+                                !isFormDisabled
+                                  ? styles.input
+                                  : styles.activeInput
+                              }
                               placeholder="Passport Number"
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
@@ -776,7 +949,11 @@ const TravellerDetailsBtn = ({
                             </Text>
                             <TextInput
                               value={field.value}
-                              style={!isFormDisabled?styles.input:styles.activeInput}
+                              style={
+                                !isFormDisabled
+                                  ? styles.input
+                                  : styles.activeInput
+                              }
                               placeholder="Passport Issue Country"
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
@@ -792,8 +969,8 @@ const TravellerDetailsBtn = ({
                           return (
                             <View>
                               <Text style={styles.label}>
-                              Passport Issue Date
-                            </Text>
+                                Passport Issue Date
+                              </Text>
                               <TouchableOpacity
                                 onPress={() => {
                                   const newShowIssueDatePicker = [
@@ -817,7 +994,11 @@ const TravellerDetailsBtn = ({
                                         })
                                       : ''
                                   }
-                                  style={!isFormDisabled?styles.input:styles.activeInput}
+                                  style={
+                                    !isFormDisabled
+                                      ? styles.input
+                                      : styles.activeInput
+                                  }
                                   placeholder="Passport Issue Date"
                                   editable={false}
                                 />
@@ -861,8 +1042,8 @@ const TravellerDetailsBtn = ({
                           return (
                             <View>
                               <Text style={styles.label}>
-                              Passport Expiry Date
-                            </Text>
+                                Passport Expiry Date
+                              </Text>
                               <TouchableOpacity
                                 onPress={() => {
                                   const newShowExpiryDatePicker = [
@@ -886,7 +1067,11 @@ const TravellerDetailsBtn = ({
                                         })
                                       : ''
                                   }
-                                  style={!isFormDisabled?styles.input:styles.activeInput}
+                                  style={
+                                    !isFormDisabled
+                                      ? styles.input
+                                      : styles.activeInput
+                                  }
                                   placeholder="Passport Expiry Date"
                                   editable={false}
                                 />
@@ -905,13 +1090,13 @@ const TravellerDetailsBtn = ({
                                       ...showinfantExpiryDatePicker,
                                     ];
                                     newShowExpiryDatePicker[i] = false;
-                                   setShowInfantExpiryDatePicker(
-                                    newShowExpiryDatePicker,
+                                    setShowInfantExpiryDatePicker(
+                                      newShowExpiryDatePicker,
                                     );
                                     if (date) {
                                       field.onChange(
                                         date.toISOString().split('T')[0],
-                                      ); 
+                                      );
                                     }
                                   }}
                                   minimumDate={new Date(1980, 0, 1)}
@@ -928,34 +1113,33 @@ const TravellerDetailsBtn = ({
             );
           })}
         </>
-       
-  {
-    status === "Not Submitted" ?
-    <>
-    {
-      tripData?.data?.travellerDetails &&
-      tripData?.data?.travellerDetails[eachTripData?.id] ?
-      !isFormDisabled ? (
-        <TouchableOpacity
-          style={styles.submitButton}
-          onPress={handleSubmit(onSubmit)}>
-          <Text style={styles.submitButtonText}>Save</Text>
-        </TouchableOpacity>
-      ) : (
-        <TouchableOpacity style={styles.submitButton} onPress={handleEdit}>
-          <Text style={styles.submitButtonText}>Edit</Text>
-        </TouchableOpacity>
-      ):
-      <TouchableOpacity
-      style={styles.submitButton}
-      onPress={handleSubmit(onSubmit)}>
-      <Text style={styles.submitButtonText}>Save</Text>
-    </TouchableOpacity>
-    }
-    </>
-    :null
-  }
-       
+
+        {status === 'Not Submitted' ? (
+          <>
+            {tripData?.data?.travellerDetails &&
+            tripData?.data?.travellerDetails[eachTripData?.id] ? (
+              !isFormDisabled ? (
+                <TouchableOpacity
+                  style={styles.submitButton}
+                  onPress={handleSubmit(onSubmit)}>
+                  <Text style={styles.submitButtonText}>Save</Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  style={styles.submitButton}
+                  onPress={handleEdit}>
+                  <Text style={styles.submitButtonText}>Edit</Text>
+                </TouchableOpacity>
+              )
+            ) : (
+              <TouchableOpacity
+                style={styles.submitButton}
+                onPress={handleSubmit(onSubmit)}>
+                <Text style={styles.submitButtonText}>Save</Text>
+              </TouchableOpacity>
+            )}
+          </>
+        ) : null}
       </PopUp>
     </View>
   );
@@ -974,10 +1158,10 @@ const styles = StyleSheet.create({
     color: colors.white,
   },
   btn: {
-    paddingHorizontal:responsiveWidth(2),
-    backgroundColor: "#0a9396",
-    paddingVertical:responsiveHeight(0.6),
-    borderRadius:responsiveHeight(.5)
+    paddingHorizontal: responsiveWidth(2),
+    backgroundColor: '#0a9396',
+    paddingVertical: responsiveHeight(0.6),
+    borderRadius: responsiveHeight(0.5),
   },
   container: {
     gap: responsiveHeight(1),
@@ -1000,7 +1184,7 @@ const styles = StyleSheet.create({
     borderRadius: responsiveHeight(1),
     padding: responsiveHeight(1),
     fontSize: responsiveHeight(2),
-    color:colors.primary
+    color: colors.primary,
   },
   activeInput: {
     // borderWidth: 1,
@@ -1008,8 +1192,8 @@ const styles = StyleSheet.create({
     borderRadius: responsiveHeight(1),
     padding: responsiveHeight(1),
     fontSize: responsiveHeight(2),
-    backgroundColor:colors.whiteSmoke,
-    color:colors.primary
+    backgroundColor: colors.whiteSmoke,
+    color: colors.primary,
   },
   submitButton: {
     backgroundColor: '#007BFF',
@@ -1031,17 +1215,14 @@ const styles = StyleSheet.create({
     fontFamily: fonts.primary,
     fontSize: responsiveHeight(1.6),
   },
-  customStyles:{
-    backgroundColor:colors.white,
+  customStyles: {
+    backgroundColor: colors.white,
     elevation: responsiveHeight(0.5),
     margin: responsiveHeight(0.5),
   },
-  activeCustomStyles:
-  {
-    backgroundColor:colors.whiteSmoke,
+  activeCustomStyles: {
+    backgroundColor: colors.whiteSmoke,
     // elevation: responsiveHeight(0.5),
     margin: responsiveHeight(0.5),
-  }
+  },
 });
-
-

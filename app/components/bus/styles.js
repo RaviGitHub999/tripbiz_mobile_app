@@ -37,6 +37,11 @@ export const styles=StyleSheet.create(
             fontSize: responsiveHeight(2),
             fontFamily: fonts.textInput,
             color: colors.primary
+        },
+        errorText:{
+            fontSize:responsiveHeight(1.5),
+            fontFamily:fonts.primary,
+            color:colors.red
         }
     }
 )

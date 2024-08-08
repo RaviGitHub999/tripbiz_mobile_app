@@ -235,5 +235,45 @@ color:colors.red
     width:responsiveWidth(45),
     backgroundColor:colors.whiteSmoke,
     borderRadius:responsiveHeight(2)
-  }
+  },
+  cancellationText: {
+    fontSize: responsiveHeight(1.8),
+    fontFamily: fonts.primary,
+    color: '#e19604',
+    textDecorationLine: 'underline',
+  },
+  tableHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#e19604',
+    alignItems: 'center',
+    paddingVertical: responsiveHeight(1.5),
+    marginTop: responsiveHeight(1.5),
+    paddingHorizontal: responsiveWidth(1),
+    borderBottomWidth: responsiveHeight(0.3),
+  },
+  tableRow: {
+    flexDirection: 'row',
+    padding: responsiveHeight(1),
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomWidth: responsiveHeight(0.1),
+    borderStyle: 'dashed',
+    backgroundColor: '#e1e2e6',
+  },
+  eachCell: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cellText: {
+    fontSize: responsiveHeight(1.5),
+    fontFamily: fonts.primary,
+    color: colors.primary,
+  },
+  travelName: {
+    fontSize: responsiveHeight(1.8),
+    fontFamily: fonts.secondry,
+    color: colors.primary,
+  },
 });

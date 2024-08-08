@@ -41,8 +41,9 @@ const HotelSearch = ({ navigation: { navigate } }) => {
   const [hotelRoomArr, setHotelRoomArr] = useState([
     { adults: "1", child: 0, childAge: [] }
   ]);
-  const[checkInTime,setCheckInTime]=useState(null)
-  const[checkOutTime,setCheckOutTime]=useState(null)
+  const[checkInTime,setCheckInTime]=useState("")
+  const[checkOutTime,setCheckOutTime]=useState("")
+  const [errors, setErrors] = useState({});
   // checkInTime: null,
   // checkOutTime: null,
   // selectedHotelCheckInDate: new Date,
@@ -184,8 +185,18 @@ const HotelSearch = ({ navigation: { navigate } }) => {
     // })
     setHotelRoomArr(roomsArr)
   }
+
+  const validate = () => {
+    const newErrors = {};
+    if (cityHotel==="") newErrors.destination = 'Destination is required';
+    if (checkInTime==="") newErrors.checkIn = 'check-In date is required';
+    if (checkOutTime==="") newErrors.checkOut = 'check-Out date is required';
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
   const handleHotelSearch = () => {
-    if (checkInTime && checkOutTime) {
+    if (validate()) {
       navigate("HotelResList")
       actions.hotelSearch({
         cityHotel,
@@ -211,8 +222,39 @@ actions.handleBookinghotelquery(
     hotelRoomArr
   }
 )
+    } else {
+      console.log('Form has errors');
     }
-  }
+  };
+//   const handleHotelSearch = () => {
+//     if (checkInTime && checkOutTime) {
+//       navigate("HotelResList")
+//       actions.hotelSearch({
+//         cityHotel,
+//         cityDestName: `${cityHotelItem.DESTINATION}, ${cityHotelItem.COUNTRY}`,
+//         countryCode,
+//         checkInDate,
+//         checkOutDate,
+//         selectedHotelCheckInDate,
+//         selectedHotelCheckOutDate,
+//         hotelNights,
+//         hotelRooms,
+//         hotelRoomArr
+//       });
+// actions.handleBookinghotelquery(
+//   {
+//     cityHotel,
+//     cityDestName: `${cityHotelItem.DESTINATION}, ${cityHotelItem.STATEPROVINCE}`,
+//     countryCode,
+//     checkInDate:selectedHotelCheckInDate,
+//     checkOutDate:selectedHotelCheckOutDate,
+//     hotelNights,
+//     hotelRooms,
+//     hotelRoomArr
+//   }
+// )
+//     }
+//   }
   
 
   return (
@@ -221,6 +263,7 @@ actions.handleBookinghotelquery(
         <View style={styles.mainContainer}>
           {/* selectedHotel */}
           <HotelSearchInput placeHolder={cityHotelDisplay} value={cityHotelQuery} handleChange={handleChangeCityHotelQuery} />
+         {errors.destination&&<Text style={styles.errorText}>{`* ${errors.destination}`}</Text>}
           {cityHotelResBox ?
             <>
               {
@@ -246,11 +289,16 @@ actions.handleBookinghotelquery(
               }
             </> : null}
 
-          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <View style={{ flexDirection: "row", gap:responsiveHeight(2)}}>
             {/* actions.handleOpenCheckinCalender */}
             {/* actions.handleOpenCheckoutCalender */}
             <SearchInputs btn={true} dropDown={false} placeholder={checkInDate} customStyles={{ width: responsiveWidth(42) }} customFontStyles={{ fontSize: responsiveHeight(2.3) }} handleDatePicker={handleOpenCheckinCalender} />
             <SearchInputs btn={true} dropDown={false} placeholder={checkOutDate} customStyles={{ width: responsiveWidth(42) }} customFontStyles={{ fontSize: responsiveHeight(2.3) }} handleDatePicker={handleOpenCheckoutCalender} />
+          </View>
+        
+         <View style={{ flexDirection: "row", gap:responsiveHeight(2)}}>
+          {errors.checkIn&&<Text style={[styles.errorText,{flex:1}]}>{`* ${errors.checkIn}`}</Text>}
+          {errors.checkOut&&<Text style={[styles.errorText,{flex:1}]}>{`* ${errors.checkOut}`}</Text>}
           </View>
           <View style={styles.aligningItemsInRow}>
             <HotelDropDown value={hotelNights} customStyles={{ width: responsiveWidth(42) }} placeHolder={"Nights"} disable={true} />
@@ -264,12 +312,12 @@ actions.handleBookinghotelquery(
                 <View style={styles.roomCard} key={r}>
                   <Text style={styles.roomTitle}>{`Room ${r + 1}`}</Text>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <HotelDropDown length={4} starting={1} value={room.adults} handleChangeValue={(val) =>
+                    <HotelDropDown length={2} starting={1} value={room.adults} handleChangeValue={(val) =>
                     handleHotelRoomsArr(val, "adults", r)} placeHolder="Adults" customStyles={{ width: responsiveWidth(39) }} />
-                    <HotelDropDown length={3} value={room.child} handleChangeValue={(val) =>
-                      handleHotelRoomsArr(val, "child", r)} placeHolder={"Children"} customStyles={{ width: responsiveWidth(39) }} />
+                    {/* <HotelDropDown length={3} value={room.child} handleChangeValue={(val) =>
+                      handleHotelRoomsArr(val, "child", r)} placeHolder={"Children"} customStyles={{ width: responsiveWidth(39) }} /> */}
                   </View>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     {
                       room.childAge &&
                       room.childAge.map((child, c) => {
@@ -286,7 +334,7 @@ actions.handleBookinghotelquery(
                         )
                       })
                     }
-                  </View>
+                  </View> */}
                 </View>
               )
             })

@@ -35,5 +35,10 @@ export const styles=StyleSheet.create({
         // backgroundColor:colors.white,
         // overflow:'hidden',
         maxHeight:responsiveHeight(30),
+    },
+    errorText:{
+        fontSize:responsiveHeight(1.5),
+        fontFamily:fonts.primary,
+        color:colors.red
     }
 })

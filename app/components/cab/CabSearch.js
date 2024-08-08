@@ -21,6 +21,14 @@ const cabTypes =
     "4 hrs cab at disposal",
     "10 hrs cab at disposal"
   ]
+  const cabTypeError=[
+    "8 hrs cab at disposal",
+    "12 hrs cab at disposal",
+    "4 hrs cab at disposal",
+    "10 hrs cab at disposal",
+    "Airport to City center Hotel",
+    "City center hotel to airport"
+  ]
 const cabTimings = {
   "Airport to City center Hotel": 
   [
@@ -445,7 +453,7 @@ const CabSearch = () => {
   const [cabCity, setCabCity] = useState("");
   const [cityCabResBox, setCityCabResBox] = useState(false);
   const [cabType, setCabType] = useState("Select the Destination Above");
-  const [cabCityItem, setCabCityItem] = useState(null);
+  const [cabCityItem, setCabCityItem] = useState("");
   const [viewAll, setViewAll] = useState(false);
   const [selectedItemIndex, setSelectedItemIndex] = useState(0);
   const [noOfCabs, setNoOfCabs] = useState("1");
@@ -460,6 +468,7 @@ const CabSearch = () => {
   const [cabEndFormated, setCabEndFormated] = useState("")
   const [btnEnable, setBtnEnable] = useState(true)
   const [nights, setNights] = useState("0");
+  const [errors, setErrors] = useState({});
   const { actions, cabSearchRes } = useContext(MyContext)
   const{navigate}=useNavigation()
   const getCabTypesForCity = (cityName) => {
@@ -593,19 +602,45 @@ const CabSearch = () => {
       <Text style={styles.selectedItemTitle}>No Data Found !!!</Text>
     )
   }
-  const searchCabs=()=>
-    {
-     actions.fetchCabs(
-        cabCityItem,
-        cabType,
-        cabStartDate,
-        cabEndDate>new Date()?cabEndDate:"",
-        noOfCabs,
-        Number(nights) + 1,
-        selectedTime,
-      )
-      navigate("CabResList")
-    }
+  // const searchCabs=()=>
+  //   {
+  //    actions.fetchCabs(
+  //       cabCityItem,
+  //       cabType,
+  //       cabStartDate,
+  //       cabEndDate>new Date()?cabEndDate:"",
+  //       noOfCabs,
+  //       Number(nights) + 1,
+  //       selectedTime,
+  //     )
+  //     navigate("CabResList")
+  //   }
+console.log(cabCityItem,"vbnv")
+    const validate = () => {
+      const newErrors= {};
+      if (cabCityItem==="") newErrors.destination = 'Destination is required';
+      if (!cabTypeError.includes(cabType)) newErrors.cabType = 'CabType is required';
+      if (cabStartFormated==="") newErrors.startDate = 'Start date is required';
+      if (cabEndFormated==="") newErrors.endDate = 'End date is required';
+      setErrors(newErrors);
+      return Object.keys(newErrors).length === 0;
+    };
+    const searchCabs = () => {
+      if (validate()) {
+        actions.fetchCabs(
+          cabCityItem,
+          cabType,
+          cabStartDate,
+          cabEndDate>new Date()?cabEndDate:"",
+          noOfCabs,
+          Number(nights) + 1,
+          selectedTime,
+        )
+        navigate("CabResList")
+      } else {
+        console.log('Form has errors');
+      }
+    };
     useFocusEffect(
       React.useCallback(() => {
     setNights("0")
@@ -626,6 +661,7 @@ const CabSearch = () => {
           <ScrollView>
             <View style={styles.mainContainer}>
               <ToggleButtonInput placeHolder="Destination" inputValue={cabCity} handleInputChange={(e) => handleInputChange(e)} selected={cabCityItem} />
+              {errors.destination&&<Text style={styles.errorText}>{`* ${errors.destination}`}</Text>}
               {
                 cityCabResBox ?
                   <>
@@ -635,8 +671,11 @@ const CabSearch = () => {
               }
               <CustomSelect data={getCabTypesForCity(cabCityItem)} renderData={(item, index) => cabCityRenderItem(item, index)
               } selectedItem={cabType} handledropDown={handledropDown} viewAll={viewAll} CustomStyle={styles.customStyle} disable={btnEnable} />
+              {errors.cabType&&<Text style={styles.errorText}>{`* ${errors.cabType}`}</Text>}
               <CalenderButton title={"Start Date"} handlePress={handleCalender_1} value={cabStartFormated} />
+             {errors.startDate&&<Text style={[styles.errorText]}>{`* ${errors.startDate}`}</Text>}
               {cabTypes.includes(cabType) ? <CalenderButton title={"End Date"} handlePress={handleCalender_2} value={cabEndFormated} /> : null}
+             {errors.endDate&&<Text style={[styles.errorText]}>{`* ${errors.endDate}`}</Text>}
               <View style={{ flexDirection: 'row', gap: 30 }}>
                 <View style={{ flex: 1 }}>
                   <HotelDropDown length={4} starting={1} value={noOfCabs} handleChangeValue={handleCabs} placeHolder="No of Cabs" />

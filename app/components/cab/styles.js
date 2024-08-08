@@ -47,5 +47,10 @@ export const styles=StyleSheet.create({
     },
     cityName:{
         marginVertical:responsiveHeight(0.8)
+    },
+    errorText:{
+        fontSize:responsiveHeight(1.5),
+        fontFamily:fonts.primary,
+        color:colors.red
     }
 })

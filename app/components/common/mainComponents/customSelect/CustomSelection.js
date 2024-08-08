@@ -11,6 +11,7 @@ import {
 import IconSwitcher from '../../icons/IconSwitcher';
 import { colors, fonts } from '../../../../config/theme';
 import { responsiveHeight, responsiveWidth } from '../../../../utils/responsiveScale';
+import moment from 'moment';
   const CustomSelection = ({placeHolder, value,setValue,data,listKey,customStyles,isEditable}) => {
     const [toggle, setToggle] = useState(false);
     const [selectedItemIndex, setSelectedItemIndex] = useState(0);
@@ -39,10 +40,16 @@ import { responsiveHeight, responsiveWidth } from '../../../../utils/responsiveS
         style={[
           styles.item,
           selectedItemIndex === index && styles.itemHovered,
+          listKey&&{borderBottomWidth:responsiveHeight(0.1)}
         ]}
         underlayColor={colors.whiteSmoke}
           onPress={() => handleSelect(listKey?item[listKey]:item,index)}>
-          <Text style={[styles.selectedItemTitle, selectedItemIndex === index && styles.activeSelectedItemTitle]}>{listKey?item[listKey]:item}</Text>
+         {listKey? 
+         <>
+         <Text style={[styles.selectedItemTitle, selectedItemIndex === index && styles.activeSelectedItemTitle]}>{item["CityPointLocation"]},Time:{" "} {moment(item.CityPointTime).format("hh:mm a")} . </Text>
+         <Text style={[styles.selectedItemTitle, selectedItemIndex === index && styles.activeSelectedItemTitle]}>{item[listKey]}</Text>
+         </>
+          :<Text style={[styles.selectedItemTitle, selectedItemIndex === index && styles.activeSelectedItemTitle]}>{item}</Text>}
         </TouchableHighlight>
       );
     };
@@ -93,6 +100,7 @@ import { responsiveHeight, responsiveWidth } from '../../../../utils/responsiveS
     item: {
       paddingVertical: responsiveHeight(0.8),
       paddingLeft: responsiveWidth(2),
+      justifyContent:'center'
     },
     itemHovered: {
       backgroundColor: colors.facebook,

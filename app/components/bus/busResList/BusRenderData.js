@@ -375,6 +375,7 @@ const BusRenderData = ({
             eachTripData={totalBus}
             tripId={tripId}
             status={busData?.status}
+            type="bus"
           />
         ) : null}
       </View>

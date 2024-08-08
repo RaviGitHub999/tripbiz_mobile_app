@@ -1,6 +1,5 @@
-import { View, Text, StyleSheet, FlatList } from 'react-native'
+import { View, Text, StyleSheet, FlatList,TouchableOpacity } from 'react-native'
 import React, { useCallback, useState } from 'react'
-import { TouchableOpacity } from 'react-native';
 import IconSwitcher from '../../icons/IconSwitcher';
 import { colors, fonts } from '../../../../config/theme';
 import {responsiveHeight, responsiveWidth } from '../../../../utils/responsiveScale';

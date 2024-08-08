@@ -856,9 +856,20 @@ const FlightBooking = ({navigation: {navigate}}) => {
 
           <View style={styles.totalFareFlightDetailsContainer}>
             <Text style={styles.flighttotalFareText}>Total fare</Text>
-            <Text style={styles.flightPrice}>{`₹ ${Math.ceil(
-              finalPrice,
-            )?.toLocaleString('en-IN')}/-`}</Text>
+            <Text style={styles.flightPrice}>
+             {bookingFlight.length === 1
+                ? Math.round(bookingFlight[0]?.flight.Fare.OfferedFare) +
+                  Math.round(
+                    bookingFlight[0]?.gstInFinalserviceCharge +
+                      bookingFlight[0]?.finalFlightServiceCharge
+                  )
+                : Math.round(bookingFlight[0]?.flight.Fare.OfferedFare) +
+                  Math.round(
+                    bookingFlight[1]?.flight.Fare.OfferedFare +
+                      bookingFlight[0]?.gstInFinalserviceCharge +
+                      bookingFlight[0]?.finalFlightServiceCharge
+                  )}
+            </Text>
             {selectedTripId ? (
               <View style={{width: '40%'}}>
                 <Text
@@ -912,7 +923,7 @@ const FlightBooking = ({navigation: {navigate}}) => {
             )}
           </View>
         </View>
-
+        {/* toLocaleString('en-IN')}/- */}
         <PopUp
           value={isExpanded}
           handlePopUpClose={toggleHeight}
@@ -1041,9 +1052,15 @@ const FlightBooking = ({navigation: {navigate}}) => {
                     <Text style={styles.ExcessBagChargesTitle}>
                       Service Charges
                     </Text>
-                    <Text style={styles.ExcessBagCharges}>{`+ ₹ ${Math.ceil(
+                    <Text style={styles.ExcessBagCharges}>
+                      {`+ ₹ ${Math.ceil(
                       (totalFareSum * internationalFlight) / 100,
-                    )}`}</Text>
+                    )}`}
+                    </Text>
+                    {/* <Text style={styles.ExcessBagCharges}>
+                    {bookingFlight &&
+                  Math.round(bookingFlight[0]?.finalFlightServiceCharge)}
+                    </Text> */}
                   </View>
                 ) : (
                   <View style={styles.totalFareFlightEachChargeDetails}>
@@ -1053,8 +1070,21 @@ const FlightBooking = ({navigation: {navigate}}) => {
                     <Text style={styles.ExcessBagCharges}>{`+ ₹ ${Math.ceil(
                       (totalFareSum * domesticFlight) / 100,
                     )}`}</Text>
+                    {/* <Text style={styles.ExcessBagCharges}>
+                    {bookingFlight &&
+                  Math.round(bookingFlight[0]?.finalFlightServiceCharge)}
+                    </Text> */}
                   </View>
                 )}
+                 <View style={styles.totalFareFlightEachChargeDetails}>
+                    <Text style={styles.ExcessBagChargesTitle}>
+                     GST
+                    </Text>
+                    <Text style={styles.ExcessBagCharges}>
+                    {bookingFlight &&
+                  Math.round(bookingFlight[0]?.gstInFinalserviceCharge)}
+                    </Text>
+                  </View>
               </View>
             </View>
           )}

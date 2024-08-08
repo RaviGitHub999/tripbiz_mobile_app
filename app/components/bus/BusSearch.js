@@ -33,6 +33,7 @@ const BusSearch = () => {
   const [busOutboundDate, setBusOutBoundDate] = useState(new Date());
   const [cabFormatedDate, setCabFormatedDate] = useState("")
   const [calenderOpen, setCalenderOpen] = useState(false);
+  const [errors, setErrors] = useState({});
   const {
     NoofBusPassengers,
     actions,
@@ -118,19 +119,39 @@ const BusSearch = () => {
       setCalenderOpen( false)
     }
   }
-const searchBus=()=>
-  {
-    actions.getLastDoc();
-    if (busOriginDetails && busDestDetails) {
+// const searchBus=()=>
+//   {
+//     actions.getLastDoc();
+//     if (busOriginDetails && busDestDetails) {
+//       navigate("BusResList")
+//       actions.busSearch(
+//         busOriginDetails,
+//         busDestDetails,
+//         busOutboundDate,
+//       );
+//     }
+//   }
+  const validate = () => {
+    const newErrors = {};
+    if (busOriginCityName==="") newErrors.origin = 'Origin is required';
+    if (busDestCityName==="") newErrors.destination = 'Destination is required';
+    if (cabFormatedDate==="") newErrors.departureDate = 'Departure date is required';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+  const searchBus = () => {
+    if (validate()) {
+      actions.getLastDoc();
       navigate("BusResList")
       actions.busSearch(
         busOriginDetails,
         busDestDetails,
         busOutboundDate,
       );
+    } else {
+      console.log('Form has errors');
     }
-  }
-
+  };
   return (
 <>
 <KeyboardAvoidingView style={{flex: 1}}>
@@ -143,6 +164,7 @@ const searchBus=()=>
               handleInputChange={e => handleInputChange(e, 'origin')}
               selected={busOriginCityName}
             />
+            {errors.origin&&<Text style={styles.errorText}>{`* ${errors.origin}`}</Text>}
             {busOriginRes ? (
               busOriginLoading ? (
                 <Text style={styles.loaderTitle}>Loading .....</Text>
@@ -171,6 +193,7 @@ const searchBus=()=>
               handleInputChange={e => handleInputChange(e, 'destination')}
               selected={busDestCityName}
             />
+             {errors.destination&&<Text style={styles.errorText}>{`* ${errors.destination}`}</Text>}
             {busDestRes ? (
               busDestLoading ? (
                 <Text style={styles.loaderTitle}>Loading .....</Text>
@@ -200,6 +223,7 @@ const searchBus=()=>
               handlePress={handleCalender}
               value={cabFormatedDate}
             />
+            {errors.departureDate&& <Text style={styles.errorText}>{`* ${errors.departureDate}`}</Text>}
             <View style={{width: '50%'}}>
               <HotelDropDown
                 length={6}

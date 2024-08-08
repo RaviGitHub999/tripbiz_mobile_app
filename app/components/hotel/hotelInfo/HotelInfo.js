@@ -230,7 +230,8 @@ const HotelInfo = ({ route: { params }, navigation: { goBack, navigate } }) => {
                             <Text style={styles.checkInAndCheckOutDates}>{`${hotelCheckIn.toLocaleString('en-us', { month: 'long' })} ${hotelCheckIn.getDate()}, ${hotelCheckIn.getFullYear()} - ${hotelCheckOut.toLocaleString('en-us', { month: 'long' })} ${hotelCheckOut.getDate()}, ${hotelCheckOut.getFullYear()} , ${hotelSearchNights} Nights`}</Text>
                         </View>
                         <View>
-                            <Text style={styles.PersonsDetails}>{`Adults-${adults?.adults} , Children-${adults?.child}`}</Text>
+                            {/* <Text style={styles.PersonsDetails}>{`Adults-${adults?.adults} , Children-${adults?.child}`}</Text> */}
+                            <Text style={styles.PersonsDetails}>{`Adults-${adults?.adults}`}</Text>
                         </View>
                         <View style={{ rowGap: responsiveHeight(1) }}>
                             <Text style={styles.roomDetailsTitle}>Room Details</Text>

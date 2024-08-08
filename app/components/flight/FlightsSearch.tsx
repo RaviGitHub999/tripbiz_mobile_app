@@ -27,7 +27,7 @@ const FlightsSearch: React.FC<IProps> = ({ navigation: { navigate } }) => {
   const [isSearchReady, setSearchReady] = useState(false);
   // const [active, setActive] = useState(btns[0].journeyType)
   const [calenderOpen, setCalenderOpen] = useState<CalenderOpen>({ departureCalender: false, returCalender: false })
-  const { journeyWay,departureformattedDate, actions,adults, oriRes, desRes, origin, airportOriginLoading, airportOriginData, destination, originSelectedAirport, originselected, destinationSelectedAirPort, destinationselected, departure, returnDate, dateValue, returnDateValue, airportDestData, airportDestLoading,directflight } = useContext<any>(MyContext)
+  const { journeyWay,departureformattedDate,returnformattedDate, actions,adults, oriRes, desRes, origin, airportOriginLoading, airportOriginData, destination, originSelectedAirport, originselected, destinationSelectedAirPort, destinationselected, departure, returnDate, dateValue, returnDateValue, airportDestData, airportDestLoading,directflight } = useContext<any>(MyContext)
   const [errors, setErrors] = useState<any>({});
   const handleActive = useCallback((item: IBtns) => {
     // setActive(item.journeyType);
@@ -99,7 +99,7 @@ const FlightsSearch: React.FC<IProps> = ({ navigation: { navigate } }) => {
     if (!originSelectedAirport.address.cityName) newErrors.origin = 'Origin is required';
     if (!destinationSelectedAirPort.address.cityName) newErrors.destination = 'Destination is required';
     if (departureformattedDate==="") newErrors.departureDate = 'Departure date is required';
-    // if (adults===0) newErrors.adults = 'Please enter a valid number of adults';
+    if (returnformattedDate===""&&journeyWay === "2") newErrors.returnDate = 'Return date is required';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -160,7 +160,7 @@ const FlightsSearch: React.FC<IProps> = ({ navigation: { navigate } }) => {
           </View>
           {errors.departureDate?<View {...journeyWay === "2" && { style: { flexDirection: 'row',columnGap:responsiveHeight(2) } }}>
           { errors.departureDate?<Text  style={[styles.errorText,{flex:1,textAlignVertical:'center',}]}>{`* ${errors.departureDate}`}</Text>:null}
-            {journeyWay === "2" &&  errors.departureDate?<Text style={[styles.errorText,{flex:1,textAlignVertical:'center',}]}>{`* ${errors.departureDate}`}</Text>:null}
+            {journeyWay === "2" &&  errors.returnDate?<Text style={[styles.errorText,{flex:1,textAlignVertical:'center',}]}>{`* ${errors.returnDate}`}</Text>:null}
           </View>:null}
           <DropDown length={10} particularState='Adults' placeHolder='Adults'/>
           <SearchInputs btn={true} dropDown={true}  />

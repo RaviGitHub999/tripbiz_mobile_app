@@ -20,6 +20,7 @@ import {TextInput} from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native';
 import { FlatList } from 'react-native';
 import BusSeatLayout from './BusSeatLayout';
+import moment from 'moment';
 
 const BusInfo = () => {
   const [boardingPoint, setBoardingPoint] = useState(null);
@@ -29,6 +30,7 @@ const BusInfo = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState('tab1');
   const [submitIsOpen, setSubmitIsOpen] = useState(false);
+  const [openBusDetails, setOpenBusDetails] = useState(false);
   var [isloading, setIsLoading] = useState(false);
   const {
     bookingBus,
@@ -215,6 +217,14 @@ const BusInfo = () => {
                 {originDetails.cityName} to {destDetails.cityName}
               </Text>
             </View>
+          </View>
+          <View>
+          <Text style={styles.titles}>{BusOperatorName}</Text>
+          <Text style={[styles.subTitles,{color:colors.gray,fontSize:responsiveHeight(1.5)}]}>{bookingBus?.bus?.BusType} ,
+          {moment(bookingBus?.bus?.DepartureTime).format("MMM D, yyyy")},</Text>
+          <TouchableOpacity onPress={() => setOpenBusDetails(true)}>
+            <Text style={styles.cancellationText}>Cancellation</Text>
+          </TouchableOpacity>
           </View>
           <View>
             <Text style={styles.titles}>Select Pickup and Drop Points</Text>
@@ -487,6 +497,53 @@ const BusInfo = () => {
             </View>
           )}
         </TouchableWithoutFeedback>
+      </PopUp>
+      <PopUp
+        value={openBusDetails}
+        handlePopUpClose={() => {
+          setOpenBusDetails(false);
+        }}>
+        <Text
+          style={[
+            styles.travelName,
+            {fontSize: responsiveHeight(2.2), textAlign: 'center'},
+          ]}>
+          Cancellation Details
+        </Text>
+        <View style={styles.tableHeader}>
+          <Text style={styles.travelName}>Cancellation Time</Text>
+          <Text style={styles.travelName}>Cancellation Charge</Text>
+        </View>
+        <>
+          {bookingBus?.bus?.CancellationPolicies?.length > 0 &&
+           bookingBus?.bus?.CancellationPolicies.map((rule, ru) => {
+              var fromDate = new Date(rule.FromDate);
+              const fromformattedDate = fromDate.toLocaleDateString('en-US', {
+                month: 'long',
+                day: 'numeric',
+              });
+              var toDate = new Date(rule.ToDate);
+              const toformattedDate = toDate.toLocaleDateString('en-US', {
+                month: 'long',
+                day: 'numeric',
+              });
+              return (
+                <View key={`id_${ru + 1}`} style={styles.tableRow}>
+                  <View style={styles.eachCell}>
+                    <Text style={styles.cellText}>
+                      From {fromDate.toLocaleTimeString()},{fromformattedDate}{' '}
+                      to {toDate.toLocaleTimeString()},{toformattedDate}
+                    </Text>
+                  </View>
+                  <View style={styles.eachCell}>
+                    <Text style={styles.cellText}>
+                      {rule.CancellationCharge}%
+                    </Text>
+                  </View>
+                </View>
+              );
+            })}
+        </>
       </PopUp>
     </>
   );
