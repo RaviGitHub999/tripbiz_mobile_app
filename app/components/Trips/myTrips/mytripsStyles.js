@@ -111,5 +111,40 @@ width:'100%'
     flexDirection: "row",
      gap: responsiveHeight(1) ,
      flexWrap:'wrap'
-  }
+  },
+  addingNewTripSubContainer: {
+    gap: responsiveHeight(1),
+  },
+  addingNewTripContainer: {
+    gap: responsiveHeight(1.5),
+  },
+  newtriptitle: {
+    fontSize: responsiveHeight(2.5),
+    fontFamily: fonts.primary,
+    color: colors.primary,
+    // textAlign: 'center'
+  },
+  multiTextContainer: {
+    borderWidth: 1,
+    textAlignVertical: 'top',
+    borderRadius: responsiveHeight(1.3),
+    paddingHorizontal: responsiveWidth(3),
+    fontSize: responsiveHeight(2.3),
+  },
+  addingNewTripBtn: {
+    borderWidth: 1,
+    padding: responsiveHeight(1),
+    paddingHorizontal: responsiveWidth(3),
+    paddingVertical: responsiveHeight(1.5),
+    borderRadius: responsiveHeight(1.3),
+    backgroundColor: colors.black,
+    alignItems: 'center',
+    alignSelf: 'center',
+    width: '60%',
+  },
+  addingNewTripBtnText: {
+    color: colors.white,
+    fontSize: responsiveHeight(2),
+    fontFamily: fonts.primary,
+  },
 });

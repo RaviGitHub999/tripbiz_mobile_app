@@ -32,7 +32,12 @@ const TravellerDetailsBtn = ({
   const [travDetails, setTravDetails] = useState(false);
   const [newtravellerDetails, setNewTravellerDetails] = useState();
   const [isFormDisabled, setIsFormDisabled] = useState(false);
-  const {control, handleSubmit, setValue} = useForm();
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: {errors},
+  } = useForm();
   const [showIssueDatePicker, setShowIssueDatePicker] = useState(
     Array(parseInt(adults ? adults : 0)).fill(false),
   );
@@ -162,7 +167,6 @@ const TravellerDetailsBtn = ({
   const handleTravDetails = () => {
     setTravDetails(true);
   };
-
   return (
     <View style={styles.mainContainer}>
       {tripData?.data?.travellerDetails &&
@@ -212,6 +216,7 @@ const TravellerDetailsBtn = ({
                     name={`adults[${i}].firstName`}
                     control={control}
                     defaultValue={i === 0 ? userAccountDetails.firstName : ''}
+                    rules={{required: '* First Name is required'}}
                     render={({field}) => (
                       <>
                         <Text style={styles.label}>First Name</Text>
@@ -225,6 +230,11 @@ const TravellerDetailsBtn = ({
                           onChangeText={field.onChange}
                           editable={!isFormDisabled}
                         />
+                        {errors.adults[i].firstName && (
+                          <Text style={styles.errorText}>
+                            {errors.adults[i].firstName.message}
+                          </Text>
+                        )}
                       </>
                     )}
                   />
@@ -232,6 +242,7 @@ const TravellerDetailsBtn = ({
                     name={`adults[${i}].lastName`}
                     control={control}
                     defaultValue={i === 0 ? userAccountDetails.lastName : ''}
+                    rules={{required: '* Last Name is required'}}
                     render={({field}) => (
                       <>
                         <Text style={styles.label}>Last Name</Text>
@@ -245,6 +256,11 @@ const TravellerDetailsBtn = ({
                           onChangeText={field.onChange}
                           editable={!isFormDisabled}
                         />
+                        {errors.adults[i].lastName && (
+                          <Text style={styles.errorText}>
+                            {errors.adults[i].lastName.message}
+                          </Text>
+                        )}
                       </>
                     )}
                   />
@@ -252,7 +268,7 @@ const TravellerDetailsBtn = ({
                     <Controller
                       name={`adults[${i}].birthDate`}
                       control={control}
-                      // defaultValue={i === 0 ? userAccountDetails.lastName : ''}
+                      rules={{required: '* Age is required'}}
                       render={({field}) => (
                         <>
                           <Text style={styles.label}>Age</Text>
@@ -268,6 +284,11 @@ const TravellerDetailsBtn = ({
                             onChangeText={field.onChange}
                             editable={!isFormDisabled}
                           />
+                          {errors.adults[i].birthDate && (
+                            <Text style={styles.errorText}>
+                              {errors.adults[i].birthDate.message}
+                            </Text>
+                          )}
                         </>
                       )}
                     />
@@ -278,6 +299,7 @@ const TravellerDetailsBtn = ({
                         name={`adults[${i}].email`}
                         control={control}
                         defaultValue={i === 0 ? userAccountDetails.email : ''}
+                        rules={{required: '* Email is required'}}
                         render={({field}) => (
                           <>
                             <Text style={styles.label}>Email</Text>
@@ -293,6 +315,11 @@ const TravellerDetailsBtn = ({
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
                             />
+                            {errors.adults[i].email && (
+                              <Text style={styles.errorText}>
+                                {errors.adults[i].email.message}
+                              </Text>
+                            )}
                           </>
                         )}
                       />
@@ -302,6 +329,7 @@ const TravellerDetailsBtn = ({
                         defaultValue={
                           i === 0 ? userAccountDetails.mobileNumber : ''
                         }
+                        rules={{required: '* MobileNumber is required'}}
                         render={({field}) => (
                           <>
                             <Text style={styles.label}>Mobile Number</Text>
@@ -317,6 +345,11 @@ const TravellerDetailsBtn = ({
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
                             />
+                            {errors.adults[i].mobileNumber && (
+                              <Text style={styles.errorText}>
+                                {errors.adults[i].mobileNumber.message}
+                              </Text>
+                            )}
                           </>
                         )}
                       />
@@ -327,6 +360,7 @@ const TravellerDetailsBtn = ({
                       <Controller
                         name={`adults[${i}].passportNumber`}
                         control={control}
+                        rules={{required: '* PassportNumber is required'}}
                         render={({field}) => (
                           <>
                             <Text style={styles.label}>Passport Number</Text>
@@ -342,6 +376,11 @@ const TravellerDetailsBtn = ({
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
                             />
+                            {errors.adults[i].passportNumber && (
+                              <Text style={styles.errorText}>
+                                {errors.adults[i].passportNumber.message}
+                              </Text>
+                            )}
                           </>
                         )}
                       />
@@ -349,6 +388,7 @@ const TravellerDetailsBtn = ({
                       <Controller
                         name={`adults[${i}].passportIssueCountry`}
                         control={control}
+                        rules={{required: '* PassportIssueCountry is required'}}
                         render={({field}) => (
                           <>
                             <Text style={styles.label}>
@@ -366,6 +406,11 @@ const TravellerDetailsBtn = ({
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
                             />
+                            {errors.adults[i].passportIssueCountry && (
+                              <Text style={styles.errorText}>
+                                {errors.adults[i].passportIssueCountry.message}
+                              </Text>
+                            )}
                           </>
                         )}
                       />
@@ -373,9 +418,10 @@ const TravellerDetailsBtn = ({
                         name={`adults[${i}].passportIssueDate`}
                         control={control}
                         defaultValue={''}
+                        rules={{required: '* PassportIssueDate is required'}}
                         render={({field}) => {
                           return (
-                            <View>
+                            <>
                               <Text style={styles.label}>
                                 Passport Issue Date
                               </Text>
@@ -442,7 +488,12 @@ const TravellerDetailsBtn = ({
                                   minimumDate={new Date(1980, 0, 1)}
                                 />
                               )}
-                            </View>
+                              {errors.adults[i].passportIssueDate && (
+                                <Text style={styles.errorText}>
+                                  {errors.adults[i].passportIssueDate.message}
+                                </Text>
+                              )}
+                            </>
                           );
                         }}
                       />
@@ -451,9 +502,10 @@ const TravellerDetailsBtn = ({
                         name={`adults[${i}].passportExpiryDate`}
                         control={control}
                         defaultValue={''}
+                        rules={{required: '* PassportExpiryDate is required'}}
                         render={({field}) => {
                           return (
-                            <View>
+                            <>
                               <Text style={styles.label}>
                                 Passport Expiry Date
                               </Text>
@@ -515,7 +567,12 @@ const TravellerDetailsBtn = ({
                                   minimumDate={new Date(1980, 0, 1)}
                                 />
                               )}
-                            </View>
+                              {errors.adults[i].passportExpiryDate && (
+                                <Text style={styles.errorText}>
+                                  {errors.adults[i].passportExpiryDate.message}
+                                </Text>
+                              )}
+                            </>
                           );
                         }}
                       />
@@ -524,21 +581,18 @@ const TravellerDetailsBtn = ({
                         name={`adults[${i}].birthDate`}
                         control={control}
                         defaultValue={''}
+                        rules={{required: '* BirthDate is required'}}
                         render={({field}) => {
                           return (
-                            <View>
-                              <Text style={styles.label}>
-                              Date of birth
-                              </Text>
+                            <>
+                              <Text style={styles.label}>Date of birth</Text>
                               <TouchableOpacity
                                 onPress={() => {
                                   const newBirthDatePicker = [
                                     ...showBirthDatePicker,
                                   ];
                                   newBirthDatePicker[i] = true;
-                                  setShowBirthDatePicker(
-                                    newBirthDatePicker,
-                                  );
+                                  setShowBirthDatePicker(newBirthDatePicker);
                                 }}
                                 disabled={isFormDisabled}>
                                 <TextInput
@@ -576,9 +630,7 @@ const TravellerDetailsBtn = ({
                                       ...showBirthDatePicker,
                                     ];
                                     newBirthDatePicker[i] = false;
-                                    setShowBirthDatePicker(
-                                      newBirthDatePicker,
-                                    );
+                                    setShowBirthDatePicker(newBirthDatePicker);
                                     if (date) {
                                       field.onChange(
                                         date.toISOString().split('T')[0],
@@ -588,7 +640,12 @@ const TravellerDetailsBtn = ({
                                   minimumDate={new Date(1980, 0, 1)}
                                 />
                               )}
-                            </View>
+                              {errors.adults[i].birthDate && (
+                                <Text style={styles.errorText}>
+                                  {errors.adults[i].birthDate.message}
+                                </Text>
+                              )}
+                            </>
                           );
                         }}
                       />
@@ -607,60 +664,95 @@ const TravellerDetailsBtn = ({
                     name={`children[${i}].gender`}
                     control={control}
                     defaultValue={''}
-                    render={({field}) => (
-                      <CustomSelection
-                        data={gender}
-                        placeHolder="Title"
-                        value={field.value ? field.value : 'Title'}
-                        setValue={field.onChange}
-                        customStyles={
-                          !isFormDisabled
-                            ? styles.customStyles
-                            : styles.activeCustomStyles
-                        }
-                        isEditable={isFormDisabled}
-                      />
-                    )}
+                    rules={{required: '* Gender is required'}}
+                    render={({field}) => {
+                      return (
+                        <>
+                          <CustomSelection
+                            data={gender}
+                            placeHolder="Title"
+                            value={field.value ? field.value : 'Title'}
+                            setValue={field.onChange}
+                            customStyles={
+                              !isFormDisabled
+                                ? styles.customStyles
+                                : styles.activeCustomStyles
+                            }
+                            isEditable={isFormDisabled}
+                          />
+                          {errors.children[i].gender && (
+                            <Text style={styles.errorText}>
+                              {errors.children[i].gender.message}
+                            </Text>
+                          )}
+                        </>
+                      );
+                    }}
                   />
                   <Controller
                     name={`children[${i}].firstName`}
                     control={control}
                     defaultValue={''}
-                    render={({field}) => (
-                      <TextInput
-                        {...field}
-                        value={field.value}
-                        style={
-                          !isFormDisabled ? styles.input : styles.activeInput
-                        }
-                        placeholder="First Name"
-                        onChangeText={field.onChange}
-                        editable={!isFormDisabled}
-                      />
-                    )}
+                    rules={{required: '* FirstName is required'}}
+                    render={({field}) => {
+                      return (
+                        <>
+                          <TextInput
+                            {...field}
+                            value={field.value}
+                            style={
+                              !isFormDisabled
+                                ? styles.input
+                                : styles.activeInput
+                            }
+                            placeholder="First Name"
+                            onChangeText={field.onChange}
+                            editable={!isFormDisabled}
+                          />
+                          {errors.children[i].firstName && (
+                            <Text style={styles.errorText}>
+                              {errors.children[i].firstName.message}
+                            </Text>
+                          )}
+                        </>
+                      );
+                    }}
                   />
                   <Controller
                     name={`children[${i}].lastName`}
                     control={control}
                     defaultValue={''}
-                    render={({field}) => (
-                      <TextInput
-                        {...field}
-                        value={field.value}
-                        style={
-                          !isFormDisabled ? styles.input : styles.activeInput
-                        }
-                        placeholder="Last Name"
-                        onChangeText={field.onChange}
-                        editable={!isFormDisabled}
-                      />
-                    )}
+                    rules={{required: '* LastName is required'}}
+                    render={({field}) => {
+                      return (
+                        <>
+                          <TextInput
+                            {...field}
+                            value={field.value}
+                            style={
+                              !isFormDisabled
+                                ? styles.input
+                                : styles.activeInput
+                            }
+                            placeholder="Last Name"
+                            onChangeText={field.onChange}
+                            editable={!isFormDisabled}
+                          />
+                          {errors.children[i].lastName && (
+                            <Text style={styles.errorText}>
+                              {errors.children[i].lastName.message}
+                            </Text>
+                          )}
+                        </>
+                      );
+                    }}
                   />
                   {isInternational && (
                     <>
                       <Controller
                         name={`children[${i}].passportNumber`}
                         control={control}
+                        rules={{required: '* PassportNumber is required'}}
                         render={({field}) => (
                           <>
                             <Text style={styles.label}>Passport Number</Text>
@@ -676,6 +768,11 @@ const TravellerDetailsBtn = ({
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
                             />
+                            {errors.children[i].passportNumber && (
+                              <Text style={styles.errorText}>
+                                {errors.children[i].passportNumber.message}
+                              </Text>
+                            )}
                           </>
                         )}
                       />
@@ -683,6 +780,7 @@ const TravellerDetailsBtn = ({
                       <Controller
                         name={`children[${i}].passportIssueCountry`}
                         control={control}
+                        rules={{required: '* PassportIssueCountry is required'}}
                         render={({field}) => (
                           <>
                             <Text style={styles.label}>
@@ -700,6 +798,14 @@ const TravellerDetailsBtn = ({
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
                             />
+                            {errors.children[i].passportIssueCountry && (
+                              <Text style={styles.errorText}>
+                                {
+                                  errors.children[i].passportIssueCountry
+                                    .message
+                                }
+                              </Text>
+                            )}
                           </>
                         )}
                       />
@@ -707,9 +813,10 @@ const TravellerDetailsBtn = ({
                         name={`children[${i}].passportIssueDate`}
                         control={control}
                         defaultValue={''}
+                        rules={{required: '* PassportIssueDate is required'}}
                         render={({field}) => {
                           return (
-                            <View>
+                            <>
                               <Text style={styles.label}>
                                 Passport Issue Date
                               </Text>
@@ -776,7 +883,12 @@ const TravellerDetailsBtn = ({
                                   minimumDate={new Date(1980, 0, 1)}
                                 />
                               )}
-                            </View>
+                              {errors.children[i].passportIssueDate && (
+                                <Text style={styles.errorText}>
+                                  {errors.children[i].passportIssueDate.message}
+                                </Text>
+                              )}
+                            </>
                           );
                         }}
                       />
@@ -785,9 +897,10 @@ const TravellerDetailsBtn = ({
                         name={`children[${i}].passportExpiryDate`}
                         control={control}
                         defaultValue={''}
+                        rules={{required: '* PassportExpiryDate is required'}}
                         render={({field}) => {
                           return (
-                            <View>
+                            <>
                               <Text style={styles.label}>
                                 Passport Expiry Date
                               </Text>
@@ -849,7 +962,15 @@ const TravellerDetailsBtn = ({
                                   minimumDate={new Date(1980, 0, 1)}
                                 />
                               )}
-                            </View>
+                              {errors.children[i].passportExpiryDate && (
+                                <Text style={styles.errorText}>
+                                  {
+                                    errors.children[i].passportExpiryDate
+                                      .message
+                                  }
+                                </Text>
+                              )}
+                            </>
                           );
                         }}
                       />
@@ -1224,5 +1345,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.whiteSmoke,
     // elevation: responsiveHeight(0.5),
     margin: responsiveHeight(0.5),
+  },
+  errorText: {
+    color: colors.red,
+    fontFamily: fonts.primary,
+    fontSize: responsiveHeight(1.3),
   },
 });

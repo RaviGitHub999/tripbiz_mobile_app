@@ -106,17 +106,23 @@ const BusRenderData = ({
   const closeAllTimeStamps = () => {
     setAllTimeStamp(false);
   };
+  const getFlightStatusStyle = (status) => {
+    switch (status) {
+      case "Booked":
+        return  "honeydew" ;
+      case "Cancelled":
+        return  "#ffe4e4" ;
+      default:
+        return "white";
+    }
+  };
   return (
     <>
       <View
         style={[
           styles.busCard,
           {
-            backgroundColor: busData?.status
-              ? busData?.status === 'Booked'
-                ? 'honeydew'
-                : 'white'
-              : 'white',
+            backgroundColor: getFlightStatusStyle(busData?.status),
           },
         ]}>
         {tripsPage ? (

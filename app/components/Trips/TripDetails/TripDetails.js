@@ -1395,6 +1395,16 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
       },
     });
   };
+  const getFlightStatusStyle = (status) => {
+    switch (status) {
+      case "Booked":
+        return  "honeydew" ;
+      case "Cancelled":
+        return  "#ffe4e4" ;
+      default:
+        return "white";
+    }
+  };
   return tripDataLoading || approvalLoading ? (
     <View style={styles.LoaderContainer}>
       <View style={styles.Loader}>
@@ -1666,10 +1676,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                   styles.hotelCard,
                                   {
                                     backgroundColor: hotelStatus[0]
-                                      ? hotelStatus[0].status === 'Booked'
-                                        ? 'honeydew'
-                                        : 'white'
-                                      : null,
+                                      && getFlightStatusStyle(hotelStatus[0].status)
                                   },
                                 ]}>
                                 <View style={styles.hotelDetailsContainer}>

@@ -362,18 +362,23 @@ const closeAllTimeStamps=()=>
 {
   setAllTimeStamp(false)
 }
-
+const getFlightStatusStyle = (status) => {
+  switch (status) {
+    case "Booked":
+      return  "honeydew" ;
+    case "Cancelled":
+      return  "#ffe4e4" ;
+    default:
+      return "white";
+  }
+};
     return (
       <View style={styles.mainConatiner}>
         <View
           style={[
             styles.card,
             {
-              backgroundColor: flightStatus
-                ? flightStatus.status === 'Booked'
-                  ? 'honeydew'
-                  : 'white'
-                : null,
+              backgroundColor: flightStatus&&getFlightStatusStyle(flightStatus.status)  
             },
           ]}>
           <FlatList

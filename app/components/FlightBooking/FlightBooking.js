@@ -61,6 +61,7 @@ const FlightBooking = ({navigation: {navigate}}) => {
     internationalFlight,
     isInternationalRound,
     userTripStatus,
+    minimumServiceCharge
   } = useContext(MyContext);
   var {
     totalFareSum,
@@ -194,6 +195,19 @@ const FlightBooking = ({navigation: {navigate}}) => {
   //         <ProgressBar />
   //         </View>
   // }
+  const returnTotal = () => {
+    let total = 0;
+    bookingFlight.map((e, i) => {
+      const flightprice = e.flight.Fare.OfferedFare;
+      const serviceFee =
+        e.flight.Fare.OfferedFare * 0.02 > minimumServiceCharge
+          ? e.flight.Fare.OfferedFare * 0.02
+          : minimumServiceCharge;
+      const Gst = serviceFee * 0.18;
+      total += serviceFee + Gst + flightprice;
+    });
+    return Math.round(total);
+  };
   return (
     // isLoading ? <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><ProgressBar /></View> :
 
@@ -857,7 +871,7 @@ const FlightBooking = ({navigation: {navigate}}) => {
           <View style={styles.totalFareFlightDetailsContainer}>
             <Text style={styles.flighttotalFareText}>Total fare</Text>
             <Text style={styles.flightPrice}>
-             {bookingFlight.length === 1
+             {/* {bookingFlight.length === 1
                 ? Math.round(bookingFlight[0]?.flight.Fare.OfferedFare) +
                   Math.round(
                     bookingFlight[0]?.gstInFinalserviceCharge +
@@ -868,7 +882,8 @@ const FlightBooking = ({navigation: {navigate}}) => {
                     bookingFlight[1]?.flight.Fare.OfferedFare +
                       bookingFlight[0]?.gstInFinalserviceCharge +
                       bookingFlight[0]?.finalFlightServiceCharge
-                  )}
+                  )} */}
+                  {returnTotal()}
             </Text>
             {selectedTripId ? (
               <View style={{width: '40%'}}>
@@ -930,42 +945,46 @@ const FlightBooking = ({navigation: {navigate}}) => {
           customStyles={{width: '100%'}}>
           {isExpanded && (
             <View style={styles.totalFareFlightDetailsMainContainer}>
-              {bookingFlight.length === 1 &&
-              bookingFlight[0].flightNew.segments.length > 1
-                ? bookingFlight.map((book, b) => {
+              {
+              // bookingFlight.length === 1 &&
+              // bookingFlight[0].flightNew.segments.length > 1?
+             
+              //         <View style={styles.flightDepAndArrMainContainer}>
+              //           <View style={styles.flightDepAndArrContainer} >
+              //             <Text style={styles.flightDepAndArrText}>
+              //               Flight fare
+              //             </Text>
+              //           </View>
+              //           <View>
+              //             <Text
+              //               style={[
+              //                 styles.flightPrice,
+              //                 {color: colors.highlight},
+              //               ]}>
+              //               {` ${
+              //         bookingFlight[bookIndex].flight.Fare.OfferedFare
+              //           ? Math.ceil(
+              //               bookingFlight[bookIndex].flight.Fare.OfferedFare
+              //             ).toLocaleString("en-IN")
+              //           : Math.ceil(
+              //               bookingFlight[bookIndex].flight.Fare.PublishedFare
+              //             ).toLocaleString("en-IN")
+              //       }`}
+              //             </Text>
+              //           </View>
+              //         </View>
+
+              //   : 
+                bookingFlight.map((book, b) => {
+                  const serviceFee =
+                  book?.flight.Fare.OfferedFare * 0.02 > minimumServiceCharge
+                    ? book?.flight.Fare.OfferedFare * 0.02
+                    : minimumServiceCharge;
+                const GST = serviceFee * 0.18;
                     return (
-                      <View style={styles.flightDepAndArrMainContainer}>
-                        <View style={styles.flightDepAndArrContainer} key={b}>
-                          <Text style={styles.flightDepAndArrText}>
-                            Flight fare
-                          </Text>
-                          {/* <IconSwitcher componentName='AntDesign' iconName='arrowright' color={colors.secondary} iconsize={2.8} />
-                                                <Text style={styles.flightDepAndArrText}>{`${book?.flightNew?.segments[0].destAirportCode}`}</Text> */}
-                        </View>
-                        <View>
-                          <Text
-                            style={[
-                              styles.flightPrice,
-                              {color: colors.highlight},
-                            ]}>
-                            {`₹ ${
-                              book.flight.Fare.OfferedFare
-                                ? Math.ceil(
-                                    book.flight.Fare.OfferedFare,
-                                  ).toLocaleString('en-IN')
-                                : Math.ceil(
-                                    book.flight.Fare.PublishedFare,
-                                  ).toLocaleString('en-IN')
-                            }`}
-                          </Text>
-                        </View>
-                      </View>
-                    );
-                  })
-                : bookingFlight.map((book, b) => {
-                    return (
-                      <View style={styles.flightDepAndArrMainContainer}>
-                        <View style={styles.flightDepAndArrContainer} key={b}>
+                    <View style={{gap:responsiveHeight(1)}} key={b}>
+                        <View style={styles.flightDepAndArrMainContainer}>
+                        <View style={styles.flightDepAndArrContainer} >
                           <Text
                             style={
                               styles.flightDepAndArrText
@@ -987,27 +1006,38 @@ const FlightBooking = ({navigation: {navigate}}) => {
                               styles.flightPrice,
                               {color: colors.highlight},
                             ]}>
-                            {`₹ ${
-                              book.flight.Fare.OfferedFare
-                                ? Math.ceil(
-                                    book.flight.Fare.OfferedFare,
-                                  ).toLocaleString('en-IN')
-                                : Math.ceil(
-                                    book.flight.Fare.PublishedFare,
-                                  ).toLocaleString('en-IN')
-                            }`}
+                            {`₹ ${book.totalFare}`}
                           </Text>
                         </View>
+                        
                       </View>
-                    );
-                  })}
-
-              <View
+                      <View style={styles.totalFareFlightEachChargeDetails}>
+                    <Text style={styles.ExcessBagChargesTitle}>
+                      Service Charges
+                    </Text>
+                    <Text style={styles.ExcessBagCharges}>
+                      {`+ ₹ ${Math.round(serviceFee)}`}
+                    </Text>
+                  </View>
+                  <View style={styles.totalFareFlightEachChargeDetails}>
+                    <Text style={styles.ExcessBagChargesTitle}>
+                     GST
+                    </Text>
+                    <Text style={styles.ExcessBagCharges}>
+                    {Math.round(GST)}
+                    </Text>
+                  </View>
+                { bookingFlight.length-1!==b&& <View
                 style={[
                   styles.horizontalLine,
                   {borderColor: '#c8c8c8', marginVertical: 0},
                 ]}
-              />
+              />}
+                      </View>
+                    );
+                  })}
+
+           
 
               <View style={styles.flightDepAndArrSubContainer}>
                 {totalBaggagePrice ? (
@@ -1047,7 +1077,7 @@ const FlightBooking = ({navigation: {navigate}}) => {
                     )}`}</Text>
                   </View>
                 ) : null}
-                {isInternationalRound ? (
+                {/* {isInternationalRound ? (
                   <View style={styles.totalFareFlightEachChargeDetails}>
                     <Text style={styles.ExcessBagChargesTitle}>
                       Service Charges
@@ -1057,23 +1087,15 @@ const FlightBooking = ({navigation: {navigate}}) => {
                       (totalFareSum * internationalFlight) / 100,
                     )}`}
                     </Text>
-                    {/* <Text style={styles.ExcessBagCharges}>
-                    {bookingFlight &&
-                  Math.round(bookingFlight[0]?.finalFlightServiceCharge)}
-                    </Text> */}
                   </View>
                 ) : (
                   <View style={styles.totalFareFlightEachChargeDetails}>
                     <Text style={styles.ExcessBagChargesTitle}>
                       Service Charges
                     </Text>
-                    <Text style={styles.ExcessBagCharges}>{`+ ₹ ${Math.ceil(
+                    <Text style={styles.ExcessBagCharges}>{`+ ₹ ${Math.round(
                       (totalFareSum * domesticFlight) / 100,
                     )}`}</Text>
-                    {/* <Text style={styles.ExcessBagCharges}>
-                    {bookingFlight &&
-                  Math.round(bookingFlight[0]?.finalFlightServiceCharge)}
-                    </Text> */}
                   </View>
                 )}
                  <View style={styles.totalFareFlightEachChargeDetails}>
@@ -1084,7 +1106,7 @@ const FlightBooking = ({navigation: {navigate}}) => {
                     {bookingFlight &&
                   Math.round(bookingFlight[0]?.gstInFinalserviceCharge)}
                     </Text>
-                  </View>
+                  </View> */}
               </View>
             </View>
           )}

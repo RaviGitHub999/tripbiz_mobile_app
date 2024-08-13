@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
 import { colors } from '../../../config/theme';
 import IconSwitcher from '../../common/icons/IconSwitcher';
@@ -11,11 +11,14 @@ import {
 } from '../../../utils/responsiveScale';
 import { RefreshControl } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
+import PopUp from '../../common/popup/PopUp';
 const MyTrips = ({ navigation: { navigate } }) => {
   var { actions, userTripStatus, userId, noOfPages } = useContext(MyContext);
   var [currentPage, setCurrentPage] = useState(1);
   var [trips, setTrips] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [newTripPopup, setNewTripPopup] = useState(false);
+  const [tripname, settripname] = useState("");
   const isFocused = useIsFocused();
   useEffect(() => {
     setTrips(userTripStatus);
@@ -38,9 +41,17 @@ const MyTrips = ({ navigation: { navigate } }) => {
     return dateString;
   };
   const handleClick = async () => {
-    var newtripId = await actions.createTrip(userTripStatus);
-    navigate("TripDetails", { id: newtripId });
+    setNewTripPopup(true);
+    // var newtripId = await actions.createTrip(userTripStatus);
+    // navigate("TripDetails", { id: newtripId });
   }
+  const handleSubmitTrip = async () => {
+    if (tripname === "") return;
+    var newtripId = await actions.createTrip(tripname);
+    navigate("TripDetails", { id: newtripId });
+    setNewTripPopup(false);
+    settripname("")
+  };
   if (userTripStatus.tripLoading) {
     return (
       <View style={styles.progressBarContainer}>
@@ -162,6 +173,28 @@ const MyTrips = ({ navigation: { navigate } }) => {
           )}
         </View>
       </ScrollView>
+      <PopUp  value={newTripPopup}
+        handlePopUpClose={() => setNewTripPopup(false)}>
+      <View style={styles.addingNewTripContainer}>
+              <View style={styles.addingNewTripSubContainer}>
+                <Text style={styles.newtriptitle}>Enter new trip Name</Text>
+                <TextInput
+                  editable
+                  multiline
+                  numberOfLines={3}
+                  placeholder="Enter trip name"
+                  style={styles.multiTextContainer}
+                  value={tripname}
+                  onChangeText={(e) => settripname(e)}
+                />
+                <TouchableOpacity
+                  style={styles.addingNewTripBtn}
+                  onPress={handleSubmitTrip}>
+                <Text style={styles.addingNewTripBtnText}>Create</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+      </PopUp>
     </View>
   );
 };

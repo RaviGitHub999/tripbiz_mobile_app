@@ -491,7 +491,9 @@ const BusInfo = () => {
                 <TouchableOpacity
                   style={styles.addingNewTripBtn}
                   onPress={handleAddToTrip}>
-                  <Text style={styles.addingNewTripBtnText}>Add to trip</Text>
+                 { !isloading?<Text style={styles.addingNewTripBtnText}>Add to trip</Text>:<View>
+                  <ActivityIndicator size={'large'} color={colors.facebook} />
+                </View>}
                 </TouchableOpacity>
               </View>
             </View>

@@ -302,6 +302,16 @@ const CabCard = ({
       setPickUpPopup(false);
     }
   };
+  const getFlightStatusStyle = (status) => {
+    switch (status) {
+      case "Booked":
+        return  "honeydew" ;
+      case "Cancelled":
+        return  "#ffe4e4" ;
+      default:
+        return "white";
+    }
+  };
   return (
     <>
       <View
@@ -309,10 +319,7 @@ const CabCard = ({
           styles.mainContainer,
           {
             backgroundColor: cabData?.status
-              ? cabData?.status === 'Booked'
-                ? 'honeydew'
-                : 'white'
-              : 'white',
+             &&getFlightStatusStyle(cabData?.status),
               marginHorizontal:responsiveWidth(3)
           },
         ]}>

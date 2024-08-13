@@ -1894,8 +1894,8 @@ export default class MyProvider extends Component {
             });
 
             this.setState({
-              // hotelResList: hotelRes.hotelResult?.HotelSearchResult?.HotelResults,
-              hotelResList: finalData,
+              hotelResList: hotelRes.hotelResult?.HotelSearchResult?.HotelResults,
+              // hotelResList: finalData,
               hotelTraceId: hotelRes.hotelResult?.HotelSearchResult?.TraceId,
               hotelStaticData: staticdata,
               hotelTokenId: hotelRes.tokenId,
@@ -2255,9 +2255,20 @@ export default class MyProvider extends Component {
             );
           }
         },
-
-        createTrip: async () => {
+        setStateAsync: async (stateUpdate) => {
+          return new Promise((resolve) => {
+            this.setState(stateUpdate, resolve);
+          });
+        },
+        createTrip: async (name) => {
+          await this.state.actions.setStateAsync((prevState) => ({
+            trip: {
+              ...prevState.trip,
+              name: name,
+            },
+          }));
           try {
+
             const accountDocRef = firestore()
               .collection('Accounts')
               .doc(this.state.userId);
