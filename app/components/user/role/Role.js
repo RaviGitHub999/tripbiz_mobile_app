@@ -9,7 +9,7 @@ import {
   Dimensions,
   ActivityIndicator,
   RefreshControl,
-   ScrollView
+  ScrollView,
 } from 'react-native';
 import {styles} from './RoleStyles';
 import IconSwitcher from '../../common/icons/IconSwitcher';
@@ -25,6 +25,8 @@ import FCard from '../../Trips/TripDetails/FCard';
 import {useNavigation} from '@react-navigation/native';
 import CCard from '../../Trips/TripDetails/CCard';
 import BCard from '../../Trips/TripDetails/BCard';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 const Role = () => {
   const {
     actions,
@@ -45,10 +47,12 @@ const Role = () => {
   const [openTrip, setOpenTrip] = useState(null);
   const [trip, setTrip] = useState(null);
   const [loading, setLoading] = useState(false);
+  const[approvedLoading,setApprovedLoading]=useState(false)
   const [open, setOpen] = useState(false);
+  const [managerStatus, setManagerStatus] = useState();
   const [refreshing, setRefreshing] = useState(false);
   const {goBack} = useNavigation();
-
+  const uid = auth().currentUser.uid;
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -74,11 +78,27 @@ const Role = () => {
     );
     setTripsData(data);
   };
+  const getManagerStatus = async () => {
+    try {
+      const userDetails = await firestore()
+        .collection('Accounts')
+        .doc(uid)
+        .get();
 
+      if (userDetails.exists) {
+        setManagerStatus(userDetails.data().manager.status);
+      } else {
+        console.log('No such document!');
+      }
+    } catch (error) {
+      console.error('Error fetching manager status: ', error);
+    }
+  };
   useEffect(() => {
     if (mounted) {
       getTripData();
       actions.handleFlightsLogos();
+      getManagerStatus();
     }
     return () => {
       setMounted(false);
@@ -110,11 +130,19 @@ const Role = () => {
     setTripsData();
     await getTripData();
   };
+  var approveRequest = (notification, userid) => {
+    setApprovedLoading(true)
+    actions.editTeamMembers(notification, userid);
+    setApprovedLoading(false)
+  };
   return (
     <>
       <KeyboardAvoidingView style={{flex: 1}}>
         <TouchableWithoutFeedback onPress={handleScreenPress}>
-          <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}>
+          <ScrollView
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }>
             <View style={styles.mainContainer}>
               <TouchableOpacity style={styles.back} onPress={goBack}>
                 <IconSwitcher
@@ -131,6 +159,13 @@ const Role = () => {
                     <Text style={styles.managerDataTitle}>
                       {userAccountDetails?.manager?.name}(
                       {userAccountDetails?.manager?.email})
+                    </Text>
+                    <Text
+                      style={[
+                        styles.btnTitle,
+                        {color: colors.lightGray, textAlign: 'center'},
+                      ]}>
+                      {managerStatus === 'pending' ? 'Pending' : 'Active'}
                     </Text>
                   </View>
                 ) : (
@@ -183,14 +218,46 @@ const Role = () => {
                 {/* team Member */}
                 {teamMembers?.length > 0 || notifications?.length > 0 ? (
                   <>
-<View style={styles.teamMembersContainer}>
-<Text style={styles.subTitle}>Team Members</Text>
-<TouchableOpacity onPress={handleClickOpen}>
-<Text style={[styles.NodatamsgTitle,{color:colors.facebook,textDecorationLine:"underline"
-}]}>({teamMembers?.length} Team Members)</Text>
-</TouchableOpacity>
-</View>
-                   
+                    <View style={styles.teamMembersContainer}>
+                      <Text style={styles.subTitle}>Team Members</Text>
+                      <TouchableOpacity onPress={handleClickOpen}>
+                        <Text
+                          style={[
+                            styles.NodatamsgTitle,
+                            {
+                              color: colors.facebook,
+                              textDecorationLine: 'underline',
+                            },
+                          ]}>
+                          ({teamMembers?.length} Team Members)
+                        </Text>
+                      </TouchableOpacity>
+                      
+                    </View>
+                    < >
+                        {notifications?.length > 0 ? (
+                          <>
+                            {notifications.map(notification => {
+                              return (
+                                <View style={[styles.managerDataContainer,{gap:responsiveHeight(1)}]}>
+                                  <Text style={[styles.title,{fontSize:responsiveHeight(1.5)}]}>
+                                    Please approve manager request of{' '}
+                                    {notification.name}({notification.email}).
+                                    Once you approve this,{notification.name}(
+                                    {notification.email}) can send their travel
+                                    approval requests to you
+                                  </Text>
+                                  <TouchableOpacity style={styles.btn} onPress={() =>
+                              approveRequest(notification, notification.userId)}>
+                                 {approvedLoading?<ActivityIndicator size={'small'} color={colors.white}/>
+                                 : <Text style={styles.btnTitle}>Approve</Text>}
+                                  </TouchableOpacity>
+                                </View>
+                              );
+                            })}
+                          </>
+                        ) : null}
+                      </>
                   </>
                 ) : null}
               </View>
@@ -255,7 +322,7 @@ const Role = () => {
                         Loading Approve Request...
                       </Text>
                     </View>
-                  ) : tripsData? (
+                  ) : tripsData ? (
                     tripsData
                       ?.filter(a => {
                         return a?.requestDetails?.status === selectedTab;
@@ -274,17 +341,18 @@ const Role = () => {
                           trip?.tripDetails?.data?.date?.seconds * 1000,
                         ).toLocaleString();
                         let updatedDate = trip?.requestDetails?.updatedAt
-                        ? new Date(
-                            trip?.requestDetails?.updatedAt?.seconds * 1000
-                          ).toLocaleString()
-                        : "";
+                          ? new Date(
+                              trip?.requestDetails?.updatedAt?.seconds * 1000,
+                            ).toLocaleString()
+                          : '';
                         return (
                           <View
                             style={styles.card}
                             key={trip.approvalRequest.requestId}>
                             <View style={styles.headers}>
                               <Text style={styles.cardTitle}>
-                                {trip?.userDetails?.firstName}
+                                {trip?.userDetails?.firstName}(
+                                  {trip?.userDetails?.email})
                               </Text>
                               <Text style={styles.cardTitle}>
                                 {trip?.tripDetails?.data?.name}
@@ -319,12 +387,20 @@ const Role = () => {
                                     }>{`Cabs - ${trip?.tripDetails?.cabs?.length}`}</Text>
                                 </View>
                               ) : null}
-                              {trip?.tripDetails?.bus?.length  > 0 ? (
+                              {trip?.tripDetails?.bus?.length > 0 ? (
                                 <View style={styles.eachTripList}>
                                   <Text
                                     style={
                                       styles.eachTripListTitle
-                                    }>{`Buses - ${trip?.tripDetails?.bus?.length }`}</Text>
+                                    }>{`Buses - ${trip?.tripDetails?.bus?.length}`}</Text>
+                                </View>
+                              ) : null}
+                                {trip?.tripDetails?.otherBookings?.length > 0 ? (
+                                <View style={styles.eachTripList}>
+                                  <Text
+                                    style={
+                                      styles.eachTripListTitle
+                                    }>{`Other - ${trip?.tripDetails?.otherBookings?.length}`}</Text>
                                 </View>
                               ) : null}
                             </View>
@@ -333,13 +409,35 @@ const Role = () => {
                               <Text style={styles.price}>
                                 {' '}
                                 &#8377;{' '}
-                                {`${
-                                  trip?.approvalRequest?.totalPrice
-                                    ? Math.ceil(
-                                        trip?.approvalRequest?.totalPrice,
-                                      )
-                                    : ''
-                                } `}
+                                {Math.ceil(
+                                    trip?.tripDetails?.flights &&
+                                      trip?.tripDetails?.flights.reduce(
+                                        (sum, obj) =>
+                                          sum + obj?.data[0]?.finalPrice,
+                                        0
+                                      ) +
+                                        trip?.tripDetails?.hotels.reduce(
+                                          (sum, obj) =>
+                                            sum + obj?.data?.hotelTotalPrice,
+                                          0
+                                        ) +
+                                        trip?.tripDetails?.cabs.reduce(
+                                          (sum, obj) =>
+                                            sum + obj?.data?.cabTotalPrice,
+                                          0
+                                        ) +
+                                        trip?.tripDetails?.bus.reduce(
+                                          (sum, obj) =>
+                                            sum + obj?.data?.busTotalPrice,
+                                          0
+                                        ) +
+                                        trip?.tripDetails?.otherBookings.reduce(
+                                          (sum, obj) =>
+                                            sum +
+                                            obj?.data?.overallBookingPrice,
+                                          0
+                                        )
+                                  )}
                               </Text>
                             </Text>
                             <View style={styles.tripListCount}>
@@ -364,8 +462,10 @@ const Role = () => {
                               </View>
                             </View>
                             {updatedDate && (
-                            <Text style={styles.eachTripListTitle}>Approved Date:{updatedDate}</Text>
-                          )}
+                              <Text style={styles.eachTripListTitle}>
+                                Approved Date:{updatedDate}
+                              </Text>
+                            )}
                             <TouchableOpacity
                               style={styles.DetailsBtn}
                               onPress={() => {
@@ -601,14 +701,14 @@ const Role = () => {
                     </Text>
                   ) : null}
                   <View style={{margin: responsiveHeight(1)}}>
-                  <BCard
-                    item={buses.data.bus}
-                    startDate={cabSDate}
-                    endDate={cabEDate}
-                    bookingBus={buses.data}
-                  />
+                    <BCard
+                      item={buses.data.bus}
+                      startDate={cabSDate}
+                      endDate={cabEDate}
+                      bookingBus={buses.data}
+                    />
                   </View>
-                  <TravDetails adults={adults}/>
+                  <TravDetails adults={adults} />
                 </View>
               );
             })}
@@ -643,34 +743,37 @@ const Role = () => {
             </View>
           ) : null}
         </ScrollView>
-      </PopUp >
+      </PopUp>
 
-      <PopUp  value={open}
-        handlePopUpClose={handleClose} >
-                   <View>
-                   <Text style={styles.subTitle}>Team Members</Text>
-                      {teamMembers?.length > 0 ? (
-                        <>
-                          {teamMembers.map(teamMember => {
-                            return (
-                              // <View
-                              //   style={[
-                              //     styles.managerDataContainer,
-                              //     {marginTop: responsiveHeight(1)},
-                              //   ]}
-                              //   key={teamMember.userId}>
-                               <View style={styles.teamMembersContainer}>
-                                <IconSwitcher componentName='Octicons' iconName='dot-fill' iconsize={2.5}/>
-                                 <Text style={styles.managerDataTitle}>
-                                  {teamMember.name}({teamMember.email})
-                                </Text>
-                                </View>
-                              // </View>
-                            );
-                          })}
-                        </>
-                      ) : null}
-                    </View>
+      <PopUp value={open} handlePopUpClose={handleClose}>
+        <View>
+          <Text style={styles.subTitle}>Team Members</Text>
+          {teamMembers?.length > 0 ? (
+            <>
+              {teamMembers.map(teamMember => {
+                return (
+                  // <View
+                  //   style={[
+                  //     styles.managerDataContainer,
+                  //     {marginTop: responsiveHeight(1)},
+                  //   ]}
+                  //   key={teamMember.userId}>
+                  <View style={styles.teamMembersContainer}>
+                    <IconSwitcher
+                      componentName="Octicons"
+                      iconName="dot-fill"
+                      iconsize={2.5}
+                    />
+                    <Text style={styles.managerDataTitle}>
+                      {teamMember.name}({teamMember.email})
+                    </Text>
+                  </View>
+                  // </View>
+                );
+              })}
+            </>
+          ) : null}
+        </View>
       </PopUp>
     </>
   );

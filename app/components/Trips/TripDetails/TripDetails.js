@@ -119,6 +119,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
   const [otherPrice, setOtherPrice] = useState({});
   const [allotherTime, setAllOtherTime] = useState(false);
   const [allotherTimeData, setAllOtherTimeData] = useState();
+  const [isAnySelected, setIsAnySelected] = useState(true);
   // const[bookingalert,setBookingAlert]=useState(false)
   const {
     actions,
@@ -238,6 +239,13 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
   }, []);
 
   var handleClick = async () => {
+    const anySelected = Object.values(selectedItems).some(
+      (items) => items.length > 0
+    );
+    setIsAnySelected(anySelected);
+    if (!anySelected) {
+      return false;
+    }
     setPaymentLoading(true);
 
     var notflights = checked
@@ -1341,7 +1349,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
       ?.filter(flight => !flightsIds.includes(flight.id))
       .map(
         flightData =>
-          flightData?.data[0]?.finalPrice ?? flightData?.data?.finalPrice,
+          flightData?.data?.finalPrice,
       ) || 0;
   const notReqprice2 =
     tripData?.hotels
@@ -3067,9 +3075,43 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                 ]}>
                                 {' '}
                                 &#8377;{' '}
-                                {`${Math.ceil(finalCost).toLocaleString(
-                                  'en-IN',
-                                )} `}
+                                {Math.ceil(
+                                  tripData.flights
+                                    .filter((flight) =>
+                                      requestData?.flights?.includes(flight.id)
+                                    )
+                                    .reduce(
+                                      (sum, obj) => sum + obj?.data?.finalPrice,
+                                      0
+                                    ) +
+                                    tripData.hotels
+                                      .filter((flight) =>
+                                        requestData?.hotels?.includes(flight.id)
+                                      )
+                                      .reduce(
+                                        (sum, obj) =>
+                                          sum + obj?.data?.hotelTotalPrice,
+                                        0
+                                      ) +
+                                    tripData.cabs
+                                      .filter((flight) =>
+                                        requestData?.cabs?.includes(flight.id)
+                                      )
+                                      .reduce(
+                                        (sum, obj) =>
+                                          sum + obj?.data?.cabTotalPrice,
+                                        0
+                                      ) +
+                                    tripData.bus
+                                      .filter((flight) =>
+                                        requestData?.bus?.includes(flight.id)
+                                      )
+                                      .reduce(
+                                        (sum, obj) =>
+                                          sum + obj?.data?.busTotalPrice,
+                                        0
+                                      )
+                                )}
                               </Text>
                             </Text>
                           </View>
@@ -3085,8 +3127,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                           {tripData?.hotels?.filter(hotel =>
                             requestData?.hotels.includes(hotel.id),
                           )?.length > 0 ? (
-                            <View style={styles.btn}>
-                              <Text style={styles.btnTitle}>
+                            <View style={[styles.btn,{backgroundColor:colors.white,borderWidth:1}]}>
+                              <Text style={[styles.btnTitle,{color:colors.black}]}>
                                 Hotels -{' '}
                                 {
                                   tripData?.hotels?.filter(hotel =>
@@ -3099,8 +3141,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                           {tripData?.flights?.filter(hotel =>
                             requestData?.flights.includes(hotel.id),
                           )?.length > 0 ? (
-                            <View style={styles.btn}>
-                              <Text style={styles.btnTitle}>
+                            <View style={[styles.btn,{backgroundColor:colors.white,borderWidth:1}]}>
+                              <Text style={[styles.btnTitle,{color:colors.black}]}>
                                 Flights -{' '}
                                 {
                                   tripData?.flights?.filter(hotel =>
@@ -3114,8 +3156,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                           {tripData?.cabs?.filter(cab =>
                             requestData?.cabs.includes(cab.id),
                           )?.length > 0 ? (
-                            <View style={styles.btn}>
-                              <Text style={styles.btnTitle}>
+                            <View style={[styles.btn,{backgroundColor:colors.white,borderWidth:1}]}>
+                              <Text style={[styles.btnTitle,{color:colors.black}]}>
                                 Cabs -{' '}
                                 {
                                   tripData?.cabs?.filter(cab =>
@@ -3128,8 +3170,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                           {tripData?.bus?.filter(bus =>
                             requestData?.bus.includes(bus.id),
                           )?.length > 0 ? (
-                            <View style={styles.btn}>
-                              <Text style={styles.btnTitle}>
+                            <View style={[styles.btn,{backgroundColor:colors.white,borderWidth:1}]}>
+                              <Text style={[styles.btnTitle,{color:colors.black}]} >
                                 Bus -{' '}
                                 {
                                   tripData?.bus?.filter(bus =>
@@ -3193,9 +3235,46 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                               style={[styles.title, {color: colors.secondary}]}>
                               {' '}
                               &#8377;{' '}
-                              {`${Math.ceil(notReqfinalCost).toLocaleString(
+                              {/* {`${Math.ceil(notReqfinalCost).toLocaleString(
                                 'en-IN',
-                              )} `}
+                              )} `} */}
+                               {Math.ceil(
+                                tripData?.flights
+                                  ?.filter(
+                                    (flight) => !flightsIds?.includes(flight.id)
+                                  )
+                                  .reduce(
+                                    (sum, obj) => sum + obj?.data?.finalPrice,
+                                    0
+                                  ) +
+                                  tripData?.hotels
+                                    ?.filter(
+                                      (flight) => !hotelIds.includes(flight.id)
+                                    )
+                                    .reduce(
+                                      (sum, obj) =>
+                                        sum + obj?.data?.hotelTotalPrice,
+                                      0
+                                    ) +
+                                  tripData?.cabs
+                                    ?.filter(
+                                      (flight) => !cabsIds?.includes(flight.id)
+                                    )
+                                    .reduce(
+                                      (sum, obj) =>
+                                        sum + obj?.data?.cabTotalPrice,
+                                      0
+                                    ) +
+                                  tripData?.bus
+                                    ?.filter(
+                                      (flight) => !busIds?.includes(flight.id)
+                                    )
+                                    .reduce(
+                                      (sum, obj) =>
+                                        sum + obj?.data?.busTotalPrice,
+                                      0
+                                    )
+                              )}
                             </Text>
                           </Text>
                         </View>
@@ -4516,6 +4595,13 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                 )}
               </>
             ) : null}
+             {!isAnySelected && (
+                 <View style={{marginTop:responsiveHeight(1),alignItems:'center',justifyContent:'center'}}>
+                   <Text style={[styles.subTitle, {color: colors.red}]}>
+                    Select Any Booking to submit
+                  </Text>
+                 </View>
+                )}
           </View>
         </PopUp>
         {/* Rechecking Hotels */}

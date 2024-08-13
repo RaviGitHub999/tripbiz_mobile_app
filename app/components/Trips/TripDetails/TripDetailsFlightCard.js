@@ -527,9 +527,9 @@ const getFlightStatusStyle = (status) => {
               ]}>
               <View style={styles.hotelTotalPriceContainer}>
                 <Text
-                  style={styles.hotelTotalPrice}>{`Total Price : ₹ ${Math.ceil(
-                  flightBooking?.finalPrice,
-                )?.toLocaleString('en-IN')}`}</Text>
+                  style={styles.hotelTotalPrice}>{`Total Price : ₹ ${Math.round(flightBooking?.finalPrice)?.toLocaleString(
+                    "en-IN"
+                  )}`}</Text>
                 <TouchableOpacity
                   onPress={() => {
                     setOpenFlightPrice(prev => !prev);

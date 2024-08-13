@@ -302,7 +302,7 @@ const BusRenderData = ({
                     <Text
                       style={
                         styles.hotelTotalPrice
-                      }>{`Total Price : ₹ ${Math.ceil(
+                      }>{`Total Price : ₹ ${Math.round(
                       bookingBus?.busTotalPrice,
                     ).toLocaleString('en-IN')}`}</Text>
                     <TouchableOpacity
