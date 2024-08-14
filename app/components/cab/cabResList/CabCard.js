@@ -319,7 +319,7 @@ const CabCard = ({
           styles.mainContainer,
           {
             backgroundColor: cabData?.status
-             &&getFlightStatusStyle(cabData?.status),
+            ?getFlightStatusStyle(cabData?.status):colors.white,
               marginHorizontal:responsiveWidth(3)
           },
         ]}>

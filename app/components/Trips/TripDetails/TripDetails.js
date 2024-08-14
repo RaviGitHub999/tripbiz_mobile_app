@@ -1142,7 +1142,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
 
   const downloadDoc = async hotelStatus => {
     try {
-      await Linking.openURL(hotelStatus[0].downloadURL);
+      await Linking.openURL(hotelStatus);
     } catch (error) {
       Alert.alert('Error', 'An error occurred while trying to open the URL');
       console.error('An error occurred', error);
@@ -2786,87 +2786,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
               <>
                 <View style={styles.approvalMainContainer}>
                   <View style={styles.approvalSubContainer}>
-                    {tripData?.requestData?.length > 0 ? (
-                      <>
-                        {tripData?.requestData?.map((request, index) => {
-                          return (
-                            <>
-                              <TouchableOpacity
-                                style={
-                                  requestId === request.id
-                                    ? styles.activeApprovalRequestDataContainer
-                                    : styles.approvalRequestDataContainer
-                                }
-                                onPress={() => {
-                                  setRequestData(request.data);
-                                  setRequestId(request.id);
-                                  setBookingNumber(index);
-                                }}>
-                                {request.data.flights?.length > 0 ? (
-                                  <Text
-                                    style={
-                                      requestId === request.id
-                                        ? styles.activeApprovalRequestDataTitle
-                                        : styles.approvalRequestDataTitle
-                                    }>
-                                    {request.data.flights.length}&nbsp;
-                                    {request.data.flights.length > 1
-                                      ? 'Flights'
-                                      : 'Flight'}
-                                  </Text>
-                                ) : null}
-                                {request.data.hotels?.length > 0 ? (
-                                  <Text
-                                    style={
-                                      requestId === request.id
-                                        ? styles.activeApprovalRequestDataTitle
-                                        : styles.approvalRequestDataTitle
-                                    }>
-                                    {request.data.hotels.length}&nbsp;
-                                    {request.data.hotels.length > 1
-                                      ? 'Hotels'
-                                      : 'Hotel'}
-                                  </Text>
-                                ) : null}
-                                {request.data.cabs?.length > 0 ? (
-                                  <Text
-                                    style={
-                                      requestId === request.id
-                                        ? styles.activeApprovalRequestDataTitle
-                                        : styles.approvalRequestDataTitle
-                                    }>
-                                    {request.data.cabs.length}&nbsp;
-                                    {request.data.cabs.length > 1
-                                      ? 'Cabs'
-                                      : 'Cab'}
-                                  </Text>
-                                ) : null}
-
-                                {request.data.bus?.length > 0 ? (
-                                  <Text
-                                    style={
-                                      requestId === request.id
-                                        ? styles.activeApprovalRequestDataTitle
-                                        : styles.approvalRequestDataTitle
-                                    }>
-                                    {request.data.bus.length}&nbsp;Bus
-                                  </Text>
-                                ) : null}
-
-                                <Text
-                                  style={
-                                    requestId === request.id
-                                      ? styles.activeReqTitle
-                                      : styles.reqTitle
-                                  }>
-                                  Requested
-                                </Text>
-                              </TouchableOpacity>
-                            </>
-                          );
-                        })}
-                      </>
-                    ) : null}
+                    
 
                     {
                       <>
@@ -2998,12 +2918,93 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                   ? styles.activeReqTitle
                                   : styles.reqTitle
                               }>
-                              Not Requested
+                              Not Requested 
                             </Text>
                           </TouchableOpacity>
                         ) : null}
                       </>
                     }
+                    {tripData?.requestData?.length > 0 ? (
+                      <>
+                        {tripData?.requestData?.map((request, index) => {
+                          return (
+                            <>
+                              <TouchableOpacity
+                                style={
+                                  requestId === request.id
+                                    ? styles.activeApprovalRequestDataContainer
+                                    : styles.approvalRequestDataContainer
+                                }
+                                onPress={() => {
+                                  setRequestData(request.data);
+                                  setRequestId(request.id);
+                                  setBookingNumber(index);
+                                }}>
+                                {request.data.flights?.length > 0 ? (
+                                  <Text
+                                    style={
+                                      requestId === request.id
+                                        ? styles.activeApprovalRequestDataTitle
+                                        : styles.approvalRequestDataTitle
+                                    }>
+                                    {request.data.flights.length}&nbsp;
+                                    {request.data.flights.length > 1
+                                      ? 'Flights'
+                                      : 'Flight'}
+                                  </Text>
+                                ) : null}
+                                {request.data.hotels?.length > 0 ? (
+                                  <Text
+                                    style={
+                                      requestId === request.id
+                                        ? styles.activeApprovalRequestDataTitle
+                                        : styles.approvalRequestDataTitle
+                                    }>
+                                    {request.data.hotels.length}&nbsp;
+                                    {request.data.hotels.length > 1
+                                      ? 'Hotels'
+                                      : 'Hotel'}
+                                  </Text>
+                                ) : null}
+                                {request.data.cabs?.length > 0 ? (
+                                  <Text
+                                    style={
+                                      requestId === request.id
+                                        ? styles.activeApprovalRequestDataTitle
+                                        : styles.approvalRequestDataTitle
+                                    }>
+                                    {request.data.cabs.length}&nbsp;
+                                    {request.data.cabs.length > 1
+                                      ? 'Cabs'
+                                      : 'Cab'}
+                                  </Text>
+                                ) : null}
+
+                                {request.data.bus?.length > 0 ? (
+                                  <Text
+                                    style={
+                                      requestId === request.id
+                                        ? styles.activeApprovalRequestDataTitle
+                                        : styles.approvalRequestDataTitle
+                                    }>
+                                    {request.data.bus.length}&nbsp;Bus
+                                  </Text>
+                                ) : null}
+
+                                <Text
+                                  style={
+                                    requestId === request.id
+                                      ? styles.activeReqTitle
+                                      : styles.reqTitle
+                                  }>
+                                  Requested
+                                </Text>
+                              </TouchableOpacity>
+                            </>
+                          );
+                        })}
+                      </>
+                    ) : null}
                   </View>
 
                   <View
@@ -3289,8 +3290,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                           {tripData?.hotels?.filter(
                             hotel => !hotelIds.includes(hotel.id),
                           )?.length > 0 ? (
-                            <View style={styles.btn}>
-                              <Text style={styles.btnTitle}>
+                            <View style={[styles.btn,{backgroundColor:colors.white,borderWidth:1}]}>
+                              <Text style={[styles.btnTitle,{color:colors.black}]}>
                                 Hotels -{' '}
                                 {
                                   tripData?.hotels?.filter(
@@ -3303,8 +3304,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                           {tripData?.flights?.filter(
                             hotel => !flightsIds.includes(hotel.id),
                           )?.length > 0 ? (
-                            <View style={styles.btn}>
-                              <Text style={styles.btnTitle}>
+                            <View style={[styles.btn,{backgroundColor:colors.white,borderWidth:1}]}>
+                              <Text style={[styles.btnTitle,{color:colors.black}]}>
                                 Flights -{' '}
                                 {
                                   tripData?.flights?.filter(
@@ -3318,8 +3319,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                           {tripData?.cabs?.filter(
                             cab => !cabsIds.includes(cab.id),
                           )?.length > 0 ? (
-                            <View style={styles.btn}>
-                              <Text style={styles.btnTitle}>
+                            <View style={[styles.btn,{backgroundColor:colors.white,borderWidth:1}]}>
+                              <Text style={[styles.btnTitle,{color:colors.black}]}>
                                 Cabs -{' '}
                                 {
                                   tripData?.cabs?.filter(
@@ -3332,8 +3333,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                           {tripData?.bus?.filter(
                             bus => !busIds.includes(bus.id),
                           )?.length > 0 ? (
-                            <View style={styles.btn}>
-                              <Text style={styles.btnTitle}>
+                            <View style={[styles.btn,{backgroundColor:colors.white,borderWidth:1}]}>
+                              <Text style={[styles.btnTitle,{color:colors.black}]}>
                                 Bus -{' '}
                                 {
                                   tripData?.bus?.filter(

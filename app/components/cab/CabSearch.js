@@ -621,7 +621,7 @@ console.log(cabCityItem,"vbnv")
       if (cabCityItem==="") newErrors.destination = 'Destination is required';
       if (!cabTypeError.includes(cabType)) newErrors.cabType = 'CabType is required';
       if (cabStartFormated==="") newErrors.startDate = 'Start date is required';
-      if (cabEndFormated==="") newErrors.endDate = 'End date is required';
+      if (cabEndFormated===""&&cabTypes.includes(cabType)) newErrors.endDate = 'End date is required';
       setErrors(newErrors);
       return Object.keys(newErrors).length === 0;
     };

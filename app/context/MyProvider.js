@@ -2552,6 +2552,8 @@ export default class MyProvider extends Component {
         //   };
         // },
         getTotalFares: bookingFlight => {
+          // console.log(bookingFlight,"bookingFlight==============>")
+
           var totalFareSum = 0;
           var totalSeatCharges = 0;
           var totalBaggagePrice = 0;
@@ -2602,7 +2604,7 @@ export default class MyProvider extends Component {
               segmentMealPrice +
               segmentSeatPrice;
             var flightServiceCharge = Math.max(
-              (segmentTotalSum * this.state.domesticFlight) / 100,
+              (segmentTotalSum *(this.state.internationalFlights?this.state.internationalFlight: this.state.domesticFlight)) / 100,
               this.state.minimumServiceCharge,
             );
             var gstOnServiceCharge =
@@ -2629,7 +2631,7 @@ export default class MyProvider extends Component {
             totalMealPrice +
             totalSeatPrice;
           var overallServiceCharge = Math.max(
-            (overallTotalSum * this.state.domesticFlight) / 100,
+            (overallTotalSum *( this.state.internationalFlights?this.state.internationalFlight:this.state.domesticFlight)) / 100,
             150,
           );
           var overallGST = overallServiceCharge * (this.state.GSTpercent / 100);

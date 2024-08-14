@@ -122,7 +122,7 @@ const BusRenderData = ({
         style={[
           styles.busCard,
           {
-            backgroundColor: getFlightStatusStyle(busData?.status),
+            backgroundColor: busData?.status?getFlightStatusStyle(busData?.status):colors.white,
           },
         ]}>
         {tripsPage ? (

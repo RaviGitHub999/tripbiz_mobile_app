@@ -501,13 +501,14 @@ borderRadius:responsiveHeight(1)
         color: colors.white,
     },
     approvalRequestDataContainer: {
-        borderBottomWidth: 1,
+        borderBottomWidth: responsiveHeight(.2),
         padding: responsiveHeight(1)
     },
     activeApprovalRequestDataContainer: {
-        borderBottomWidth: 1,
+        borderBottomWidth: responsiveHeight(.2),
         padding: responsiveHeight(1),
-        backgroundColor: "#a6acaf"
+        backgroundColor: "#a6acaf",
+        // borderBlockColor:colors.facebook
     },
     approvalRequestDataTitle: {
         fontSize: responsiveHeight(1.5),
