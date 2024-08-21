@@ -38,7 +38,7 @@ const TravDetails = ({id,adults,child,infant}) => {
   })
    }
 {
- child?child.map((e, i) =>{
+ child&&child?child.map((e, i) =>{
   return(
     <View style={styles.mainContainer}>
       <Text style={[styles.title,{marginBottom:responsiveHeight(1)}]}>{`Children`}-{i+1}</Text>
@@ -52,7 +52,7 @@ const TravDetails = ({id,adults,child,infant}) => {
   
   
   }):
- tripData?.data?.travellerDetails[id]?.children?.map((e, i) =>{
+ tripData?.data?.travellerDetails?.[id]?.children?.map((e, i) =>{
   return(
     <View style={styles.mainContainer}>
       <Text style={[styles.title,{marginBottom:responsiveHeight(1)}]}>{`Children`}-{i+1}</Text>

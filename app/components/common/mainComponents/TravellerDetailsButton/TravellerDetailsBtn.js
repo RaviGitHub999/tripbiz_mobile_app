@@ -230,7 +230,7 @@ const TravellerDetailsBtn = ({
                           onChangeText={field.onChange}
                           editable={!isFormDisabled}
                         />
-                        {errors.adults[i].firstName && (
+                        {errors.adults?.[i]?.firstName && (
                           <Text style={styles.errorText}>
                             {errors.adults[i].firstName.message}
                           </Text>
@@ -256,7 +256,7 @@ const TravellerDetailsBtn = ({
                           onChangeText={field.onChange}
                           editable={!isFormDisabled}
                         />
-                        {errors.adults[i].lastName && (
+                        {errors.adults?.[i]?.lastName && (
                           <Text style={styles.errorText}>
                             {errors.adults[i].lastName.message}
                           </Text>
@@ -284,7 +284,7 @@ const TravellerDetailsBtn = ({
                             onChangeText={field.onChange}
                             editable={!isFormDisabled}
                           />
-                          {errors.adults[i].birthDate && (
+                          {errors.adults?.[i]?.birthDate && (
                             <Text style={styles.errorText}>
                               {errors.adults[i].birthDate.message}
                             </Text>
@@ -315,7 +315,7 @@ const TravellerDetailsBtn = ({
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
                             />
-                            {errors.adults[i].email && (
+                            {errors.adults?.[i]?.email && (
                               <Text style={styles.errorText}>
                                 {errors.adults[i].email.message}
                               </Text>
@@ -345,7 +345,7 @@ const TravellerDetailsBtn = ({
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
                             />
-                            {errors.adults[i].mobileNumber && (
+                            {errors.adults?.[i]?.mobileNumber && (
                               <Text style={styles.errorText}>
                                 {errors.adults[i].mobileNumber.message}
                               </Text>
@@ -376,7 +376,7 @@ const TravellerDetailsBtn = ({
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
                             />
-                            {errors.adults[i].passportNumber && (
+                            {errors.adults?.[i]?.passportNumber && (
                               <Text style={styles.errorText}>
                                 {errors.adults[i].passportNumber.message}
                               </Text>
@@ -406,7 +406,7 @@ const TravellerDetailsBtn = ({
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
                             />
-                            {errors.adults[i].passportIssueCountry && (
+                            {errors.adults?.[i]?.passportIssueCountry && (
                               <Text style={styles.errorText}>
                                 {errors.adults[i].passportIssueCountry.message}
                               </Text>
@@ -488,7 +488,7 @@ const TravellerDetailsBtn = ({
                                   minimumDate={new Date(1980, 0, 1)}
                                 />
                               )}
-                              {errors.adults[i].passportIssueDate && (
+                              {errors.adults?.[i]?.passportIssueDate && (
                                 <Text style={styles.errorText}>
                                   {errors.adults[i].passportIssueDate.message}
                                 </Text>
@@ -567,7 +567,7 @@ const TravellerDetailsBtn = ({
                                   minimumDate={new Date(1980, 0, 1)}
                                 />
                               )}
-                              {errors.adults[i].passportExpiryDate && (
+                              {errors.adults?.[i]?.passportExpiryDate && (
                                 <Text style={styles.errorText}>
                                   {errors.adults[i].passportExpiryDate.message}
                                 </Text>
@@ -640,7 +640,7 @@ const TravellerDetailsBtn = ({
                                   minimumDate={new Date(1980, 0, 1)}
                                 />
                               )}
-                              {errors.adults[i].birthDate && (
+                              {errors.adults?.[i]?.birthDate && (
                                 <Text style={styles.errorText}>
                                   {errors.adults[i].birthDate.message}
                                 </Text>

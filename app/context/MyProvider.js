@@ -313,6 +313,7 @@ export default class MyProvider extends Component {
       busResList: [],
       busService: null,
       GSTpercent: null,
+      selectedSeats:[],
       actions: {
         handleBookinghotelquery: query => {
           this.setState({bookinghotelquery: query});
@@ -2558,8 +2559,11 @@ export default class MyProvider extends Component {
           var totalSeatCharges = 0;
           var totalBaggagePrice = 0;
           var totalMealPrice = 0;
-
+          var isEitherOrBothNotIn=false
           bookingFlight.forEach((seg, s) => {
+            var isEitherOrBothNotIn = 
+            seg?.flightNew?.segments[0].originCountryCode !== "IN" ||
+            seg?.flightNew?.segments[0].destCountryCode !== "IN";
             var segmentTotalFare = seg.totalFare ? Number(seg.totalFare) : 0;
             var segmentSeatCharges = seg.seatCharges
               ? Number(seg.seatCharges)
@@ -2604,7 +2608,7 @@ export default class MyProvider extends Component {
               segmentMealPrice +
               segmentSeatPrice;
             var flightServiceCharge = Math.max(
-              (segmentTotalSum *(this.state.internationalFlights?this.state.internationalFlight: this.state.domesticFlight)) / 100,
+              (segmentTotalSum *(isEitherOrBothNotIn?this.state.internationalFlight: this.state.domesticFlight)) / 100,
               this.state.minimumServiceCharge,
             );
             var gstOnServiceCharge =
@@ -2631,7 +2635,7 @@ export default class MyProvider extends Component {
             totalMealPrice +
             totalSeatPrice;
           var overallServiceCharge = Math.max(
-            (overallTotalSum *( this.state.internationalFlights?this.state.internationalFlight:this.state.domesticFlight)) / 100,
+            (overallTotalSum *( isEitherOrBothNotIn?this.state.internationalFlight:this.state.domesticFlight)) / 100,
             150,
           );
           var overallGST = overallServiceCharge * (this.state.GSTpercent / 100);
@@ -4975,7 +4979,7 @@ export default class MyProvider extends Component {
         },
 
         approveTripRequest: async (approvalRequest, managerId) => {
-          try {
+      
             const userDocRef = firestore()
               .collection('Accounts')
               .doc(approvalRequest.userId);
@@ -5076,13 +5080,13 @@ export default class MyProvider extends Component {
               }
             }
             if (approvalRequest.otherBookings) {
-              var othersData = tripData.otherbookings?.filter(other =>
-                approvalRequest.otherbookings.includes(other.id),
+              var othersData = tripData.otherBookings?.filter(other =>
+                approvalRequest.otherBookings.includes(other.id),
               );
 
               for (const other of othersData) {
                 await tripRef.update({
-                  otherbookings: firestore.FieldValue.arrayRemove(other),
+                  otherBookings: firestore.FieldValue.arrayRemove(other),
                 });
                 var bData = {
                   ...other,
@@ -5090,7 +5094,7 @@ export default class MyProvider extends Component {
                   managerApprovedTime: new Date(),
                 };
                 await tripRef.update({
-                  otherbookings: firestore.FieldValue.arrayUnion(bData),
+                  otherBookings: firestore.FieldValue.arrayUnion(bData),
                 });
               }
             }
@@ -5122,9 +5126,7 @@ export default class MyProvider extends Component {
               updatedAt: new Date(),
               approvedTime: new Date(),
             });
-          } catch (error) {
-            console.error('Error approving trip request:', error);
-          }
+          
         },
         getFlightUpdatedDetails: async (searchReqs, flight) => {
           var flightRes = await fetch(
@@ -6031,6 +6033,91 @@ export default class MyProvider extends Component {
             console.log(error);
           }
         },
+        toggleSeatSelection : (seat) => {
+          // console.log(seat);
+          const isSelected = this.state.selectedSeats.some(
+            (s) =>
+              s.RowNo === seat.RowNo &&
+              s.ColumnNo === seat.ColumnNo &&
+              s.IsUpper === seat.IsUpper
+          );
+      
+          if (seat.SeatStatus) {
+            if (isSelected) {
+              // Remove seat from selected seats
+              this.setState((prevState) => ({
+                selectedSeats: prevState.selectedSeats.filter(
+                  (s) =>
+                    !(
+                      s.RowNo === seat.RowNo &&
+                      s.ColumnNo === seat.ColumnNo &&
+                      s.IsUpper === seat.IsUpper
+                    )
+                )
+              }));
+            } else {
+              // Add seat to selected seats
+              this.setState((prevState) => {
+                const updatedSeats = [...prevState.selectedSeats, seat];
+                if (updatedSeats.length > this.state.NoofBusPassengers) {
+                  // Remove the oldest seat if limit is exceeded
+                  updatedSeats.shift();
+                }
+                return { selectedSeats: updatedSeats };
+              });
+            }
+          }
+        },
+        updateAdminTripAccepted : async (trip, req) => {
+          try {
+            const accountCollectionRef = firestore().collection('Accounts');
+            const querySnapshot = await accountCollectionRef.where('role', '==', 'admin').get();
+      
+            if (querySnapshot.empty) {
+              console.log('No admin user found.');
+              return;
+            }
+      
+            // Assume there is only one admin user
+            const adminDoc = querySnapshot.docs[0];
+            const adminId = adminDoc.id;
+            const tripCollectionRef = accountCollectionRef.doc(adminId).collection('trips');
+            var tripQuery = tripCollectionRef.where("tripId", "==", req.tripId);
+            var querysnapshot = await tripQuery.get();
+            if (querysnapshot.empty) {
+              console.log("No matching documents.");
+              return;
+            }
+            
+        var tripDocRef = querysnapshot.docs[0].ref;
+        var tripData = querysnapshot.docs[0].data();
+          
+        const updateItems = (itemType, approvalItems) => {
+          if (approvalItems && approvalItems.length > 0) {
+            tripData[itemType] = tripData[itemType].map((item) => {
+              if (approvalItems.includes(item.id)) {
+                return {
+                  ...item,
+                  date: item.date || new Date(),
+                  requestStatus: "Approved",
+                };
+              }
+              return item;
+            });
+          }
+        };
+            
+        updateItems("flights", trip.approvalRequest.flights);
+        updateItems("hotels", trip.approvalRequest.hotels);
+        updateItems("cabs", trip.approvalRequest.cabs);
+        updateItems("bus", trip.approvalRequest.bus);
+        updateItems("otherBookings", trip.approvalRequest.otherBookings);    
+        await tripDocRef.update(tripData);
+        console.log("Document successfully updated");    
+          } catch (error) {
+            console.log('Error fetching admin trips:', error);
+          }
+        }
       },
     };
   }

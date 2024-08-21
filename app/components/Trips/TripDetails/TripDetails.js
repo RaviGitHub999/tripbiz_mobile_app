@@ -2245,6 +2245,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                   <Text style={styles.flightCardTitle}>Other Bookings</Text>
                 </View>
                 {tripData?.otherBookings?.map(other => {
+                   price = price + other.data.overallBookingPrice;
                    const otherM = tripData?.data?.otherBookings?.filter(
                     (otherMain) => {
                       return otherMain.id === other.id;
@@ -2357,7 +2358,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                 style={
                                   styles.hotelTotalPrice
                                 }>{`Total Price : ₹ ${Math.ceil(
-                                other?.data?.bookingCost,
+                                  other?.data?.overallBookingPrice
                               ).toLocaleString('en-IN')}`}</Text>
                               <TouchableOpacity
                                 onPress={() => {
@@ -2788,7 +2789,89 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                   <View style={styles.approvalSubContainer}>
                     
 
-                    {
+                   
+                    {tripData?.requestData?.length > 0 ? (
+                      <>
+                        {tripData?.requestData?.map((request, index) => {
+                          return (
+                            <>
+                              <TouchableOpacity
+                                style={
+                                  requestId === request.id
+                                    ? styles.activeApprovalRequestDataContainer
+                                    : styles.approvalRequestDataContainer
+                                }
+                                onPress={() => {
+                                  setRequestData(request.data);
+                                  setRequestId(request.id);
+                                  setBookingNumber(index);
+                                }}>
+                                {request.data.flights?.length > 0 ? (
+                                  <Text
+                                    style={
+                                      requestId === request.id
+                                        ? styles.activeApprovalRequestDataTitle
+                                        : styles.approvalRequestDataTitle
+                                    }>
+                                    {request.data.flights.length}&nbsp;
+                                    {request.data.flights.length > 1
+                                      ? 'Flights'
+                                      : 'Flight'}
+                                  </Text>
+                                ) : null}
+                                {request.data.hotels?.length > 0 ? (
+                                  <Text
+                                    style={
+                                      requestId === request.id
+                                        ? styles.activeApprovalRequestDataTitle
+                                        : styles.approvalRequestDataTitle
+                                    }>
+                                    {request.data.hotels.length}&nbsp;
+                                    {request.data.hotels.length > 1
+                                      ? 'Hotels'
+                                      : 'Hotel'}
+                                  </Text>
+                                ) : null}
+                                {request.data.cabs?.length > 0 ? (
+                                  <Text
+                                    style={
+                                      requestId === request.id
+                                        ? styles.activeApprovalRequestDataTitle
+                                        : styles.approvalRequestDataTitle
+                                    }>
+                                    {request.data.cabs.length}&nbsp;
+                                    {request.data.cabs.length > 1
+                                      ? 'Cabs'
+                                      : 'Cab'}
+                                  </Text>
+                                ) : null}
+
+                                {request.data.bus?.length > 0 ? (
+                                  <Text
+                                    style={
+                                      requestId === request.id
+                                        ? styles.activeApprovalRequestDataTitle
+                                        : styles.approvalRequestDataTitle
+                                    }>
+                                    {request.data.bus.length}&nbsp;Bus
+                                  </Text>
+                                ) : null}
+
+                                <Text
+                                  style={
+                                    requestId === request.id
+                                      ? styles.activeReqTitle
+                                      : styles.reqTitle
+                                  }>
+                                  Requested
+                                </Text>
+                              </TouchableOpacity>
+                            </>
+                          );
+                        })}
+                      </>
+                    ) : null}
+                     {
                       <>
                         {tripData?.hotels?.filter(
                           hotel => !hotelIds.includes(hotel.id),
@@ -2805,8 +2888,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                           <TouchableOpacity
                             style={
                               !requestData && !requestId
-                                ? styles.activeApprovalRequestDataContainer
-                                : styles.approvalRequestDataContainer
+                                ? styles.activeApprovalNotRequestDataContainer
+                                : styles.approvalNotRequestDataContainer
                             }
                             onPress={() => {
                               setRequestData(null);
@@ -2924,87 +3007,6 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                         ) : null}
                       </>
                     }
-                    {tripData?.requestData?.length > 0 ? (
-                      <>
-                        {tripData?.requestData?.map((request, index) => {
-                          return (
-                            <>
-                              <TouchableOpacity
-                                style={
-                                  requestId === request.id
-                                    ? styles.activeApprovalRequestDataContainer
-                                    : styles.approvalRequestDataContainer
-                                }
-                                onPress={() => {
-                                  setRequestData(request.data);
-                                  setRequestId(request.id);
-                                  setBookingNumber(index);
-                                }}>
-                                {request.data.flights?.length > 0 ? (
-                                  <Text
-                                    style={
-                                      requestId === request.id
-                                        ? styles.activeApprovalRequestDataTitle
-                                        : styles.approvalRequestDataTitle
-                                    }>
-                                    {request.data.flights.length}&nbsp;
-                                    {request.data.flights.length > 1
-                                      ? 'Flights'
-                                      : 'Flight'}
-                                  </Text>
-                                ) : null}
-                                {request.data.hotels?.length > 0 ? (
-                                  <Text
-                                    style={
-                                      requestId === request.id
-                                        ? styles.activeApprovalRequestDataTitle
-                                        : styles.approvalRequestDataTitle
-                                    }>
-                                    {request.data.hotels.length}&nbsp;
-                                    {request.data.hotels.length > 1
-                                      ? 'Hotels'
-                                      : 'Hotel'}
-                                  </Text>
-                                ) : null}
-                                {request.data.cabs?.length > 0 ? (
-                                  <Text
-                                    style={
-                                      requestId === request.id
-                                        ? styles.activeApprovalRequestDataTitle
-                                        : styles.approvalRequestDataTitle
-                                    }>
-                                    {request.data.cabs.length}&nbsp;
-                                    {request.data.cabs.length > 1
-                                      ? 'Cabs'
-                                      : 'Cab'}
-                                  </Text>
-                                ) : null}
-
-                                {request.data.bus?.length > 0 ? (
-                                  <Text
-                                    style={
-                                      requestId === request.id
-                                        ? styles.activeApprovalRequestDataTitle
-                                        : styles.approvalRequestDataTitle
-                                    }>
-                                    {request.data.bus.length}&nbsp;Bus
-                                  </Text>
-                                ) : null}
-
-                                <Text
-                                  style={
-                                    requestId === request.id
-                                      ? styles.activeReqTitle
-                                      : styles.reqTitle
-                                  }>
-                                  Requested
-                                </Text>
-                              </TouchableOpacity>
-                            </>
-                          );
-                        })}
-                      </>
-                    ) : null}
                   </View>
 
                   <View
@@ -3997,7 +3999,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                         width: '100%',
                                         gap: responsiveHeight(1),
                                       }}>
-                                      <Text>Comments :</Text>
+                                      <Text style={[styles.title,{fontSize:responsiveHeight(1.3)}]}>Comments/special requests/(this will be
+                                        viewed by the approver)</Text>
                                       <TextInput
                                         editable
                                         multiline
@@ -5122,7 +5125,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
             <Text style={styles.priceDetailsTitle}>GST</Text>
             <Text style={[styles.priceDetails, {color: colors.highlight,fontSize:responsiveHeight(1.8)}]}>
               + &#8377;
-                {Math.round(otherPrice?.gst)}
+                {Math.ceil(otherPrice?.gst)}
             </Text>
           </View>
           <View
@@ -5133,7 +5136,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
             <Text style={styles.priceDetails}>Total fare</Text>
             <Text style={[styles.priceDetails, {color: colors.secondary}]}>
               + &#8377;
-              {` ${Math.round(otherPrice?.total).toLocaleString(
+              {` ${Math.ceil(otherPrice?.total).toLocaleString(
                 'en-IN',
               )}`}
             </Text>

@@ -152,6 +152,11 @@ const MyTrips = ({ navigation: { navigate } }) => {
                         <Text style={styles.btnTitle}>Buses - {trip.bus.length}</Text>
                       </View>
                     ) : null}
+                    {trip?.data?.otherBookings?.length > 0 ? (
+                      <View style={styles.btn}>
+                        <Text style={styles.btnTitle}>Other - {trip?.data?.otherBookings?.length}</Text>
+                      </View>
+                    ) : null}
                   </View>
                 </TouchableOpacity>
               );

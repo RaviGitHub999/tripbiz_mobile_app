@@ -27,6 +27,7 @@ import CCard from '../../Trips/TripDetails/CCard';
 import BCard from '../../Trips/TripDetails/BCard';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import OCard from '../../Trips/TripDetails/OCard';
 const Role = () => {
   const {
     actions,
@@ -51,6 +52,7 @@ const Role = () => {
   const [open, setOpen] = useState(false);
   const [managerStatus, setManagerStatus] = useState();
   const [refreshing, setRefreshing] = useState(false);
+  const [managerComment, setManagerComment] = useState();
   const {goBack} = useNavigation();
   const uid = auth().currentUser.uid;
   const handleClickOpen = () => {
@@ -122,9 +124,10 @@ const Role = () => {
     var dateString = `${month.slice(0, 3)} ${dayOfWeek} ${dayofyear}`;
     return dateString;
   };
-  var handleApprove = async req => {
+  var handleApprove = async(trip, req)=> {
     setLoading(true);
     await actions.approveTripRequest(req, userAccountDetails?.userid);
+    await actions.updateAdminTripAccepted(trip, req);
     setOpenTrip(false);
     setLoading(false);
     setTripsData();
@@ -350,14 +353,14 @@ const Role = () => {
                             style={styles.card}
                             key={trip.approvalRequest.requestId}>
                             <View style={styles.headers}>
-                              <Text style={styles.cardTitle}>
+                              <Text  style={[styles.cardTitle,{fontSize:responsiveHeight(1.6)}]}>
                                 {trip?.userDetails?.firstName}(
                                   {trip?.userDetails?.email})
                               </Text>
-                              <Text style={styles.cardTitle}>
+                              <Text  style={[styles.cardTitle,{fontSize:responsiveHeight(1.4)}]}>
                                 {trip?.tripDetails?.data?.name}
                               </Text>
-                              <Text style={styles.cardTitle}>
+                              <Text style={[styles.cardTitle,{fontSize:responsiveHeight(1.4)}]}>
                                 Requested on:
                                 <Text style={styles.date}>{`  ${date}`}</Text>
                               </Text>
@@ -470,12 +473,15 @@ const Role = () => {
                               style={styles.DetailsBtn}
                               onPress={() => {
                                 setTrip(trip);
+                                setManagerComment(
+                                  trip.requestDetails.managerComment
+                                );
                                 setOpenTrip(true);
                               }}>
                               <Text
                                 style={[
                                   styles.priceTitle,
-                                  {color: colors.white},
+                                  {color: colors.white,fontSize:responsiveHeight(1.4)},
                                 ]}>
                                 View Details
                               </Text>
@@ -500,6 +506,7 @@ const Role = () => {
         value={openTrip}
         handlePopUpClose={() => setOpenTrip(false)}
         customStyles={{height: Dimensions.get('screen').height / 1.5}}>
+          <Text style={[styles.title,{fontSize:responsiveHeight(1.5)}]}>{`Comments: ${managerComment}`}</Text>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View>
             {trip?.tripDetails?.hotels?.map((hotel, s) => {
@@ -713,6 +720,27 @@ const Role = () => {
               );
             })}
           </>
+          <>
+            {trip?.tripDetails?.otherBookings&&
+              trip?.tripDetails?.otherBookings?.map((other, s) => {
+                return (
+                  <View style={{marginTop: responsiveHeight(1)}}>
+                    {s === 0 ? (
+                      <Text style={[styles.title, {textAlign: 'center'}]}>
+                       Other
+                      </Text>
+                    ) : null}
+                    <View style={{margin: responsiveHeight(1)}}>
+                      <OCard
+                        other={other}
+                        
+                      />
+                    </View>
+                    <TravDetails adults={other?.data?.bookingTravellers} />
+                  </View>
+                );
+              })}
+          </>
           {trip?.approvalRequest?.status === 'Pending' ? (
             <View
               style={{
@@ -733,7 +761,7 @@ const Role = () => {
               <TouchableOpacity
                 style={styles.btn}
                 disabled={loading}
-                onPress={() => handleApprove(trip?.approvalRequest)}>
+                onPress={() => handleApprove(trip,trip?.approvalRequest)}>
                 {loading ? (
                   <ActivityIndicator color={colors.facebook} />
                 ) : (

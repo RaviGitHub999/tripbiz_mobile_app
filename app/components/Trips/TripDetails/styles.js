@@ -504,10 +504,21 @@ borderRadius:responsiveHeight(1)
         borderBottomWidth: responsiveHeight(.2),
         padding: responsiveHeight(1)
     },
+    approvalNotRequestDataContainer: {
+        borderBottomWidth: responsiveHeight(.2),
+        padding: responsiveHeight(1),
+        backgroundColor: colors.highlight,
+    },
     activeApprovalRequestDataContainer: {
         borderBottomWidth: responsiveHeight(.2),
         padding: responsiveHeight(1),
         backgroundColor: "#a6acaf",
+        // borderBlockColor:colors.facebook
+    },
+    activeApprovalNotRequestDataContainer: {
+        borderBottomWidth: responsiveHeight(.2),
+        padding: responsiveHeight(1),
+        backgroundColor:colors.highlight,
         // borderBlockColor:colors.facebook
     },
     approvalRequestDataTitle: {

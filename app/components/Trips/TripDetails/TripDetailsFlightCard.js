@@ -527,7 +527,7 @@ const getFlightStatusStyle = (status) => {
               ]}>
               <View style={styles.hotelTotalPriceContainer}>
                 <Text
-                  style={styles.hotelTotalPrice}>{`Total Price : ₹ ${Math.round(flightBooking?.finalPrice)?.toLocaleString(
+                  style={styles.hotelTotalPrice}>{`Total Price : ₹ ${Math.ceil(flightBooking?.finalPrice)?.toLocaleString(
                     "en-IN"
                   )}`}</Text>
                 <TouchableOpacity
@@ -928,7 +928,7 @@ const getFlightStatusStyle = (status) => {
               <>
                 {[flightBooking].map((book, b) => {
                   return (
-                    <View style={styles.flightDirectionMainContainer}>
+                    <View style={styles.flightDirectionMainContainer} key={b}>
                       <View style={styles.flightDirectionContainer}>
                         <Text
                           style={
@@ -954,7 +954,7 @@ const getFlightStatusStyle = (status) => {
               <>
               {[flightBooking].map((book, b) => {
                 return (
-                  <View style={styles.flightDirectionMainContainer}>
+                  <View key={b} style={styles.flightDirectionMainContainer}>
                     <View style={styles.flightDirectionContainer}>
                       <Text
                         style={
@@ -1026,14 +1026,14 @@ const getFlightStatusStyle = (status) => {
               <Text style={styles.flightCharges}>Service Charges</Text>
               <Text style={[styles.flightChargesPrice,{fontSize:responsiveHeight(1.8)}]}>
                 + &#8377;
-                {Math.round(flightBooking?.finalFlightServiceCharge)}
+                {Math.ceil(flightBooking?.finalFlightServiceCharge)}
               </Text>
             </View>
             <View style={styles.serviceCharges}>
               <Text style={styles.flightCharges}>GST</Text>
               <Text style={[styles.flightChargesPrice,{fontSize:responsiveHeight(1.8)}]}>
                 + &#8377;
-                {Math.round(flightBooking?.gstInFinalserviceCharge)}
+                {Math.ceil(flightBooking?.gstInFinalserviceCharge)}
               </Text>
             </View>
           </View>
@@ -1041,7 +1041,7 @@ const getFlightStatusStyle = (status) => {
             <Text style={styles.totalFareTitle}>Total fare</Text>
             <Text style={styles.totalFare}>
               &#8377;{' '}
-              {` ${Math.round(flightBooking?.finalPrice).toLocaleString('en-IN')}`}
+              {` ${Math.ceil(flightBooking?.finalPrice).toLocaleString('en-IN')}`}
             </Text>
           </View>
         </PopUp>

@@ -5,48 +5,48 @@ import MyContext from '../../../context/Context';
 import { busSeating, selectedSeat, sitterSelected, sleeperBedSelected, sleeperBedSelected1, sleeperbed, sleeperbed1, sleeperselected } from "./assets";
 import { colors } from '../../../config/theme';
 const BusSeatLayout = ({ deck }) => {
-  const [selectedSeats, setSelectedSeats] = useState([]);
-  const { actions, NoofBusPassengers } = useContext(MyContext);
+  // const [selectedSeats, setSelectedSeats] = useState([]);
+  const { actions, NoofBusPassengers,selectedSeats } = useContext(MyContext);
 
   useEffect(() => {
     actions.setBusBookDetails(selectedSeats, "seat");
   }, [selectedSeats]);
 
-  const toggleSeatSelection = (seat) => {
-    console.log(seat)
-    const isSelected = selectedSeats.some(
-      (s) =>
-        s.RowNo === seat.RowNo &&
-        s.ColumnNo === seat.ColumnNo &&
-        s.IsUpper === seat.IsUpper
-    );
+  // const toggleSeatSelection = (seat) => {
+  //   console.log(seat)
+  //   const isSelected = selectedSeats.some(
+  //     (s) =>
+  //       s.RowNo === seat.RowNo &&
+  //       s.ColumnNo === seat.ColumnNo 
+  //       // &&s.IsUpper === seat.IsUpper
+  //   );
 
-    if (seat.SeatStatus) {
-      if (isSelected) {
-        // Remove seat from selected seats
-        setSelectedSeats((prevSelectedSeats) =>
-          prevSelectedSeats.filter(
-            (s) =>
-              !(
-                s.RowNo === seat.RowNo &&
-                s.ColumnNo === seat.ColumnNo &&
-                s.IsUpper === seat.IsUpper
-              )
-          )
-        );
-      } else {
-        // Add seat to selected seats
-        setSelectedSeats((prevSelectedSeats) => {
-          const updatedSeats = [...prevSelectedSeats, seat];
-          if (updatedSeats.length > NoofBusPassengers) {
-            // Remove the oldest seat if limit is exceeded
-            updatedSeats.shift();
-          }
-          return updatedSeats;
-        });
-      }
-    }
-  };
+  //   if (seat.SeatStatus) {
+  //     if (isSelected) {
+  //       // Remove seat from selected seats
+  //       setSelectedSeats((prevSelectedSeats) =>
+  //         prevSelectedSeats.filter(
+  //           (s) =>
+  //             !(
+  //               s.RowNo === seat.RowNo &&
+  //               s.ColumnNo === seat.ColumnNo 
+  //               // &&s.IsUpper === seat.IsUpper
+  //             )
+  //         )
+  //       );
+  //     } else {
+  //       // Add seat to selected seats
+  //       setSelectedSeats((prevSelectedSeats) => {
+  //         const updatedSeats = [...prevSelectedSeats, seat];
+  //         if (updatedSeats.length > NoofBusPassengers) {
+  //           // Remove the oldest seat if limit is exceeded
+  //           updatedSeats.shift();
+  //         }
+  //         return updatedSeats;
+  //       });
+  //     }
+  //   }
+  // };
   const getIconDetails = (seat, isSelected) => {
     if (!seat.SeatStatus) {
       return (
@@ -137,7 +137,7 @@ const BusSeatLayout = ({ deck }) => {
               top: parseInt(item.ColumnNo, 10) * responsiveHeight(4),
             }}
             key={item.SeatName}
-            onPress={() => toggleSeatSelection(item)}
+            onPress={() => actions.toggleSeatSelection(item)}
             disabled={!item.SeatStatus}
           >
              {getIconDetails(item, isSelected)}
