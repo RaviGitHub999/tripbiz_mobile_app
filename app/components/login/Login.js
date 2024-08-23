@@ -128,7 +128,7 @@
 
 
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, Alert, ScrollView, StatusBar, TouchableOpacity, BackHandler } from 'react-native';
+import { View, Text, Alert, ScrollView, StatusBar, TouchableOpacity, BackHandler, Image } from 'react-native';
 import { styles } from './styles';
 import en from "./locales/en.json"
 import MyContext from '../../context/Context';
@@ -137,6 +137,7 @@ import CustomButton from '../common/customButton/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import PopUp from '../common/popup/PopUp';
 import { responsiveFontSize, responsiveHeight } from '../../utils/responsiveScale';
+import { logo2 } from '../home/assets';
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -243,7 +244,8 @@ const LoginScreen = () => {
       <StatusBar hidden={false} />
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scrollViewContainer}  >
         <View style={styles.container}>
-          <Text style={styles.title}>{(en.login)}</Text>
+          {/* <Text style={styles.title}>{(en.login)}</Text> */}
+          <Image source={logo2} style={styles.appLogo} />
           <View style={styles.inputContainer}>
             <View style={styles.errorMsgContainer}>
               <CustomInput iconComponentName={en.iconComponentName1} name={en.iconName1} placeHolder={en.placeHolder1} title={en.title1} iconsize={2.8} handleChange={handleEmailChange} stateName='email' value={email} />

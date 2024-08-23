@@ -4499,7 +4499,7 @@ export default class MyProvider extends Component {
             await tripCollecRef.update({
               flights: firestore.FieldValue.arrayRemove(flight),
             });
-            const newflight = {...flight, requestStatus: status};
+            const newflight = {...flight, requestStatus: status,manager_request_time: new Date(),};
             await tripCollecRef.update({
               flights: firestore.FieldValue.arrayUnion(newflight),
             });
@@ -4508,7 +4508,7 @@ export default class MyProvider extends Component {
               await tripCollecRef.update({
                 hotels: firestore.FieldValue.arrayRemove(hotel),
               });
-              const newhotel = {...hotel, requestStatus: status};
+              const newhotel = {...hotel, requestStatus: status,manager_request_time: new Date()};
               await tripCollecRef.update({
                 hotels: firestore.FieldValue.arrayUnion(newhotel),
               });
@@ -4517,7 +4517,7 @@ export default class MyProvider extends Component {
               await tripCollecRef.update({
                 cabs: firestore.FieldValue.arrayRemove(cab),
               });
-              const newCab = {...cab, requestStatus: status};
+              const newCab = {...cab, requestStatus: status,manager_request_time: new Date(),};
               await tripCollecRef.update({
                 cabs: firestore.FieldValue.arrayUnion(newCab),
               });
@@ -4526,7 +4526,7 @@ export default class MyProvider extends Component {
               await tripCollecRef.update({
                 bus: firestore.FieldValue.arrayRemove(bus),
               });
-              const newBus = {...bus, requestStatus: status};
+              const newBus = {...bus, requestStatus: status,manager_request_time: new Date(),};
               await tripCollecRef.update({
                 bus: firestore.FieldValue.arrayUnion(newBus),
               });
@@ -6142,9 +6142,6 @@ export default class MyProvider extends Component {
         console.log('userLogOut');
       }
     });
-    // await this.state.actions.setAdminData()
-    // this.state.actions.fetchHotelCityList();
-    // await this.state.actions.getLastDoc();
   };
   debounce = (cb, delay) => {
     let timer;

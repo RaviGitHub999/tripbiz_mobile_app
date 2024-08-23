@@ -553,6 +553,9 @@ const CabCard = ({
             status={cabData?.status}
           />
         ) : null}
+        {cabData?.note && (
+          <Text>Note:{cabData?.note}</Text>
+        )}
       </View>
       <PopUp
         value={submitIsOpen}

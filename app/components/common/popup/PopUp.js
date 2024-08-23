@@ -25,7 +25,7 @@ const PopUp = (props) => {
                                 <IconSwitcher componentName='MaterialCommunityIcons' iconName='close' iconsize={3} color='black' />
                             </TouchableOpacity>
                         </View>
-                        <ScrollView>
+                        <ScrollView keyboardShouldPersistTaps="always">
                             {props.children}
                         </ScrollView>
                     </View>

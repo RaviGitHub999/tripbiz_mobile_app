@@ -606,6 +606,7 @@ const getFlightStatusStyle = (status) => {
             isInternational={isInternational}
             status={flightStatus?.status}
           />
+        { flightStatus?.note!=="undefined" && <Text>Note: {flightStatus?.note}</Text>}
           {isTimeReCheck ? (
             <View
               style={{

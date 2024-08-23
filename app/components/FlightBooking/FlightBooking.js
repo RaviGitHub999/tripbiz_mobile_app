@@ -199,11 +199,8 @@ const FlightBooking = ({navigation: {navigate}}) => {
     let total = 0;
     bookingFlight.map((e, i) => {
       const flightprice = e.flight.Fare.OfferedFare;
-      const serviceFee =
-        e.flight.Fare.OfferedFare * 0.02 > minimumServiceCharge
-          ? e.flight.Fare.OfferedFare * 0.02
-          : minimumServiceCharge;
-      const Gst = serviceFee * 0.18;
+      const serviceFee =e?.finalFlightServiceCharge;
+      const Gst = e?.gstInFinalserviceCharge;
       total += serviceFee + Gst + flightprice;
     });
     return Math.round(total);
@@ -883,7 +880,8 @@ const FlightBooking = ({navigation: {navigate}}) => {
                       bookingFlight[0]?.gstInFinalserviceCharge +
                       bookingFlight[0]?.finalFlightServiceCharge
                   )} */}
-                  {returnTotal()}
+                  {/* {returnTotal()} */}
+                  {` ${Math.ceil(finalPrice)?.toLocaleString("en-IN")}`}
             </Text>
             {selectedTripId ? (
               <View style={{width: '40%'}}>
@@ -976,11 +974,8 @@ const FlightBooking = ({navigation: {navigate}}) => {
 
               //   : 
                 bookingFlight.map((book, b) => {
-                  const serviceFee =
-                  book?.flight.Fare.OfferedFare * 0.02 > minimumServiceCharge
-                    ? book?.flight.Fare.OfferedFare * 0.02
-                    : minimumServiceCharge;
-                const GST = serviceFee * 0.18;
+                  const serviceFee = book?.finalFlightServiceCharge;
+                  const GST = book?.gstInFinalserviceCharge;
                     return (
                     <View style={{gap:responsiveHeight(1)}} key={b}>
                         <View style={styles.flightDepAndArrMainContainer}>
@@ -1016,7 +1011,7 @@ const FlightBooking = ({navigation: {navigate}}) => {
                       Service Charges
                     </Text>
                     <Text style={styles.ExcessBagCharges}>
-                      {`+ ₹ ${Math.round(serviceFee)}`}
+                      {`+ ₹ ${Math.ceil(serviceFee)}`}
                     </Text>
                   </View>
                   <View style={styles.totalFareFlightEachChargeDetails}>

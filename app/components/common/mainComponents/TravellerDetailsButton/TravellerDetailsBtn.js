@@ -229,6 +229,7 @@ const TravellerDetailsBtn = ({
                           placeholder="First Name"
                           onChangeText={field.onChange}
                           editable={!isFormDisabled}
+                          autoComplete='off'
                         />
                         {errors.adults?.[i]?.firstName && (
                           <Text style={styles.errorText}>
@@ -255,6 +256,7 @@ const TravellerDetailsBtn = ({
                           placeholder="Last Name"
                           onChangeText={field.onChange}
                           editable={!isFormDisabled}
+                          autoComplete='off'
                         />
                         {errors.adults?.[i]?.lastName && (
                           <Text style={styles.errorText}>
@@ -283,6 +285,7 @@ const TravellerDetailsBtn = ({
                             placeholder="Age"
                             onChangeText={field.onChange}
                             editable={!isFormDisabled}
+                            autoComplete='off'
                           />
                           {errors.adults?.[i]?.birthDate && (
                             <Text style={styles.errorText}>
@@ -314,6 +317,7 @@ const TravellerDetailsBtn = ({
                               placeholder="Email"
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
+                              autoComplete='off'
                             />
                             {errors.adults?.[i]?.email && (
                               <Text style={styles.errorText}>
@@ -344,6 +348,7 @@ const TravellerDetailsBtn = ({
                               placeholder="Mobile Number"
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
+                              autoComplete='off'
                             />
                             {errors.adults?.[i]?.mobileNumber && (
                               <Text style={styles.errorText}>
@@ -375,6 +380,7 @@ const TravellerDetailsBtn = ({
                               placeholder="Passport Number"
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
+                              autoComplete='off'
                             />
                             {errors.adults?.[i]?.passportNumber && (
                               <Text style={styles.errorText}>
@@ -405,6 +411,7 @@ const TravellerDetailsBtn = ({
                               placeholder="Passport Issue Country"
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
+                              autoComplete='off'
                             />
                             {errors.adults?.[i]?.passportIssueCountry && (
                               <Text style={styles.errorText}>
@@ -455,6 +462,7 @@ const TravellerDetailsBtn = ({
                                   }
                                   placeholder="Passport Issue Date"
                                   editable={false}
+                                  autoComplete='off'
                                 />
                               </TouchableOpacity>
                               {showIssueDatePicker[i] && (
@@ -539,6 +547,7 @@ const TravellerDetailsBtn = ({
                                   }
                                   placeholder="Passport Expiry Date"
                                   editable={false}
+                                  autoComplete='off'
                                 />
                               </TouchableOpacity>
                               {showExpiryDatePicker[i] && (
@@ -614,6 +623,7 @@ const TravellerDetailsBtn = ({
                                   }
                                   placeholder="Date of birth"
                                   editable={false}
+                                  autoComplete='off'
                                 />
                               </TouchableOpacity>
                               {showBirthDatePicker[i] && (
@@ -708,6 +718,7 @@ const TravellerDetailsBtn = ({
                             placeholder="First Name"
                             onChangeText={field.onChange}
                             editable={!isFormDisabled}
+                            autoComplete='off'
                           />
                           {errors.children[i].firstName && (
                             <Text style={styles.errorText}>
@@ -737,6 +748,7 @@ const TravellerDetailsBtn = ({
                             placeholder="Last Name"
                             onChangeText={field.onChange}
                             editable={!isFormDisabled}
+                            autoComplete='off'
                           />
                           {errors.children[i].lastName && (
                             <Text style={styles.errorText}>
@@ -767,6 +779,7 @@ const TravellerDetailsBtn = ({
                               placeholder="Passport Number"
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
+                              autoComplete='off'
                             />
                             {errors.children[i].passportNumber && (
                               <Text style={styles.errorText}>
@@ -797,6 +810,7 @@ const TravellerDetailsBtn = ({
                               placeholder="Passport Issue Country"
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
+                              autoComplete='off'
                             />
                             {errors.children[i].passportIssueCountry && (
                               <Text style={styles.errorText}>
@@ -850,6 +864,7 @@ const TravellerDetailsBtn = ({
                                   }
                                   placeholder="Passport Issue Date"
                                   editable={false}
+                                  autoComplete='off'
                                 />
                               </TouchableOpacity>
                               {showchildIssueDatePicker[i] && (
@@ -934,6 +949,7 @@ const TravellerDetailsBtn = ({
                                   }
                                   placeholder="Passport Expiry Date"
                                   editable={false}
+                                  autoComplete='off'
                                 />
                               </TouchableOpacity>
                               {showchildExpiryDatePicker[i] && (
@@ -1018,6 +1034,7 @@ const TravellerDetailsBtn = ({
                         placeholder="First Name"
                         onChangeText={field.onChange}
                         editable={!isFormDisabled}
+                        autoComplete='off'
                       />
                     )}
                   />
@@ -1034,6 +1051,7 @@ const TravellerDetailsBtn = ({
                         placeholder="Last Name"
                         onChangeText={field.onChange}
                         editable={!isFormDisabled}
+                        autoComplete='off'
                       />
                     )}
                   />
@@ -1055,6 +1073,7 @@ const TravellerDetailsBtn = ({
                               placeholder="Passport Number"
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
+                              autoComplete='off'
                             />
                           </>
                         )}
@@ -1078,6 +1097,7 @@ const TravellerDetailsBtn = ({
                               placeholder="Passport Issue Country"
                               onChangeText={field.onChange}
                               editable={!isFormDisabled}
+                              autoComplete='off'
                             />
                           </>
                         )}
@@ -1122,6 +1142,7 @@ const TravellerDetailsBtn = ({
                                   }
                                   placeholder="Passport Issue Date"
                                   editable={false}
+                                  autoComplete='off'
                                 />
                               </TouchableOpacity>
                               {showinfantIssueDatePicker[i] && (
@@ -1195,6 +1216,7 @@ const TravellerDetailsBtn = ({
                                   }
                                   placeholder="Passport Expiry Date"
                                   editable={false}
+                                  autoComplete='off'
                                 />
                               </TouchableOpacity>
                               {showinfantExpiryDatePicker[i] && (

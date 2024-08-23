@@ -11,6 +11,7 @@ export const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        gap:responsiveFontSize(1)
       },
     title: {
         textAlign: 'center',
@@ -91,5 +92,9 @@ export const styles = StyleSheet.create({
 color:colors.red,
 fontFamily:fonts.primary,
 fontSize:responsiveHeight(1.6)
+    },
+    appLogo:{
+        height:responsiveHeight(8),
+        width:responsiveHeight(20)
     }
 })

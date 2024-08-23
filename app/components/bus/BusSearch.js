@@ -156,7 +156,7 @@ const BusSearch = () => {
 <>
 <KeyboardAvoidingView style={{flex: 1}}>
       <TouchableWithoutFeedback onPress={handleScreenPress}>
-        <ScrollView>
+        <ScrollView keyboardShouldPersistTaps="always">
           <View style={styles.mainContainer}>
             <ToggleButtonInput
               placeHolder="Origin"

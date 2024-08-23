@@ -389,6 +389,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
     await getTripData();
     setRequestData(req.reqData);
     setRequestId(req.reqId);
+    setApprovalError(false)
+    setMandatoryError("")
   };
   const handlePress = (index, list) => {
     setSelectedCard({index, list});
@@ -535,7 +537,9 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
   const handleCabs = async () => {
     navigate('Home');
     actions.setSelectedTripId(id);
+    await actions.setRes();
     actions.switchComponent('cab');
+    await actions.getLastDoc();
   };
   const handleBuses = async () => {
     navigate('Home');
@@ -2020,6 +2024,11 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                   child={adults?.child}
                                   status={hotelStatus[0]?.status}
                                 />
+                                 {hotelStatus[0]?.note && (
+                                <Text>
+                                  Note:{hotelStatus[0]?.note}
+                                </Text>
+                              )}
                                 {isTimeReCheck ? (
                                   <View
                                     style={{
@@ -2412,6 +2421,9 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                             </TouchableOpacity>
                           )}
                     </View>
+                    {otherM[0]?.note && (
+          <Text>Note:{otherM[0]?.note}</Text>
+        )}
                     </View>
                     // <></>
                   );
@@ -2510,56 +2522,67 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
           <Text style={styles.totalPrice}>{`₹ ${Math.ceil(price).toLocaleString(
             'en-IN',
           )}`}</Text>
-          {tripData?.data?.flights?.filter(
-            flight => flight.status === 'Not Submitted',
-          )?.length > 0 ||
-          tripData?.data?.hotels?.filter(
-            flight => flight.status === 'Not Submitted',
-          )?.length > 0 ||
-          tripData?.data?.cabs?.filter(
-            flight => flight.status === 'Not Submitted',
-          )?.length > 0 ||
-          tripData?.data?.bus?.filter(cab => cab.status === 'Not Submitted')
-            ?.length > 0 ? (
-            <>
-              {tripData?.data?.flights.every(flight => {
-                var hotelData = tripData?.data?.flights.filter(
-                  hotels => hotels.id === flight.id,
-                );
-                var hotelTimeStamp =
-                  hotelData[0]?.updatedAt?.seconds * 1000
-                    ? new Date(hotelData[0].updatedAt?.seconds * 1000)
-                    : new Date(hotelData[0]?.date?.seconds * 1000);
-                // var originalDate = new Date(hotelTimeStamp);
-                var threeHoursAfter = new Date(
-                  hotelTimeStamp.getTime() + 3 * 60 * 60 * 1000,
-                );
-                var currentTime = new Date();
-                var isTimeReCheck =
-                  hotelData[0]?.status === 'Submitted'
-                    ? true
-                    : currentTime < threeHoursAfter;
-                return isTimeReCheck;
-              }) &&
-              tripData?.data?.hotels.every(hotel => {
-                var hotelData = tripData?.data?.hotels.filter(
-                  hotels => hotels.id === hotel.id,
-                );
-                var hotelTimeStamp =
-                  hotelData[0]?.updatedAt?.seconds * 1000
-                    ? new Date(hotelData[0].updatedAt?.seconds * 1000)
-                    : new Date(hotelData[0]?.date?.seconds * 1000);
-                // var originalDate = new Date(hotelTimeStamp);
-                var threeHoursAfter = new Date(
-                  hotelTimeStamp.getTime() + 3 * 60 * 60 * 1000,
-                );
-                var currentTime = new Date();
-                var isTimeReCheck =
-                  hotelData[0]?.status === 'Submitted'
-                    ? true
-                    : currentTime < threeHoursAfter;
-                return isTimeReCheck;
-              }) ? (
+             {tripData?.data?.flights?.some(
+              (flight) => flight?.status === "Not Submitted"
+            ) ||
+            tripData?.data?.hotels?.some(
+              (hotel) => hotel.status === "Not Submitted"
+            ) ||
+            tripData?.data?.cabs?.some(
+              (cab) => cab.status === "Not Submitted"
+            ) ||
+            tripData?.data?.bus?.some(
+              (bus) => bus.status === "Not Submitted"
+            ) ? (
+              <>
+                {tripData?.data?.flights.every((flight) => {
+                  const matchingFlight = tripData?.data?.flights.find(
+                    (f) => f.id === flight.id
+                  );
+
+                  if (!matchingFlight) return false;
+
+                  const flightTimeStamp = matchingFlight?.updatedAt
+                    ? new Date(matchingFlight.updatedAt.seconds * 1000)
+                    : new Date(matchingFlight?.date?.seconds * 1000);
+
+                  const threeHoursAfter = new Date(
+                    flightTimeStamp.getTime() + 3 * 60 * 60 * 1000
+                  );
+
+                  const currentTime = new Date();
+
+                  const isTimeReCheck =
+                    matchingFlight?.status === "Submitted" ||
+                    matchingFlight?.status === "Booked"
+                      ? true
+                      : currentTime < threeHoursAfter;
+                  return isTimeReCheck;
+                }) &&
+                tripData?.data?.hotels.every((hotel) => {
+                  const matchingHotel = tripData?.data?.hotels.find(
+                    (h) => h.id === hotel.id
+                  );
+
+                  if (!matchingHotel) return false;
+
+                  const hotelTimeStamp = matchingHotel?.updatedAt
+                    ? new Date(matchingHotel.updatedAt.seconds * 1000)
+                    : new Date(matchingHotel?.date?.seconds * 1000);
+
+                  const threeHoursAfter = new Date(
+                    hotelTimeStamp.getTime() + 3 * 60 * 60 * 1000
+                  );
+
+                  const currentTime = new Date();
+
+                  const isTimeReCheck =
+                    matchingHotel?.status === "Submitted" ||
+                    matchingHotel?.status === "Booked"
+                      ? true
+                      : currentTime < threeHoursAfter;
+                  return isTimeReCheck;
+                }) ? (
                 <>
                   <TouchableOpacity
                     style={styles.proceedToBookingBtn}
@@ -3808,7 +3831,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                               </Text>
                                               <Text style={styles.subTitle}>
                                                 Trip will be booked only after
-                                                approval from your manager
+                                                approval.
                                               </Text>
                                             </View>
                                           </>
@@ -3983,7 +4006,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                             </Text>
                                             <Text style={styles.subTitle}>
                                               Trip will be booked only after
-                                              approval from your manager
+                                              approval.
                                             </Text>
                                           </View>
                                         </>
@@ -4144,8 +4167,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                             {fontSize: responsiveHeight(1.7)},
                           ]}>
                           <Text style={{color: colors.red}}>Note: </Text>
-                          Trip will be booked only after approval from your
-                          manager
+                          Trip will be booked only after approval. 
                         </Text>
                       )}
                     </View>
@@ -4505,7 +4527,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                       styles.btn,
                                       {paddingVertical: responsiveHeight(1)},
                                     ]}
-                                    onPress={() => navigate('Wallet')}>
+                                    onPress={() => navigate('WalletStack')}>
                                     <Text style={styles.btnTitle}>
                                       Add money
                                     </Text>

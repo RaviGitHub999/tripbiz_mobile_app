@@ -72,7 +72,7 @@ const CCard = ({item, startDate, endDate, data}) => {
       <Text style={styles.subTitle}>No Of Cabs -{data.cabCount}</Text>
       <Text style={styles.subTitle}>Pick up:{data?.selectedTime}</Text>
       <View style={styles.totalPriceContainer}>
-        <Text style={styles.totalPrice}> &#8377; {data.cabTotalPrice}</Text>
+        <Text style={styles.totalPrice}> &#8377; {Math.ceil(data.cabTotalPrice)}</Text>
       </View>
     </View>
   );

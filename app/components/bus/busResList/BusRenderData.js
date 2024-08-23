@@ -384,6 +384,9 @@ const BusRenderData = ({
             type="bus"
           />
         ) : null}
+         {busData?.note && (
+          <Text>Note:{busData?.note}</Text>
+        )}
       </View>
       <PopUp
         value={openBusDetails}

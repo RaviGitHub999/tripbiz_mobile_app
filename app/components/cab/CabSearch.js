@@ -658,7 +658,7 @@ console.log(cabCityItem,"vbnv")
     <>
       <KeyboardAvoidingView style={{ flex: 1 }} >
         <TouchableWithoutFeedback onPress={handleScreenPress}>
-          <ScrollView>
+          <ScrollView keyboardShouldPersistTaps="always">
             <View style={styles.mainContainer}>
               <ToggleButtonInput placeHolder="Destination" inputValue={cabCity} handleInputChange={(e) => handleInputChange(e)} selected={cabCityItem} />
               {errors.destination&&<Text style={styles.errorText}>{`* ${errors.destination}`}</Text>}

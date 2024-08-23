@@ -258,8 +258,8 @@ actions.handleBookinghotelquery(
   
 
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} >
+      <ScrollView showsVerticalScrollIndicator={false}  keyboardShouldPersistTaps="always" contentContainerStyle={{paddingBottom:responsiveHeight(5)}}>
         <View style={styles.mainContainer}>
           {/* selectedHotel */}
           <HotelSearchInput placeHolder={cityHotelDisplay} value={cityHotelQuery} handleChange={handleChangeCityHotelQuery} />
