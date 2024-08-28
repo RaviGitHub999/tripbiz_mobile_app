@@ -2559,11 +2559,14 @@ export default class MyProvider extends Component {
           var totalSeatCharges = 0;
           var totalBaggagePrice = 0;
           var totalMealPrice = 0;
+          var totalSeatPrice = 0;
           var isEitherOrBothNotIn=false
+        
           bookingFlight.forEach((seg, s) => {
-            var isEitherOrBothNotIn = 
+             isEitherOrBothNotIn = 
             seg?.flightNew?.segments[0].originCountryCode !== "IN" ||
             seg?.flightNew?.segments[0].destCountryCode !== "IN";
+           
             var segmentTotalFare = seg.totalFare ? Number(seg.totalFare) : 0;
             var segmentSeatCharges = seg.seatCharges
               ? Number(seg.seatCharges)
@@ -2572,8 +2575,8 @@ export default class MyProvider extends Component {
             var segmentMealPrice = 0;
             var segmentSeatPrice = 0; // New variable for seat price
 
-            totalFareSum += segmentTotalFare;
-            totalSeatCharges += segmentSeatCharges;
+            // totalFareSum += segmentTotalFare;
+            // totalSeatCharges += segmentSeatCharges;
 
             if (Array.isArray(seg.selectedBaggage)) {
               seg.selectedBaggage.forEach(baggage => {
@@ -2598,8 +2601,8 @@ export default class MyProvider extends Component {
               });
             }
 
-            totalBaggagePrice += segmentBaggagePrice;
-            totalMealPrice += segmentMealPrice;
+            // totalBaggagePrice += segmentBaggagePrice;
+            // totalMealPrice += segmentMealPrice;
 
             var segmentTotalSum =
               segmentTotalFare +
@@ -2607,39 +2610,47 @@ export default class MyProvider extends Component {
               segmentBaggagePrice +
               segmentMealPrice +
               segmentSeatPrice;
-            var flightServiceCharge = Math.max(
-              (segmentTotalSum *(isEitherOrBothNotIn?this.state.internationalFlight: this.state.domesticFlight)) / 100,
+              
+            var flightServiceCharge = segmentTotalFare === 0? 0
+            :  Math.max(
+              (segmentTotalFare *(isEitherOrBothNotIn?this.state.internationalFlight: this.state.domesticFlight)) / 100,
               this.state.minimumServiceCharge,
             );
-            var gstOnServiceCharge =
-              flightServiceCharge * (this.state.GSTpercent / 100);
+            var gstOnServiceCharge = segmentTotalFare === 0? 0
+            :flightServiceCharge * (this.state.GSTpercent / 100);
             var segmentFinalPrice =
               segmentTotalSum + flightServiceCharge + gstOnServiceCharge;
 
-            bookingFlight[s].finalPrice = Math.round(segmentFinalPrice);
-            bookingFlight[s].finalFlightServiceCharge = flightServiceCharge;
-            bookingFlight[s].gstInFinalserviceCharge = gstOnServiceCharge;
-            bookingFlight[s].totalBaggagePrice = segmentBaggagePrice;
-            bookingFlight[s].totalMealPrice = segmentMealPrice;
-            bookingFlight[s].totalSeatPrice = segmentSeatPrice;
-          });
+            bookingFlight[s].finalPrice = Math.ceil(segmentFinalPrice);
+            bookingFlight[s].finalFlightServiceCharge = Math.ceil(flightServiceCharge);
+            bookingFlight[s].gstInFinalserviceCharge = Math.ceil(gstOnServiceCharge);
+            bookingFlight[s].totalBaggagePrice = Math.ceil(segmentBaggagePrice);
+            bookingFlight[s].totalMealPrice = Math.ceil(segmentMealPrice);
+            bookingFlight[s].totalSeatPrice = Math.ceil(segmentSeatPrice);
 
-          var totalSeatPrice = bookingFlight.reduce(
-            (sum, seg) => sum + (seg.totalSeatPrice || 0),
-            0,
-          );
-          var overallTotalSum =
-            totalFareSum +
-            totalSeatCharges +
-            totalBaggagePrice +
-            totalMealPrice +
-            totalSeatPrice;
+            totalFareSum += segmentTotalFare;
+            totalSeatCharges += segmentSeatCharges;
+            totalBaggagePrice += segmentBaggagePrice;
+            totalMealPrice += segmentMealPrice;
+            totalSeatPrice += segmentSeatPrice;
+          });
+          var overallTotalSum = totalFareSum;
+          // var totalSeatPrice = bookingFlight.reduce(
+          //   (sum, seg) => sum + (seg.totalSeatPrice || 0),
+          //   0,
+          // );
+          // var overallTotalSum =
+          //   totalFareSum +
+          //   totalSeatCharges +
+          //   totalBaggagePrice +
+          //   totalMealPrice +
+          //   totalSeatPrice;
           var overallServiceCharge = Math.max(
-            (overallTotalSum *( isEitherOrBothNotIn?this.state.internationalFlight:this.state.domesticFlight)) / 100,
-            150,
+            (totalFareSum *( isEitherOrBothNotIn?this.state.internationalFlight:this.state.domesticFlight)) / 100,
+            this.state.minimumServiceCharge,
           );
           var overallGST = overallServiceCharge * (this.state.GSTpercent / 100);
-          var overallFinalPrice = Math.round(
+          var overallFinalPrice = Math.ceil(
             overallTotalSum + overallServiceCharge + overallGST,
           );
 

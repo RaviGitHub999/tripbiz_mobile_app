@@ -416,7 +416,11 @@ const Role = () => {
                                     trip?.tripDetails?.flights &&
                                       trip?.tripDetails?.flights.reduce(
                                         (sum, obj) =>
-                                          sum + obj?.data[0]?.finalPrice,
+                                          sum + (obj?.data[0]?.totalFare +
+                                            obj?.data[0]
+                                              ?.finalFlightServiceCharge +
+                                            obj?.data[0]
+                                              ?.gstInFinalserviceCharge),
                                         0
                                       ) +
                                         trip?.tripDetails?.hotels.reduce(
@@ -587,6 +591,7 @@ const Role = () => {
                       airline={airline}
                       flightArr={flightArr}
                       flightData={flight}
+                      type="role"
                     />
                     {/* <View
                       style={{

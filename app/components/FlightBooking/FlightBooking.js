@@ -1019,7 +1019,7 @@ const FlightBooking = ({navigation: {navigate}}) => {
                      GST
                     </Text>
                     <Text style={styles.ExcessBagCharges}>
-                    {Math.round(GST)}
+                    {Math.ceil(GST)}
                     </Text>
                   </View>
                 { bookingFlight.length-1!==b&& <View

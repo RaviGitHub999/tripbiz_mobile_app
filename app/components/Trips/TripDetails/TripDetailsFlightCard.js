@@ -527,9 +527,11 @@ const getFlightStatusStyle = (status) => {
               ]}>
               <View style={styles.hotelTotalPriceContainer}>
                 <Text
-                  style={styles.hotelTotalPrice}>{`Total Price : ₹ ${Math.ceil(flightBooking?.finalPrice)?.toLocaleString(
-                    "en-IN"
-                  )}`}</Text>
+                  style={styles.hotelTotalPrice}>{`Total Price : ₹ ${Math.ceil(
+                    flightBooking?.totalFare +
+                      flightBooking?.finalFlightServiceCharge +
+                      flightBooking?.gstInFinalserviceCharge
+                  )?.toLocaleString("en-IN")}`}</Text>
                 <TouchableOpacity
                   onPress={() => {
                     setOpenFlightPrice(prev => !prev);
@@ -606,7 +608,7 @@ const getFlightStatusStyle = (status) => {
             isInternational={isInternational}
             status={flightStatus?.status}
           />
-        { flightStatus?.note!=="undefined" && <Text>Note: {flightStatus?.note}</Text>}
+        { flightStatus?.note&& <Text>Note: {flightStatus?.note}</Text>}
           {isTimeReCheck ? (
             <View
               style={{
@@ -1042,7 +1044,11 @@ const getFlightStatusStyle = (status) => {
             <Text style={styles.totalFareTitle}>Total fare</Text>
             <Text style={styles.totalFare}>
               &#8377;{' '}
-              {` ${Math.ceil(flightBooking?.finalPrice).toLocaleString('en-IN')}`}
+              {` ${Math.ceil(
+            flightBooking?.totalFare +
+              flightBooking?.gstInFinalserviceCharge +
+              flightBooking?.finalFlightServiceCharge
+          )}`}
             </Text>
           </View>
         </PopUp>

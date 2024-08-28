@@ -18,7 +18,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import MyContext from '../../../context/Context';
 import {styles} from './styles';
 import IconSwitcher from '../../common/icons/IconSwitcher';
-import {colors} from '../../../config/theme';
+import {colors, fonts} from '../../../config/theme';
 import ProgressBar from '../../common/progressBar/ProgressBar';
 import {useRoute} from '@react-navigation/native';
 import {
@@ -2096,7 +2096,11 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                           var flightStatus = tripData.data.flights.filter(
                             f => f.id === flight.id,
                           );
-                          price = price + flight.data.finalPrice;
+                          // price = price + flight.data.finalPrice;
+                          price =price +
+                          flight?.data?.totalFare +
+                          flight?.data?.gstInFinalserviceCharge +
+                          flight?.data?.finalFlightServiceCharge;
                           var hotelTimeStamp = new Date(
                             flightStatus[0]?.date?.seconds * 1000,
                           );
@@ -3026,6 +3030,14 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                               }>
                               Not Requested 
                             </Text>
+                            <Text
+                            style={
+                              !requestData && !requestId
+                                ? [styles.activeReqTitle,{fontFamily:fonts.title}]
+                                : [styles.reqTitle,{fontFamily:fonts.title}]
+                            }>
+                            Click here to Select
+                          </Text>
                           </TouchableOpacity>
                         ) : null}
                       </>
@@ -3107,7 +3119,9 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                       requestData?.flights?.includes(flight.id)
                                     )
                                     .reduce(
-                                      (sum, obj) => sum + obj?.data?.finalPrice,
+                                      (sum, obj) => sum +(obj?.data?.totalFare +
+                                        obj?.data?.finalFlightServiceCharge +
+                                        obj?.data?.gstInFinalserviceCharge),
                                       0
                                     ) +
                                     tripData.hotels
@@ -3270,7 +3284,9 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                     (flight) => !flightsIds?.includes(flight.id)
                                   )
                                   .reduce(
-                                    (sum, obj) => sum + obj?.data?.finalPrice,
+                                    (sum, obj) => sum +(obj?.data?.totalFare +
+                                      obj?.data?.finalFlightServiceCharge +
+                                      obj?.data?.gstInFinalserviceCharge),
                                     0
                                   ) +
                                   tripData?.hotels
@@ -3546,11 +3562,11 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                       tripData?.bus?.filter(hotel => !busIds.includes(hotel.id))
                         ?.length > 0 ? (
                         <TouchableOpacity
-                          style={
-                            !requestData && !requestId
-                              ? styles.activeApprovalRequestDataContainer
-                              : styles.approvalRequestDataContainer
-                          }
+                        style={
+                          !requestData && !requestId
+                            ? styles.activeApprovalNotRequestDataContainer
+                            : styles.approvalNotRequestDataContainer
+                        }
                           onPress={() => {
                             setRequestData(null);
                             setRequestId(null);
@@ -3665,6 +3681,14 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                             }>
                             Not Requested
                           </Text>
+                          <Text
+                            style={
+                              !requestData && !requestId
+                                ? [styles.activeReqTitle,{fontFamily:fonts.title}]
+                                : [styles.reqTitle,{fontFamily:fonts.title}]
+                            }>
+                           Click here to select
+                          </Text>
                         </TouchableOpacity>
                       ) : null}
                     </>
@@ -3696,7 +3720,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                 marginBottom: responsiveHeight(1.5),
                               },
                             ]}>
-                            Manager Approval
+                            Approval request
                           </Text>
                           {
                             userAccountDetails?.manager ? (
@@ -3704,7 +3728,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                 <Text
                                   style={
                                     styles.subTitle
-                                  }>{`Manager Name : `}</Text>
+                                  }>{`Approver Name : `}</Text>
                                 <Text
                                   style={
                                     styles.title
@@ -3886,7 +3910,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                 marginBottom: responsiveHeight(1.5),
                               },
                             ]}>
-                            Manager Approval
+                            Approval request
                           </Text>
                           {Object.keys(userAccountDetails?.manager).length >
                           0 ? (
@@ -3894,7 +3918,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                               <Text
                                 style={
                                   styles.subTitle
-                                }>{`Manager Name : `}</Text>
+                                }>{`Approver Name : `}</Text>
                               <Text
                                 style={
                                   styles.title
@@ -4028,7 +4052,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                         editable
                                         multiline
                                         numberOfLines={1}
-                                        placeholder="Enter name of your trip"
+                                        placeholder="Comments"
                                         style={styles.multiTextContainer}
                                         value={managerComment}
                                         onChangeText={e => setManagerComment(e)}
@@ -4040,7 +4064,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                             </>
                           ) : (
                             <View>
-                              <Text>No manager assigned</Text>
+                              <Text>No Approver assigned</Text>
                             </View>
                           )}
                         </View>
@@ -4275,6 +4299,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                   )}
                                 </>
                               ) : (
+                                <>
+                                <Text style={styles.subTitle}>* This will be viewed by Tripbizz team</Text>
                                 <TextInput
                                   editable
                                   multiline
@@ -4285,11 +4311,13 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                     {
                                       borderRadius: 0,
                                       fontSize: responsiveHeight(1.6),
+                                      marginTop:responsiveHeight(1)
                                     },
                                   ]}
                                   // value={}
                                   onChangeText={e => handleCommentChange(i, e)}
                                 />
+                                </>
                               )}
                             </View>
                             <View

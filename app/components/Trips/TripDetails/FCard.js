@@ -7,7 +7,7 @@ import {
   responsiveWidth,
 } from '../../../utils/responsiveScale';
 const FCard = props => {
-  const {flightArr, airline, flightData} = props;
+  const {flightArr, airline, flightData,type} = props;
   return (
     <View style={styles.flightCard}>
       {flightArr[0].segments.map((segment, sg) => {
@@ -101,9 +101,16 @@ const FCard = props => {
         style={{
           alignSelf: 'flex-end',
         }}>
-        <Text style={styles.totalPrice}>{`${Math.ceil(
-          flightData?.data[0]?.finalPrice??flightData?.data?.finalPrice,
-        )?.toLocaleString('en-IN')}`}</Text>
+{       type!=="role"&& <Text style={styles.totalPrice}> {`${Math.ceil(
+                  flightData?.data?.totalFare +
+                    flightData?.data?.finalFlightServiceCharge +
+                    flightData?.data?.gstInFinalserviceCharge
+                )?.toLocaleString("en-IN")}`}</Text>}
+                {type==="role"&&<Text style={styles.totalPrice}> {`${Math.ceil(
+                  flightData?.data[0]?.totalFare +
+                    flightData?.data[0]?.finalFlightServiceCharge +
+                    flightData?.data[0]?.gstInFinalserviceCharge
+                )?.toLocaleString("en-IN")}`}</Text>}
       </View>
     </View>
   );

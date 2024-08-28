@@ -194,6 +194,7 @@ const TravellerDetailsBtn = ({
                     name={`adults[${i}].gender`}
                     control={control}
                     defaultValue={i === 0 ? userAccountDetails.gender : ''}
+                    rules={{required: '* Title  is required'}}
                     render={({field}) => (
                       <>
                         <Text style={styles.label}>Title</Text>
@@ -209,6 +210,11 @@ const TravellerDetailsBtn = ({
                           }
                           isEditable={isFormDisabled}
                         />
+                         {errors.adults?.[i]?.gender && (
+                          <Text style={styles.errorText}>
+                            {errors.adults[i].gender.message}
+                          </Text>
+                        )}
                       </>
                     )}
                   />
