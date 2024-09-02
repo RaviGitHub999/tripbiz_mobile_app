@@ -497,13 +497,13 @@ const BusRenderData = ({
           <Text style={styles.travelName}>
             Boarding Point :{' '}
             <Text style={{color: colors.highlight}}>
-              {bookingBus?.boardingPointDetails}
+             {`${bookingBus?.boardingPointDetails} , Time:${bookingBus?.boardingTime &&moment(bookingBus.boardingTime).format("MMMM D, h:mm A")}`}
             </Text>
           </Text>
           <Text style={styles.travelName}>
             Dropping Point :{' '}
             <Text style={{color: colors.highlight}}>
-              {bookingBus?.droppingPointDetails}
+             {`${bookingBus?.droppingPointDetails} , Time:${bookingBus?.droppingTime &&moment(bookingBus.droppingTime).format("MMMM D, h:mm A")}`}
             </Text>
           </Text>
         </View>

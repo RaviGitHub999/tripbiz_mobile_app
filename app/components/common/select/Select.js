@@ -76,7 +76,7 @@ import MyContext from '../../../context/Context';
 
 const Select = ({ bookIndex, segIndex, bookingFlight, name,traveller }) => {
     const [viewAll, setViewAll] = useState(false);
-    const [selectedItem, setSelectedItem] = useState(null);
+    const [selectedItem, setSelectedItem] = useState({});
     const [selectedItemIndex, setSelectedItemIndex] = useState(null);
 const{actions}=useContext(MyContext)
     const handledropDown = () => {
@@ -85,7 +85,11 @@ const{actions}=useContext(MyContext)
 
     const handleItemPress = (index, bag,type) => {
         const pickedItem=name === "baggage" ? bag.Weight > 0 ? `${bag.Weight}KG at Rs ${bag.Price}/-` : "No excess baggage" : bag.Quantity > 0 ? `${bag.AirlineDescription} -> Rs ${bag.Price}/-` : "No add-on meal"
-        setSelectedItem(pickedItem);
+        // setSelectedItem(pickedItem);
+        setSelectedItem(prevState => ({
+            ...prevState,
+            [`${bookIndex}-${segIndex}-${traveller}`]: pickedItem,
+        }));
         setSelectedItemIndex(index);
         setViewAll(false);
         // actions.handleChangeFlightBook(
@@ -107,7 +111,7 @@ const{actions}=useContext(MyContext)
         <View>
             <TouchableOpacity style={styles.maincontainer} onPress={handledropDown}>
                <View style={{flex:1}}>
-               <Text>{selectedItem ? selectedItem : name === "baggage" ? "No excess Baggage" : "No add-on meal"}</Text>
+               <Text>{selectedItem [`${bookIndex}-${segIndex}-${traveller}`] ? selectedItem[`${bookIndex}-${segIndex}-${traveller}`] : name === "baggage" ? "No excess Baggage" : "No add-on meal"}</Text>
                </View>
                 <IconSwitcher componentName='Ionicons' iconName={viewAll?"chevron-up":'chevron-down'} color={colors.black} iconsize={3} />
             </TouchableOpacity>

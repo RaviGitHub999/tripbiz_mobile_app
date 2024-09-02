@@ -479,8 +479,6 @@ const CabSearch = () => {
       return acc;
     }, []);
   };
-
-
   const handleScreenPress = () => {
     Keyboard.dismiss();
   };

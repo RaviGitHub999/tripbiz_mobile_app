@@ -36,8 +36,8 @@ backgroundColor:colors.primary
         gap:responsiveHeight(2)
     },
     airportOriginDataContainer:{
-        borderWidth:1,
-        height:responsiveHeight(30),
+        borderWidth:responsiveHeight(0.2),
+        maxHeight:responsiveHeight(30),
         borderRadius:responsiveHeight(1.5),
         backgroundColor:colors.white
     },

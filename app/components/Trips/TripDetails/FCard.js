@@ -22,7 +22,8 @@ const FCard = props => {
 
         return (
           <>
-            <View style={styles.flightCardHeader}>
+           <View style={{flexDirection:"row"}}>
+           <View style={styles.flightCardHeader}>
               {airline[0]?.url ? (
                 <Image
                   source={{uri: airline[0]?.url}}
@@ -44,6 +45,7 @@ const FCard = props => {
                 {segment.depTimeDate.toString().slice(4, 10)}
               </Text>
             </View>
+           </View>
             <View style={styles.flightsTimingContainer}>
               <View style={styles.originContainer}>
                 <Text style={styles.originTitle}>
@@ -181,9 +183,7 @@ const styles = StyleSheet.create({
     padding: responsiveHeight(0.5),
     borderBottomLeftRadius: responsiveHeight(1),
     borderTopLeftRadius: responsiveHeight(1),
-    position: 'absolute',
-    right: 0,
-    top: responsiveHeight(1),
+   maxHeight:responsiveHeight(3)
   },
   flightCard: {
     backgroundColor: 'white',

@@ -2560,6 +2560,8 @@ export default class MyProvider extends Component {
           var totalBaggagePrice = 0;
           var totalMealPrice = 0;
           var totalSeatPrice = 0;
+          var FserviceCharge=0;
+          var FGst=0
           var isEitherOrBothNotIn=false
         
           bookingFlight.forEach((seg, s) => {
@@ -2612,12 +2614,14 @@ export default class MyProvider extends Component {
               segmentSeatPrice;
               
             var flightServiceCharge = segmentTotalFare === 0? 0
-            :  Math.max(
+            :  Math.ceil(
               (segmentTotalFare *(isEitherOrBothNotIn?this.state.internationalFlight: this.state.domesticFlight)) / 100,
               this.state.minimumServiceCharge,
             );
+            FserviceCharge+=flightServiceCharge
             var gstOnServiceCharge = segmentTotalFare === 0? 0
             :flightServiceCharge * (this.state.GSTpercent / 100);
+            FGst+=gstOnServiceCharge
             var segmentFinalPrice =
               segmentTotalSum + flightServiceCharge + gstOnServiceCharge;
 
@@ -2645,15 +2649,14 @@ export default class MyProvider extends Component {
           //   totalBaggagePrice +
           //   totalMealPrice +
           //   totalSeatPrice;
-          var overallServiceCharge = Math.max(
-            (totalFareSum *( isEitherOrBothNotIn?this.state.internationalFlight:this.state.domesticFlight)) / 100,
-            this.state.minimumServiceCharge,
-          );
-          var overallGST = overallServiceCharge * (this.state.GSTpercent / 100);
+          // var overallServiceCharge = Math.max(
+          //   (totalFareSum *( isEitherOrBothNotIn?this.state.internationalFlight:this.state.domesticFlight)) / 100,
+          //   this.state.minimumServiceCharge,
+          // );
+          // var overallGST = overallServiceCharge * (this.state.GSTpercent / 100);
           var overallFinalPrice = Math.ceil(
-            overallTotalSum + overallServiceCharge + overallGST,
+            overallTotalSum + FserviceCharge + FGst,
           );
-
           return {
             totalFareSum,
             totalSeatCharges,
@@ -5894,7 +5897,7 @@ export default class MyProvider extends Component {
             busRes,
           });
         },
-        setBusBookDetails: (data, type) => {
+        setBusBookDetails: (data, type,ele) => {
           var bookingBus = {...this.state.bookingBus};
           if (type === 'seat') {
             const threePercent = data.reduce((total, seat) => {
@@ -5926,12 +5929,15 @@ export default class MyProvider extends Component {
             bookingBus.GST = eighteenPercentGst;
             bookingBus.serviceCharge = calculatedServiceCharge;
             bookingBus.busTotalPrice = finalPrice;
+            bookingBus.busPrice=totPrice
           }
           if (type === 'boardingPoint') {
             bookingBus.boardingPointDetails = data;
+            bookingBus.boardingTime = ele.CityPointTime;
           }
           if (type === 'droppingPoint') {
             bookingBus.droppingPointDetails = data;
+            bookingBus.droppingTime = ele.CityPointTime;
           }
           this.setState({
             bookingBus,

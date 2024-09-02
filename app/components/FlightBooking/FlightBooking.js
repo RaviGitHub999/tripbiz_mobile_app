@@ -351,7 +351,7 @@ const FlightBooking = ({navigation: {navigate}}) => {
             </View>
           ) : null}
 
-          {bookingFlight[bookIndex].seatData &&
+          {/* {bookingFlight[bookIndex].seatData &&
           bookingFlight[bookIndex].seatData[segIndex] &&
           actions.validSeatMap(bookingFlight[bookIndex].seatData[segIndex]) ? (
             <View style={styles.seatSelectionBtnContainer}>
@@ -439,7 +439,7 @@ const FlightBooking = ({navigation: {navigate}}) => {
                 <Text style={styles.seatSelectionBtnTitle}>Select seats</Text>
               </TouchableOpacity>
             </View>
-          ) : null}
+          ) : null} */}
 
           <View style={styles.baggageAndMealsContainer}>
             {/* Baggage and Meals */}
@@ -497,7 +497,7 @@ const FlightBooking = ({navigation: {navigate}}) => {
                         {[...Array(bookingFlight[bookIndex].travellers)].map(
                           (trav, index) => {
                             return (
-                              <>
+                              <React.Fragment>
                                 <Text>
                                   {index + 1 <=
                                   Number(bookingFlight[bookIndex].adults)
@@ -529,7 +529,7 @@ const FlightBooking = ({navigation: {navigate}}) => {
                                   name={'baggage'}
                                   traveller={index}
                                 />
-                              </>
+                              </React.Fragment>
                             );
                           },
                         )}
@@ -550,7 +550,7 @@ const FlightBooking = ({navigation: {navigate}}) => {
                         {[...Array(bookingFlight[bookIndex].travellers)].map(
                           (trav, index) => {
                             return (
-                              <>
+                              <React.Fragment >
                                 <Text>
                                   {index + 1 <=
                                   Number(bookingFlight[bookIndex].adults)
@@ -582,7 +582,7 @@ const FlightBooking = ({navigation: {navigate}}) => {
                                   name={'baggage'}
                                   traveller={index}
                                 />
-                              </>
+                              </React.Fragment>
                             );
                           },
                         )}
@@ -1001,7 +1001,7 @@ const FlightBooking = ({navigation: {navigate}}) => {
                               styles.flightPrice,
                               {color: colors.highlight},
                             ]}>
-                            {`₹ ${book.totalFare}`}
+                            {`₹ ${Math.ceil(book?.flight?.Fare?.OfferedFare)}`}
                           </Text>
                         </View>
                         

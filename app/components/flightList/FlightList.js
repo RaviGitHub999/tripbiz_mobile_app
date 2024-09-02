@@ -107,8 +107,7 @@ const FlightList = ({ index, props }) => {
     // setIntSelectedDepTime1((prev) => prev === updatedTimes[index].time ? null : updatedTimes[index].time)
     setIntSelectedArrTime1((prev) => prev === updatedTimes[index].time ? null : updatedTimes[index].time)
   };
-
-  const toggleintDepSelection2 = () => {
+  const toggleintDepSelection2 = (index) => {
     const updatedTimes = [...times];
     setIntSelectedArrTime2((prev) => prev === updatedTimes[index].time ? null : updatedTimes[index].time)
   }

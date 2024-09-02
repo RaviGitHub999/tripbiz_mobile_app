@@ -24,14 +24,14 @@ import moment from 'moment';
     const handleToggle = () => {
       setToggle(!toggle);
     };
-    const handleSetValue=(item)=>
+    const handleSetValue=(item,ele)=>
       {
-          setValue(item)
+          setValue(item,ele)
       }
-    const handleSelect = (item,ind) => {
+    const handleSelect = (item,ind,ele) => {
       setSelectedItemIndex(ind);
       handleToggle()
-      handleSetValue(item)
+      handleSetValue(item,ele)
     };
     
     const handleRenderData = ({item, index}) => {
@@ -43,7 +43,7 @@ import moment from 'moment';
           listKey&&{borderBottomWidth:responsiveHeight(0.1)}
         ]}
         underlayColor={colors.whiteSmoke}
-          onPress={() => handleSelect(listKey?item[listKey]:item,index)}>
+          onPress={() => handleSelect(listKey?item[listKey]:item,index,item)}>
          {listKey? 
          <>
          <Text style={[styles.selectedItemTitle, selectedItemIndex === index && styles.activeSelectedItemTitle]}>{item["CityPointLocation"]},Time:{" "} {moment(item.CityPointTime).format("hh:mm a")} . </Text>

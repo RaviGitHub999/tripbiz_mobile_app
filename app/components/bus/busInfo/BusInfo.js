@@ -54,14 +54,14 @@ const BusInfo = () => {
   const combinedString = `${myStr}_${formattedDate}`;
   var [defaultInput, setDefaultInput] = useState(combinedString);
   const {goBack,navigate} = useNavigation();
-  const handleDropping = val => {
+  const handleDropping =(val,ele) => {
     setDroppingPoint(val);
-    actions.setBusBookDetails(val,"droppingPoint")
+    actions.setBusBookDetails(val,"droppingPoint",ele)
   };
 
-  const handleBoarding = val => {
+  const handleBoarding = (val,ele) => {
     setBoardingPoint(val);
-    actions.setBusBookDetails(val,"boardingPoint")
+    actions.setBusBookDetails(val,"boardingPoint",ele)
   };
 
   const handleGoBack = () => {
@@ -233,7 +233,7 @@ const BusInfo = () => {
                 <Text style={styles.subTitles}>Select Boarding Point</Text>
                 <CustomSelection
                   placeHolder={'Select Boarding Point'}
-                  setValue={handleBoarding}
+                  setValue={(item,ele)=>handleBoarding(item,ele)}
                   value={boardingPoint}
                   data={
                     bookingBus?.busBoardingDetails?.busResult
@@ -247,10 +247,10 @@ const BusInfo = () => {
               </View>
 
               <View style={styles.boardingPoint_droppingPoint_subContainer}>
-                <Text style={styles.subTitles}>Select Boarding Point</Text>
+                <Text style={styles.subTitles}>Select Dropping Point</Text>
                 <CustomSelection
                   placeHolder={'Select Dropping Point'}
-                  setValue={handleDropping}
+                  setValue={(item,ele)=>handleDropping(item,ele)}
                   value={droppingPoint}
                   data={
                     bookingBus?.busBoardingDetails?.busResult

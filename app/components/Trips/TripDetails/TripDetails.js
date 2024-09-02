@@ -339,7 +339,10 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
     const tripbookingPrice =
       tripData?.flights
         ?.filter(flight => flightArray.some(id => id.id === flight.id))
-        .reduce((sum, obj) => sum + obj?.data?.finalPrice, 0) +
+        .reduce((sum, obj) =>  sum +
+        (obj?.data?.totalFare +
+          obj?.data?.finalFlightServiceCharge +
+          obj?.data?.gstInFinalserviceCharge), 0) +
       tripData?.hotels
         ?.filter(flight => hotelArray.some(id => id.id === flight.id))
         .reduce((sum, obj) => sum + obj?.data?.hotelTotalPrice, 0) +
