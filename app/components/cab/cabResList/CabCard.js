@@ -110,7 +110,7 @@ const CabCard = ({
   const [drop, setDrop] = useState("");
   const [pickUpError, setPickUpError] = useState('');
   const [dropError, setDropError] = useState('');
-
+  const [cabLocationPopup, setCabLocationPopup] = useState(false);
   const {
     actions,
     cabNights,
@@ -405,6 +405,11 @@ const CabCard = ({
               <Text style={styles.title}>{cabTotal.selectedTime}</Text>
             </View>
           )}
+
+        <TouchableOpacity onPress={() => setCabLocationPopup(true)}>
+          <IconSwitcher componentName='FontAwesome5' iconName='taxi' iconsize={2.5}/>
+        </TouchableOpacity>
+
         </View>
 
         {!tripsPage && (
@@ -815,6 +820,11 @@ const CabCard = ({
           </TouchableOpacity>
        </View>
 
+      </PopUp>
+      {/* cabLocationPopup */}
+      <PopUp value={cabLocationPopup} handlePopUpClose={() => setCabLocationPopup(false)}>
+        <Text style={styles.timeStampsTitles}>Pickup: <Text style={{color:colors.highlight}}>{cabTotal.pickUp}</Text></Text>
+        <Text style={styles.timeStampsTitles}>Drop : <Text style={{color:colors.highlight}}>{cabTotal.drop}</Text></Text>
       </PopUp>
     </>
   );

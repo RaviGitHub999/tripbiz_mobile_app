@@ -120,7 +120,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
   const [allotherTime, setAllOtherTime] = useState(false);
   const [allotherTimeData, setAllOtherTimeData] = useState();
   const [isAnySelected, setIsAnySelected] = useState(true);
-  // const[bookingalert,setBookingAlert]=useState(false)
+  const [totalCheckedPrice, setTotalCheckedPrice] = useState(0);
   const {
     actions,
     tripData,
@@ -130,6 +130,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
     userAccountDetails,
     domesticHotel,
   } = useContext(MyContext);
+  console.log(bookingPrice,"bookingPrice")
   const errorMessage =
     userAccountDetails.approvalType === 'Mandatory'
       ? 'Approval is Mandatory'
@@ -143,8 +144,16 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
   const handleCheckboxChange = (book, index) => {
     const updatedChecked = [...check];
     updatedChecked[index] = !updatedChecked[index];
+    let newTotal = totalCheckedPrice;
+
+  if (updatedChecked[index] ) {
+    newTotal += Math.ceil(book.bookingPrice);
+  } else {
+    newTotal -= Math.ceil(book.bookingPrice);
+  }
     handleCheck(book, updatedChecked[index], index);
     setCheck(updatedChecked);
+    setTotalCheckedPrice(newTotal)
   };
   const handleviewPaymentComment = index => {
     const updatedChecked = [...viewpaymentComments];
@@ -277,7 +286,9 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
       ...tripData.data.travellerDetails,
     };
     if (userAccountDetails.accountType !== 'PostPaid') {
-      await actions.makeTripPayment(tripData.data?.name, bookingPrice);
+      await actions.makeTripPayment(tripData.data?.name, totalCheckedPrice);
+      const finalBookingPrice=bookingPrice-totalCheckedPrice
+      setBookingPrice(finalBookingPrice)
     }
     const tripbookingPrice =
       tripData.flights
@@ -294,6 +305,13 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
         .reduce((sum, obj) => sum + obj?.data?.busTotalPrice, 0);
 
     await actions.updateBookingStatus(id, bookingIndex, comment);
+    // const total = tripData?.data?.bookings?.reduce((total, book) => {
+    //   if (book.submissionStatus !== "Submitted") {
+    //     return total + Math.round(book.bookingPrice);
+    //   }
+    //   return total;
+    // }, 0);
+    // setBookingPrice(total)
     await actions.editAdminTrips(
       id,
       tripData,
@@ -4068,6 +4086,14 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                           ) : (
                             <View>
                               <Text>No Approver assigned</Text>
+                              <View style={{alignSelf:'flex-start',width:'100%',flexDirection:'row',gap:responsiveHeight(1),marginTop:responsiveHeight(1)}}>
+                            <TouchableOpacity style={styles.btn} onPress={()=>{navigate("Role"),setTraveller(!traveller)}}>
+                                <Text style={styles.btnTitle}>Assign Approver</Text>
+                              </TouchableOpacity>
+                              <TouchableOpacity style={styles.btn} onPress={() => handleManagerClick("Skipped")}>
+                                <Text style={styles.btnTitle}>Skip</Text>
+                              </TouchableOpacity>
+                            </View>
                             </View>
                           )}
                         </View>
@@ -4133,6 +4159,13 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                         } else {
                           setSelectedTab('payment');
                         }
+                        const total = tripData?.data?.bookings?.reduce((total, book) => {
+                          if (book.submissionStatus !== "Submitted") {
+                            return total + Math.round(book.bookingPrice);
+                          }
+                          return total;
+                        }, 0);
+                        setBookingPrice(total)
                       }}>
                       <Text style={[styles.subTitle, {color: colors.white}]}>
                         Next
@@ -4340,7 +4373,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                   styles.totalPrice,
                                   {fontSize: responsiveHeight(1.5)},
                                 ]}>
-                                {Math.round(book.bookingPrice).toLocaleString()}
+                                {Math.ceil(book.bookingPrice).toLocaleString()}
                               </Text>
                             </View>
                           </View>

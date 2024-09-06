@@ -53,7 +53,7 @@ const TripDetailsFlightCard = ({
     const [recheckSeatsAvailable, setRecheckSeatsAvailable] = useState(false);
     const [alltimeStamp, setAllTimeStamp] = useState(false);
     const [flightRecheckError,setFlightRecheckError]=useState(false)
-    const { actions, flightsLogosData, domesticFlight } = useContext(MyContext)
+    const { actions, flightsLogosData, domesticFlight,recheckFlightError } = useContext(MyContext)
     const statuses = [
         { status: "Submitted", color: "#ffa500" },
         { status: "Need clarification", color: "#FFC107" },
@@ -1085,7 +1085,7 @@ const getFlightStatusStyle = (status) => {
                 flightArr={flightArr}
                 flightData={{data: flightBooking}}
               />
-              {checkingDate ?!flightRecheckError? (
+              {checkingDate ?!flightRecheckError&&!recheckFlightError? (
                 <>
                   {reCheckLoading ? (
                     <View style={styles.progressBarContainer}>

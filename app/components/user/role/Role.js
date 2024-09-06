@@ -156,8 +156,8 @@ const Role = () => {
               </TouchableOpacity>
               <Text style={styles.maintitle}>Roles and Approval</Text>
               <View style={styles.subContainer}>
-                <Text style={styles.subTitle}>Manager</Text>
-                {userAccountDetails.manager ? (
+                <Text style={styles.subTitle}>Approver</Text>
+                {Object.keys(userAccountDetails?.manager).length > 0 ? (
                   <View style={styles.managerDataContainer}>
                     <Text style={styles.managerDataTitle}>
                       {userAccountDetails?.manager?.name}(
@@ -181,13 +181,13 @@ const Role = () => {
                       iconsize={2}
                       color={colors.white}
                     />
-                    <Text style={styles.btnTitle}>Add Manager</Text>
+                    <Text style={styles.btnTitle}>Add Approver</Text>
                   </TouchableOpacity>
                 )}
 
                 {openManager ? (
                   <View style={styles.managerDetailsContainer}>
-                    <View style={styles.inputContainer}>
+                    {/* <View style={styles.inputContainer}>
                       <Text style={styles.inPutHeaderTitle}>
                         Enter the name of the manager
                       </Text>
@@ -197,10 +197,10 @@ const Role = () => {
                         stateValue={managerData.name}
                         handleonChange={e => handleManagerDataChange(e, 'name')}
                       />
-                    </View>
+                    </View> */}
                     <View style={styles.inputContainer}>
                       <Text style={styles.inPutHeaderTitle}>
-                        Enter the email of the manager
+                      Enter the email ID of the Approver
                       </Text>
                       <ChangePasswordInput
                         placeholderName={'Enter the email'}
