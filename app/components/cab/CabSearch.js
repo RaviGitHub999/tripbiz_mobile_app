@@ -613,7 +613,6 @@ const CabSearch = () => {
   //     )
   //     navigate("CabResList")
   //   }
-console.log(cabCityItem,"vbnv")
     const validate = () => {
       const newErrors= {};
       if (cabCityItem==="") newErrors.destination = 'Destination is required';

@@ -130,7 +130,6 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
     userAccountDetails,
     domesticHotel,
   } = useContext(MyContext);
-  console.log(bookingPrice,"bookingPrice")
   const errorMessage =
     userAccountDetails.approvalType === 'Mandatory'
       ? 'Approval is Mandatory'
@@ -1438,6 +1437,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
         return "white";
     }
   };
+  var anyNotSubmitted = check.some(book => book === true);
   return tripDataLoading || approvalLoading ? (
     <View style={styles.LoaderContainer}>
       <View style={styles.Loader}>
@@ -4380,137 +4380,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                         );
                       })}
                     </>
-                    {/* {tripData?.hotels?.filter(hotel =>
-                      hotelNotSubmittedIds.includes(hotel.id),
-                    )?.length > 0 ||
-                    tripData?.flights?.filter(hotel =>
-                      flightNotSubmittedIds.includes(hotel.id),
-                    )?.length > 0 ||
-                    tripData?.cabs?.filter(hotel =>
-                      cabNotSubmittedIds.includes(hotel.id),
-                    )?.length > 0 ||
-                    tripData?.bus?.filter(hotel =>
-                      busNotSubmittedIds.includes(hotel.id),
-                    )?.length > 0 ? (
-                      <View
-                        style={[
-                          styles.card,
-                          {width: '100%', gap: responsiveHeight(2)},
-                        ]}>
-                        <View style={styles.paymentCheckBoxContainer}>
-                          <TouchableOpacity
-                            onPress={() => {
-                              if (!checked) {
-                                setChecked(true);
-                                setBookingPrice(prev => prev + finalPrice);
-                              } else {
-                                setChecked(false);
-                                setBookingPrice(prev => prev - finalPrice);
-                              }
-                            }}>
-                            <IconSwitcher
-                              componentName="MaterialIcons"
-                              iconName={
-                                checked
-                                  ? 'check-box'
-                                  : 'check-box-outline-blank'
-                              }
-                              color={checked ? colors.facebook : colors.gray}
-                              iconsize={3}
-                            />
-                          </TouchableOpacity>
-                          <View style={styles.notSubmitedContainer}>
-                            <Text style={styles.notSubmitedTitle}>
-                              Not Submitted
-                            </Text>
-                          </View>
-                        </View>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                          }}>
-                          <View
-                            style={{
-                              flex: 1,
-                              flexDirection: 'row',
-                              flexWrap: 'wrap',
-                            }}>
-                            <Text style={styles.title}>
-                              {tripData?.flights?.filter(hotel =>
-                                flightNotSubmittedIds.includes(hotel.id),
-                              ).length > 0 ? (
-                                <>
-                                  {
-                                    tripData?.flights?.filter(hotel =>
-                                      flightNotSubmittedIds.includes(hotel.id),
-                                    ).length
-                                  }
-                                  -Flights&nbsp;,{' '}
-                                </>
-                              ) : null}
-                            </Text>
-                            <Text style={styles.title}>
-                              {tripData?.hotels?.filter(hotel =>
-                                hotelNotSubmittedIds.includes(hotel.id),
-                              ).length > 0 ? (
-                                <>
-                                  {
-                                    tripData?.hotels?.filter(hotel =>
-                                      hotelNotSubmittedIds.includes(hotel.id),
-                                    ).length
-                                  }
-                                  -Hotels&nbsp;
-                                </>
-                              ) : null}
-                            </Text>
-
-                            <Text style={styles.title}>
-                              {tripData?.cabs?.filter(hotel =>
-                                cabNotSubmittedIds.includes(hotel.id),
-                              ).length > 0 ? (
-                                <>
-                                  {
-                                    tripData?.cabs?.filter(hotel =>
-                                      cabNotSubmittedIds.includes(hotel.id),
-                                    ).length
-                                  }
-                                  -Cabs&nbsp;
-                                </>
-                              ) : null}
-                            </Text>
-
-                            <Text style={styles.title}>
-                              {tripData?.bus?.filter(hotel =>
-                                busNotSubmittedIds.includes(hotel.id),
-                              ).length > 0 ? (
-                                <>
-                                  {
-                                    tripData?.bus?.filter(hotel =>
-                                      busNotSubmittedIds.includes(hotel.id),
-                                    ).length
-                                  }
-                                  -Bus&nbsp;
-                                </>
-                              ) : null}
-                            </Text>
-                          </View>
-                          <View>
-                            <Text style={styles.title}>
-                              Price:&nbsp;
-                              <Text
-                                style={[
-                                  styles.title,
-                                  {color: colors.secondary},
-                                ]}>
-                                &#8377;
-                                {Math.ceil(finalPrice).toLocaleString('en-IN')}
-                              </Text>
-                            </Text>
-                          </View>
-                        </View>
-                      </View>
-                    ) : null} */}
+                   
 
                     {/* Showing Balance */}
                     <View
@@ -4536,7 +4406,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                           </Text>
                         </>
                       ) : null}
-                      {bookingPrice > 0 ? (
+                      {anyNotSubmitted? (
                         <>
                           {userAccountDetails.accountType === 'PostPaid' ? (
                             <View  style={{

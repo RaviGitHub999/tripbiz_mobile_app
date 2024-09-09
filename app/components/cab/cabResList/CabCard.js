@@ -823,8 +823,8 @@ const CabCard = ({
       </PopUp>
       {/* cabLocationPopup */}
       <PopUp value={cabLocationPopup} handlePopUpClose={() => setCabLocationPopup(false)}>
-        <Text style={styles.timeStampsTitles}>Pickup: <Text style={{color:colors.highlight}}>{cabTotal.pickUp}</Text></Text>
-        <Text style={styles.timeStampsTitles}>Drop : <Text style={{color:colors.highlight}}>{cabTotal.drop}</Text></Text>
+        <Text style={styles.timeStampsTitles}>Pickup: <Text style={{color:colors.highlight}}>{cabTotal?.pickUp}</Text></Text>
+        <Text style={styles.timeStampsTitles}>Drop : <Text style={{color:colors.highlight}}>{cabTotal?.drop}</Text></Text>
       </PopUp>
     </>
   );
