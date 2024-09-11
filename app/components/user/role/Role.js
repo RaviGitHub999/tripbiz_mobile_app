@@ -125,8 +125,32 @@ const Role = () => {
     return dateString;
   };
   var handleApprove = async(trip, req)=> {
+    const templateCabs = trip?.tripDetails?.cabs?.filter((id, i) => {
+      return req?.cabs?.some((selectedCab) => selectedCab === id?.id);
+    });
+    const templateFlights = trip?.tripDetails?.flights?.filter((id, i) => {
+      return req?.flights?.some((selectedCab) => selectedCab === id?.id);
+    });
+
+    const templateHotels = trip?.tripDetails?.hotels?.filter((id, i) => {
+      return req?.hotels?.some((selectedCab) => selectedCab === id?.id);
+    });
+    const templateBus = trip?.tripDetails?.bus?.filter((id, i) => {
+      return req?.bus?.some((selectedCab) => selectedCab === id?.id);
+    });
+    const templateOther = trip?.tripDetails?.otherBookings?.filter((id, i) => {
+      return req?.otherBookings?.some((selectedCab) => selectedCab === id?.id);
+    });
+    const templateData = {
+      flights: templateFlights,
+      hotels: templateHotels,
+      cabs: templateCabs,
+      bus: templateBus,
+      otherBookings: templateOther,
+      travellerDetails: trip?.tripDetails?.data?.travellerDetails,
+    };
     setLoading(true);
-    await actions.approveTripRequest(req, userAccountDetails?.userid);
+    await actions.approveTripRequest(req, userAccountDetails?.userid,templateData);
     await actions.updateAdminTripAccepted(trip, req);
     setOpenTrip(false);
     setLoading(false);

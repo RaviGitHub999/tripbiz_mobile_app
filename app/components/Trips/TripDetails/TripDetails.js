@@ -247,6 +247,23 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
   }, []);
 
   var handleClick = async () => {
+    const templateCabs = tripData?.cabs?.filter((id, i) => {
+      return selectedItems.cabs?.some((selectedCab) => selectedCab === id?.id);
+    });
+    const templateFlights = tripData?.flights?.filter((id, i) => {
+      return selectedItems.flights?.some(
+        (selectedCab) => selectedCab === id?.id
+      );
+    });
+
+    const templateHotels = tripData?.hotels?.filter((id, i) => {
+      return selectedItems.hotels?.some(
+        (selectedCab) => selectedCab === id?.id
+      );
+    });
+    const templateBus = tripData?.bus?.filter((id, i) => {
+      return selectedItems.buses?.some((selectedCab) => selectedCab === id?.id);
+    });
     const anySelected = Object.values(selectedItems).some(
       (items) => items.length > 0
     );
@@ -255,54 +272,21 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
       return false;
     }
     setPaymentLoading(true);
-
-    var notflights = checked
-      ? tripData?.flights
-          ?.filter(hotel => flightNotSubmittedIds.includes(hotel.id))
-          .map(data => data.id)
-      : [];
-    var nothotels = checked
-      ? tripData?.hotels
-          ?.filter(hotel => hotelNotSubmittedIds.includes(hotel.id))
-          .map(data => data.id)
-      : [];
-    var notcabs = checked
-      ? tripData?.cabs
-          ?.filter(hotel => cabNotSubmittedIds.includes(hotel.id))
-          .map(data => data.id)
-      : [];
-    var notbus = checked
-      ? tripData?.bus
-          ?.filter(hotel => busNotSubmittedIds.includes(hotel.id))
-          .map(data => data.id)
-      : [];
-    var submittedFlights = notflights;
-    var submittedHotels = nothotels;
-    var submittedCabs = notcabs;
-    var submittedBus = notbus;
     var finalTravDetails = {
       ...travellerDetails,
       ...tripData.data.travellerDetails,
     };
+    var notbus = checked
+      ? tripData?.bus
+          ?.filter((hotel) => busNotSubmittedIds.includes(hotel.id))
+          .map((data) => data.id)
+      : [];
     if (userAccountDetails.accountType !== 'PostPaid') {
       await actions.makeTripPayment(tripData.data?.name, totalCheckedPrice);
       const finalBookingPrice=bookingPrice-totalCheckedPrice
       setBookingPrice(finalBookingPrice)
     }
-    const tripbookingPrice =
-      tripData.flights
-        .filter(flight => submittedFlights.includes(flight.id))
-        .reduce((sum, obj) => sum + obj?.data?.finalPrice, 0) +
-      tripData.hotels
-        .filter(flight => submittedHotels.includes(flight.id))
-        .reduce((sum, obj) => sum + obj?.data?.hotelTotalPrice, 0) +
-      tripData.cabs
-        .filter(flight => submittedCabs.includes(flight.id))
-        .reduce((sum, obj) => sum + obj?.data?.cabTotalPrice, 0) +
-      tripData.bus
-        .filter(flight => submittedBus.includes(flight.id))
-        .reduce((sum, obj) => sum + obj?.data?.busTotalPrice, 0);
-
+   
     await actions.updateBookingStatus(id, bookingIndex, comment);
     // const total = tripData?.data?.bookings?.reduce((total, book) => {
     //   if (book.submissionStatus !== "Submitted") {
@@ -311,6 +295,13 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
     //   return total;
     // }, 0);
     // setBookingPrice(total)
+    const templateData = {
+      flights: templateFlights,
+      hotels: templateHotels,
+      cabs: templateCabs,
+      bus: templateBus,
+      travellerDetails: tripData.data.travellerDetails,
+    };
     await actions.editAdminTrips(
       id,
       tripData,
@@ -327,6 +318,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
       // submittedBus,
       notbus,
       comment,
+      templateData
     );
     setPaymentLoading(false);
     showToast();
@@ -382,7 +374,21 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
         adminComment: '',
       },
     ];
-
+    const templateData = {
+      flights: tripData?.flights?.filter((flight) =>
+        flightArray.some((id) => id.id === flight.id)
+      ),
+      hotels: tripData?.hotels?.filter((flight) =>
+        hotelArray.some((id) => id.id === flight.id)
+      ),
+      cabs: tripData?.cabs?.filter((flight) =>
+        cabArray.some((id) => id.id === flight.id)
+      ),
+      bus: tripData?.bus?.filter((flight) =>
+        busArray.some((id) => id.id === flight.id)
+      ),
+      travellerDetails: tripData.data.travellerDetails,
+    };
     await actions.addBookings(id, book);
 
     var req = await actions.sendApproval(
@@ -402,6 +408,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
         managerEmail: userAccountDetails.manager.email,
         managerName: userAccountDetails.manager.name,
         tripName: tripData.data.name,
+        templateData: templateData,
       });
     }
     setApporvalLoading(false);
@@ -622,7 +629,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
         {filterdFlights?.map((flight, i) => {
           const flightName =
             flight?.data?.flightNew?.segments?.[0]?.airlineName;
-          const ArrDate = flight?.data?.flight?.Segments[0][0]?.Origin?.DepTime;
+            const ArrDate = flight?.data?.flight?.Segments?.[0]?.[0]?.Origin?.DepTime;
           return (
             <View style={styles.notFilledDataContainer}>
               <IconSwitcher
@@ -658,8 +665,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                 </Text>{' '}
                 Hotel,
                 {moment(hotelDate.seconds * 1000).format('MMMM D, h:mm a')},
-                {hotel?.data?.hotelSearchQuery?.hotelRoomArr[0]?.adults} Adults,{' '}
-                {hotel?.data?.hotelSearchQuery?.hotelRoomArr[0]?.child} Child
+                {hotel?.data?.hotelSearchQuery?.hotelRoomArr?.[0]?.adults} Adults,{' '}
+                {hotel?.data?.hotelSearchQuery?.hotelRoomArr?.[0]?.child} Child
               </Text>
             </View>
           );
@@ -733,17 +740,17 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
       setTraveller(true);
       setTripId(
         tripData?.flights.length > 0
-          ? tripData?.flights[0]?.id
+          ? tripData?.flights?.[0]?.id
           : tripData?.hotels.length > 0
-          ? tripData.hotels[0].id
+          ? tripData.hotels?.[0].id
           : tripData?.cabs.length > 0
-          ? tripData?.cabs[0].id
+          ? tripData?.cabs?.[0].id
           : tripData?.bus.length > 0
-          ? tripData?.bus[0].id
+          ? tripData?.bus?.[0].id
           : 0,
       );
       var adults =
-        tripData?.hotels[0]?.data?.hotelSearchQuery?.hotelRoomArr.reduce(
+        tripData?.hotels?.[0]?.data?.hotelSearchQuery?.hotelRoomArr.reduce(
           (acc, obj) => {
             acc.adults += parseInt(obj.adults, 10);
             acc.child += parseInt(obj.child, 10);
@@ -755,15 +762,15 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
       setTravellerCount(
         tripData?.flights.length > 0
           ? {
-              adults: Number(tripData?.flights[0]?.data?.adults),
-              child: Number(tripData?.flights[0]?.data?.child),
-              infant: Number(tripData?.flights[0]?.data?.infant),
+              adults: Number(tripData?.flights?.[0]?.data?.adults),
+              child: Number(tripData?.flights?.[0]?.data?.child),
+              infant: Number(tripData?.flights?.[0]?.data?.infant),
             }
           : tripData?.hotels.length > 0
           ? adults
           : tripData?.bus?.length > 0
           ? {
-              adults: Number(tripData?.bus[0]?.data.passengers),
+              adults: Number(tripData?.bus?.[0]?.data.passengers),
             }
           : {},
       );
@@ -797,8 +804,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
       setBookingPrice(price);
       setRequestIds(reqIds);
       setFinalPrice(mainprice);
-      setRequestId(tripData?.requestData[0]?.id);
-      setRequestData(tripData?.requestData[0]?.data);
+      setRequestId(tripData?.requestData?.[0]?.id);
+      setRequestData(tripData?.requestData?.[0]?.data);
     } else {
       setIsAddedAlltravellers(true);
     }
@@ -898,7 +905,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
     setSelectedTab(item);
   };
   const renderItem = ({item, index}) => {
-    var airlinename = item.data.flightNew.segments[0].airlineName;
+    var airlinename = item.data.flightNew.segments?.[0].airlineName;
     var airline = flightsLogosData?.filter(a => {
       return airlinename.toLowerCase() === a.id;
     });
@@ -908,8 +915,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
       };
     });
     var isInternational =
-      item.data.flightNew.segments[0].destCountryCode !== 'IN' ||
-      item.data.flightNew.segments[0].originCountryCode !== 'IN';
+      item.data.flightNew.segments?.[0].destCountryCode !== 'IN' ||
+      item.data.flightNew.segments?.[0].originCountryCode !== 'IN';
     return (
       <View>
         {index === 0 ? (
@@ -1348,7 +1355,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
       ?.filter(flight => requestData?.flights.includes(flight.id))
       .map(
         flightData =>
-          flightData?.data[0]?.finalPrice ?? flightData?.data?.finalPrice,
+          flightData?.data?.[0]?.finalPrice ?? flightData?.data?.finalPrice,
       ) || 0;
   const price2 =
     tripData?.hotels
@@ -1619,17 +1626,17 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                             hotels => hotels.id === hotel.id,
                           );
                           var hotelTimeStamp = new Date(
-                            hotelData[0]?.date?.seconds * 1000,
+                            hotelData?.[0]?.date?.seconds * 1000,
                           );
 
-                          const updatedAt = hotelData[0]?.updatedAt?.seconds;
+                          const updatedAt = hotelData?.[0]?.updatedAt?.seconds;
                           var hotelUpdatedDate = new Date(updatedAt * 1000);
                           var hotelPrice = 0;
                           var hotelStatus = tripData?.data?.hotels?.filter(
                             f => f.id === hotel.id,
                           );
                           var color = statuses.filter(status => {
-                            return status?.status === hotelStatus[0]?.status;
+                            return status?.status === hotelStatus?.[0]?.status;
                           });
                           const startdate = new Date(
                             hotel?.data?.hotelSearchQuery?.checkInDate
@@ -1644,7 +1651,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                           );
                           var img =
                             hotel.data.hotelInfo.HotelInfoResult.HotelDetails
-                              .Images[0];
+                              .Images?.[0];
                           var rating = [];
                           var starRating =
                             hotel.data.hotelInfo.HotelInfoResult.HotelDetails
@@ -1666,18 +1673,18 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                           );
                           var reqColor = reqStatuses.filter(status => {
                             return (
-                              status?.status === hotelReq[0]?.requestStatus
+                              status?.status === hotelReq?.[0]?.requestStatus
                             );
                           });
-                          var originalDate = hotelData[0]?.updatedAt
-                            ? new Date(hotelData[0]?.updatedAt?.seconds * 1000)
+                          var originalDate = hotelData?.[0]?.updatedAt
+                            ? new Date(hotelData?.[0]?.updatedAt?.seconds * 1000)
                             : new Date(hotelTimeStamp);
                           var threeHoursAfter = new Date(
                             originalDate.getTime() + 3 * 60 * 60 * 1000,
                           );
                           var currentTime = new Date();
                           var isTimeReCheck =
-                            hotelData[0]?.status === 'Not Submitted'
+                            hotelData?.[0]?.status === 'Not Submitted'
                               ? currentTime > threeHoursAfter
                               : false;
                           for (var i = 1; i <= Math.ceil(starRating); i++) {
@@ -1708,8 +1715,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                 style={[
                                   styles.hotelCard,
                                   {
-                                    backgroundColor: hotelStatus[0]
-                                      && getFlightStatusStyle(hotelStatus[0].status)
+                                    backgroundColor: hotelStatus?.[0]
+                                      && getFlightStatusStyle(hotelStatus?.[0].status)
                                   },
                                 ]}>
                                 <View style={styles.hotelDetailsContainer}>
@@ -1889,17 +1896,17 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                       style={[
                                         styles.bookingStatusTextContainer,
                                         {
-                                          backgroundColor: reqColor[0]
-                                            ? reqColor[0].color
+                                          backgroundColor: reqColor?.[0]
+                                            ? reqColor?.[0].color
                                             : '#808080',
                                         },
                                       ]}>
                                       <Text style={styles.bookingStatusText}>
-                                        {hotelReq[0]?.requestStatus}
+                                        {hotelReq?.[0]?.requestStatus}
                                       </Text>
                                     </View>
                                   </View>
-                                  {hotelStatus[0]?.status ? (
+                                  {hotelStatus?.[0]?.status ? (
                                     <View
                                       style={
                                         styles.bookingStatusTitlesMainContainer
@@ -1912,13 +1919,13 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                         style={[
                                           styles.bookingStatusTextContainer,
                                           {
-                                            backgroundColor: color[0]
-                                              ? color[0].color
+                                            backgroundColor: color?.[0]
+                                              ? color?.[0].color
                                               : '#808080',
                                           },
                                         ]}>
                                         <Text style={styles.bookingStatusText}>
-                                          {hotelStatus[0]?.status}
+                                          {hotelStatus?.[0]?.status}
                                         </Text>
                                       </View>
                                     </View>
@@ -1935,8 +1942,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                         style={[
                                           styles.bookingStatusTextContainer,
                                           {
-                                            backgroundColor: color[0]
-                                              ? color[0].color
+                                            backgroundColor: color?.[0]
+                                              ? color?.[0].color
                                               : '#808080',
                                           },
                                         ]}>
@@ -1975,7 +1982,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                     <TouchableOpacity
                                       onPress={() => {
                                         openAllTimeStamps(),
-                                          setTimeStampData(hotelReq[0]);
+                                          setTimeStampData(hotelReq?.[0]);
                                       }}>
                                       <IconSwitcher
                                         componentName="MaterialIcons"
@@ -1985,7 +1992,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                       />
                                     </TouchableOpacity>
                                   </View>
-                                  {hotelStatus[0]?.downloadURL ? (
+                                  {hotelStatus?.[0]?.downloadURL ? (
                                     <TouchableOpacity
                                       style={styles.voucherContainer}
                                       onPress={() => downloadDoc(hotelStatus)}>
@@ -2020,9 +2027,9 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                       </Text>
                                     </Text>
                                   </View>
-                                  {hotelReq[0]?.requestStatus ===
+                                  {hotelReq?.[0]?.requestStatus ===
                                     'Not Requested' &&
-                                  hotelStatus[0]?.status === 'Not Submitted' ? (
+                                  hotelStatus?.[0]?.status === 'Not Submitted' ? (
                                     <TouchableOpacity
                                       onPress={() => {
                                         setOpenDelete(true);
@@ -2043,11 +2050,11 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                   eachTripData={hotel}
                                   tripId={id}
                                   child={adults?.child}
-                                  status={hotelStatus[0]?.status}
+                                  status={hotelStatus?.[0]?.status}
                                 />
-                                 {hotelStatus[0]?.note && (
+                                 {hotelStatus?.[0]?.note && (
                                 <Text>
-                                  Note:{hotelStatus[0]?.note}
+                                  Note:{hotelStatus?.[0]?.note}
                                 </Text>
                               )}
                                 {isTimeReCheck ? (
@@ -2109,8 +2116,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                             return {...actions.modifyFlightObject(flight)};
                           });
                           return (
-                            aflightArr[0]?.segments[0]?.depTimeDate -
-                            bflightArr[0]?.segments[0]?.depTimeDate
+                            aflightArr?.[0]?.segments?.[0]?.depTimeDate -
+                            bflightArr?.[0]?.segments?.[0]?.depTimeDate
                           );
                         })
                         .map((flight, f) => {
@@ -2123,12 +2130,12 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                           flight?.data?.gstInFinalserviceCharge +
                           flight?.data?.finalFlightServiceCharge;
                           var hotelTimeStamp = new Date(
-                            flightStatus[0]?.date?.seconds * 1000,
+                            flightStatus?.[0]?.date?.seconds * 1000,
                           );
                           var fightData = tripData?.data?.flights.filter(
                             f => f.id === flight.id,
                           );
-                          const updatedAt = flightStatus[0]?.updatedAt?.seconds;
+                          const updatedAt = flightStatus?.[0]?.updatedAt?.seconds;
                           var flightUpdatedDate;
                           if (updatedAt) {
                             flightUpdatedDate = new Date(updatedAt * 1000);
@@ -2143,13 +2150,13 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
 
                           var reqColor = reqStatuses.filter(status => {
                             return (
-                              status?.status === flightReq[0]?.requestStatus
+                              status?.status === flightReq?.[0]?.requestStatus
                             );
                           });
                           var isInternational =
-                            flight.data.flightNew.segments[0]
+                            flight.data.flightNew.segments?.[0]
                               .destCountryCode !== 'IN' ||
-                            flight.data.flightNew.segments[0]
+                            flight.data.flightNew.segments?.[0]
                               .originCountryCode !== 'IN';
                           return (
                             <>
@@ -2157,7 +2164,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                 flightGrp={[flight.data.flight]}
                                 index={f}
                                 flightBooking={flight.data}
-                                flightStatus={flightStatus[0]}
+                                flightStatus={flightStatus?.[0]}
                                 flightReq={flightReq}
                                 timeStamp={hotelTimeStamp}
                                 updatedAt={flightUpdatedDate}
@@ -2166,8 +2173,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                 flightId={flight.id}
                                 tripsPage={true}
                                 downloadUrl={
-                                  flightStatus[0]?.downloadURL
-                                    ? flightStatus[0].downloadURL
+                                  flightStatus?.[0]?.downloadURL
+                                    ? flightStatus?.[0].downloadURL
                                     : undefined
                                 }
                                 flight={flight}
@@ -2212,7 +2219,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                         tripsPage={true}
                         startDate={cab.data.cabStartDate}
                         endDate={cab.data.cabEndDate}
-                        cabData={cabReq[0] ? cabReq[0] : null}
+                        cabData={cabReq?.[0] ? cabReq?.[0] : null}
                         tripsCabType={cab.data.cabType}
                         cabTotal={cab.data}
                         tripId={id}
@@ -2264,7 +2271,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                       item={bus}
                       tripsPage={true}
                       bookingBus={busData.data}
-                      busData={busDataa && busDataa[0]}
+                      busData={busDataa && busDataa?.[0]}
                       tripId={id}
                       totalBus={busData}
                     />
@@ -2286,10 +2293,10 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                     }
                   );
                   var color = statuses.filter(status => {
-                    return status?.status === otherM[0].status;
+                    return status?.status === otherM?.[0].status;
                   });
                   var reqColor = reqStatuses.filter(status => {
-                    return status?.status === otherM[0].requestStatus;
+                    return status?.status === otherM?.[0].requestStatus;
                   });
                   return (
                     <View
@@ -2349,13 +2356,13 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                               style={[
                                 styles.bookingStatusTextContainer,
                                 {
-                                  backgroundColor: reqColor[0]
-                                    ? reqColor[0].color
+                                  backgroundColor: reqColor?.[0]
+                                    ? reqColor?.[0].color
                                     : '#808080',
                                 },
                               ]}>
                               <Text style={styles.bookingStatusText}>
-                                {otherM[0].requestStatus}
+                                {otherM?.[0].requestStatus}
                               </Text>
                             </View>
                           </View>
@@ -2370,13 +2377,13 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                 style={[
                                   styles.bookingStatusTextContainer,
                                   {
-                                    backgroundColor: color[0]
-                                      ? color[0].color
+                                    backgroundColor: color?.[0]
+                                      ? color?.[0].color
                                       : '#808080',
                                   },
                                 ]}>
                                 <Text style={styles.bookingStatusText}>
-                                  {otherM[0].status}
+                                  {otherM?.[0].status}
                                 </Text>
                               </View>
                             </View>
@@ -2414,7 +2421,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                             </View>
                             <TouchableOpacity
                             onPress={() => {
-                              setAllOtherTimeData(otherM[0]);
+                              setAllOtherTimeData(otherM?.[0]);
                               setAllOtherTime(true);
                             }}
                             >
@@ -2430,11 +2437,11 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                         </View>
                       </View>
                     <View style={{paddingHorizontal: responsiveHeight(1.3),marginTop:responsiveHeight(1)}}>
-                    {otherM[0]?.downloadURL && (
+                    {otherM?.[0]?.downloadURL && (
                             <TouchableOpacity
                               style={styles.voucherContainer}
                               onPress={() =>
-                                downloadDoc(otherM[0]?.downloadURL)
+                                downloadDoc(otherM?.[0]?.downloadURL)
                               }>
                               <Text style={styles.voucherTitle}>Voucher</Text>
                               <IconSwitcher
@@ -2446,8 +2453,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                             </TouchableOpacity>
                           )}
                     </View>
-                    {otherM[0]?.note && (
-          <Text>Note:{otherM[0]?.note}</Text>
+                    {otherM?.[0]?.note && (
+          <Text>Note:{otherM?.[0]?.note}</Text>
         )}
                     </View>
                     // <></>
@@ -2579,7 +2586,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
 
                   const isTimeReCheck =
                     matchingFlight?.status === "Submitted" ||
-                    matchingFlight?.status === "Booked"
+                    matchingFlight?.status === "Booked"||
+                     matchingFlight?.status === "Cancelled"
                       ? true
                       : currentTime < threeHoursAfter;
                   return isTimeReCheck;
@@ -2603,7 +2611,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
 
                   const isTimeReCheck =
                     matchingHotel?.status === "Submitted" ||
-                    matchingHotel?.status === "Booked"
+                    matchingHotel?.status === "Booked"||
+                    matchingHotel?.status === "Cancelled"
                       ? true
                       : currentTime < threeHoursAfter;
                   return isTimeReCheck;
@@ -4129,8 +4138,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                       style={[styles.btn]}
                       onPress={() => {
                         setSelectedTab('travellers');
-                        setRequestData(tripData?.requestData[0]?.data);
-                        setRequestId(tripData?.requestData[0]?.id);
+                        setRequestData(tripData?.requestData?.[0]?.data);
+                        setRequestId(tripData?.requestData?.[0]?.id);
                         setBookingNumber(0);
                       }}>
                       <Text style={[styles.subTitle, {color: colors.white}]}>
@@ -4774,7 +4783,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                     hotels => hotels.id === flight.id,
                   );
                   var hotelTimeStamp = new Date(
-                    hotelData[0]?.date?.seconds * 1000,
+                    hotelData?.[0]?.date?.seconds * 1000,
                   );
                   var originalDate = new Date(hotelTimeStamp);
                   var threeHoursAfter = new Date(
@@ -4793,7 +4802,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                     hotels => hotels.id === flight.id,
                   );
                   var hotelTimeStamp = new Date(
-                    hotelData[0]?.date?.seconds * 1000,
+                    hotelData?.[0]?.date?.seconds * 1000,
                   );
                   var originalDate = new Date(hotelTimeStamp);
                   var threeHoursAfter = new Date(
@@ -4807,8 +4816,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                   return (
                     <Text style={styles.title}>
                       {`${ind + 1} . ${
-                        flight.data.flightNew.segments[0].destCityName
-                      } to ${flight.data.flightNew.segments[0].originCityName}`}
+                        flight.data.flightNew.segments?.[0].destCityName
+                      } to ${flight.data.flightNew.segments?.[0].originCityName}`}
                     </Text>
                   );
                 })}
@@ -4819,7 +4828,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                   hotels => hotels.id === flight.id,
                 );
                 var hotelTimeStamp = new Date(
-                  hotelData[0]?.date?.seconds * 1000,
+                  hotelData?.[0]?.date?.seconds * 1000,
                 );
                 var originalDate = new Date(hotelTimeStamp);
                 var threeHoursAfter = new Date(
@@ -4835,7 +4844,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                     hotels => hotels.id === hotel.id,
                   );
                   var hotelTimeStamp = new Date(
-                    hotelData[0]?.date?.seconds * 1000,
+                    hotelData?.[0]?.date?.seconds * 1000,
                   );
                   var originalDate = new Date(hotelTimeStamp);
                   var threeHoursAfter = new Date(

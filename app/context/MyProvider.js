@@ -3122,7 +3122,7 @@ export default class MyProvider extends Component {
           }
         },
 
-        sendBookingSubmitEmail: async userData => {
+        sendBookingSubmitEmail: async (userData) => {
           try {
             const response = await fetch(
               'https://tripbizzapi-lxyskuwaba-uc.a.run.app/sendBookingSubmitEmail',
@@ -3135,7 +3135,7 @@ export default class MyProvider extends Component {
               },
             );
             if (!response.ok) {
-              console.log(response);
+              console.log(response,"ravi");
             }
             var data = await response.json();
           } catch (error) {
@@ -3640,6 +3640,7 @@ export default class MyProvider extends Component {
           submittedBus,
           notBus,
           comment,
+          templateData
         ) => {
           try {
             const accountDocRef = firestore()
@@ -3675,6 +3676,7 @@ export default class MyProvider extends Component {
                 this.state.userAccountDetails.lastName,
               email: this.state.userAccountDetails.email,
               tripName: tripName,
+              templateData: templateData,
             });
 
             const cabArray = submittedCabs?.map(cab => {
@@ -4726,7 +4728,7 @@ export default class MyProvider extends Component {
           }
         },
 
-        approveTripRequest: async (approvalRequest, managerId) => {
+        approveTripRequest: async (approvalRequest, managerId,templateData) => {
       
             const userDocRef = firestore()
               .collection('Accounts')
@@ -4749,6 +4751,7 @@ export default class MyProvider extends Component {
                 this.state.userAccountDetails.firstName +
                 this.state.userAccountDetails.lastName,
               tripName: tripData.name,
+              templateData: templateData,
             });
             if (approvalRequest.flights) {
               var flightData = tripData.flights.filter(flight =>
