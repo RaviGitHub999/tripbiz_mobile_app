@@ -1,41 +1,110 @@
-import React, { useState } from 'react';
-import { View, Text, Button } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, {Component} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ImageBackground,
+} from 'react-native';
+import {errorImg} from './app/components/splash/assets';
+import { colors, fonts } from './app/config/theme';
+import { responsiveHeight } from './app/utils/responsiveScale';
 
-const ErrorBoundary = ({ children }) => {
-  const [hasError, setHasError] = useState(false);
-  const navigation = useNavigation();
-
-  const reloadApp = () => {
-    setHasError(false);
-    // You might need to trigger a full app reload depending on your use case
-  };
-
-  const goBack = () => {
-    navigation.goBack();
-  };
-
-  const handleCatch = (error, errorInfo) => {
-    console.error("ErrorBoundary caught an error", error, errorInfo);
-    setHasError(true);
-  };
-
-  if (hasError) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Something went wrong.</Text>
-        <Button title="Go Back" onPress={goBack} />
-        <Button title="Reload" onPress={reloadApp} />
-      </View>
-    );
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {hasError: false};
   }
 
-  try {
-    return children;
-  } catch (error) {
-    handleCatch(error);
-    return null;
+  static getDerivedStateFromError() {
+    return {hasError: true};
   }
-};
+
+  componentDidCatch(error, errorInfo) {
+    console.error('Error caught in ErrorBoundary:', error, errorInfo);
+  }
+  handleReset = () => {
+    this.setState({hasError: false});
+  };
+
+  // // Back button using navigation prop
+  // handleBack = () => {
+  //   if (this.props.navigation) {
+  //     this.props.navigation.goBack();
+  //   }
+  // };
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <ImageBackground
+          source={errorImg}
+          style={{flex: 1}}
+          resizeMode="stretch">
+          <View
+            style={{
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              backgroundColor: 'rgba(0,0,0,0.5)',
+            }}>
+             <View style={styles.container}>
+             <Text style={styles.errorText}>Oops! something went wrong.</Text>
+              <Text style={styles.infoText}>
+               We encountered an unexpected error.Please reload the App
+              </Text>
+
+              <TouchableOpacity
+                style={styles.button}
+                onPress={this.handleReset}>
+                <Text style={styles.buttonText}>Reload</Text>
+              </TouchableOpacity>
+             </View>
+            </View>
+        </ImageBackground>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    fontSize: responsiveHeight(5),
+    color: colors.white,
+    marginBottom: responsiveHeight(1),
+    textAlign: 'center',
+    fontFamily:fonts.primary
+  },
+  infoText: {
+    fontSize: responsiveHeight(2),
+    color:"gray",
+    marginBottom: 30,
+    textAlign: 'center',
+    fontFamily:fonts.secondry
+  },
+  button: {
+    backgroundColor: '#007bff',
+    paddingVertical: responsiveHeight(1.5),
+    paddingHorizontal: responsiveHeight(2.5),
+    borderRadius: responsiveHeight(2.5),
+    marginVertical: responsiveHeight(1.8),
+    alignItems: 'center',
+  },
+  backButton: {
+    backgroundColor: colors.facebook,
+  },
+  buttonText: {
+    color: colors.white,
+    fontSize: responsiveHeight(1.8),
+    fontFamily:fonts.primary
+  },
+});
 
 export default ErrorBoundary;

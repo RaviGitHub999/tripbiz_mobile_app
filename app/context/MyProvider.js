@@ -1140,7 +1140,7 @@ export default class MyProvider extends Component {
           seatData.SegmentSeat.forEach((seg, s) => {
             var firstRow = seg.RowSeats[1];
 
-            if (firstRow.Seats.length === 6) {
+            if (firstRow?.Seats?.length === 6) {
               valid = true;
             }
           });
@@ -1150,7 +1150,7 @@ export default class MyProvider extends Component {
         fillUpRowSeats: rowSeats => {
           var rowsNum = 0;
           var firstRow = rowSeats[1];
-          rowsNum = Number(firstRow.Seats[0].RowNo) - 1;
+          rowsNum = Number(firstRow?.Seats[0]?.RowNo) - 1;
           var rows = [];
 
           for (var i = 1; i <= rowsNum; i++) {

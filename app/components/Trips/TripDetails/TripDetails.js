@@ -288,13 +288,6 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
     }
    
     await actions.updateBookingStatus(id, bookingIndex, comment);
-    // const total = tripData?.data?.bookings?.reduce((total, book) => {
-    //   if (book.submissionStatus !== "Submitted") {
-    //     return total + Math.round(book.bookingPrice);
-    //   }
-    //   return total;
-    // }, 0);
-    // setBookingPrice(total)
     const templateData = {
       flights: templateFlights,
       hotels: templateHotels,
@@ -653,7 +646,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
             hotel?.data?.hotelInfo?.HotelInfoResult?.HotelDetails?.HotelName;
           const hotelDate = hotel?.data?.hotelSearchQuery?.checkInDate;
           return (
-            <View style={styles.notFilledDataContainer}>
+            <View style={styles.notFilledDataContainer} key={hotelName}>
               <IconSwitcher
                 componentName="Octicons"
                 iconName="dot-fill"
@@ -696,7 +689,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
           const busDate = bus?.data?.bus?.ArrivalTime;
           const passengers = bus?.data?.passengers;
           return (
-            <View style={styles.notFilledDataContainer}>
+            <View style={styles.notFilledDataContainer} key={TravelName}>
               <IconSwitcher
                 componentName="Octicons"
                 iconName="dot-fill"
@@ -1981,7 +1974,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                     </View>
                                     <TouchableOpacity
                                       onPress={() => {
-                                        openAllTimeStamps(),
+                                        openAllTimeStamps();
                                           setTimeStampData(hotelReq?.[0]);
                                       }}>
                                       <IconSwitcher
@@ -2124,7 +2117,6 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                           var flightStatus = tripData.data.flights.filter(
                             f => f.id === flight.id,
                           );
-                          // price = price + flight.data.finalPrice;
                           price =price +
                           flight?.data?.totalFare +
                           flight?.data?.gstInFinalserviceCharge +
@@ -2159,8 +2151,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                             flight.data.flightNew.segments?.[0]
                               .originCountryCode !== 'IN';
                           return (
-                            <>
-                              <TripDetailsFlightCard
+                            <TripDetailsFlightCard
+                                key={`flight-${flight.id}`}
                                 flightGrp={[flight.data.flight]}
                                 index={f}
                                 flightBooking={flight.data}
@@ -2181,7 +2173,6 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                 isInternational={isInternational}
                                 totalFlight={fightData}
                               />
-                            </>
                           );
                         })}
                     </>
@@ -2213,8 +2204,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                   });
                   price = price + Number(cab.data.cabTotalPrice);
                   return (
-                    <>
                       <CabCard
+                        key={id}
                         item={cab.data.cab}
                         tripsPage={true}
                         startDate={cab.data.cabStartDate}
@@ -2226,7 +2217,6 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                         countCab={cab?.data?.cabCount}
                         totalCab={cab}
                       />
-                    </>
                   );
                 })}
               </>
@@ -2268,6 +2258,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                   price = price + Number(busData.data.busTotalPrice);
                   return (
                     <BusRenderData
+                      key={id}
                       item={bus}
                       tripsPage={true}
                       bookingBus={busData.data}
@@ -2307,7 +2298,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                           paddingVertical: responsiveHeight(1.3),
                           paddingHorizontal: 0,
                         },
-                      ]}>
+                      ]} key={other?.data?.bookingDetails}>
                       <View
                         style={{
                           flexDirection: 'row',
@@ -2617,7 +2608,6 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                       : currentTime < threeHoursAfter;
                   return isTimeReCheck;
                 }) ? (
-                <>
                   <TouchableOpacity
                     style={styles.proceedToBookingBtn}
                     onPress={onBtnClick}>
@@ -2625,7 +2615,6 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                       Proceed to Booking
                     </Text>
                   </TouchableOpacity>
-                </>
               ) : (
                 <TouchableOpacity
                   style={styles.proceedToBookingBtn}
@@ -4248,7 +4237,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                               book.submissionStatus === 'Submitted'
                                 ? styles.isActivePaymentCard
                                 : styles.paymentCard
-                            }>
+                            } key={book.bookingPrice}>
                             <View style={{flexDirection: 'row'}}>
                               <View>
                                 {book.submissionStatus === 'Submitted' ? (
@@ -4814,7 +4803,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                 })
                 .map((flight, ind) => {
                   return (
-                    <Text style={styles.title}>
+                    <Text style={styles.title} key={`data_${ind+1}`}>
                       {`${ind + 1} . ${
                         flight.data.flightNew.segments?.[0].destCityName
                       } to ${flight.data.flightNew.segments?.[0].originCityName}`}
