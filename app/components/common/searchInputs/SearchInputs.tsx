@@ -77,9 +77,9 @@ const SearchInputs: React.FC<IProps> = ({ btn, dropDown,selected, placeholder,cu
 // :activeBtn?`${handleDate(datePick)}`
 // console.log(originSelectedAirport)
   return (
-    <View>
+    <View style={{flex:1}}>
       {btn ?
-        <View>
+        <>
           <View style={[styles.btnMainContainer, activeBtn && { borderColor:colors.primary, borderWidth: responsiveHeight(0.3) },customStyles]}>
            { !dropDown?<TouchableWithoutFeedback onPressIn={() => handleFocus("btn")}
               onPressOut={handlePressOut} style={styles.btn} onPress={handleDatePicker}>
@@ -88,7 +88,7 @@ const SearchInputs: React.FC<IProps> = ({ btn, dropDown,selected, placeholder,cu
             </TouchableWithoutFeedback>
 
 :
-            <View style={styles.btn}>
+<View style={styles.classIDBtn}>
 <Text style={[styles.btnText,customFontStyles]}>{dropDown ? classes: placeholder}</Text>
 <TouchableWithoutFeedback onPressIn={() => handleFocus("btn")}
               onPressOut={handlePressOut} >
@@ -109,7 +109,7 @@ const SearchInputs: React.FC<IProps> = ({ btn, dropDown,selected, placeholder,cu
               }
             </View>
           }
-        </View>
+        </>
         :
         (
           btnOrTextInput?<View style={[styles.textInputContainer, active && { borderColor: colors.primary, borderWidth: responsiveHeight(0.3) }]}>
@@ -118,11 +118,8 @@ const SearchInputs: React.FC<IProps> = ({ btn, dropDown,selected, placeholder,cu
             
               {!selected?<Text style={styles.textInputFont}>{placeholder}</Text>:
               <View style={styles.selectedAirportContainer}>
-                <Text style={{color:"#505050"}}>{selectedObj?.address.cityName}</Text>
-                <View style={{flexDirection:"row"}}>
-                <Text style={{color:'#969696'}}>{selectedObj?.iataCode}, </Text>
-                <Text style={{color:'#969696'}}>{selectedObj?.name}</Text>
-                </View>
+                <Text style={styles.title}>{selectedObj?.address.cityName}</Text>
+                <Text style={styles.subTitle}>{selectedObj?.iataCode},{selectedObj?.name}</Text>
                 </View>}
             
           </TouchableWithoutFeedback>

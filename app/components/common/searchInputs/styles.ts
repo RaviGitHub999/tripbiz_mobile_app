@@ -9,7 +9,7 @@ export const styles=StyleSheet.create(
             justifyContent:'center',
             borderRadius:responsiveHeight(1.5),
             paddingHorizontal:responsiveWidth(5),
-            height:responsiveHeight(7)
+            minHeight:responsiveHeight(8)
         },
         btn:{
             width:"100%",
@@ -18,9 +18,15 @@ export const styles=StyleSheet.create(
             flexDirection:'row',
             justifyContent:'space-between',
         },
+        classIDBtn:{
+            alignItems:"center",
+            flexDirection:'row',
+            justifyContent:'space-between',
+        },
         btnText:{
-            fontSize:responsiveFontSize(2.5),
-            color:colors.gray
+            fontSize:responsiveWidth(4.5),
+            color:colors.gray,
+            fontFamily:fonts.textFont,
         },
         dropDownListContainer:{
             borderWidth:1,
@@ -34,27 +40,39 @@ export const styles=StyleSheet.create(
             backgroundColor:"#f6f6f6",
             justifyContent:'center',
             borderRadius:responsiveHeight(1.5),
-            paddingHorizontal:responsiveWidth(5)
+            paddingHorizontal:responsiveHeight(2)
         },
         textInputFont:{
-            fontSize:responsiveFontSize(2.5)
+            fontSize:responsiveWidth(4.2),
+            fontFamily:fonts.primary,
+            color:colors.primary
         },
         eachListText:{
-            fontSize:responsiveFontSize(2),
+            fontSize:responsiveWidth(4),
             fontFamily:fonts.textInput,
             color:colors.primary
         },
         btnorTextInput:{
-            height:responsiveHeight(7),
+           paddingHorizontal:responsiveHeight(2),
            justifyContent:'center',
-           paddingHorizontal:responsiveWidth(5),
            borderRadius:responsiveHeight(1.5),
            backgroundColor:"#f6f6f6",
+           minHeight:responsiveHeight(8)
         },
         selectedAirportContainer:{
             flex:1,
             justifyContent:'center',
             rowGap:responsiveHeight(0.5)
+        },
+        title:{
+            fontSize:responsiveWidth(4),
+            fontFamily:fonts.primary,
+            color:colors.primary
+        },
+        subTitle:{
+            fontSize:responsiveWidth(2.6),
+            fontFamily:fonts.textFont,
+            color:"#969696"
         }
     }
 )

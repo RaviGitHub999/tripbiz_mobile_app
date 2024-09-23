@@ -123,7 +123,7 @@ const FlightCard = ({
     });
     return (
       <View style={{ rowGap: responsiveHeight(2) }}>
-        <View style={bookingFlight ? { flexDirection: 'row', alignItems: 'center' } : styles.logoHeader}>
+        {/* <View style={bookingFlight ? { flexDirection: 'row', alignItems: 'center' } : styles.logoHeader}>
           <View style={styles.flightLogoContainer}>
             {flightSymbol(item.airlineName) ? (
               <Image
@@ -139,16 +139,6 @@ const FlightCard = ({
               />
             )}
           </View>
-          {/* <View
-            style={[
-              {
-                flexDirection: 'row',
-                alignItems: 'center',
-                // justifyContent: 'space-between',
-                borderWidth:1,
-                borderBlockColor:'red'
-              },
-            ]}> */}
           <View style={bookingFlight ? { width: "40%" } : { width: "50%" }}>
             <Text style={styles.airlineName}> {`${item.airlineName}`}</Text>
           </View>
@@ -160,9 +150,34 @@ const FlightCard = ({
               <Text style={{ fontSize: responsiveHeight(1.8), fontFamily: fonts.primary, color: colors.primary }}>{item.depTimeDate.toString().slice(4, 10)}</Text>
             </View>
           ) : null}
-          {/* </View> */}
           <View></View>
-        </View>
+        </View> */}
+      <View style={{flexDirection:'row',alignItems:'center'}}>
+      <View style={styles.flightLogoContainer}>
+            {flightSymbol(item.airlineName) ? (
+              <Image
+                source={{ uri: flightSymbol(item.airlineName) }}
+                style={styles.flightLogo}
+                resizeMode="contain"
+              />
+            ) : (
+              <IconSwitcher
+                componentName="FontAwesome5"
+                iconName="plane-departure"
+                iconsize={3}
+              />
+            )}
+          </View>
+          <View style={{flexDirection:'row',alignItems:'center',flex:1,flexWrap:'wrap',borderWidth:1}}>
+            <Text style={styles.airlineName}> {`${item.airlineName}`}</Text>
+            <Text style={styles.flightNumbers}>({flightCode})</Text>
+          </View>
+          {bookingPage ? (
+            <View style={{ backgroundColor: colors.highlight, padding: responsiveHeight(1), borderTopLeftRadius: responsiveHeight(2), borderBottomLeftRadius: responsiveHeight(2) }}>
+              <Text style={{ fontSize: responsiveHeight(1.8), fontFamily: fonts.primary, color: colors.primary }}>{item.depTimeDate.toString().slice(4, 10)}</Text>
+            </View>
+          ) : null}
+      </View>
         <View style={styles.flightsTimingContainer}>
           <View style={styles.originContainer}>
             <Text style={styles.originTitle}>{item.depTime}</Text>
@@ -753,12 +768,12 @@ const styles = StyleSheet.create({
     padding: responsiveHeight(1),
   },
   airlineName: {
-    fontSize: responsiveFontSize(2.2),
+    fontSize: responsiveWidth(4.2),
     fontFamily: fonts.primary,
     color: colors.black,
   },
   flightNumbers: {
-    fontSize: responsiveFontSize(1.6),
+    fontSize: responsiveWidth(3.5),
     fontFamily: fonts.textInput,
     color: colors.gray,
     // borderWidth:1,
@@ -782,7 +797,7 @@ const styles = StyleSheet.create({
   },
   farePrice: {
     color: colors.secondary,
-    fontSize: responsiveFontSize(2),
+    fontSize: responsiveWidth(4),
   },
   bookingButton: {
     backgroundColor: colors.primary,

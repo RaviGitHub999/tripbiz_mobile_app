@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import React, { useContext, useState } from 'react'
 import IconSwitcher from '../icons/IconSwitcher'
 import { responsiveHeight, responsiveWidth } from '../../../utils/responsiveScale'
-import { colors } from '../../../config/theme'
+import { colors, fonts } from '../../../config/theme'
 import MyContext from '../../../context/Context'
 interface IProps {
     length: number,
@@ -42,8 +42,8 @@ const DropDown: React.FC<IProps> = ({ length,starting, particularState,customSty
     const list = numbers.map((number) => {
        let comp=starting===1?number+1:number
        return(
-        <TouchableOpacity key={number} style={[requiredState(particularState) === comp&& { backgroundColor: "#86c9e8" }, { paddingHorizontal: responsiveWidth(2.5) }]} onPress={() => handlePress(particularState, starting===1?number+1:number)}>
-        <Text style={requiredState(particularState) === comp?{color:colors.white}:{color:"#505050"}}>{starting===1?number+1:number}</Text>
+        <TouchableOpacity key={number} style={[requiredState(particularState) === comp&& { backgroundColor: "#86c9e8" },styles.highliteColor]} onPress={() => handlePress(particularState, starting===1?number+1:number)}>
+        <Text style={requiredState(particularState) === comp?styles.activeText:styles.inActiveText}>{starting===1?number+1:number}</Text>
     </TouchableOpacity>
        )
        })
@@ -59,10 +59,10 @@ const DropDown: React.FC<IProps> = ({ length,starting, particularState,customSty
         <View >
             <TouchableOpacity style={[styles.mainContainer,customStyles&&{...customStyles}]} onPress={handleDropDownIcon}>
                 <View>
-                   {!dropDownIcon?<Text style={{color:"#969696"}}>{placeHolder}</Text>:null}
+                   {!dropDownIcon?<Text style={styles.placeHolder}>{placeHolder}</Text>:null}
                 </View>
                 <View style={styles.dropDownInActiveConatiner}>
-                    <Text style={{color:"#505050"}}>{requiredState(particularState)}</Text>
+                    <Text style={styles.listItem}>{requiredState(particularState)}</Text>
                     {dropDownIcon&& <IconSwitcher componentName='AntDesign' iconName='down' iconsize={2} />}
                 </View>
             </TouchableOpacity>
@@ -78,12 +78,11 @@ const styles = StyleSheet.create(
     {
         mainContainer: {
             backgroundColor: "#f6f6f6",
-            rowGap: responsiveHeight(1),
-            paddingHorizontal: responsiveWidth(2.5),
+            rowGap: responsiveHeight(0.5),
+            paddingHorizontal:responsiveHeight(2),
             borderRadius: responsiveHeight(1.5),
             paddingVertical: responsiveHeight(0.5),
-            // width: responsiveWidth(24),
-            height:responsiveHeight(8),
+            minHeight:responsiveHeight(8.5),
             justifyContent:'center'
         },
         dropDownInActiveConatiner:{
@@ -91,8 +90,29 @@ const styles = StyleSheet.create(
              flexDirection: "row", 
              alignItems: "center" 
         },
-        dropDownActiveConatiner:{
-
+        placeHolder:{
+                fontSize:responsiveWidth(4.5),
+                color:colors.gray,
+                fontFamily:fonts.textFont,
+        },
+        activeText:{
+            color:colors.white,
+            fontFamily:fonts.primary,
+            fontSize:responsiveWidth(3.5),
+        },
+        inActiveText:{
+            color:"#505050",
+            fontFamily:fonts.primary,
+            fontSize:responsiveWidth(3.5),
+        },
+        highliteColor:{
+            paddingHorizontal: responsiveWidth(3.5),
+            paddingVertical:responsiveHeight(.5)
+        },
+        listItem:{
+            color:"#505050",
+            fontFamily:fonts.primary,
+            fontSize:responsiveWidth(4.5), 
         }
     }
 )

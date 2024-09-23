@@ -31,7 +31,8 @@ export const styles=StyleSheet.create({
         justifyContent:'center',
     },
     travellerDescription:{
-        flexDirection:'row'
+        flexDirection:'row',
+        flexWrap:"wrap"
     },
     descriptionTitles:{
 color:colors.white,

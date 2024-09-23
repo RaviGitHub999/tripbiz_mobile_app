@@ -199,14 +199,15 @@ export const styles = StyleSheet.create({
     },
     seatSelectionBtn: {
         backgroundColor: colors.black,
-        width: responsiveWidth(20),
-        height: responsiveHeight(3.5),
+        width: responsiveWidth(25),
+        minHeight: responsiveHeight(3.5),
         borderRadius: responsiveHeight(1.5),
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        padding:responsiveHeight(1)
     },
     seatSelectionBtnTitle: {
-        fontSize: responsiveHeight(1.3),
+        fontSize: responsiveWidth(3),
         color: colors.white,
         fontFamily: fonts.primary
     },

@@ -48,8 +48,9 @@ backgroundColor:colors.primary
         marginTop:responsiveHeight(1.5)
     },
     airportName:{
-        fontSize:responsiveFontSize(1.6),
-        color:'#969696',
+        fontSize:responsiveWidth(2.6),
+        fontFamily:fonts.textFont,
+        color:"#969696"
     },
     searchFlightsBtnConatainer:{
         marginBottom:responsiveHeight(5)
@@ -68,5 +69,16 @@ backgroundColor:colors.primary
         fontSize:responsiveHeight(1.5),
         fontFamily:fonts.primary,
         color:colors.red
-    }
+    },
+    message:
+    {
+        fontSize:responsiveWidth(3.6),
+        fontFamily:fonts.textFont,
+        color:"#505050"
+    },
+    title:{
+        fontSize:responsiveWidth(4),
+        fontFamily:fonts.primary,
+        color:colors.primary
+    },
 })

@@ -80,12 +80,12 @@ const FlightsSearch: React.FC<IProps> = ({ navigation: { navigate } }) => {
   }
   const MemoizedAirportItem = React.memo((item: any) => (
     <TouchableOpacity style={styles.renderItemsContainer} onPress={() => {actions.handleOriginSelectedAirPort(item)}}>
-      <View>
-        <Text style={{color:"#505050"}}>{`${item.address.cityName},${item.address.countryName}`}</Text>
+      <View style={{flex:1}}>
+        <Text style={styles.title}>{`${item.address.cityName},${item.address.countryName}`}</Text>
         <Text style={styles.airportName}>{item.name}</Text>
       </View>
       <View>
-        <Text style={{color:colors.primary}}>{item.iataCode}</Text>
+        <Text style={styles.title}>{item.iataCode}</Text>
       </View>
     </TouchableOpacity>
   ));
@@ -122,9 +122,9 @@ const FlightsSearch: React.FC<IProps> = ({ navigation: { navigate } }) => {
             oriRes ?
               <View >
                 {airportOriginLoading ? (
-                  <Text style={{color:"#505050"}}>Loading......</Text>
+                  <Text style={styles.message}>Loading......</Text>
                 ) : airportOriginData.length === 0 ?
-                  <Text style={{color:"#505050"}}>No Data!!!</Text> : <View style={{ flex: 1 }}>
+                  <Text style={styles.message}>No Data!!!</Text> : <View style={{ flex: 1 }}>
                     <FlatList data={airportOriginData} renderItem={({ item }: any) => <MemoizedAirportItem {...item} />} nestedScrollEnabled style={styles.airportOriginDataContainer}  />
                   </View>}
               </View> : null
@@ -135,18 +135,18 @@ const FlightsSearch: React.FC<IProps> = ({ navigation: { navigate } }) => {
             desRes ?
               <View >
                 {airportDestLoading ? (
-                  <Text style={{color:"#505050"}}>Loading......</Text>
+                  <Text style={styles.message}>Loading......</Text>
                 ) : airportDestData.length === 0 ?
-                  <Text style={{color:"#505050"}}>No Data!!!</Text> : <View style={{ flex: 1 }}>
+                  <Text style={styles.message}>No Data!!!</Text> : <View style={{ flex: 1 }}>
                     <FlatList data={airportDestData} renderItem={({ item }) => {
                       return (
                         <TouchableOpacity style={styles.renderItemsContainer} onPress={() => actions.handleDestinationSelectedAirPort(item)}>
-                          <View>
-                            <Text style={{color:"#505050"}}>{`${item.address.cityName},${item.address.countryName}`}</Text>
+                          <View style={{flex:1}}>
+                            <Text style={styles.title}>{`${item.address.cityName},${item.address.countryName}`}</Text>
                             <Text style={styles.airportName}>{item.name}</Text>
                           </View>
-                          <View>
-                            <Text style={{color:colors.primary}}>{item.iataCode}</Text>
+                          <View >
+                            <Text style={styles.title}>{item.iataCode}</Text>
                           </View>
                         </TouchableOpacity>
                       )
@@ -154,9 +154,11 @@ const FlightsSearch: React.FC<IProps> = ({ navigation: { navigate } }) => {
                   </View>}
               </View> : null
           }
-          <View {...journeyWay === "2" && { style: { flexDirection: 'row',gap:responsiveHeight(2) } }}>
-            <SearchInputs  btn={true} dropDown={false} placeholder={departure}{...journeyWay === "2" && { customStyles: { width: responsiveWidth(41) } }} handleDatePicker={handleOpenCalender} />   
-            {journeyWay === "2" && <SearchInputs  btn={true} dropDown={false} placeholder={returnDate} customStyles={{ width: responsiveWidth(41) }} handleDatePicker={handleOpenReturnCalender} />}
+          {/* {...journeyWay === "2" && { customStyles: { width: responsiveWidth(41)} }} */}
+          {/* customStyles={{ width: responsiveWidth(41) }} */}
+          <View {...journeyWay === "2" && { style: { flexDirection: 'row',gap:responsiveHeight(1.5),flex:1 } }}>
+            <SearchInputs  btn={true} dropDown={false} placeholder={departure} handleDatePicker={handleOpenCalender}  {...journeyWay === "2" && { customStyles: { width: responsiveWidth(41)} }}/>   
+            {journeyWay === "2" && <SearchInputs  btn={true} dropDown={false} placeholder={returnDate}  handleDatePicker={handleOpenReturnCalender} customStyles={{width: responsiveWidth(41)}}/>}
           </View>
           {errors.departureDate?<View {...journeyWay === "2" && { style: { flexDirection: 'row',columnGap:responsiveHeight(2) } }}>
           { errors.departureDate?<Text  style={[styles.errorText,{flex:1,textAlignVertical:'center',}]}>{`* ${errors.departureDate}`}</Text>:null}
