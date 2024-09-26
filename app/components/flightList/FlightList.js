@@ -542,9 +542,9 @@ const listEmpty=()=>
               <View>
                 <Text style={styles.filterTitles}>{"Stops"}</Text>
                 {isInternationalRound ?
-                  <>
+                  <View style={styles.stopsMainContainer}>
                     <View>
-                      <Text>Onward Flight</Text>
+                      <Text style={styles.stopsSubTitle}>Onward Flight</Text>
                       <View style={[styles.stopsContainer]}>
                         <FlatList ref={flatListRef} data={flightStops} renderItem={({ item, index }) => {
                           return (
@@ -556,7 +556,7 @@ const listEmpty=()=>
                       </View>
                     </View>
                     <View>
-                      <Text>Return Flight</Text>
+                      <Text style={styles.stopsSubTitle}>Return Flight</Text>
                       <View style={[styles.stopsContainer]}>
                         <FlatList ref={flatListRef} data={flightStops} renderItem={({ item, index }) => {
                           return (
@@ -568,7 +568,7 @@ const listEmpty=()=>
                       </View>
                     </View>
 
-                  </>
+                  </View>
 
 
                   : <View style={[styles.stopsContainer]}>
@@ -584,20 +584,20 @@ const listEmpty=()=>
               <View>
                 <Text style={styles.filterTitles}>{"Departure Time"}</Text>
                 {isInternationalRound ?
-                  <>
+                  <View style={styles.stopsMainContainer}>
                     <View>
-                      <Text>Onward flight</Text>
+                      <Text style={styles.stopsSubTitle}>Onward flight</Text>
                       <View style={styles.mappedSunImgContainer}>
                         {intdepimg1}
                       </View>
                     </View>
                     <View>
-                      <Text>Return flight</Text>
+                      <Text style={styles.stopsSubTitle}>Return flight</Text>
                       <View style={styles.mappedSunImgContainer}>
                         {intdepimg2}
                       </View>
                     </View>
-                  </>
+                  </View>
                   :
                   <View style={styles.mappedSunImgContainer}>
                     {img1}
@@ -607,20 +607,20 @@ const listEmpty=()=>
               <View>
                 <Text style={styles.filterTitles}>{"Arrival Time"}</Text>
                 {isInternationalRound ?
-                  <>
+                  <View style={styles.stopsMainContainer}>
                     <View>
-                      <Text>Onward flight</Text>
+                      <Text style={styles.stopsSubTitle}>Onward flight</Text>
                       <View style={styles.mappedSunImgContainer}>
                         {intarrimg1}
                       </View>
                     </View>
                     <View>
-                      <Text>Return flight</Text>
+                      <Text style={styles.stopsSubTitle}>Return flight</Text>
                       <View style={styles.mappedSunImgContainer}>
                         {intarrimg2}
                       </View>
                     </View>
-                  </>
+                  </View>
                   : <View style={styles.mappedSunImgContainer}>
                     {img2}
                   </View>}
@@ -841,7 +841,8 @@ const styles = StyleSheet.create({
   flightNamesContentContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    flexShrink: 1
+    flexShrink: 1,
+    marginTop:responsiveHeight(1)
   },
   selectedFlightNameBtn: {
     backgroundColor: colors.gray
@@ -871,7 +872,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gray
   },
   flightStopsText: {
-    fontSize: responsiveHeight(1.8)
+    fontSize: responsiveHeight(1.8),
+    fontFamily:fonts.textFont,
+    color:colors.gray
   },
   activeStopsText: {
     fontFamily: fonts.primary,
@@ -968,5 +971,14 @@ const styles = StyleSheet.create({
   listEmptyContainer:{
     alignItems:'center',
     marginTop:responsiveHeight(2)
+  },
+  stopsSubTitle:{
+    fontFamily: fonts.primary,
+    fontSize: responsiveHeight(1.6),
+    color: colors.primary
+  },
+  stopsMainContainer:{
+    gap:responsiveHeight(1),
+    marginTop:responsiveHeight(1)
   }
 })  

@@ -57,6 +57,7 @@ export const styles = StyleSheet.create({
     borderRadius: responsiveHeight(2),
     fontSize: responsiveHeight(2.1),
     color:colors.primary,
+    fontFamily:fonts.primary
   },
   filterButtonsContainer:
   {

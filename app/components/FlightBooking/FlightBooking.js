@@ -493,12 +493,12 @@ const FlightBooking = ({navigation: {navigate}}) => {
                       <View style={styles.flightextrabagAndMealContainer}>
                         <Text style={styles.flightextrabagAndMealTitle}>
                           Select extra baggage
-                        </Text>
+                        </Text >
                         {[...Array(bookingFlight[bookIndex].travellers)].map(
                           (trav, index) => {
                             return (
-                              <React.Fragment>
-                                <Text>
+                              <React.Fragment >
+                                <Text style={styles.flightBaggageText}>
                                   {index + 1 <=
                                   Number(bookingFlight[bookIndex].adults)
                                     ? 'Adult'
@@ -551,7 +551,7 @@ const FlightBooking = ({navigation: {navigate}}) => {
                           (trav, index) => {
                             return (
                               <React.Fragment >
-                                <Text>
+                                <Text style={styles.flightBaggageText}>
                                   {index + 1 <=
                                   Number(bookingFlight[bookIndex].adults)
                                     ? 'Adult'
@@ -608,7 +608,7 @@ const FlightBooking = ({navigation: {navigate}}) => {
                           (trav, index) => {
                             return (
                               <>
-                                <Text>
+                                <Text style={styles.flightBaggageText}>
                                   {index + 1 <=
                                   Number(bookingFlight[bookIndex].adults)
                                     ? 'Adult'
@@ -736,7 +736,7 @@ const FlightBooking = ({navigation: {navigate}}) => {
                                       componentName="AntDesign"
                                       iconName="arrowright"
                                       color="black"
-                                      iconsize={3}
+                                      iconsize={2.1}
                                     />
                                     <Text
                                       style={
@@ -758,7 +758,7 @@ const FlightBooking = ({navigation: {navigate}}) => {
                                       styles.flightPrice,
                                       {
                                         color: colors.highlight,
-                                        fontSize: responsiveHeight(2),
+                                        fontSize: responsiveHeight(1.6),
                                       },
                                     ]}>
                                     {rule.Details}
@@ -794,7 +794,7 @@ const FlightBooking = ({navigation: {navigate}}) => {
                                     componentName="AntDesign"
                                     iconName="arrowright"
                                     color="black"
-                                    iconsize={3}
+                                    iconsize={2.1}
                                   />
                                   <Text
                                     style={
@@ -816,7 +816,7 @@ const FlightBooking = ({navigation: {navigate}}) => {
                                     styles.flightPrice,
                                     {
                                       color: colors.highlight,
-                                      fontSize: responsiveHeight(2),
+                                      fontSize: responsiveHeight(1.6),
                                     },
                                   ]}>
                                   {rule.Details}

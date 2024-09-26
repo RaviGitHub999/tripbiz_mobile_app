@@ -134,7 +134,7 @@ selectedDomesticFlightName:{
 },
 selectedDomesticFlightTimings:{
     fontSize:responsiveHeight(1.8),
-    fontWeight:"800",
-    color:colors.lightGray
+    color:colors.lightGray,
+    fontFamily:fonts.primary
 }
 })

@@ -7,7 +7,7 @@ import {
   Linking,
   Alert,
 } from 'react-native';
-import React, {useCallback, useContext, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {
   responsiveFontSize,
   responsiveHeight,
@@ -116,6 +116,8 @@ const BusRenderData = ({
         return "white";
     }
   };
+ 
+  
   return (
     <>
       <View
@@ -632,6 +634,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    // flexWrap:"wrap"
   },
   time: {
     fontSize: responsiveHeight(1.8),

@@ -25,7 +25,7 @@ const HotelSearchInput = ({placeHolder,value,handleChange}) => {
     <View>
         <TouchableOpacity style={[active?styles.isActiveMainContainer:styles.mainContainer,styles.mainContainer]} onPress={handleFocus}>
     {
-        active?<TextInput autoFocus style={{ paddingHorizontal:responsiveWidth(5),}} value={value} onChangeText={(e)=>handleChange(e)} onFocus={handleFocus} onBlur={handleBlur}/>:<Text style={[styles.title,{paddingHorizontal:responsiveWidth(5)}]}>{placeHolder}</Text>
+        active?<TextInput autoFocus style={styles.placeHolderText} value={value} onChangeText={(e)=>handleChange(e)} onFocus={handleFocus} onBlur={handleBlur}/>:<Text style={[styles.title,{paddingHorizontal:responsiveWidth(5)}]}>{placeHolder}</Text>
     }
     </TouchableOpacity>
     </View>
@@ -38,8 +38,7 @@ const styles=StyleSheet.create({
         backgroundColor:colors.whiteSmoke,
         justifyContent:'center',
         borderRadius:responsiveHeight(1.5),
-       
-        height:responsiveHeight(7)
+        minHeight:responsiveHeight(8)
     },
     isActiveMainContainer:{
         borderWidth:responsiveHeight(0.3)
@@ -49,4 +48,10 @@ const styles=StyleSheet.create({
         fontFamily:fonts.textFont,
         color:colors.gray
     },
+    placeHolderText:{
+        paddingHorizontal:responsiveWidth(5),
+        fontSize:responsiveWidth(4.2),
+        fontFamily:fonts.primary,
+        color:colors.primary
+    }
 })

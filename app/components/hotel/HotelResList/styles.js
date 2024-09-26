@@ -5,26 +5,27 @@ import { responsiveHeight, responsiveWidth } from "../../../utils/responsiveScal
 export const styles=StyleSheet.create({
 headerMainContainer:{
     backgroundColor:colors.primary,
-    // flex: .1, 
-    // borderWidth: 2,
-    //  borderColor: "red",
      paddingHorizontal:responsiveWidth(5),
      justifyContent:'center',
      rowGap:responsiveHeight(1),
-     height:responsiveHeight(10)
+     minHeight:responsiveHeight(10),
+     paddingVertical:responsiveHeight(1)
+     
 },
 titleContainer:{
     flexDirection: "row",
     alignItems:'centers',
     columnGap:responsiveWidth(4),
-    // borderWidth:1,
+    justifyContent:"space-between"
 },
 title:{
-    textAlignVertical:'center',
     color:colors.white,
     fontSize:responsiveHeight(2.2),
     fontFamily:fonts.primary
-
+},
+editButtonMainContainer:{
+alignItems:"center",
+justifyContent:'center'
 },
 editButtonContainer:{
     backgroundColor: colors.highlight,
@@ -43,10 +44,7 @@ subTitle:{
 hotelCard: {
     flexDirection: 'row',
     marginVertical: responsiveHeight(0.5),
-    // marginHorizontal: 15,
     padding: responsiveHeight(1),
-    // borderWidth: 1,
-    // borderColor: '#ccc',
     borderRadius: responsiveHeight(1.5),
     shadowColor:"#ccc",
     shadowOffset: { width: responsiveWidth(-0.2), height: responsiveHeight(-5) },
@@ -75,17 +73,17 @@ hotelCard: {
   },
   hotelDetailsContainer: {
     flex: 2,
-    rowGap:responsiveHeight(1)
+    rowGap:responsiveHeight(1),
     // marginLeft: 10,
     // borderWidth:1
   },
   hotelNameContainer: {
     // marginBottom: 5,
-    flexDirection:"row",
-    justifyContent:"space-between",
+    // flexDirection:"row",
+    // justifyContent:"space-between",
     // width:"50%",
     // borderWidth:1,
-    alignItems:'center'
+    // alignItems:'center'
    
   },
   hotelName: {

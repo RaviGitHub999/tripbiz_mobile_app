@@ -36,7 +36,8 @@ export const styles = StyleSheet.create({
     tripDateTitle: {
         fontSize: responsiveHeight(1.7),
         color: colors.primary,
-        fontWeight: '500'
+        fontWeight: '500',
+        fontFamily:fonts.primary
     },
     tripDate: {
         color: colors.highlight
@@ -67,9 +68,9 @@ export const styles = StyleSheet.create({
 
     },
     hotelBookedDate: {
-        fontSize: responsiveHeight(1.7),
-        fontWeight: "600",
-        color: colors.primary
+        fontSize: responsiveHeight(1.5),
+        color: colors.primary,
+        fontFamily:fonts.primary
     },
     hotelNights: {
         fontSize: responsiveHeight(1.6),
@@ -786,7 +787,8 @@ width:responsiveHeight(10),borderRadius:responsiveHeight(1)
         textAlignVertical: "top",
         borderRadius: responsiveHeight(1.3),
         paddingHorizontal: responsiveWidth(3),
-        fontSize: responsiveHeight(1.3)
+        fontSize: responsiveHeight(1.3),
+        fontFamily:fonts.primary
       },
       paymentCard:{
         width: '90%',

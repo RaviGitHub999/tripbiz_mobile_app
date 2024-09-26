@@ -406,9 +406,9 @@ const CabCard = ({
             </View>
           )}
 
-        <TouchableOpacity onPress={() => setCabLocationPopup(true)}>
+       {tripsPage &&<TouchableOpacity onPress={() => setCabLocationPopup(true)}>
           <IconSwitcher componentName='FontAwesome5' iconName='taxi' iconsize={2.5}/>
-        </TouchableOpacity>
+        </TouchableOpacity>}
 
         </View>
 
@@ -981,6 +981,7 @@ const styles = StyleSheet.create({
     borderRadius: responsiveHeight(1.3),
     paddingHorizontal: responsiveWidth(3),
     fontSize: responsiveHeight(2.3),
+    fontFamily:fonts.primary
   },
   newtriptitle: {
     fontSize: responsiveHeight(2.5),

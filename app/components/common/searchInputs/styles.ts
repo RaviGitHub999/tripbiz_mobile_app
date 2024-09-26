@@ -30,7 +30,7 @@ export const styles=StyleSheet.create(
         },
         dropDownListContainer:{
             borderWidth:1,
-            height:responsiveHeight(15)
+            minHeight:responsiveHeight(15)
         },
         eachListItem:{
             paddingLeft:responsiveWidth(5),

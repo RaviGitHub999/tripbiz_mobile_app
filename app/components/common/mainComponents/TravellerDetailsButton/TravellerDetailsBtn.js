@@ -1332,17 +1332,19 @@ const styles = StyleSheet.create({
     borderColor: colors.gray,
     borderRadius: responsiveHeight(1),
     padding: responsiveHeight(1),
-    fontSize: responsiveHeight(2),
+    fontSize: responsiveHeight(1.8),
     color: colors.primary,
+    fontFamily:fonts.primary
   },
   activeInput: {
     // borderWidth: 1,
     // borderColor: colors.gray,
     borderRadius: responsiveHeight(1),
     padding: responsiveHeight(1),
-    fontSize: responsiveHeight(2),
+    fontSize: responsiveHeight(1.8),
     backgroundColor: colors.whiteSmoke,
     color: colors.primary,
+    fontFamily:fonts.primary
   },
   submitButton: {
     backgroundColor: '#007BFF',

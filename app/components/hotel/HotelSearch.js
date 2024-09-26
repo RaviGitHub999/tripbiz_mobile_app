@@ -9,7 +9,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import MyContext from '../../context/Context'
 import HotelDropDown from '../common/hotelDropDown/HotelDropDown'
 import HotelSearchInput from '../common/HotelSearchInput/HotelSearchInput'
-import { colors } from '../../config/theme'
+import { colors, fonts } from '../../config/theme'
 const Item = React.memo(({ cityHotel, handleSelect }) => {
   const { item } = cityHotel
   return (
@@ -17,7 +17,7 @@ const Item = React.memo(({ cityHotel, handleSelect }) => {
       paddingHorizontal: responsiveWidth(2.5),
       margin: responsiveHeight(0.8)
     }} onPress={() => handleSelect(item)}>
-      <Text style={{fontSize:responsiveHeight(2),color:"black"}}>{`${item.DESTINATION},${item?.COUNTRY}`}</Text>
+      <Text style={styles.title}>{`${item.DESTINATION},${item?.COUNTRY}`}</Text>
     </TouchableOpacity>
   )
 })
@@ -180,9 +180,6 @@ const HotelSearch = ({ navigation: { navigate } }) => {
     setHotelRoomArr(roomsArr);
   };
   const  handleChildAge= (roomsArr) => {
-    // this.setState({
-    //   hotelRoomArr: roomsArr
-    // })
     setHotelRoomArr(roomsArr)
   }
 
@@ -226,37 +223,6 @@ actions.handleBookinghotelquery(
       console.log('Form has errors');
     }
   };
-//   const handleHotelSearch = () => {
-//     if (checkInTime && checkOutTime) {
-//       navigate("HotelResList")
-//       actions.hotelSearch({
-//         cityHotel,
-//         cityDestName: `${cityHotelItem.DESTINATION}, ${cityHotelItem.COUNTRY}`,
-//         countryCode,
-//         checkInDate,
-//         checkOutDate,
-//         selectedHotelCheckInDate,
-//         selectedHotelCheckOutDate,
-//         hotelNights,
-//         hotelRooms,
-//         hotelRoomArr
-//       });
-// actions.handleBookinghotelquery(
-//   {
-//     cityHotel,
-//     cityDestName: `${cityHotelItem.DESTINATION}, ${cityHotelItem.STATEPROVINCE}`,
-//     countryCode,
-//     checkInDate:selectedHotelCheckInDate,
-//     checkOutDate:selectedHotelCheckOutDate,
-//     hotelNights,
-//     hotelRooms,
-//     hotelRoomArr
-//   }
-// )
-//     }
-//   }
-  
-
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} >
       <ScrollView showsVerticalScrollIndicator={false}  keyboardShouldPersistTaps="always" contentContainerStyle={{paddingBottom:responsiveHeight(5)}}>
@@ -268,18 +234,16 @@ actions.handleBookinghotelquery(
             <>
               {
                 hotelCityLoading ? (
-                  <Text>Loading......</Text>
+                  <Text style={styles.message}>Loading......</Text>
                 ) :
                   cityHotelRes.length === 0 ? <View>
-                    <Text>No DataFound!!!</Text>
+                    <Text style={styles.message}>No DataFound!!!</Text>
                   </View> :
-                  //  { height: cityHotelRes.length < 3 ? responsiveHeight(8) : responsiveHeight(30), }
                    <View style={{  borderWidth:1,
                     borderRadius:responsiveHeight(1.5),
                     backgroundColor:colors.white,
                     overflow:'hidden',}}>
                       <FlatList data={cityHotelRes} renderItem={handlerenderData}
-                        // scrollEnabled={cityHotelRes.length > 3}
                         keyExtractor={handleKeyextractor}
                      contentContainerStyle={{justifyContent:"center"}} 
                      style={styles.hotelCityListCard}
@@ -289,9 +253,7 @@ actions.handleBookinghotelquery(
               }
             </> : null}
 
-          <View style={{ flexDirection: "row", gap:responsiveHeight(2)}}>
-            {/* actions.handleOpenCheckinCalender */}
-            {/* actions.handleOpenCheckoutCalender */}
+          <View style={{ flexDirection: "row", gap:responsiveHeight(2),flex:1}}>
             <SearchInputs btn={true} dropDown={false} placeholder={checkInDate} customStyles={{ width: responsiveWidth(42) }} customFontStyles={{ fontSize: responsiveHeight(2.3) }} handleDatePicker={handleOpenCheckinCalender} />
             <SearchInputs btn={true} dropDown={false} placeholder={checkOutDate} customStyles={{ width: responsiveWidth(42) }} customFontStyles={{ fontSize: responsiveHeight(2.3) }} handleDatePicker={handleOpenCheckoutCalender} />
           </View>
@@ -300,7 +262,7 @@ actions.handleBookinghotelquery(
           {errors.checkIn&&<Text style={[styles.errorText,{flex:1}]}>{`* ${errors.checkIn}`}</Text>}
           {errors.checkOut&&<Text style={[styles.errorText,{flex:1}]}>{`* ${errors.checkOut}`}</Text>}
           </View>
-          <View style={styles.aligningItemsInRow}>
+          <View style={[styles.aligningItemsInRow,{flex:1}]}>
             <HotelDropDown value={hotelNights} customStyles={{ width: responsiveWidth(42) }} placeHolder={"Nights"} disable={true} />
             <HotelDropDown length={4} starting={1} value={hotelRooms} handleChangeValue={handleHotelRooms} customStyles={{ width: responsiveWidth(42) }} placeHolder="Rooms" />
           </View>

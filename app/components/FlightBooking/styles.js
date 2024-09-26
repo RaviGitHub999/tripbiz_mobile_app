@@ -39,17 +39,20 @@ export const styles = StyleSheet.create({
         marginVertical: responsiveHeight(2)
     },
     baggageAndMealsTitle: {
-        fontSize: responsiveHeight(2.6),
+        fontSize: responsiveHeight(1.8),
         marginBottom: responsiveHeight(1.5),
-        color: colors.black
+        color: colors.black,
+        fontFamily:fonts.primary
     },
     baggageDetailsText: {
-        fontSize: responsiveHeight(2.2),
-        color: colors.black
+        fontSize: responsiveHeight(1.8),
+        color: colors.black,
+        fontFamily:fonts.primary
     },
     flightextrabagAndMealTitle: {
-        fontSize: responsiveHeight(2.2),
-        color: colors.black
+        fontSize: responsiveHeight(1.8),
+        color: colors.black,
+        fontFamily:fonts.primary
     },
     flightextrabagAndMealContainer: {
         rowGap: responsiveHeight(1.3),
@@ -58,8 +61,9 @@ export const styles = StyleSheet.create({
         borderWidth: 1
     },
     flightBaggageText: {
-        fontSize: responsiveHeight(1.8),
-        color: colors.black
+        fontSize: responsiveHeight(1.6),
+        color: colors.black,
+        fontFamily:fonts.primary
     },
     flightBaggageDataText: {
         color: colors.highlight
@@ -73,9 +77,10 @@ export const styles = StyleSheet.create({
         paddingHorizontal: responsiveWidth(3),
     },
     cancellationAndDateChangeTitle: {
-        fontSize: responsiveHeight(2.6),
+        fontSize: responsiveHeight(2.2),
         marginBottom: responsiveHeight(1.5),
         color: colors.black,
+        fontFamily:fonts.primary
     },
     cancellationAndDateChangeDetailsContainer: {
         paddingHorizontal: responsiveWidth(4),
@@ -380,7 +385,8 @@ export const styles = StyleSheet.create({
         textAlignVertical: "top", 
         borderRadius: responsiveHeight(1.3),
         paddingHorizontal:responsiveWidth(3),
-        fontSize:responsiveHeight(2.3)
+        fontSize:responsiveHeight(2.3),
+        fontFamily:fonts.primary
     },
     newtriptitle:{
         fontSize: responsiveHeight(2.5),

@@ -22,7 +22,6 @@ const HotelRenderItem = ({ item: hotel, handleBooking }) => {
         }
         return starsArray;
     }, [starRatingFull]);
-console.log("star")
     return (
         <View style={styles.hotelCard}>
             <View style={styles.hotelImgContainer}>

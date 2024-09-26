@@ -31,7 +31,6 @@ import {RefreshControl} from 'react-native';
 import FCard from './FCard';
 import TravDetails from './TravDetails';
 import HCard from './HCard';
-import {Modal} from 'react-native';
 import ReCheck from '../../common/recheck/ReCheck';
 import CustomSelect from '../../common/mainComponents/customSelect/CustomSelect';
 import {TextInput} from 'react-native';
@@ -69,8 +68,6 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
   const [requestData, setRequestData] = useState();
   const [selectedTab, setSelectedTab] = useState('travellers');
   const [travellerDetails, setTravellerDetails] = useState({});
-  const [isEdit, setIsEdit] = useState({});
-  const [showError, setShowError] = useState(false);
   var [fareIsOpen, setFareIsOpen] = useState(false);
   const [checked, setChecked] = useState(true);
   const [check, setCheck] = useState([]);
@@ -1499,7 +1496,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                             justifyContent: 'space-between',
                             width: '100%',
                           }}>
-                          <Text style={[, {fontSize: responsiveHeight(1.6)}]}>
+                          <Text style={[styles.tripDateTitle, {fontSize: responsiveHeight(1.6),fontFamily:fonts.subTitle}]}>
                             {tripData?.data?.flights?.filter(
                               flight => flight.status === status.status,
                             ).length > 0 ? (
@@ -2816,7 +2813,6 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                     ? styles.tripDetailsTravellerSelectedEachTab
                     : styles.tripDetailsTravellerEachTab
                 }
-                // onPress={() => handleSelectedTab('payment')}
                 disabled>
                 <Text
                   style={
@@ -3280,23 +3276,12 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                         {/* not Requested */}
 
                         <View style={{marginBottom: responsiveHeight(1)}}>
-                          {/* <Text style={styles.subTitle}>
-                            Created on:
-                            <Text
-                              style={[
-                                styles.subTitle,
-                                {color: colors.highlight},
-                              ]}>{` ${newdate}`}</Text>
-                          </Text> */}
                           <Text style={styles.title}>
                             Total price:
                             <Text
                               style={[styles.title, {color: colors.secondary}]}>
                               {' '}
                               &#8377;{' '}
-                              {/* {`${Math.ceil(notReqfinalCost).toLocaleString(
-                                'en-IN',
-                              )} `} */}
                                {Math.ceil(
                                 tripData?.flights
                                   ?.filter(
@@ -3459,11 +3444,6 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                       gap: responsiveHeight(1),
                       alignItems: 'center',
                     }}>
-                    {/* {approvalError && (
-                      <Text style={[styles.title, {color: colors.red}]}>
-                        Approval is Mandatory
-                      </Text>
-                    )} */}
                     <TouchableOpacity
                       style={[styles.btn]}
                       onPress={() => {
@@ -3887,26 +3867,8 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                     </>
                                   )}
                                 </>
-                                {/* comments */}
-                                {/* <>
-                                    <Text>Comments</Text>
-                                    <TextInput
-                                                    editable
-                                                    multiline
-                                                    numberOfLines={3}
-                                                    placeholder='Enter name of your trip'
-                                                    style={styles.multiTextContainer}
-                                                    // value={defaultInput}
-                                                    // onChangeText={handleInputChange}
-                                                     />
-                                    </> */}
                               </>
                             ) : null
-                            // (
-                            //   <View>
-                            //     <Text>No manager assigned</Text>
-                            //   </View>
-                            // )
                           }
                         </View>
                       </View>
@@ -4027,10 +3989,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                                         </TouchableOpacity>
                                       )}
                                     </View>
-                                    {/* <Text style={styles.title}>OR</Text> */}
-                                    {/* <Text style={styles.subTitle}>
-                                          Continue booking without Approval
-                                        </Text> */}
+                                
                                     <>
                                       {userAccountDetails.approvalType ===
                                       'Mandatory' ? (
@@ -4138,16 +4097,7 @@ const TripDetails = ({navigation: {navigate, goBack}}) => {
                     <TouchableOpacity
                       style={[styles.btn]}
                       onPress={() => {
-                        // if (userAccountDetails.approvalType !== 'Mandatory') {
-                        //   setSelectedTab('payment');
-                        // } else if (
-                        //   requestData?.status !== undefined &&
-                        //   userAccountDetails.approvalType === 'Mandatory'
-                        // ) {
-                        //   setSelectedTab('payment');
-                        // } else {
-                        //   setApprovalError(true);
-                        // }
+                        
                         if (
                           requestData?.status !== 'Pending' &&
                           requestData?.status !== 'Skipped'&&requestData?.status !== 'Approved'

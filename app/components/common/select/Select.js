@@ -67,7 +67,7 @@
 // })
 import React, { useContext, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TouchableHighlight, FlatList } from 'react-native';
-import { colors } from '../../../config/theme';
+import { colors, fonts } from '../../../config/theme';
 import { responsiveHeight, responsiveWidth } from '../../../utils/responsiveScale';
 import IconSwitcher from '../icons/IconSwitcher';
 import MyContext from '../../../context/Context';
@@ -111,7 +111,7 @@ const{actions}=useContext(MyContext)
         <View>
             <TouchableOpacity style={styles.maincontainer} onPress={handledropDown}>
                <View style={{flex:1}}>
-               <Text>{selectedItem [`${bookIndex}-${segIndex}-${traveller}`] ? selectedItem[`${bookIndex}-${segIndex}-${traveller}`] : name === "baggage" ? "No excess Baggage" : "No add-on meal"}</Text>
+               <Text style={styles.listOfItems}>{selectedItem [`${bookIndex}-${segIndex}-${traveller}`] ? selectedItem[`${bookIndex}-${segIndex}-${traveller}`] : name === "baggage" ? "No excess Baggage" : "No add-on meal"}</Text>
                </View>
                 <IconSwitcher componentName='Ionicons' iconName={viewAll?"chevron-up":'chevron-down'} color={colors.black} iconsize={3} />
             </TouchableOpacity>
@@ -130,7 +130,7 @@ const{actions}=useContext(MyContext)
                                             selectedItemIndex === index && styles.itemHovered,
                                         ]}
                                     >
-                                        <Text>{item.Weight > 0 ? `${item.Weight}KG at Rs ${item.Price}/-` : "No excess baggage"}</Text>
+                                        <Text style={styles.listOfItems}>{item.Weight > 0 ? `${item.Weight}KG at Rs ${item.Price}/-` : "No excess baggage"}</Text>
                                     </TouchableHighlight>
                                 )
                             }}  nestedScrollEnabled/>
@@ -146,7 +146,7 @@ const{actions}=useContext(MyContext)
                                             selectedItemIndex === index && styles.itemHovered,
                                         ]}
                                     >
-                                        <Text>{item.Quantity > 0 ? `${item.AirlineDescription} -> Rs ${item.Price}/-` : "No add-on meal"}</Text>
+                                        <Text style={styles.listOfItems}>{item.Quantity > 0 ? `${item.AirlineDescription} -> Rs ${item.Price}/-` : "No add-on meal"}</Text>
                                     </TouchableHighlight>
                                 )
                             }} nestedScrollEnabled/>
@@ -179,6 +179,12 @@ const styles = StyleSheet.create({
     itemHovered: {
         backgroundColor: colors.lightGray,
     },
+    listOfItems:{
+        fontSize:responsiveHeight(1.8),
+        fontFamily:fonts.textFont,
+        color:colors.primary
+
+    }
 });
 
 export default Select;

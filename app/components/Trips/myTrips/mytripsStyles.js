@@ -71,7 +71,8 @@ width:responsiveHeight(4)
   },
   pageTitle:{
     fontSize:responsiveHeight(1.5),
-    color:colors.primary
+    color:colors.primary,
+    fontFamily:fonts.primary
   },
   tripName:
   {
@@ -96,7 +97,9 @@ color:colors.highlight
     borderRadius:responsiveHeight(1)
   },
   btnTitle:{
-    color:colors.white
+    color:colors.white,
+    fontSize:responsiveHeight(1.6),
+    fontFamily:fonts.textFont
   },
   progressBarContainer:{
     flex: 1,

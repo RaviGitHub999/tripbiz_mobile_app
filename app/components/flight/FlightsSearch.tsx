@@ -165,7 +165,7 @@ const FlightsSearch: React.FC<IProps> = ({ navigation: { navigate } }) => {
             {journeyWay === "2" &&  errors.returnDate?<Text style={[styles.errorText,{flex:1,textAlignVertical:'center',}]}>{`* ${errors.returnDate}`}</Text>:null}
           </View>:null}
           <DropDown length={10} particularState='Adults' placeHolder='Adults'/>
-          <SearchInputs btn={true} dropDown={true}  />
+           <SearchInputs btn={true} dropDown={true}  />
           {/* <View style={{ flexDirection: "row", justifyContent: 'space-evenly' }}>
             <DropDown length={10} particularState='Adults' placeHolder='Adults'/>
             <DropDown length={9} particularState='Children' placeHolder='Children'/>
@@ -180,7 +180,8 @@ const FlightsSearch: React.FC<IProps> = ({ navigation: { navigate } }) => {
   {!directflight? <IconSwitcher componentName='MaterialCommunityIcons' iconName='checkbox-blank-outline' color={colors.gray} iconsize={2.4}/>
     :<IconSwitcher componentName='MaterialCommunityIcons' iconName='checkbox-marked' color={colors.facebook} iconsize={2.4}/>}
   </TouchableOpacity>
-  <Text style={styles.directFlightTitle}>Direct flights only</Text>
+  {/*  allowFontScaling={true}  */}
+  <Text style={styles.directFlightTitle} >Direct flights only</Text>
    </View>
     
 

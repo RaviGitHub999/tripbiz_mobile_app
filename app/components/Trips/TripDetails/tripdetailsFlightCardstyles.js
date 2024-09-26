@@ -61,7 +61,7 @@ export const styles = StyleSheet.create({
     },
     directionContainer: {
         width: '50%',
-        rowGap: 4,
+        // rowGap: responsiveHeight(1),
     },
     stopsBtn: {
         flexDirection: 'row',
@@ -71,6 +71,8 @@ export const styles = StyleSheet.create({
     },
     stopsBtnText: {
         color: colors.highlight,
+        fontFamily:fonts.primary,
+        fontSize:responsiveHeight(1.6)
     },
     flighttotalTime: {
         fontSize: responsiveFontSize(1.8),
@@ -356,7 +358,8 @@ export const styles = StyleSheet.create({
         color: colors.primary
     },
     renderingMainContainer:{
-        rowGap: responsiveHeight(1.2) 
+        rowGap: responsiveHeight(1.2) ,
+        marginTop:responsiveHeight(1)
     },
     headerContainer:{
         flexDirection: 'row',

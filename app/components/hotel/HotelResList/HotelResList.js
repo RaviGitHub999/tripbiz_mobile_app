@@ -5,7 +5,7 @@ import MyContext from '../../../context/Context'
 import { styles } from './styles'
 import IconSwitcher from '../../common/icons/IconSwitcher'
 import ProgressBar from '../../common/progressBar/ProgressBar'
-import { colors } from '../../../config/theme'
+import { colors, fonts } from '../../../config/theme'
 import { responsiveHeight, responsiveWidth } from '../../../utils/responsiveScale'
 import FilterHeader from '../../common/filterHeader/FilterHeader'
 import HotelRenderItem from './HotelRenderItem'
@@ -217,9 +217,12 @@ const HotelResList = ({ navigation: { navigate, goBack, push } }) => {
                 placeholder='Search for your favourite hotel'
                 style={{
                     borderWidth: 1,
-                    paddingHorizontal: responsiveWidth(5),
                     borderRadius: responsiveHeight(2),
-                    fontSize: responsiveHeight(2.1)
+                    fontSize: responsiveHeight(2.1), 
+                    fontFamily: fonts.primary,
+                    textAlignVertical: 'center', 
+                    overflow: 'hidden',
+                    padding:responsiveHeight(1.5)
                 }}
                 value={searchTerm}
                 onChangeText={handleSearch}
@@ -342,9 +345,11 @@ const HotelResList = ({ navigation: { navigate, goBack, push } }) => {
             <View style={styles.headerMainContainer}>
                 <View style={styles.titleContainer}>
                     <Text style={styles.title}>{`${hotelSearchName}`}</Text>
+                    <View style={styles.editButtonMainContainer}>
                     <TouchableOpacity style={styles.editButtonContainer} onPress={handleEditButton}>
                         <IconSwitcher componentName='MaterialIcons' iconName='edit' color={colors.white} iconsize={2.2} />
                     </TouchableOpacity>
+                    </View>
                 </View>
                 {hotelSearchCheckIn && <Text style={styles.subTitle}>{`${hotelSearchCheckIn?.toString()
                     .slice(4, 10)} - ${hotelSearchCheckOut?.toString()
